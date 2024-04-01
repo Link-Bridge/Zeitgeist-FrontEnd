@@ -1,4 +1,3 @@
-import React from 'react';
 import EmployeeDummyComponent from '../../components/modules/Employees/Table';
 
 const Employees = () => {

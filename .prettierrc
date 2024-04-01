@@ -6,7 +6,7 @@
   "useTabs": false,
   "singleQuote": true,
   "jsxSingleQuote": true,
-  "printWidth": 120,
+  "printWidth": 100,
   "breakBeforeElse": true,
   "plugins": ["prettier-plugin-jsdoc", "prettier-plugin-organize-imports"]
 }

@@ -1,6 +1,7 @@
 // Importamos useState y useEffect de React, necesarios para gestionar el estado
 // del hook y efectuar efectos secundarios, respectivamente.
 import { useState, useEffect } from 'react';
+import axios from 'axios';
 
 // Define un tipo genérico para el estado del hook, incluyendo los datos (data),
 // si está cargando (isLoading) y cualquier error (error) que pueda ocurrir.
@@ -30,20 +31,16 @@ const useFetch = <T>(url: string): UseFetchState<T> => {
     const fetchData = async () => {
       setIsLoading(true); // Inicia la carga antes de hacer la solicitud.
       try {
-        const response = await fetch(url); // Realiza la solicitud fetch.
-        // Verifica si la respuesta es exitosa.
-        if (!response.ok) {
-          // Si la respuesta no es exitosa, lanza un error con el status de la respuesta.
-          throw new Error(`Network response was not ok (${response.statusText})`);
-        }
-        const data: T = await response.json(); // Convierte la respuesta a JSON.
-        setData(data); // Almacena los datos en el estado.
+        const response = await axios.get<T>(url); // Realiza la solicitud fetch.
+        setData(response.data); // Almacena los datos en el estado.
         setError(null); // Asegura que el estado de error esté limpio si la solicitud fue exitosa.
       } catch (error) {
         // Maneja cualquier error que ocurra durante la solicitud o su procesamiento.
-        if (error instanceof Error) {
-          // Si el error es una instancia de Error, lo almacena en el estado.
-          setError(error);
+        if (error) {
+          if (axios.isAxiosError(error)) {
+            // Si el error es una instancia de AxiosError, extrae el error de la respuesta.
+            setError(new Error(error.response?.data?.message || error.message));
+          }
         } else {
           // Si por alguna razón el error no es una instancia de Error, crea uno nuevo.
           setError(new Error('Unknown error occurred'));

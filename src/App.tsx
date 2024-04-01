@@ -7,7 +7,6 @@ import {
   Route,
   Link
 } from 'react-router-dom';
-import React from 'react';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import Clients from './pages/Clients';
