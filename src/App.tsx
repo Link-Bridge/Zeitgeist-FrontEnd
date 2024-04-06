@@ -9,6 +9,7 @@ import Tasks from './pages/Tasks';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees/';
 import Home from './pages/Home';
+import AddButton from './components/common/AddButton';
 
 function App() {
 
@@ -19,6 +20,9 @@ function App() {
         <nav>
           {/* Navegación */}
           <ul>
+            <li>
+              <AddButton/>
+            </li>
             <li>
               <Link to="/">Home</Link>
             </li>
@@ -47,7 +51,7 @@ function App() {
         </Routes>
       </div>
     </Router>
-    </>
+    </> 
   )
 }
 
