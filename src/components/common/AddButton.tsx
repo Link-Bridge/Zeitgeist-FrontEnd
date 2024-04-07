@@ -1,5 +1,5 @@
 import Button from '@mui/joy/Button';
-import colors from '../../colors';
+import colors from '../../colors'; // Importar los colores del archivo colors.tsx
 
 function AddButton() {
   return (
@@ -7,7 +7,7 @@ function AddButton() {
       variant="solid"
       size="sm"
       sx={{
-        backgroundColor: colors.darkerBlue, 
+        backgroundColor: colors.darkGold, // Llamar el color correspondiente
         '&:hover': {
           backgroundColor: colors.darkerGold,
         }
