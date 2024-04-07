@@ -9,6 +9,7 @@ import Tasks from './pages/Tasks';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees/';
 import Home from './pages/Home';
+import SocketComponent from './utils/socket';
 
 function App() {
 
@@ -47,6 +48,7 @@ function App() {
         </Routes>
       </div>
     </Router>
+    <div className='bg-color red'><SocketComponent /></div>
     </>
   )
 }
