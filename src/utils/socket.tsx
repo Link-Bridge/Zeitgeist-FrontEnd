@@ -4,11 +4,9 @@ import { io } from 'socket.io-client';
 const SocketComponent = () => {
     const [message, setMessage] = useState<string>('');
 
-    const SERVER = process.env['SERVER_HOST'];
-
     useEffect(() => {
         // Conecta al servidor de Socket.IO
-        const socket = io(`${SERVER}`); // Asegúrate de usar la URL y el puerto correctos de tu servidor
+        const socket = io('zeitgeist-backend-production-f842.up.railway.app'); // Asegúrate de usar la URL y el puerto correctos de tu servidor
     
         // Escucha por mensajes de tipo 'status' enviados por el servidor
         socket.on('status', (data: string) => {
