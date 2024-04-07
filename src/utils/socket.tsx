@@ -6,7 +6,7 @@ const SocketComponent = () => {
 
     useEffect(() => {
         // Conecta al servidor de Socket.IO
-        const socket = io('zeitgeist-backend-production-f842.up.railway.app'); // Asegúrate de usar la URL y el puerto correctos de tu servidor
+        const socket = io('zeitgeist-backend-production-a311.up.railway.app'); // Asegúrate de usar la URL y el puerto correctos de tu servidor
     
         // Escucha por mensajes de tipo 'status' enviados por el servidor
         socket.on('status', (data: string) => {
