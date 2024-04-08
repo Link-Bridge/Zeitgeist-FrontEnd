@@ -16,7 +16,7 @@ const EmployeeDummyComponent = () => {
 
   return (
     <div>
-        {/* Muestra el nombre del empleado si hay datos */}
+      {/* Muestra el nombre del empleado si hay datos */}
       {data && <div>{data.name}</div>}
     </div>
   );

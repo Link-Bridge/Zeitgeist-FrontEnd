@@ -1,4 +1,3 @@
-
 const Tasks = () => {
   return (
     <div>
@@ -6,6 +5,6 @@ const Tasks = () => {
       <p>Welcome to the Tasks page!</p>
     </div>
   );
-}
+};
 
 export default Tasks;

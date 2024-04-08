@@ -1,0 +1,33 @@
+#!/usr/bin/env sh
+
+# Load husky
+. "$(dirname -- "$0")/_/husky.sh"
+
+# Read commit message
+message=$(cat "$1")
+
+# Regex pattern
+requiredPattern="^(build|chore|feat|fix|docs|refactor|perf|style|test)\([a-zA-Z0-9\s\-_]+\): .+$"
+
+# Check if the commit message is valid
+if ! echo "$message" | grep -iqE "$requiredPattern"; then
+  cat <<EOF
+.
+.
+Oh no! Tu commit message tiene el formato incorrecto :(
+El message debe de estar en el siguiente formato:
+<type>(<scope>): <subject>
+Los 'type' aceptados son: build, chore, feat, fix, docs, refactor, perf, style, test
+Ejemplo: fix(middleware): ensure Range headers adhere more closely to RFC 2616
+.
+Tu message fue:
+$message
+.
+Si quieres conocer más sobre este estándar, visita: https://dev.to/ishanmakadia/git-commit-message-convention-that-you-can-follow-1709
+.
+No te preocupes, intenta de nuevo. TQM <3
+EOF
+
+  # Exit with error status
+  exit 1
+fi

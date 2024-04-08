@@ -8,6 +8,6 @@ const Employees = () => {
       <p>Welcome to the Employees page!</p>
     </div>
   );
-}
+};
 
 export default Employees;

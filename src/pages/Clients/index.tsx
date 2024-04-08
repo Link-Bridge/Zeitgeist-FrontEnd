@@ -1,4 +1,3 @@
-
 const Clients = () => {
   return (
     <div>
@@ -6,6 +5,6 @@ const Clients = () => {
       <p>Welcome to the Clients page!</p>
     </div>
   );
-}
+};
 
 export default Clients;
