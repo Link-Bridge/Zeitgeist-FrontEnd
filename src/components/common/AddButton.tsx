@@ -4,13 +4,13 @@ import colors from '../../colors'; // Importar los colores del archivo colors.ts
 function AddButton() {
   return (
     <Button
-      variant="solid"
-      size="sm"
+      variant='solid'
+      size='sm'
       sx={{
         backgroundColor: colors.darkGold, // Llamar el color correspondiente
         '&:hover': {
           backgroundColor: colors.darkerGold,
-        }
+        },
       }}
     >
       + New

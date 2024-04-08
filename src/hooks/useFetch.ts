@@ -1,7 +1,7 @@
 // Importamos useState y useEffect de React, necesarios para gestionar el estado
 // del hook y efectuar efectos secundarios, respectivamente.
-import { useState, useEffect } from 'react';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
 
 // Define un tipo genérico para el estado del hook, incluyendo los datos (data),
 // si está cargando (isLoading) y cualquier error (error) que pueda ocurrir.
@@ -13,7 +13,7 @@ type UseFetchState<T> = {
 
 /**
  * Hook personalizado para realizar solicitudes fetch con manejo de estados.
- * 
+ *
  * @param url La URL a la que hacer la solicitud fetch.
  * @returns El estado de la solicitud incluyendo los datos, estado de carga y errores.
  */
