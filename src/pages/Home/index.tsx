@@ -1,11 +1,14 @@
+import Layout from "../../components/common/Layout";
 
 const Home = () => {
   return (
-    <div>
-      <h1>Home Page</h1>
-      <p>Welcome to the home page!</p>
-    </div>
-  );   
-}  
+    <Layout>
+      <main className="p-10 flex">
+        <section className="bg-[#FAFAFA]">Home Page</section>
+        <p>Welcome to the home page!</p>
+      </main>
+    </Layout>
+  );
+}
 
 export default Home;
