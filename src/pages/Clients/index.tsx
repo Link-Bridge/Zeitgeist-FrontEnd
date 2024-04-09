@@ -1,9 +1,13 @@
+import Layout from "../../components/common/Layout";
+
 const Clients = () => {
   return (
-    <div>
-      <h1>Clients Page</h1>
-      <p>Welcome to the Clients page!</p>
-    </div>
+    <Layout>
+      <main className="p-10 py-4 flex gap-4">
+        <h1>Clients Page</h1>
+        <p>Welcome to the Clients page!</p>
+      </main>
+    </Layout>
   );
 };
 
