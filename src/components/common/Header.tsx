@@ -11,8 +11,13 @@ const Header = ({pageTitle}:HeaderProps) => {
   const [currentDate, setCurrentDate] = useState('');
   useEffect(() => {
     const date = new Date();
-    const dateOption = {weekday: 'long', day: 'numeric', month: 'long', year: 'numeric'};
-    setCurrentDate(date.toLocaleDateString('en-US', dateOption));
+    const dateOptions: Intl.DateTimeFormatOptions = {
+      weekday: 'long',
+      day: 'numeric',
+      month: 'long',
+      year: 'numeric'
+    };
+    setCurrentDate(date.toLocaleDateString('en-US', dateOptions));
   }, [])
     
   return (
