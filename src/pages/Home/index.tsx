@@ -1,5 +1,3 @@
-import CardContainer from "../../components/common/CardContainer";
-
 const Home = () => {
   return (
     <div>
