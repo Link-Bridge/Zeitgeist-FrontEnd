@@ -14,8 +14,7 @@ export default function CardContainer({ children }: CardContainerProps) {
             sx={
                 { 
                     bgcolor: '#EFEFEF', 
-                    maxWidth: "420px", 
-                    minWidth: "280px"
+                    maxWidth: "100%", 
                 }}
         >
             <CardContent>
