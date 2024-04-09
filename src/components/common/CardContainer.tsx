@@ -11,7 +11,12 @@ export default function CardContainer({ children }: CardContainerProps) {
         <Card
             size="lg"
             variant="soft"
-            sx={{ bgcolor: '#EFEFEF', maxWidth: "420px" }}
+            sx={
+                { 
+                    bgcolor: '#EFEFEF', 
+                    maxWidth: "420px", 
+                    minWidth: "280px"
+                }}
         >
             <CardContent>
                 {children}
