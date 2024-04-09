@@ -1,13 +1,21 @@
+import { ReactNode } from 'react';
 import Card from '@mui/joy/Card';
+import CardContent from '@mui/joy/CardContent';
 
-export default function CardContainer({children}) {
+interface CardContainerProps {
+    children: ReactNode;
+}
+
+export default function CardContainer({ children }: CardContainerProps) {
     return (
         <Card
             size="lg"
             variant="soft"
-            sx={{ bgcolor: '#EFEFEF', maxWidth: "420px "}}
+            sx={{ bgcolor: '#EFEFEF', maxWidth: "420px" }}
         >
-            {children}
+            <CardContent>
+                {children}
+            </CardContent>
         </Card>
     );
 }
