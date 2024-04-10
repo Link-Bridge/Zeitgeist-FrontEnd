@@ -6,16 +6,17 @@ import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 
+
 function App() {
   return (
     <>
       <h1>Main page</h1>
-      <Auth />
       <Router>
         <div>
           {/* Configuración de las rutas */}
           <Routes>
             <Route path='/' element={<Home />} />
+            <Route path='/auth' element={<Auth />} />
             <Route path='/projects' element={<Projects />} />
             <Route path='/tasks' element={<Tasks />} />
             <Route path='/clients' element={<Clients />} />
