@@ -1,4 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees/';
 import Home from './pages/Home';
@@ -8,6 +9,8 @@ import Tasks from './pages/Tasks';
 function App() {
   return (
     <>
+      <h1>Main page</h1>
+      <Auth />
       <Router>
         <div>
           {/* Configuración de las rutas */}
