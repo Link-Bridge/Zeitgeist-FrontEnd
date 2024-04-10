@@ -5,7 +5,6 @@ import ListItemDecorator from '@mui/joy/ListItemDecorator';
 import ListDivider from '@mui/joy/ListDivider';
 import MoreVert from '@mui/icons-material/MoreVert';
 import Edit from '@mui/icons-material/Edit';
-import DeleteForever from '@mui/icons-material/DeleteForever';
 import MenuButton from '@mui/joy/MenuButton';
 import Dropdown from '@mui/joy/Dropdown';
 import ArchiveIcon from '@mui/icons-material/Archive';
