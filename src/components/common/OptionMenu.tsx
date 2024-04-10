@@ -8,6 +8,7 @@ import Edit from '@mui/icons-material/Edit';
 import DeleteForever from '@mui/icons-material/DeleteForever';
 import MenuButton from '@mui/joy/MenuButton';
 import Dropdown from '@mui/joy/Dropdown';
+import ArchiveIcon from '@mui/icons-material/Archive';
 
 export default function PositionedMenu() {
     return (
@@ -27,11 +28,11 @@ export default function PositionedMenu() {
           </MenuItem>
           <ListDivider />
           
-          <MenuItem variant="soft" color="danger">
+          <MenuItem variant="soft" color="neutral">
             <ListItemDecorator sx={{ color: 'inherit' }}>
-              <DeleteForever />
+              <ArchiveIcon />
             </ListItemDecorator>{' '}
-            Delete
+            Archive
           </MenuItem>
         
         </Menu>
