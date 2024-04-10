@@ -18,10 +18,14 @@ export default function ClickableChip() {
         },
       }}
     >
-      <Option value={'Under Revision'}>Under Revision</Option>
       <Option value={'Not Started'}>Not Started</Option>
-      <Option value={'Done'}>Done</Option>
       <Option value={'In Progress'}>In Progress</Option>
+      <Option value={'Under Revision'}>Under Revision</Option>
+      <Option value={'Delayed'}>Delayed</Option>
+      <Option value={'Postponed'}>Postponed</Option>
+      <Option value={'Done'}>Done</Option>
+      <Option value={'Cancelled'}>Cancelled</Option>
+
     </Chip>
   );
 }
