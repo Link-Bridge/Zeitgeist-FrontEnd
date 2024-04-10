@@ -13,7 +13,7 @@ export default function CardContainer({ children }: CardContainerProps) {
             variant="soft"
             sx={
                 { 
-                    bgcolor: '#EFEFEF', 
+                    bgcolor: '#e1e1e1', 
                     maxWidth: "100%", 
                 }}
         >

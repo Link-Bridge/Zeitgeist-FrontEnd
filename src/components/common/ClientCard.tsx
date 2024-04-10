@@ -1,5 +1,6 @@
 import { Chip } from "@mui/joy";
 import CardContainer from "./CardContainer";
+import WorkIcon from "../../assets/icons/work_filled.svg"
 
 interface ClientCardProps {
   name: string;
@@ -12,8 +13,8 @@ interface ClientCardProps {
 const ClientCard = ({name, accountingHours, legalHours, chargeableHours, totalProjects} : ClientCardProps) => {
   return (
     <CardContainer>
-        <header className='mb-3 text-xl'>
-            {name}
+        <header className='mb-3 text-xl flex'>
+            <img src={WorkIcon} alt="Yellow Briefcase" className="mr-2" /> {name}
         </header>
         <div className='grid grid-cols-2 gap-2'>
             <Chip sx={{
