@@ -1,4 +1,5 @@
 import { ReactNode } from 'react';
+import { Link } from 'react-router-dom';
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 
@@ -15,11 +16,18 @@ export default function CardContainer({ children }: CardContainerProps) {
                 { 
                     bgcolor: '#e1e1e1', 
                     maxWidth: "100%", 
+                    transition: 'background-color 0.3s',
+                    "&:hover": {
+                        bgcolor: '#c1c1c1', 
+                        cursor: "pointer",
+                    }, 
                 }}
         >
-            <CardContent>
-                {children}
-            </CardContent>
+            <Link to={"#"}>
+                <CardContent>
+                    {children}
+                </CardContent>
+            </Link>
         </Card>
     );
 }
