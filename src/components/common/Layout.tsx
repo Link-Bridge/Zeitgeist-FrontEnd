@@ -15,15 +15,18 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname === '/projects') return 'Projects';
     if (location.pathname === '/tasks') return 'Tasks';
     if (location.pathname === '/employees') return 'Employees';
+    if (location.pathname === '/projects/new') return 'New Project';
 
     return 'Welcome Back';
   };
 
   return (
-    <main className='flex flex-col h-screen'>
-      <Header pageTitle={pathToText()} />
+    <main className='w-screen h-screen flex'>
       <SideBar />
-      <section className='flex-1 pl-[243px]'>{children}</section>
+      <div className='flex flex-col h-full flex-1'>
+        <Header pageTitle={pathToText()} />
+        <section className='flex flex-col flex-1'>{children}</section>
+      </div>
     </main>
   );
 };

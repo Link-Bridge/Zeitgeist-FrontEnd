@@ -13,7 +13,7 @@ function App() {
         {/* Configuración de las rutas */}
         <Routes>
           <Route path='/' element={<Home />} />
-          <Route path='/projects' element={<Projects />} />
+          <Route path='/projects/*' element={<Projects />} />
           <Route path='/tasks' element={<Tasks />} />
           <Route path='/clients' element={<Clients />} />
           <Route path='/employees' element={<Employees />} />
