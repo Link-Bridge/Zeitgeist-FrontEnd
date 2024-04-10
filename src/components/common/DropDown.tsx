@@ -7,6 +7,7 @@ export default function ClickableChip() {
   return (
     <Chip
       component={Select}
+      placeholder="Select an option"
       indicator={<KeyboardArrowDown />}
       sx={{
         [`& .${selectClasses.indicator}`]: {
@@ -17,7 +18,10 @@ export default function ClickableChip() {
         },
       }}
     >
-      <Option value={'Hola'}>Hola</Option>
+      <Option value={'Under Revision'}>Under Revision</Option>
+      <Option value={'Not Started'}>Not Started</Option>
+      <Option value={'Done'}>Done</Option>
+      <Option value={'In Progress'}>In Progress</Option>
     </Chip>
   );
 }
