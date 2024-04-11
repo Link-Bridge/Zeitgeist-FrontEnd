@@ -2,13 +2,14 @@ import { FolderShared, Home, SwitchAccount, Toc, ViewTimeline } from '@mui/icons
 import { Link } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
 import Colors from '../../colors';
+import { RoutesPath } from '../../utils/constants';
 
 const Items = [
-  { icon: Home, href: '/', title: 'Home Page' },
-  { icon: ViewTimeline, href: '/projects', title: 'Projects' },
-  { icon: Toc, href: '/tasks', title: 'Tasks' },
-  { icon: FolderShared, href: '/clients', title: 'Clients' },
-  { icon: SwitchAccount, href: '/employees', title: 'Employees' },
+  { icon: HomeIcon, href: RoutesPath.HOME, title: 'Home Page' },
+  { icon: ProjectsIcon, href: RoutesPath.PROJECTS, title: 'Projects' },
+  { icon: TasksIcon, href: RoutesPath.TASKS, title: 'Tasks' },
+  { icon: ClientsIcon, href: RoutesPath.CLIENTS, title: 'Clients' },
+  { icon: EmployeesIcon, href: RoutesPath.EMPLOYEES, title: 'Employees' },
 ];
 
 const SideBar = () => {
