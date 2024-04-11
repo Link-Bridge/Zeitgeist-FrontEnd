@@ -6,13 +6,14 @@ import HomeIcon from '../../assets/icons/homeIcon.svg';
 import TasksIcon from '../../assets/icons/list.svg';
 import ProjectsIcon from '../../assets/icons/view_module.svg';
 import Colors from '../../colors';
+import { RoutesPath } from '../../utils/constants';
 
 const Items = [
-  { icon: HomeIcon, href: '/', title: 'Home Page' },
-  { icon: ProjectsIcon, href: '/projects', title: 'Projects' },
-  { icon: TasksIcon, href: '/tasks', title: 'Tasks' },
-  { icon: ClientsIcon, href: '/clients', title: 'Clients' },
-  { icon: EmployeesIcon, href: '/employees', title: 'Employees' },
+  { icon: HomeIcon, href: RoutesPath.HOME, title: 'Home Page' },
+  { icon: ProjectsIcon, href: RoutesPath.PROJECTS, title: 'Projects' },
+  { icon: TasksIcon, href: RoutesPath.TASKS, title: 'Tasks' },
+  { icon: ClientsIcon, href: RoutesPath.CLIENTS, title: 'Clients' },
+  { icon: EmployeesIcon, href: RoutesPath.EMPLOYEES, title: 'Employees' },
 ];
 
 const SideBar = () => {
