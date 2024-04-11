@@ -2,6 +2,13 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import Chip from '@mui/joy/Chip';
 import { Option, Select, selectClasses } from '@mui/joy';
 
+/**
+ * ClickableChip component
+ * @description Chip component with Select component
+ * @returns JSX.Element
+ */
+
+
 export default function ClickableChip() {
   return (
     <Chip

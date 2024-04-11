@@ -9,7 +9,13 @@ import MenuButton from '@mui/joy/MenuButton';
 import Dropdown from '@mui/joy/Dropdown';
 import ArchiveIcon from '@mui/icons-material/Archive';
 
-export default function PositionedMenu() {
+/**
+ *  OptionMenu component
+ * @description Menu component with options: Edit and Archive
+ * @returns  JSX.Element
+ */
+
+export default function OptionMenu() {
     return (
       <Dropdown>
         <MenuButton
