@@ -13,7 +13,7 @@ const Items = [
 
 const SideBar = () => {
   return (
-    <aside className='bg-[#424242] h-screen flex flex-col items-center pt-16 gap-10 w-60'>
+    <aside className='bg-[#424242] h-screen flex flex-col items-center pt-16 gap-10 w-[200px]'>
       <Link to={'/'}>
         <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
       </Link>
@@ -26,7 +26,7 @@ const SideBar = () => {
             >
               <Link
                 to={item.href}
-                className='flex items-center gap-5 px-[43px] py-5'
+                className='flex items-center gap-3 px-9 py-5'
                 style={{ color: Colors.lightGold }}
               >
                 <item.icon />

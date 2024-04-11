@@ -21,7 +21,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
   }, []);
 
   return (
-    <header className='flex flex-row flex-wrap justify-between items-start px-14 py-6 basis-1/5'>
+    <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
       <section>
         <h1
           style={{
