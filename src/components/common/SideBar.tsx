@@ -1,6 +1,10 @@
-import { FolderShared, Home, SwitchAccount, Toc, ViewTimeline } from '@mui/icons-material';
 import { Link } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
+import ClientsIcon from '../../assets/icons/folder_shared.svg';
+import EmployeesIcon from '../../assets/icons/groups_black.svg';
+import HomeIcon from '../../assets/icons/homeIcon.svg';
+import TasksIcon from '../../assets/icons/list.svg';
+import ProjectsIcon from '../../assets/icons/view_module.svg';
 import Colors from '../../colors';
 import { RoutesPath } from '../../utils/constants';
 
