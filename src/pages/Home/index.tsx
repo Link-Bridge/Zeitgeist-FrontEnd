@@ -1,20 +1,14 @@
-import Layout from "../../components/common/Layout";
-import DropDown from "../../components/common/DropDown";
-import OptionMenu from "../../components/common/OptionMenu";
-
 const Home = () => {
   return (
-    <Layout>
-      <main className="p-10 py-4 flex gap-4">
-        <section className="bg-[#FAFAFA] rounded-xl basis-4/6 h-[750px] p-10"><h2 className="font-semibold text-[34px]">My Projects</h2>
-        <DropDown></DropDown>
-        <OptionMenu></OptionMenu>
-        </section>
-        <section className="bg-[#FAFAFA] rounded-xl basis-2/6 h-[750px] p-10"><h2 className="font-semibold text-[34px]">Clients</h2></section>
-        
-      </main>
-    </Layout>
+    <main className='p-10 py-4 grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
+      <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg'>
+        <h2 className='text-[34px]'>MY PROJECTS</h2>
+      </section>
+      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg'>
+        <h2 className='text-[34px]'>CLIENTS</h2>
+      </section>
+    </main>
   );
-}
+};
 
 export default Home;
