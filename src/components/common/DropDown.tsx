@@ -1,6 +1,5 @@
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import Chip from '@mui/joy/Chip';
-
 import { Option, Select, selectClasses } from '@mui/joy';
 
 export default function ClickableChip() {
