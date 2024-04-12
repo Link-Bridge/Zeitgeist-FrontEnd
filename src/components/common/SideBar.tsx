@@ -34,7 +34,7 @@ const SideBar = () => {
                 className='flex items-center gap-5 px-[43px] py-5'
                 style={{ color: Colors.lightGold }}
               >
-                <item.icon />
+                <img src={item.icon} alt={item.title} />
                 <p>{item.title}</p>
               </Link>
             </li>
