@@ -5,6 +5,7 @@ import Employees from './pages/Employees/';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
+import { RoutesPath } from './utils/constants';
 
 function App() {
   return (
@@ -12,11 +13,11 @@ function App() {
       <Layout>
         {/* Configuración de las rutas */}
         <Routes>
-          <Route path='/' element={<Home />} />
-          <Route path='/projects/*' element={<Projects />} />
-          <Route path='/tasks' element={<Tasks />} />
-          <Route path='/clients' element={<Clients />} />
-          <Route path='/employees' element={<Employees />} />
+          <Route path={RoutesPath.HOME} element={<Home />} />
+          <Route path={RoutesPath.PROJECTS} element={<Projects />} />
+          <Route path={RoutesPath.TASKS} element={<Tasks />} />
+          <Route path={RoutesPath.CLIENTS} element={<Clients />} />
+          <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
         </Routes>
       </Layout>
     </Router>
