@@ -1,5 +1,6 @@
 import { ReactNode } from 'react';
 import { useLocation } from 'react-router-dom';
+import { RoutesPath } from '../../utils/constants';
 import Header from './Header';
 import SideBar from './SideBar';
 
@@ -11,11 +12,11 @@ const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
 
   const pathToText = () => {
-    if (location.pathname === '/clients') return 'Clients';
-    if (location.pathname === '/projects') return 'Projects';
-    if (location.pathname === '/tasks') return 'Tasks';
-    if (location.pathname === '/employees') return 'Employees';
-    if (location.pathname === '/projects/new') return 'New Project';
+    if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
+    if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
+    if (location.pathname === RoutesPath.TASKS) return 'Tasks';
+    if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
+    if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
 
     return 'Welcome Back';
   };

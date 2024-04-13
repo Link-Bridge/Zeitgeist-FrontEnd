@@ -3,6 +3,7 @@ const colors = {
   gray: '#686868',
   darkGray: '#515151',
   darkerGray: '#424242',
+  darkestGray: '#313131',
   lightGold: '#E8C273',
   gold: '#C29A51',
   darkGold: '#9C844C',
