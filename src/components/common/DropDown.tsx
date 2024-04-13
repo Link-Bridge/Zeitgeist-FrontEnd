@@ -14,6 +14,7 @@ export default function ClickableChip() {
   return (
     <Chip
       component={Select}
+      variant='solid'
       placeholder="Select an option"
       indicator={<KeyboardArrowDown />}
       sx={{
