@@ -14,6 +14,34 @@ const Auth = () => {
     }
   };
 
+  // const Auth = () => {
+  //   const signInWithGoogle = async () => {
+  //     try {
+  //       const result = await signInWithPopup(auth, provider);
+  //       // Extraemos el token ID del objeto de autenticación
+  //       const token = result.user.accessToken; // Asegúrate de que este es el nombre correcto de la propiedad para el token
+
+  //       // Enviamos el token al backend
+  //       const response = await fetch('http://localhost:3000/create/employee', {
+  //         method: 'POST',
+  //         headers: {
+  //           'Content-Type': 'application/json',
+  //           'Authorization': `Bearer ${token}` // Enviamos el token en el encabezado de autorización
+  //         },
+  //       });
+
+  //       if (!response.ok) {
+  //         throw new Error('Failed to create employee');
+  //       }
+
+  //       const data = await response.json();
+  //       console.log('Server response:', data);
+  //     } catch (error) {
+  //       console.error('Firebase Sign-in error or Server response error:', error);
+  //     }
+  //   };
+  // }
+
   return (
     <div
       className="bg-cover bg-center h-screen" 
