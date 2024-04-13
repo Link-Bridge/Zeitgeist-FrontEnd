@@ -1,4 +1,5 @@
-import { Delete } from '@mui/icons-material';
+import { Delete, Warning } from '@mui/icons-material';
+import Alert from '@mui/joy/Alert';
 import DialogContent from '@mui/joy/DialogContent';
 import DialogTitle from '@mui/joy/DialogTitle';
 import IconButton from '@mui/joy/IconButton';
@@ -18,7 +19,10 @@ export default function DeleteModal() {
         <ModalDialog>
           <ModalClose />
           <DialogTitle>Delete Employee</DialogTitle>
-          <DialogContent>Are you sure you want to delete this employee?</DialogContent>
+          <DialogContent>Are you sure to delete this employee?</DialogContent>
+          <Alert key={'Warning'} sx={{ alignItems: 'flex-start' }} startDecorator={<Warning />}>
+            <div>This action cannot be undone</div>
+          </Alert>
         </ModalDialog>
       </Modal>
     </React.Fragment>
