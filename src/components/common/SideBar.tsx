@@ -19,20 +19,22 @@ const Items = [
 const SideBar = () => {
   return (
     <aside className='fixed bg-[#424242] h-screen flex flex-col items-center pt-16 gap-10 w-[246px]'>
-      <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
+      <Link to={'/'}>
+        <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
+      </Link>
       <nav className='w-full flex justify-center'>
         <ul className='w-full'>
           {Items.map(item => (
             <li
               key={item.href}
-              className='first:mt-0 my-6 text-base hover:bg-gray-600 ease-in-out duration-400 font-semibold'
+              className='first:mt-0 my-6 text-base hover:bg-[#313131] transition-all duration-400 font-semibold'
             >
               <Link
                 to={item.href}
                 className='flex items-center gap-5 px-[43px] py-5'
                 style={{ color: Colors.lightGold }}
               >
-                <img alt={`${item.title} icon`} src={item.icon} className='w-8' />
+                <item.icon />
                 <p>{item.title}</p>
               </Link>
             </li>
