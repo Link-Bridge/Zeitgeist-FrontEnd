@@ -9,7 +9,7 @@ interface CustomSelectProps {
 
 const CustomSelect = ({ values, handleChange, name }: CustomSelectProps) => {
   return (
-    <Select onChange={(_, newVal) => handleChange(name, String(newVal))}>
+    <Select defaultValue={''} onChange={(_, newVal) => handleChange(name, String(newVal))}>
       {values.map(value => {
         return (
           <Option key={value} value={value}>
