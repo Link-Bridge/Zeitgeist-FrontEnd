@@ -2,16 +2,21 @@ import { Button, Card, FormControl, FormLabel, Input, Select, Textarea } from '@
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
+import useFetch from '../../hooks/useFetch';
 import useNewProject from '../../hooks/useNewProject';
+import { CompanyEntity } from '../../types/company';
+import { Response } from '../../types/response';
 
 const NewProject = () => {
-  const { formState, handleChange } = useNewProject();
-  console.log(formState);
+  const { formState, handleChange, handleSubmit } = useNewProject();
   const values = ['1', '2', '3', '4'];
 
+  const { data: companies } = useFetch<Response<CompanyEntity>>(
+    'http://localhost:4000/api/v1/company'
+  );
   return (
     <Card className='bg-white flex-1' sx={{ padding: '30px' }}>
-      <form action='' className='flex flex-col gap-4'>
+      <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
         <FormControl>
           <FormLabel>Project Name</FormLabel>
           <Input
@@ -24,7 +29,11 @@ const NewProject = () => {
         <section className='flex flex-row gap-4'>
           <FormControl className='flex-1'>
             <FormLabel>Client</FormLabel>
-            <CustomSelect values={values} name='client' handleChange={handleChange} />
+            <CustomSelect
+              values={companies?.data?.map(company => company.name) ?? []}
+              name='client'
+              handleChange={handleChange}
+            />
           </FormControl>
           <FormControl className='flex-1'>
             <FormLabel>Category</FormLabel>
@@ -84,6 +93,7 @@ const NewProject = () => {
             <Link to={'..'}>Cancel</Link>
           </Button>
           <Button
+            type='submit'
             sx={{
               background: colors.darkGold,
               '&:hover': {
