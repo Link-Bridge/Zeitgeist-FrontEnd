@@ -8,23 +8,44 @@ const Auth = () => {
   const signInWithGoogle = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();  // Obtener el token de ID del usuario autenticado
+      const token = await result.user.getIdToken();  
 
-      // Extraer datos adicionales del usuario
       const { displayName, email, photoURL } = result.user;
 
-      // Enviamos el token y los datos del usuario al backend
+      if (!displayName) {
+        console.error('No display name available from Google account.');
+        return; 
+      }
+
+      const nameParts = displayName.trim().split(/\s+/); 
+      let firstName, lastName;
+
+      if (nameParts.length === 2) {
+
+        [firstName, lastName] = nameParts;
+      } else if (nameParts.length === 3) {
+        firstName = nameParts[0];
+        lastName = nameParts.slice(1).join(' ');
+      } else if (nameParts.length >= 4) {
+        firstName = nameParts.slice(0, 2).join(' ');
+        lastName = nameParts.slice(2).join(' ');
+      } else {
+        firstName = displayName; 
+        lastName = ''; 
+      }
+
       const response = await fetch('http://localhost:3000/create/employee', {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
-          'Authorization': `Bearer ${token}`  // Enviamos el token en el encabezado de autorización
+          'Authorization': `Bearer ${token}` 
         },
         body: JSON.stringify({
-          name: displayName,
+          firstName: firstName,
+          lastName: lastName,
           email: email,
           imageUrl: photoURL
-        })  // Datos del usuario en el cuerpo de la solicitud
+        })  
       });
 
       if (!response.ok) {
