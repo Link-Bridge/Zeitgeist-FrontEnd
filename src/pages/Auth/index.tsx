@@ -32,9 +32,21 @@ const Auth: React.FC = () => {
       const { displayName, email, photoURL } = result.user;
       if (!displayName || !email || !photoURL) throw new Error('Missing required user information');
 
-      const nameParts = displayName.split(/\s+/);
-      let firstName = nameParts[0];
-      let lastName = nameParts.slice(1).join(' ');
+      const nameParts = displayName.trim().split(/\s+/);
+      let firstName, lastName;
+
+      if (nameParts.length === 2) {
+        [firstName, lastName] = nameParts;
+      } else if (nameParts.length === 3) {
+        firstName = nameParts[0];
+        lastName = nameParts.slice(1).join(' ');
+      } else if (nameParts.length >= 4) {
+        firstName = nameParts.slice(0, 2).join(' ');
+        lastName = nameParts.slice(2).join(' ');
+      } else {
+        firstName = displayName;
+        lastName = '';
+      }
 
       await post({ firstName, lastName, email, imageUrl: photoURL });
       navigate(RoutesPath.HOME);
