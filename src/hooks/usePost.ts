@@ -22,7 +22,7 @@ const usePost = <T, U>(url: string): UsePostState<T, U> => {
   const post = async (postData: U) => {
     setIsLoading(true);
     setError(null);
-    const token = localStorage.getItem('idToken');
+    const token = sessionStorage.getItem('idToken'); //¿cambiar a localStorage?
 
     const headers = {
       Authorization: `Bearer ${token}`,
