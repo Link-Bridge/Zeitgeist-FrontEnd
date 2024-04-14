@@ -1,19 +1,25 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
+import React from 'react';
+import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login_image.png';
 import { auth, provider } from '../../config/firebase.config';
 import usePost from '../../hooks/usePost';
+import { RoutesPath } from '../../utils/constants';
 
-type EmployeeData = {
+// Tipos para los datos del empleado
+interface EmployeeData {
   firstName: string;
   lastName: string;
   email: string;
   imageUrl: string;
-};
+}
 
-const Auth = () => {
-  const { data, isLoading, error, post } = usePost<EmployeeData, EmployeeData>(
+// Componente Auth
+const Auth: React.FC = () => {
+  const navigate = useNavigate();
+  const { post, isLoading, error, data } = usePost<EmployeeData, EmployeeData>(
     'http://localhost:4000/api/v1/employee/create'
   );
 
@@ -21,37 +27,17 @@ const Auth = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const token = await result.user.getIdToken();
-      localStorage.setItem('idToken', token);
+      sessionStorage.setItem('idToken', token); // ¿cambiar a localStorage?
 
       const { displayName, email, photoURL } = result.user;
+      if (!displayName || !email || !photoURL) throw new Error('Missing required user information');
 
-      if (!displayName || !email || !photoURL) {
-        throw new Error('Missing required user information');
-      }
+      const nameParts = displayName.split(/\s+/);
+      let firstName = nameParts[0];
+      let lastName = nameParts.slice(1).join(' ');
 
-      const nameParts = displayName.trim().split(/\s+/);
-      let firstName = displayName,
-        lastName = '';
-
-      if (nameParts.length === 2) {
-        [firstName, lastName] = nameParts;
-      } else if (nameParts.length === 3) {
-        firstName = nameParts[0];
-        lastName = nameParts.slice(1).join(' ');
-      } else if (nameParts.length >= 4) {
-        firstName = nameParts.slice(0, 2).join(' ');
-        lastName = nameParts.slice(2).join(' ');
-      } else {
-        firstName = displayName;
-        lastName = '';
-      }
-
-      post({
-        firstName,
-        lastName,
-        email,
-        imageUrl: photoURL,
-      });
+      await post({ firstName, lastName, email, imageUrl: photoURL });
+      navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
     }
