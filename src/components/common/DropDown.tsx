@@ -2,6 +2,8 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import Chip from '@mui/joy/Chip';
 import { Option, Select, selectClasses } from '@mui/joy';
 import colors from '../../colors';
+import { useState } from 'react'; 
+
 
 /**
  * ClickableChip component
@@ -9,14 +11,46 @@ import colors from '../../colors';
  * @returns JSX.Element
  */
 
+function colorForStatus(status: string) {
+  switch (status) {
+    case 'Not Started':
+      return colors.notStarted;
+    case 'In Process':
+      return colors.inProcess;
+    case 'Under Revision':
+      return colors.purple;
+    case 'Delayed':
+      return colors.delayed;
+    case 'Postponed':
+      return colors.blue;
+    case 'Done':
+      return colors.success;
+    case 'Cancelled':
+      return colors.danger;
+    default:
+      return "neutral";
+  }
+}
 
-export default function ClickableChip() {
+export default function ClickableChip(status: string) {
+  const [value, setValue] = useState("not started")
+  
+  const handleChange = (newValue: string) => {
+    setValue(newValue);
+  };
+
   return (
     <Chip
       component={Select}
       variant='solid'
+      label={status}
+      style={{backgroundColor: colorForStatus(status)}}
+      value={value}
       placeholder="Select an option"
       indicator={<KeyboardArrowDown />}
+      
+      onChange={(event) => handleChange(event.target.value as string)}
+
       sx={{
         [`& .${selectClasses.indicator}`]: {
           transition: '0.2s',
