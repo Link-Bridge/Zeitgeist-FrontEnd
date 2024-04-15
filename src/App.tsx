@@ -13,7 +13,7 @@ function App() {
         <div>
           {/* Configuración de las rutas */}
           <Routes>
-            <Route path={RoutesPath.HOME} element={<Home />} />
+            <Route path={RoutesPath.ROOT} element={<Home />} />
             <Route path={RoutesPath.PROJECTS} element={<Projects />} />
             <Route path={RoutesPath.TASKS} element={<Tasks />} />
             <Route path={RoutesPath.CLIENTS} element={<Clients />} />
