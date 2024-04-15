@@ -16,7 +16,6 @@ interface EmployeeData {
   imageUrl: string;
 }
 
-// Componente Auth
 const Auth: React.FC = () => {
   const navigate = useNavigate();
   const { post, isLoading, error, data } = usePost<EmployeeData, EmployeeData>(

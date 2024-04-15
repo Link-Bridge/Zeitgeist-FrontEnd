@@ -1,5 +1,5 @@
 import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
-import ProtectedRoute from './components/common/ProtectedRoute'; // Asegúrate de importar el componente
+import ProtectedRoute from './components/common/ProtectedRoute';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
