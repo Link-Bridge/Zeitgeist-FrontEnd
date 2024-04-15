@@ -9,7 +9,7 @@ const ProjectReport = () => {
 
     const getReportController = (): void => {
         const doFetch = async(): Promise<void> => {
-            const data: Report = await getReport(searchParams.get('id') || '');
+            const data: Report = await getReport(searchParams.get('id') || 'fb6bde87-5890-4cf7-978b-8daa13f105f7');
 
             setReport(data);
         }

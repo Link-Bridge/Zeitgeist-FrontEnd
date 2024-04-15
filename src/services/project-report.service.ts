@@ -9,8 +9,9 @@ export const getReport = async(id: string): Promise<Report> => {
                 "Content-Type": "application/json",
             }
         });
+        
         const data: Report = await res.json();
-        console.log(data);
+        
         if (!data) {
             throw new Error('No report data')
         }
