@@ -1,3 +1,4 @@
+import { useEffect } from 'react';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -7,8 +8,15 @@ import { CompanyEntity } from '../../types/company';
 import { RequestMethods } from '../../utils/constants';
 
 const Clients = () => {
-  const { data, error, loading } = useHttp<CompanyEntity[]>('/company', RequestMethods.GET);
+  const { data, error, loading, sendRequest } = useHttp<CompanyEntity[]>(
+    '/company',
+    RequestMethods.GET
+  );
   const companies: CompanyEntity[] = data && data ? data.flat() : [];
+
+  useEffect(() => {
+    sendRequest();
+  }, []);
 
   return (
     <main className='p-10 py-0 flex flex-col'>
