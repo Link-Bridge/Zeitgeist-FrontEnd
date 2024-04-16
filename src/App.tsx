@@ -11,6 +11,7 @@ function App() {
   return (
     <>
       <Router>
+        
         <div>
           {/* Configuración de las rutas */}
           <Routes>

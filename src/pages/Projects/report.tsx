@@ -2,6 +2,7 @@ import { useEffect, useState } from "react";
 import { Report } from "../../types/project-report";
 import { Response } from "../../types/response";
 import { getReport } from "../../services/project-report.service";
+import StatusChip from "../../components/common/StatusChip"
 import { useParams } from "react-router-dom";
 
 const ProjectReport = () => {
@@ -36,7 +37,8 @@ const ProjectReport = () => {
           Horas totales cotizadas
           Fecha de envío de cotización
         */}
-        <p>{report?.project.name || 'NOMBRE DEL PROYECTO'}</p>
+        <p>{report?.project.name}</p>
+        <StatusChip status = {`${report?.project.status || '-'}`}/>
       </main>
     );
   };
