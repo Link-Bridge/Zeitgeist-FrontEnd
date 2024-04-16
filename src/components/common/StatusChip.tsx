@@ -30,10 +30,10 @@ function statusColor(status: string) {
     }
   }
 
-function StatusChip(status: StatusChipProps) {
+function StatusChip(props: StatusChipProps) {
   return (
-    <Chip label = {status.status}
-    style={{ backgroundColor: statusColor(status.status), color: "black" }}/>
+    <Chip label = {props.status}
+    style={{ backgroundColor: statusColor(props.status), color: "black" }}/>
   );
 }
 
