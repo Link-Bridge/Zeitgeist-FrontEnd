@@ -21,7 +21,7 @@ export default function EmployeeTable({ employees }: { employees: Employee[] }) 
     <Table variant={'outlined'}>
       <thead>
         <tr>
-          <th>Photo</th>
+          <th style={{ width: '10%' }}> Photo </th>
           <th>Name</th>
           <th>Role</th>
           <th>Email</th>
