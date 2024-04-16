@@ -4,6 +4,7 @@ import Table from '@mui/joy/Table';
 import { useState } from 'react';
 import DeleteModal from '../../common/DeleteModal';
 import colors from '../../../colors';
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Employee = {
   fullName: string;
@@ -11,7 +12,11 @@ type Employee = {
   role: string;
 };
 
-export default function EmployeeTable({ fullName, email, role }: Employee) {
+
+
+
+
+export default function EmployeeTable({fullName, email, role }: Employee) {
   const [open, setOpen] = useState(false);
   const openModal = () => setOpen(true);
 
@@ -19,6 +24,7 @@ export default function EmployeeTable({ fullName, email, role }: Employee) {
     <Table variant={'outlined'}>
       <thead>
         <tr>
+          <th>Photo</th>
           <th>Name</th>
           <th>Role</th>
           <th>Email</th>
@@ -27,6 +33,7 @@ export default function EmployeeTable({ fullName, email, role }: Employee) {
       </thead>
       <tbody>
         <tr>
+          <td> <AccountCircleIcon></AccountCircleIcon> </td>
           <td>{fullName}</td>
           <td>{role}</td>
           <td>{email}</td>

@@ -37,6 +37,7 @@ const employees = [
     phoneNumber: '987654321',
     department: 'legal',
     role: 'employee',
+    //imageUrl: 'https://media.istockphoto.com/id/1361394182/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised.jpg?b=1&s=612x612&w=0&k=20&c=-niqIUX8Kfiyn50xgUzxxUYX6H2q9BlGc3PX5PVM-iA='
   },
 ];
 
@@ -46,6 +47,7 @@ const Employees = () => {
       <section className='bg-[#FAFAFA] rounded-xl p-10 lg:col-span-2 shadow-lg'>
         {employees.map(employee => (
           <EmployeeTable
+            //photo={employee.imageUrl}
             fullName={employee.fullName}
             email={employee.email}
             role={employee.role}
