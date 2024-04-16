@@ -1,19 +1,19 @@
+import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/joy';
 import Table from '@mui/joy/Table';
 import { useState } from 'react';
-import DeleteModal from '../../common/DeleteModal';
 import colors from '../../../colors';
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
+import DeleteModal from '../../common/DeleteModal';
 
 type Employee = {
-  photo: string;
+  // photo: string;
   fullName: string;
   email: string;
   role: string;
 };
 
-export default function EmployeeTable({fullName, email, role }: Employee) {
+export default function EmployeeTable({ employees }: { employees: Employee[] }) {
   const [open, setOpen] = useState(false);
   const openModal = () => setOpen(true);
 
@@ -29,17 +29,22 @@ export default function EmployeeTable({fullName, email, role }: Employee) {
         </tr>
       </thead>
       <tbody>
-        <tr>
-          <td> <AccountCircleIcon></AccountCircleIcon> </td>
-          <td>{fullName}</td>
-          <td>{role}</td>
-          <td>{email}</td>
-          <td>
-            <IconButton>
-              <DeleteOutlineIcon onClick={openModal} style={{color: colors.gold}}/>
-            </IconButton>
-          </td>
-        </tr>
+        {employees.map(employee => (
+          <tr>
+            <td>
+              {' '}
+              <AccountCircleIcon></AccountCircleIcon>{' '}
+            </td>
+            <td>{employee.fullName}</td>
+            <td>{employee.role}</td>
+            <td>{employee.email}</td>
+            <td>
+              <IconButton>
+                <DeleteOutlineIcon onClick={openModal} style={{ color: colors.gold }} />
+              </IconButton>
+            </td>
+          </tr>
+        ))}
       </tbody>
       <DeleteModal
         open={open}

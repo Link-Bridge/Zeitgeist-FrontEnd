@@ -1,3 +1,4 @@
+import { Card } from '@mui/joy';
 import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
 //import EmployeeDummyComponent from '../../components/modules/Employees/Table';
 
@@ -43,18 +44,9 @@ const employees = [
 
 const Employees = () => {
   return (
-    <main className='p-10 py-4 grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
-      <section className='bg-[#FAFAFA] rounded-xl p-10 lg:col-span-2 shadow-lg'>
-        {employees.map(employee => (
-          <EmployeeTable
-            //photo={employee.imageUrl}
-            fullName={employee.fullName}
-            email={employee.email}
-            role={employee.role}
-          />
-        ))}
-      </section>
-    </main>
+    <Card className='flex-1'>
+      <EmployeeTable employees={employees} />
+    </Card>
   );
 };
 
