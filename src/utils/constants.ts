@@ -15,3 +15,9 @@ export enum RoutesPath {
 export enum APIPath {
   PROJECT_REPORT = '/project/report',
 }
+
+export enum ReportStatus {
+  IN_QUOTATION = 'In quotation',
+  WITHOUT_STATUS = '-',
+  CANCELLED = 'Cancelled',
+}

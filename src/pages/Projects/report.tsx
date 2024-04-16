@@ -25,8 +25,17 @@ const ProjectReport = () => {
     }, []);
 
     return (
-      <main className='p-10 py-4 flex gap-4'>
-        <h1>Project Report</h1>
+      <main className='p-10 py-4'>
+        <h1>Project Report</h1> 
+        <p>{ new Date().toLocaleString() }</p>
+
+
+        {/*Nombre del proyecto
+          Cliente
+          Estatus
+          Horas totales cotizadas
+          Fecha de envío de cotización
+        */}
         <p>{report?.project.name || 'NOMBRE DEL PROYECTO'}</p>
       </main>
     );
