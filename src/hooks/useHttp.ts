@@ -53,6 +53,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   const [loading, setLoading] = useState<boolean>(false);
 
   const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+  console.log(BASE_URL)
 
   const sendRequest = async (
     params: Record<string, unknown> = {},
