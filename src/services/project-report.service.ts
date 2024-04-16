@@ -1,18 +1,13 @@
-import { EnvKeysValues , APIPath } from '../utils/constants';
+import { EnvKeysValues , APIPath, RequestMethods } from '../utils/constants';
 import { Report } from '../types/project-report';
+import useHttp from '../hooks/useHttp'
 import { Response } from '../types/response';
 
 export const getReport = async(id: string): Promise<Response<Report>> => {
-    try {
-        const res = await fetch(`${EnvKeysValues.BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}`, {
-            method: "GET",
-            headers: {
-                "Content-Type": "application/json",
-            }
-        });
-
-        const data: Response<Report> = await res.json();
-
+    try {    
+        const { data, error, loading, sendRequest } = useHttp<Response<Report>>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
+        
+        console.log(data);
         if (!data) {
             throw new Error('No report data')
         }

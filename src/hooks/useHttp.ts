@@ -48,11 +48,13 @@ interface HttpHook<T> {
 }
 
 const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
+  console.log('DURAANTE');
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+  console.log('BASE',BASE_URL);
 
   const sendRequest = async (
     params: Record<string, unknown> = {},
@@ -69,7 +71,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
       //     Authorization: `Bearer ${idToken}`,
       //     'Content-Type': 'application/json',
       //   };
-
+      console.log(`${BASE_URL}${endpoint}`);
       const options: AxiosRequestConfig = {
         method: method,
         url: `${BASE_URL}${endpoint}`,
