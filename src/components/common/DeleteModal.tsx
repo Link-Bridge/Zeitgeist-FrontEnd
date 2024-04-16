@@ -1,3 +1,7 @@
+import { useEffect, useState } from 'react';
+
+import Colors from '../../colors';
+
 import WarningIcon from '@mui/icons-material/Warning';
 import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
@@ -7,8 +11,6 @@ import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Snackbar from '@mui/joy/Snackbar';
 import Typography from '@mui/joy/Typography';
-import { useEffect, useState } from 'react';
-import Colors from '../../colors';
 
 interface ModalInterface {
   open: boolean;

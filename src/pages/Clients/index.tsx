@@ -1,5 +1,6 @@
-import Input from '@mui/joy/Input';
+import { Link } from 'react-router-dom';
 
+import Input from '@mui/joy/Input';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -100,13 +101,15 @@ const Clients = () => {
         </section>
         <CardsGrid>
           {clients.map(client => (
-            <ClientCard
-              name={client.name}
-              accountingHours={client.accountingHours}
-              legalHours={client.legalHours}
-              chargeableHours={client.chargeableHours}
-              totalProjects={client.totalProjects}
-            />
+            <Link to={`/clients/${client.id}`} key={client.id}>
+              <ClientCard
+                name={client.name}
+                accountingHours={client.accountingHours}
+                legalHours={client.legalHours}
+                chargeableHours={client.chargeableHours}
+                totalProjects={client.totalProjects}
+              />
+            </Link>
           ))}
         </CardsGrid>
       </section>
