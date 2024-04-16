@@ -5,7 +5,7 @@ import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login_image.png';
 import { auth, provider } from '../../config/firebase.config';
-import usePost from '../../hooks/usePost';
+import useHttp from '../../hooks/useHttp';
 import { RoutesPath } from '../../utils/constants';
 
 // Tipos para los datos del empleado
@@ -18,9 +18,7 @@ interface EmployeeData {
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const { post, isLoading, error, data } = usePost<EmployeeData, EmployeeData>(
-    'http://localhost:4000/api/v1/employee/create'
-  );
+  const { data, error, loading, sendRequest } = useHttp<EmployeeData>('/employee/create', 'POST');
 
   const signInWithGoogle = async () => {
     try {
@@ -47,7 +45,14 @@ const Auth: React.FC = () => {
         lastName = '';
       }
 
-      await post({ firstName, lastName, email, imageUrl: photoURL });
+      await sendRequest(
+        {},
+        { firstName, lastName, email, imageUrl: photoURL },
+        {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${token}`,
+        }
+      );
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
@@ -74,7 +79,7 @@ const Auth: React.FC = () => {
         >
           Sign in to LinkBridge with Google
         </Button>
-        {isLoading && <p>Loading...</p>}
+        {loading && <p>Loading...</p>}
         {error && <p>Error: {error.message}</p>}
         {data && <p>Employee created successfully!</p>}
       </div>
