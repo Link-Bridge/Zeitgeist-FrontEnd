@@ -1,8 +1,9 @@
-import { Delete } from '@mui/icons-material';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import { IconButton } from '@mui/joy';
 import Table from '@mui/joy/Table';
 import { useState } from 'react';
 import DeleteModal from '../../common/DeleteModal';
+import colors from '../../../colors';
 
 type Employee = {
   fullName: string;
@@ -31,8 +32,7 @@ export default function EmployeeTable({ fullName, email, role }: Employee) {
           <td>{email}</td>
           <td>
             <IconButton>
-              <Delete onClick={openModal} />
-              
+              <DeleteOutlineIcon onClick={openModal} style={{color: colors.lightGold}}/>
             </IconButton>
           </td>
         </tr>
