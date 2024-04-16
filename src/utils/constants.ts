@@ -16,8 +16,9 @@ export enum APIPath {
   PROJECT_REPORT = '/project/report',
 }
 
-export enum ReportStatus {
-  IN_QUOTATION = 'In quotation',
-  WITHOUT_STATUS = '-',
-  CANCELLED = 'Cancelled',
+export enum RequestMethods {
+  GET = 'GET',
+  POST = 'POST',
+  PUT = 'PUT',
+  DELETE = 'DELETE',
 }
