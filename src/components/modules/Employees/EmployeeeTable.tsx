@@ -5,13 +5,12 @@ import { useState } from 'react';
 import DeleteModal from '../../common/DeleteModal';
 
 type Employee = {
-  firstName: string;
-  lastName: string;
+  fullName: string;
   email: string;
   role: string;
 };
 
-export default function EmployeeTable({ firstName, lastName, email, role }: Employee) {
+export default function EmployeeTable({ fullName, email, role }: Employee) {
   const [open, setOpen] = useState(false);
   const openModal = () => setOpen(true);
 
@@ -19,8 +18,7 @@ export default function EmployeeTable({ firstName, lastName, email, role }: Empl
     <Table variant={'outlined'}>
       <thead>
         <tr>
-          <th>First Name</th>
-          <th>Last Name</th>
+          <th>Name</th>
           <th>Role</th>
           <th>Email</th>
           <th style={{ width: '10%' }}></th>
@@ -28,13 +26,13 @@ export default function EmployeeTable({ firstName, lastName, email, role }: Empl
       </thead>
       <tbody>
         <tr>
-          <td>{firstName}</td>
-          <td>{lastName}</td>
+          <td>{fullName}</td>
           <td>{role}</td>
           <td>{email}</td>
           <td>
             <IconButton>
               <Delete onClick={openModal} />
+              
             </IconButton>
           </td>
         </tr>
