@@ -1,7 +1,8 @@
 import { EnvKeysValues , APIPath } from '../utils/constants';
 import { Report } from '../types/project-report';
+import { Response } from '../types/response';
 
-export const getReport = async(id: string): Promise<Report> => {
+export const getReport = async(id: string): Promise<Response<Report>> => {
     try {
         const res = await fetch(`${EnvKeysValues.BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}`, {
             method: "GET",
@@ -9,9 +10,9 @@ export const getReport = async(id: string): Promise<Report> => {
                 "Content-Type": "application/json",
             }
         });
-        
-        const data: Report = await res.json();
-        
+
+        const data: Response<Report> = await res.json();
+
         if (!data) {
             throw new Error('No report data')
         }

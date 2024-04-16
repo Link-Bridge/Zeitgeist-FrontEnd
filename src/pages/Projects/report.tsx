@@ -1,17 +1,20 @@
 import { useEffect, useState } from "react";
 import { Report } from "../../types/project-report";
+import { Response } from "../../types/response";
 import { getReport } from "../../services/project-report.service";
-import { useSearchParams } from "react-router-dom";
+import { useParams } from "react-router-dom";
 
 const ProjectReport = () => {
     const [report, setReport] = useState<Report>();
-    const [searchParams] = useSearchParams();
+    const { id } = useParams();
 
     const getReportController = (): void => {
         const doFetch = async(): Promise<void> => {
-            const data: Report = await getReport(searchParams.get('id') || 'fb6bde87-5890-4cf7-978b-8daa13f105f7');
-
-            setReport(data);
+          if (id === undefined || id === null) {
+            throw new Error('Project id not defined');
+          }
+          const data: Response<Report> = await getReport(id);
+          setReport(data.data);
         }
 
         void doFetch();
@@ -24,9 +27,7 @@ const ProjectReport = () => {
     return (
       <main className='p-10 py-4 flex gap-4'>
         <h1>Project Report</h1>
-        <p>{new Date().getDate().toLocaleString()}</p>
-        <p>{report?.project.name}</p>
-
+        <p>{report?.project.name || 'NOMBRE DEL PROYECTO'}</p>
       </main>
     );
   };
