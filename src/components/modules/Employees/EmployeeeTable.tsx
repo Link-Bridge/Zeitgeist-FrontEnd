@@ -32,7 +32,7 @@ export default function EmployeeTable({ fullName, email, role }: Employee) {
           <td>{email}</td>
           <td>
             <IconButton>
-              <DeleteOutlineIcon onClick={openModal} style={{color: colors.lightGold}}/>
+              <DeleteOutlineIcon onClick={openModal} style={{color: colors.gold}}/>
             </IconButton>
           </td>
         </tr>
