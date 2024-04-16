@@ -6,13 +6,14 @@ import Loader from '../../components/common/Loader';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { RequestMethods } from '../../utils/constants';
+import { Response } from '../../types/response';
 
 const Clients = () => {
-  const { data, error, loading, sendRequest } = useHttp<CompanyEntity[]>(
+  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity[]>>(
     '/company',
     RequestMethods.GET
   );
-  const companies: CompanyEntity[] = data && data ? data.flat() : [];
+  const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
 
   useEffect(() => {
     sendRequest();
