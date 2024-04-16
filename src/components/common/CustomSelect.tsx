@@ -3,13 +3,17 @@ import { FormState } from '../../hooks/useNewProject';
 
 interface CustomSelectProps {
   values: string[];
-  handleChange: (field: keyof FormState, value: string | Date | boolean) => void;
+  handleChange: (field: keyof FormState, value: string | Date | boolean | null) => void;
   name: keyof FormState;
+  defaultValue?: string;
 }
 
-const CustomSelect = ({ values, handleChange, name }: CustomSelectProps) => {
+const CustomSelect = ({ values, handleChange, name, defaultValue = '' }: CustomSelectProps) => {
   return (
-    <Select defaultValue={''} onChange={(_, newVal) => handleChange(name, String(newVal))}>
+    <Select
+      defaultValue={defaultValue}
+      onChange={(_, newVal) => handleChange(name, String(newVal))}
+    >
       {values.map(value => {
         return (
           <Option key={value} value={value}>

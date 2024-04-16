@@ -1,5 +1,7 @@
 import axios from 'axios';
+import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
+import { ProjectPeriodicity } from '../types/project';
 
 export interface FormState {
   projectName: string;
@@ -8,7 +10,7 @@ export interface FormState {
   matter: string;
   description: string;
   startDate: Date;
-  endDate: Date;
+  endDate: Date | null;
   periodic: string;
   chargable: boolean;
 }
@@ -20,13 +22,13 @@ const initialFormState: FormState = {
   matter: '',
   description: '',
   startDate: new Date(),
-  endDate: new Date(),
-  periodic: '',
+  endDate: null,
+  periodic: ProjectPeriodicity.WHEN_NEEDED,
   chargable: false,
 };
 
 type FormAction =
-  | { type: 'CHANGE'; field: keyof FormState; value: string | Date | boolean }
+  | { type: 'CHANGE'; field: keyof FormState; value: string | Date | boolean | null }
   | { type: 'RESET'; initialState: FormState };
 
 const formReducer = (state: FormState, action: FormAction) => {
@@ -46,14 +48,32 @@ const formReducer = (state: FormState, action: FormAction) => {
 const useNewProject = () => {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [error, setError] = useState<Error | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
 
-  const handleChange = (field: keyof FormState, value: string | Date | boolean) => {
+  const handleChange = (field: keyof FormState, value: string | Date | boolean | null) => {
     dispatch({ type: 'CHANGE', field, value });
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
+      if (!formState.projectName) {
+        setError(new Error('Project name must not be empty'));
+        return;
+      }
+      if (!formState.client) {
+        setError(new Error('Project client must not be empty'));
+        return;
+      }
+      if (!formState.category) {
+        setError(new Error('Project categoryr must not be empty'));
+        return;
+      }
+      if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
+        setError(new Error('End date must be after start date'));
+        return;
+      }
+      setIsPosting(true);
       await axios.post('http://localhost:4000/api/v1/project', formState);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
@@ -61,10 +81,12 @@ const useNewProject = () => {
       } else {
         setError(new Error('Unknown error ocurred'));
       }
+    } finally {
+      setIsPosting(false);
     }
   };
 
-  return { formState, handleChange, handleSubmit, error };
+  return { formState, handleChange, handleSubmit, error, isPosting };
 };
 
 export default useNewProject;
