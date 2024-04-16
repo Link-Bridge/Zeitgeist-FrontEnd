@@ -7,14 +7,11 @@ import colors from '../../../colors';
 import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 
 type Employee = {
+  photo: string;
   fullName: string;
   email: string;
   role: string;
 };
-
-
-
-
 
 export default function EmployeeTable({fullName, email, role }: Employee) {
   const [open, setOpen] = useState(false);
