@@ -1,81 +1,92 @@
-import axios, { AxiosRequestConfig, Method } from 'axios';
+import axios, { AxiosRequestConfig } from 'axios';
 import { useState } from 'react';
-
-interface HttpHook<T> {
-  data: T | null; // T es el tipo de la respuesta esperada
-  error: Error | null;
-  loading: boolean;
-  sendRequest: (
-    params?: Record<string, any>,
-    body?: Record<string, any>,
-    headers?: Record<string, string>
-  ) => Promise<void>;
-}
+import { RequestMethods } from '../utils/constants';
 
 /**
- * Hook para realizar solicitudes HTTP con configuración de tipos genéricos.
- * @param endpoint - Ejemplo de endpoint: '/dummy/findAll'.
- * @param method - Método HTTP como 'GET', 'POST', 'PUT', 'DELETE'.
+ * Hook for performing HTTP requests with generic type configuration.
+ * @param endpoint - Example of an endpoint: '/dummy/data'.
+ * @param method - HTTP method such as 'GET', 'POST', 'PUT', 'DELETE'.
  *
  * @example
- * // Para recibir un array de objetos "Usuario":
+ * // To receive an array of "User" objects:
  * const { data, error, loading, sendRequest } = useHttp<User[]>("/users", "GET");
  *
  * @example
- * // Para recibir un objeto específico de "Usuario":
+ * // To receive a specific "User" object:
  * const { data, error, loading, sendRequest } = useHttp<User>("/users", "GET");
+ * sendRequest({ id: e224f1ff-7fbf-4f20-8b21-e6871449caa0 });
  *
  * @example
- * // Crear un nuevo usuario con POST:
+ * // To create a new user with POST:
  * const userInfo = { name: "John Doe", email: "john@example.com" };
  * const { data, error, loading, sendRequest } = useHttp<User>("/users", "POST");
  * sendRequest({}, userInfo, { 'Content-Type': 'application/json' });
  *
  * @example
- * // Actualizar un usuario existente con PUT:
+ * // To update an existing user with PUT:
  * const updatedInfo = { name: "Jane Doe", email: "jane@example.com" };
  * const { data, error, loading, sendRequest } = useHttp<User>("/users/:id", "PUT");
  * sendRequest({}, updatedInfo, { 'Content-Type': 'application/json' });
  *
  * @example
- * // Eliminar un usuario con DELETE:
+ * // To delete a user with DELETE:
  * const { data, error, loading, sendRequest } = useHttp<null>("/users/:id", "DELETE");
  * sendRequest();
  *
- * @typeParam T - El tipo de la respuesta esperada. Define este tipo según los datos que retorna la API.
+ * @typeParam T - The type of the expected response. Define this type according to the data returned by the API.
  */
 
-const useHttp = <T>(endpoint: string, method: Method): HttpHook<T> => {
+interface HttpHook<T> {
+  data: T | null;
+  error: Error | null;
+  loading: boolean;
+  sendRequest: (
+    params?: Record<string, unknown>,
+    body?: Record<string, unknown>,
+    customHeaders?: Record<string, string>
+  ) => Promise<void>;
+}
+
+const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   const [data, setData] = useState<T | null>(null);
   const [error, setError] = useState<Error | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const BASE_URL = 'http://localhost:4000/api/v1';
+  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
 
   const sendRequest = async (
-    params: Record<string, any> = {},
-    body: Record<string, any> | null = null,
-    headers: Record<string, string> = {}
+    params: Record<string, unknown> = {},
+    body: Record<string, unknown> | null = null,
+    customHeaders: Record<string, string> = {}
   ): Promise<void> => {
     setLoading(true);
     try {
+      // TODO: Uncomment the following lines when authentication is implemented
+      //   const idToken = sessionStorage.getItem('idToken');
+
+      //   const headers = {
+      //     ...customHeaders,
+      //     Authorization: `Bearer ${idToken}`,
+      //     'Content-Type': 'application/json',
+      //   };
+
       const options: AxiosRequestConfig = {
         method: method,
         url: `${BASE_URL}${endpoint}`,
-        headers: headers,
-        params: method === 'GET' ? params : {}, // Usar parámetros solo con GET
-        data: method === 'POST' || method === 'PUT' ? body : null, // Usar cuerpo de solicitud con POST y PUT
+        headers: customHeaders, // TODO: Change to 'headers' when auth is implemented
+        params: method === RequestMethods.GET ? params : {},
+        data: method === RequestMethods.POST || method === RequestMethods.PUT ? body : null,
       };
 
-      if (method === 'DELETE') {
+      if (method === RequestMethods.DELETE) {
         options.params = params;
       }
 
       const response = await axios(options);
       setData(response.data as T);
-    } catch (err) {
-      setError(err as Error);
-      console.error(err);
+    } catch (error) {
+      setError(error as Error);
+      console.error(error);
     } finally {
       setLoading(false);
     }
