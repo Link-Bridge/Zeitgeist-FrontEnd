@@ -5,8 +5,8 @@ import ClientCard from '../../components/common/ClientCard';
 import Loader from '../../components/common/Loader';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { RequestMethods } from '../../utils/constants';
 import { Response } from '../../types/response';
+import { RequestMethods } from '../../utils/constants';
 
 const Clients = () => {
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity[]>>(
