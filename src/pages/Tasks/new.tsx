@@ -2,7 +2,18 @@ import { Dropdown, Grid, Input, Sheet, Textarea } from '@mui/joy';
 import { styled } from '@mui/material/styles';
 import CancelButton from '../../components/common/CancelButton';
 import CustomDatePicker from '../../components/common/DatePicker';
+import GenericDropdown from '../../components/common/GenericDropdown';
 import SendButton from '../../components/common/SendButton';
+
+enum TaskStatus {
+  NOT_STARTED = 'NOT STARTED',
+  IN_PROGRESS = 'IN PROGRESS',
+  UNDER_REVISSION = 'UNDER REVISSION',
+  DELAYED = 'DELAYED',
+  POSTPONED = 'POSTPONED',
+  DONE = 'DONE',
+  CANCELLED = 'CANCELLED',
+}
 
 const StyledSheet = styled(Sheet)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -60,6 +71,7 @@ const newTask = () => {
         <Grid xs={2}>
           <Item>
             <Header>Status *</Header>
+            <GenericDropdown options={Object.values(TaskStatus)} backgroundColor='#EDEDED' />
           </Item>
         </Grid>
       </Grid>
