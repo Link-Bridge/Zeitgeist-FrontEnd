@@ -9,7 +9,7 @@ const SendButton = () => {
         color: '#fff',
         textTransform: 'none',
         padding: '6px 30px',
-        margin: '10px 10px',
+        margin: '10px 0',
         '&:hover': {
           bgcolor: '#876F39',
           opacity: '0.8',

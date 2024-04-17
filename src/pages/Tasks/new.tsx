@@ -1,6 +1,7 @@
 import { Dropdown, Grid, Input, Sheet, Textarea } from '@mui/joy';
 import { styled } from '@mui/material/styles';
 import CancelButton from '../../components/common/CancelButton';
+import CustomDatePicker from '../../components/common/DatePicker';
 import SendButton from '../../components/common/SendButton';
 
 const StyledSheet = styled(Sheet)(({ theme }) => ({
@@ -8,16 +9,16 @@ const StyledSheet = styled(Sheet)(({ theme }) => ({
   borderRadius: '0.6rem',
 }));
 
-const Item = styled(Sheet)(({ theme }) => ({
-  padding: theme.spacing(2),
-  textAlign: 'left',
-  borderRadius: 8,
-}));
-
 const Header = styled('h1')(({}) => ({
   color: '#686868',
   fontWeight: 'bold',
   margin: '10px 0',
+}));
+
+const Item = styled(Sheet)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'left',
+  borderRadius: 8,
 }));
 
 const newTask = () => {
@@ -47,11 +48,13 @@ const newTask = () => {
         <Grid xs={2}>
           <Item>
             <Header>Start Date *</Header>
+            <CustomDatePicker />
           </Item>
         </Grid>
         <Grid xs={2}>
           <Item>
             <Header>Due Date *</Header>
+            <CustomDatePicker />
           </Item>
         </Grid>
         <Grid xs={2}>

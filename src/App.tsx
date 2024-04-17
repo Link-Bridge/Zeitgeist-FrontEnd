@@ -7,22 +7,26 @@ import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import NewTask from './pages/Tasks/new';
 import { RoutesPath } from './utils/constants';
+import { LocalizationProvider } from '@mui/x-date-pickers';
+import { AdapterMoment } from '@mui/x-date-pickers/AdapterMoment';
 
 function App() {
   return (
-    <Router>
-      <Layout>
-        {/* Configuración de las rutas */}
-        <Routes>
-          <Route path={RoutesPath.HOME} element={<Home />} />
-          <Route path={`${RoutesPath.PROJECTS}/*`} element={<Projects />} />
-          <Route path={RoutesPath.TASKS} element={<Tasks />} />
-          <Route path={RoutesPath.CLIENTS} element={<Clients />} />
-          <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
-          <Route path={`${RoutesPath.TASKS}/create`} element={<NewTask />} />
-        </Routes>
-      </Layout>
-    </Router>
+    <LocalizationProvider dateAdapter={AdapterMoment}>
+      <Router>
+        <Layout>
+          {/* Configuración de las rutas */}
+          <Routes>
+            <Route path={RoutesPath.HOME} element={<Home />} />
+            <Route path={`${RoutesPath.PROJECTS}/*`} element={<Projects />} />
+            <Route path={RoutesPath.TASKS} element={<Tasks />} />
+            <Route path={RoutesPath.CLIENTS} element={<Clients />} />
+            <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
+            <Route path={`${RoutesPath.TASKS}/create`} element={<NewTask />} />
+          </Routes>
+        </Layout>
+      </Router>
+    </LocalizationProvider>
   );
 }
 

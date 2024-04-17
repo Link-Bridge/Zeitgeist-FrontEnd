@@ -9,7 +9,7 @@ const CancelButton = () => {
         color: '#9C844C',
         textTransform: 'none',
         padding: '7px 30px',
-        margin: '10px 10px',
+        margin: '10px 0',
       }}
     >
       Cancel
