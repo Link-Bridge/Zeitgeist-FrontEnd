@@ -2,73 +2,81 @@ import { Button, Card, FormControl, FormLabel, Input, Snackbar, Switch, Textarea
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
+import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import useFetch from '../../hooks/useFetch';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
-import { ProjectCategory, ProjectPeriodicity } from '../../types/project';
+import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
 import { Response } from '../../types/response';
 
 const NewProject = () => {
-  const { formState, handleChange, handleSubmit, isPosting, error: postError } = useNewProject();
+  const [openSnack, setOpenSnack] = useState(false);
+  const form = useNewProject();
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
-  const [openSnack, setOpenSnack] = useState(false);
-  const {
-    data: companies,
-    isLoading,
-    error,
-  } = useFetch<Response<CompanyEntity>>('http://localhost:4000/api/v1/company');
+  const projectAreas = Object.values(ProjectAreas) as string[];
+  const req = useFetch<Response<CompanyEntity>>('http://localhost:4000/api/v1/company');
 
   useEffect(() => {
-    setOpenSnack(!!error || !!postError);
+    setOpenSnack(!!req.error || !!form.error);
     return () => {
       setTimeout(() => setOpenSnack(false), 2000);
     };
-  }, [error, postError]);
+  }, [req.error, form.error]);
+
+  if (form.success) {
+    return <Navigate to='/projects' />;
+  }
 
   return (
     <>
-      <Card className='bg-white flex-1' sx={{ padding: '30px' }}>
-        {isLoading ? (
+      <Card className='bg-white flex-1 font-montserrat' sx={{ padding: '30px' }}>
+        {req.isLoading ? (
           <Loader />
         ) : (
-          <form className='flex flex-col gap-4' onSubmit={handleSubmit}>
+          <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
             <FormControl>
-              <FormLabel>Project Name*</FormLabel>
+              <FormLabel className='font-montserrat'>
+                Project Name <span className='text-red-600'>*</span>
+              </FormLabel>
               <Input
-                value={formState.projectName}
+                value={form.formState.projectName}
                 onChange={e => {
-                  handleChange('projectName', e.target.value);
+                  form.handleChange('projectName', e.target.value);
                 }}
               />
             </FormControl>
             <section className='flex flex-row gap-4'>
               <FormControl className='flex-1'>
-                <FormLabel>Client*</FormLabel>
-                <CustomSelect
-                  values={companies?.data?.map(company => company.name) ?? []}
+                <FormLabel>
+                  Client <span className='text-red-600'>*</span>
+                </FormLabel>
+                <ClientDropdown
+                  values={req.data?.data ?? []}
                   name='client'
-                  handleChange={handleChange}
+                  handleChange={form.handleChange}
                 />
               </FormControl>
               <FormControl className='flex-1'>
-                <FormLabel>Category*</FormLabel>
+                <FormLabel>
+                  Category <span className='text-red-600'>*</span>
+                </FormLabel>
                 <CustomSelect
                   values={projectCategories}
                   name='category'
-                  handleChange={handleChange}
+                  handleChange={form.handleChange}
                 />
               </FormControl>
               <FormControl className='flex-1'>
                 <FormLabel>Matter</FormLabel>
                 <Input
-                  value={formState.matter}
+                  value={form.formState.matter}
                   onChange={e => {
-                    handleChange('matter', e.target.value);
+                    form.handleChange('matter', e.target.value);
                   }}
                 />
               </FormControl>
@@ -77,48 +85,62 @@ const NewProject = () => {
               <FormLabel>Description</FormLabel>
               <Textarea
                 minRows={5}
-                value={formState.description}
+                value={form.formState.description}
                 onChange={e => {
-                  handleChange('description', e.target.value);
+                  form.handleChange('description', e.target.value);
                 }}
               />
             </FormControl>
-            <section className='grid grid-cols-2 w-full gap-4'>
+            <section className='lg:grid grid-cols-3 w-full gap-4'>
               <FormControl>
-                <FormLabel>Start Date*</FormLabel>
+                <FormLabel>
+                  Start Date <span className='text-red-600'>*</span>
+                </FormLabel>
                 <DatePicker
-                  value={dayjs(formState.startDate)}
+                  value={dayjs(form.formState.startDate)}
                   onChange={e => {
-                    handleChange('startDate', e?.toDate() ?? formState.startDate);
+                    form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
                   }}
                 />
               </FormControl>
               <FormControl>
                 <FormLabel>End Date</FormLabel>
                 <DatePicker
-                  value={formState.endDate ? dayjs(formState.endDate) : null}
+                  value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
                   onChange={e => {
-                    handleChange('endDate', e?.toDate() ?? null);
+                    form.handleChange('endDate', e?.toDate() ?? null);
                   }}
                 />
+              </FormControl>
+              <FormControl>
+                <FormLabel>Chargable</FormLabel>
+                <Switch
+                  sx={{ mr: 'auto' }}
+                  checked={form.formState.chargable}
+                  onChange={e => {
+                    form.handleChange('chargable', e.target.checked);
+                  }}
+                  size='lg'
+                />
+              </FormControl>
+              <FormControl>
+                <FormLabel>
+                  Area <span className='text-red-600'>*</span>
+                </FormLabel>
+                <CustomSelect
+                  name='area'
+                  handleChange={form.handleChange}
+                  values={projectAreas}
+                ></CustomSelect>
               </FormControl>
               <FormControl>
                 <FormLabel>Periodic</FormLabel>
                 <CustomSelect
                   name='periodic'
-                  handleChange={handleChange}
+                  handleChange={form.handleChange}
                   values={projectPeriodicity}
                   defaultValue={ProjectPeriodicity.WHEN_NEEDED}
                 ></CustomSelect>
-              </FormControl>
-              <FormControl>
-                <FormLabel>Chargable</FormLabel>
-                <Switch
-                  checked={formState.chargable}
-                  onChange={e => {
-                    handleChange('chargable', e.target.checked);
-                  }}
-                />
               </FormControl>
             </section>
             <section className='flex mt-10 gap-4 justify-end'>
@@ -144,7 +166,7 @@ const NewProject = () => {
                     backgroundColor: colors.darkerGold,
                   },
                 }}
-                disabled={isPosting}
+                disabled={form.isPosting}
               >
                 Add Project
               </Button>
@@ -153,7 +175,7 @@ const NewProject = () => {
         )}
       </Card>
       <Snackbar color='danger' variant='solid' open={openSnack}>
-        {(error && 'Error getting clients') || postError?.message}
+        {(req.error && 'Error getting clients') || form.error?.message}
       </Snackbar>
     </>
   );

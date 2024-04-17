@@ -13,6 +13,7 @@ export interface FormState {
   endDate: Date | null;
   periodic: string;
   chargable: boolean;
+  area: string;
 }
 
 const initialFormState: FormState = {
@@ -25,6 +26,7 @@ const initialFormState: FormState = {
   endDate: null,
   periodic: ProjectPeriodicity.WHEN_NEEDED,
   chargable: false,
+  area: '',
 };
 
 type FormAction =
@@ -49,6 +51,7 @@ const useNewProject = () => {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [error, setError] = useState<Error | null>(null);
   const [isPosting, setIsPosting] = useState(false);
+  const [success, setSuccess] = useState(false);
 
   const handleChange = (field: keyof FormState, value: string | Date | boolean | null) => {
     dispatch({ type: 'CHANGE', field, value });
@@ -66,7 +69,11 @@ const useNewProject = () => {
         return;
       }
       if (!formState.category) {
-        setError(new Error('Project categoryr must not be empty'));
+        setError(new Error('Project category must not be empty'));
+        return;
+      }
+      if (!formState.area) {
+        setError(new Error('Project area must not be empty'));
         return;
       }
       if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
@@ -74,10 +81,14 @@ const useNewProject = () => {
         return;
       }
       setIsPosting(true);
-      await axios.post('http://localhost:4000/api/v1/project', formState);
+      const res = await axios.post('http://localhost:4000/api/v1/project', formState);
+      if (res.status === 201) {
+        setSuccess(true);
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        setError(new Error(err.response?.data.message || err.message));
+        console.error(err);
+        setError(new Error(err.message));
       } else {
         setError(new Error('Unknown error ocurred'));
       }
@@ -86,7 +97,7 @@ const useNewProject = () => {
     }
   };
 
-  return { formState, handleChange, handleSubmit, error, isPosting };
+  return { formState, handleChange, handleSubmit, error, isPosting, success };
 };
 
 export default useNewProject;

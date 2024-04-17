@@ -10,10 +10,7 @@ interface CustomSelectProps {
 
 const CustomSelect = ({ values, handleChange, name, defaultValue = '' }: CustomSelectProps) => {
   return (
-    <Select
-      defaultValue={defaultValue}
-      onChange={(_, newVal) => handleChange(name, String(newVal))}
-    >
+    <Select defaultValue={defaultValue} onChange={(_, newVal) => handleChange(name, newVal ?? '')}>
       {values.map(value => {
         return (
           <Option key={value} value={value}>
