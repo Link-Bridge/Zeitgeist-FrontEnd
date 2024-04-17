@@ -1,5 +1,6 @@
 const colors = {
   lightGray: '#929292',
+  placeHolder: '#CBCBCB',
   gray: '#686868',
   darkGray: '#515151',
   darkerGray: '#424242',
@@ -19,6 +20,7 @@ const colors = {
   blue: '#A0C5E8',
   darkBlue: '#878FD2',
   darkerBlue: '#273086',
+  
 };
 
 export default colors;
