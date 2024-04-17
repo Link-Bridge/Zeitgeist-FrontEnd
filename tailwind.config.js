@@ -4,6 +4,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        lighterGray: '#BDBDBD',
         lightGray: '#929292',
         gray: '#686868',
         darkGray: '#515151',
@@ -23,7 +24,11 @@ export default {
         darkBlue: '#878FD2',
         darkerBlue: '#273086',
       },
+      fontFamily: {
+        sans: ['Montserrat', 'sans-serif'],
+      },
     },
+
   },
   plugins: [],
 };

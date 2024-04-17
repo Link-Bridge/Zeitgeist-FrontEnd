@@ -1,0 +1,103 @@
+import { Dropdown, Grid, Input, Sheet, Textarea } from '@mui/joy';
+import { styled } from '@mui/material/styles';
+import CancelButton from '../../components/common/CancelButton';
+import SendButton from '../../components/common/SendButton';
+
+const StyledSheet = styled(Sheet)(({ theme }) => ({
+  padding: theme.spacing(3),
+  borderRadius: '0.6rem',
+}));
+
+const Item = styled(Sheet)(({ theme }) => ({
+  padding: theme.spacing(2),
+  textAlign: 'left',
+  borderRadius: 8,
+}));
+
+const Header = styled('h1')(({}) => ({
+  color: '#686868',
+  fontWeight: 'bold',
+  margin: '10px 0',
+}));
+
+const newTask = () => {
+  return (
+    <StyledSheet>
+      <Header>Title *</Header>
+      <Input type='text' placeholder='Write your text here... ' sx={{ color: '#BDBDBD' }} />
+
+      <Header>Description *</Header>
+      <Textarea
+        placeholder='Write your text here... '
+        sx={{
+          color: '#BDBDBD',
+          width: '100%',
+          height: '200px',
+          padding: '10px',
+          borderRadius: '4px',
+          border: '1px solid #E0E0E0',
+          '&:focus': {
+            border: '1px solid #9C844C',
+          },
+        }}
+      />
+
+      {/* Date and status columns */}
+      <Grid container spacing={2}>
+        <Grid xs={2}>
+          <Item>
+            <Header>Start Date *</Header>
+          </Item>
+        </Grid>
+        <Grid xs={2}>
+          <Item>
+            <Header>Due Date *</Header>
+          </Item>
+        </Grid>
+        <Grid xs={2}>
+          <Item>
+            <Header>Status *</Header>
+          </Item>
+        </Grid>
+      </Grid>
+
+      {/* Waiting For, Worked Hours, Project Name */}
+      <Grid container spacing={2}>
+        <Grid xs={2}>
+          <Item>
+            <Header>Waiting For ...</Header>
+            <Dropdown children={['Option 1', 'Option 2', 'Option 3']} />
+          </Item>
+        </Grid>
+        <Grid xs={2}>
+          <Item>
+            <Header>Worked Hours</Header>
+            <Input placeholder='00' type='number' />
+          </Item>
+        </Grid>
+        <Grid>
+          <Item>
+            <Header>Project Name *</Header>
+            <Input type='text' placeholder='Project name' />
+          </Item>
+        </Grid>
+      </Grid>
+
+      {/* Cancel & send button */}
+      <Grid container justifyContent='flex-end'>
+        <Grid>
+          <Item>
+            <CancelButton />
+          </Item>
+        </Grid>
+        <Grid>
+          <Item>
+            <SendButton />
+          </Item>
+        </Grid>
+      </Grid>
+    </StyledSheet>
+  );
+};
+
+export default newTask;

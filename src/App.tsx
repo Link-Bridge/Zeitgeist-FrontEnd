@@ -5,6 +5,7 @@ import Employees from './pages/Employees/';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
+import NewTask from './pages/Tasks/new';
 import { RoutesPath } from './utils/constants';
 
 function App() {
@@ -18,6 +19,7 @@ function App() {
           <Route path={RoutesPath.TASKS} element={<Tasks />} />
           <Route path={RoutesPath.CLIENTS} element={<Clients />} />
           <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
+          <Route path={`${RoutesPath.TASKS}/create`} element={<NewTask />} />
         </Routes>
       </Layout>
     </Router>
