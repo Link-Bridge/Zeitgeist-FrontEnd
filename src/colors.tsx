@@ -1,11 +1,10 @@
 const colors = {
   lightGray: '#929292',
-  placeHolder: '#CBCBCB',
   gray: '#686868',
   darkGray: '#515151',
   darkerGray: '#424242',
   lightGold: '#E8C273',
-  inProcess: '#FFE598',
+  inProcess: '#FFE598', //'#a98307'
   gold: '#C29A51',
   darkGold: '#9C844C',
   darkerGold: '#876F39',
@@ -20,7 +19,7 @@ const colors = {
   blue: '#A0C5E8',
   darkBlue: '#878FD2',
   darkerBlue: '#273086',
-  
+
 };
 
 export default colors;

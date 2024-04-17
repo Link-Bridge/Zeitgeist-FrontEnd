@@ -12,7 +12,7 @@ import colors from '../../colors';
 function colorForStatus(status: string) {
   switch (status) {
     case 'Select an option':
-      return colors.placeHolder;
+      return 'neutral';
     case 'Not Started':
       return colors.notStarted;
     case 'In Process':
@@ -57,8 +57,8 @@ export default function ClickableChip({
         },
       }}
     >
-      <Option value='Not Started'  >Not Started</Option>
-      <Option value='In Process' >In Process</Option>
+      <Option value='Not Started'>Not Started</Option>
+      <Option value='In Process'>In Process</Option>
       <Option value='Under Revision'>Under Revision</Option>
       <Option value='Delayed'>Delayed</Option>
       <Option value='Postponed'>Postponed</Option>
