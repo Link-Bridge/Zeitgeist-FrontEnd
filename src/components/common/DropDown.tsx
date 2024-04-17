@@ -4,10 +4,12 @@ import Chip from '@mui/joy/Chip';
 import colors from '../../colors';
 
 /**
- * ClickableChip component
- * @description Chip component with Select component
- * @returns JSX.Element
+ *  colorForStatus function 
+ * @description  returns color for status
+ * @param status  string
+ * @returns  string
  */
+
 
 function colorForStatus(status: string) {
   switch (status) {
@@ -31,6 +33,12 @@ function colorForStatus(status: string) {
       return 'neutral';
   }
 }
+
+/**
+ * ClickableChip component
+ * @description Chip component with Select component
+ * @returns JSX.Element
+ */
 
 export default function ClickableChip({
   value,
