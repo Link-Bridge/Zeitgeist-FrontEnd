@@ -24,7 +24,7 @@ import DeleteModal from '../../../components/common/DeleteModal';
 
 const Items = [
   { projectId: 1, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Accounting' },
-  { projectId: 2, projectTitle: 'sadsadsadsad', status: 'In progress', department: 'Legal' },
+  { projectId: 2, projectTitle: 'sadsadsadsad', status: 'In process', department: 'Legal' },
   { projectId: 3, projectTitle: 'sadsadsadsad', status: 'Delayed', department: 'Legal' },
   { projectId: 4, projectTitle: 'sadsadsadsad', status: 'In quotation', department: 'Legal' },
   { projectId: 5, projectTitle: 'sadsadsadsad', status: 'Under Revision', department: 'Legal' },

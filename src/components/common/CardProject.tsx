@@ -1,52 +1,44 @@
 import Chip from '@mui/joy/Chip';
+import { DepartmentAreas, ProjectStatus } from '../../types/projects';
 
 type CardProjectInterface = {
   projectTitle: string;
-  status:
-    | 'Done'
-    | 'In quotation'
-    | 'Accepted'
-    | 'Not started'
-    | 'In progress'
-    | 'Under revision'
-    | 'Delayed'
-    | 'Postponed'
-    | 'Cancelled';
-  department: 'Legal' | 'Accounting' | 'Directives';
+  status: ProjectStatus;
+  department: DepartmentAreas;
 };
 
-const getStatusColor = (status: string) => {
+const getStatusColor = (status: ProjectStatus) => {
   switch (status) {
-    case 'Done':
+    case ProjectStatus.DONE:
       return 'success';
-    case 'In quotation':
+    case ProjectStatus.IN_QUOTATION:
       return 'warning';
-    case 'Accepted':
+    case ProjectStatus.ACCEPTED:
       return 'blue';
-    case 'Not started':
+    case ProjectStatus.NOT_STARTED:
       return 'lightGray';
-    case 'In progress':
+    case ProjectStatus.IN_PROCESS:
       return 'darkBlue';
-    case 'Under revision':
+    case ProjectStatus.UNDER_REVISION:
       return 'darkPurple';
-    case 'Delayed':
+    case ProjectStatus.DELAYED:
       return 'danger';
-    case 'Postponed':
+    case ProjectStatus.POSTPONED:
       return 'darkGray';
-    case 'Cancelled':
+    case ProjectStatus.CANCELLED:
       return 'darkGold';
     default:
       return 'lightGray';
   }
 };
 
-const getDepartmentColor = (department: string) => {
+const getDepartmentColor = (department: DepartmentAreas) => {
   switch (department) {
-    case 'Legal':
-      return 'lightGold';
-    case 'Accounting':
+    case DepartmentAreas.LEGAL:
+      return 'primary';
+    case DepartmentAreas.ACCOUNTING:
       return 'success';
-    case 'Directives':
+    case DepartmentAreas.DIRECTIVES:
       return 'darkPurple';
     default:
       return 'lightGray';
