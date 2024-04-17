@@ -1,4 +1,4 @@
-import { useEffect, useState } from "react";
+import { useEffect } from "react";
 import colors from "../../colors";
 import { Report } from "../../types/project-report";
 import { Response } from "../../types/reponse";
@@ -11,13 +11,11 @@ import { useParams } from "react-router-dom";
 const ProjectReport: React.FC = () => {
     const { id } = useParams();
     const { data, loading, sendRequest, error } = useHttp<Response<Report>>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
-    const [report, setReport] = useState<Report>();
 
     useEffect (() => {
       if (!data){
         sendRequest()
       }
-      setReport(data?.data);
       
     }, [data]);
 
@@ -25,39 +23,39 @@ const ProjectReport: React.FC = () => {
       return <div>Loading...</div>;
     }
 
-    if (error){
+    else if (error){
       return <div>Error al cargar el reporte-</div>
     }
 
-    return (
+    else return (
       <main className='p-10 py-4'>
-        {report? (
+        {data?.data? (
           <>
             <h1>Project Report</h1> 
             <p>{ new Date().toLocaleString() }</p>
     
-            <h2>{report?.project.name}</h2>
-            <p>{report?.project.description}</p>
+            <h2>{data?.data.project.name}</h2>
+            <p>{data?.data.project.description}</p>
             <div className='p-10 py-4 flex'>
-              <StatusChip status = {`${report?.project.status || '-'}`}/>
-              <ColorChip label = {`${report?.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
-              <ColorChip label = {`${report?.project.totalHours}`} color={`${colors.null}`}></ColorChip>
+              <StatusChip status = {`${data?.data.project.status || '-'}`}/>
+              <ColorChip label = {`${data?.data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
+              <ColorChip label = {`${data?.data.project.totalHours}`} color={`${colors.null}`}></ColorChip>
             </div>
     
             <div className='p-10 py-4 flex'>
               <div>
                 <p>Matter</p>
-                <ColorChip label = {`${report?.project.matter}`} color={`${colors.null}`}></ColorChip>
+                <ColorChip label = {`${data?.data.project.matter}`} color={`${colors.null}`}></ColorChip>
               </div>
     
               <div>
                 <p>Category</p>
-                <ColorChip label = {`${report?.project.category}`} color={`${colors.null}`}></ColorChip>
+                <ColorChip label = {`${data?.data.project.category}`} color={`${colors.null}`}></ColorChip>
               </div>
     
               <div>
                 <p>Chargeable</p>
-                <ColorChip label = {`${report?.project.isChargeable}`? 'YES' : 'NO'} color={`${colors.null}`}></ColorChip>
+                <ColorChip label = {`${data?.data.project.isChargeable}`? 'YES' : 'NO'} color={`${colors.null}`}></ColorChip>
               </div>
     
             </div>
@@ -65,17 +63,17 @@ const ProjectReport: React.FC = () => {
             <div className='p-10 py-4 flex'>
             <div>
                 {
-                  report?.project.startDate &&
+                  data?.data.project.startDate &&
                   <>
                     <p>Start Date</p>
-                    <p>{report?.project.startDate.toString() || ''}</p>
+                    <p>{data?.data.project.startDate.toString() || ''}</p>
                   </>
                 }
               </div>
             </div>
           </>
         ):  (
-          <p>No se econtro el reporte</p>
+          <p>No se econtró el reporte</p>
         )}
         
         

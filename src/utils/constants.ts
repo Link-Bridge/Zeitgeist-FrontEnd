@@ -6,7 +6,6 @@ export enum RoutesPath {
   ROOT = '/',
   HOME = '/home',
   PROJECTS = '/projects',
-  PROJECT_REPORT = '/projects/report/:id',
   TASKS = '/tasks',
   CLIENTS = '/clients',
   EMPLOYEES = '/employees',
