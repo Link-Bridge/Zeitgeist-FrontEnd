@@ -1,9 +1,7 @@
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
-import Chip from '@mui/joy/Chip';
 import { Option, Select, selectClasses } from '@mui/joy';
+import Chip from '@mui/joy/Chip';
 import colors from '../../colors';
-import { useState } from 'react'; 
-
 
 /**
  * ClickableChip component
@@ -28,29 +26,26 @@ function colorForStatus(status: string) {
     case 'Cancelled':
       return colors.danger;
     default:
-      return "neutral";
+      return 'neutral';
   }
 }
 
-export default function ClickableChip(status: string) {
-  const [value, setValue] = useState("not started")
-  
-  const handleChange = (newValue: string) => {
-    setValue(newValue);
-  };
-
+export default function ClickableChip({
+  value,
+  setValue,
+}: {
+  value: string;
+  setValue: (newVal: string) => void;
+}) {
   return (
     <Chip
       component={Select}
       variant='solid'
-      label={status}
-      style={{backgroundColor: colorForStatus(status)}}
+      style={{ backgroundColor: colorForStatus(value) }}
       value={value}
-      placeholder="Select an option"
+      placeholder='Select an option'
       indicator={<KeyboardArrowDown />}
-      
-      onChange={(event) => handleChange(event.target.value as string)}
-
+      onChange={(_, newVal) => setValue(String(newVal) ?? '')}
       sx={{
         [`& .${selectClasses.indicator}`]: {
           transition: '0.2s',
@@ -60,15 +55,13 @@ export default function ClickableChip(status: string) {
         },
       }}
     >
-      <Option value={'Not Started'} style={{backgroundColor: colors.notStarted}} >Not Started</Option>
-      <Option value={'In Process'} style={{backgroundColor: colors.inProcess}}>In Progress</Option>
-      <Option value={'Under Revision'} style={{backgroundColor: colors.purple}}>Under Revision</Option>
-      <Option value={'Delayed'} style={{backgroundColor: colors.delayed}}>Delayed</Option>
-      <Option value={'Postponed'} style={{backgroundColor: colors.blue}}>Postponed</Option>
-      <Option value={'Done'} style={{backgroundColor: colors.success}}>Done</Option>
-      <Option value={'Cancelled'} style={{backgroundColor: colors.danger}}>Cancelled</Option>
-
+      <Option value='Not Started'>Not Started</Option>
+      <Option value='In Process'>In Progress</Option>
+      <Option value='Under Revision'>Under Revision</Option>
+      <Option value='Delayed'>Delayed</Option>
+      <Option value='Postponed'>Postponed</Option>
+      <Option value='Done'>Done</Option>
+      <Option value='Cancelled'>Cancelled</Option>
     </Chip>
   );
 }
-
