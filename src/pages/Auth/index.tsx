@@ -5,57 +5,40 @@ import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login_image.png';
 import { auth, provider } from '../../config/firebase.config';
-import useHttp from '../../hooks/useHttp';
 import { RoutesPath } from '../../utils/constants';
-
-// Tipos para los datos del empleado
-interface EmployeeData {
-  firstName: string;
-  lastName: string;
-  email: string;
-  imageUrl: string;
-}
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
-  const { data, error, loading, sendRequest } = useHttp<EmployeeData>('/employee/create', 'POST');
 
-  const signInWithGoogle = async () => {
+  const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken();
-      sessionStorage.setItem('idToken', token); // ¿cambiar a localStorage?
+      const idToken = await result.user.getIdToken();
+      sessionStorage.setItem('idToken', idToken);
 
-      const { displayName, email, photoURL } = result.user;
-      if (!displayName || !email || !photoURL) throw new Error('Missing required user information');
+      // TODO: Had trouble using the useHttp hook
 
-      const nameParts = displayName.trim().split(/\s+/);
-      let firstName, lastName;
+      const response = await fetch('http://localhost:4000/api/v1/employee/signup', {
+        method: 'POST',
+        headers: {
+          'Content-Type': 'application/json',
+          Authorization: `Bearer ${idToken}`,
+        },
+        body: JSON.stringify({
+          name: result.user.displayName,
+          email: result.user.email,
+          imageUrl: result.user.photoURL,
+        }),
+      });
 
-      if (nameParts.length === 2) {
-        [firstName, lastName] = nameParts;
-      } else if (nameParts.length === 3) {
-        firstName = nameParts[0];
-        lastName = nameParts.slice(1).join(' ');
-      } else if (nameParts.length >= 4) {
-        firstName = nameParts.slice(0, 2).join(' ');
-        lastName = nameParts.slice(2).join(' ');
-      } else {
-        firstName = displayName;
-        lastName = '';
+      if (!response.ok) {
+        throw new Error('Failed to sign up');
       }
 
-      await sendRequest(
-        {},
-        { firstName, lastName, email, imageUrl: photoURL },
-        {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${token}`,
-        }
-      );
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
+      throw error;
     }
   };
 
@@ -63,7 +46,7 @@ const Auth: React.FC = () => {
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>
       <div className='flex justify-end pr-16 pt-10'>
         <Button
-          onClick={signInWithGoogle}
+          onClick={handleGoogleSignIn}
           sx={{
             backgroundColor: 'white',
             color: 'black',
@@ -79,9 +62,6 @@ const Auth: React.FC = () => {
         >
           Sign in to LinkBridge with Google
         </Button>
-        {loading && <p>Loading...</p>}
-        {error && <p>Error: {error.message}</p>}
-        {data && <p>Employee created successfully!</p>}
       </div>
     </div>
   );
