@@ -3,7 +3,6 @@ export interface EmployeeEntity {
   firstName: string;
   lastName: string;
   email: string;
-  phoneNumber: string | null;
   imageUrl: string | null;
   createdAt: Date;
   updatedAt: Date | null;
