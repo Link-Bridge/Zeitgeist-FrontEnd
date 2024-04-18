@@ -7,7 +7,7 @@ import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
 const Employees = () => {
   return (
     <Card className='flex-1'>
-      <EmployeeTable employees={employees} />
+      
     </Card>
   );
 };
