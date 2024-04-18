@@ -83,6 +83,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
       }
 
       const response = await axios(options);
+      console.log(response.data)
       setData(response.data as T);
     } catch (error) {
       setError(error as Error);

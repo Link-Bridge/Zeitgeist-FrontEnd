@@ -9,23 +9,15 @@ import { CompanyEntity } from '../../types/company';
 import { Response } from '../../types/response';
 
 const Clients = () => {
-  const { data, isLoading, error } = useFetch<Response<CompanyEntity[]>>(
-    'http://localhost:4000/company'
+  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity[]>>(
+    '/company',
+    RequestMethods.GET
   );
-
-  
-  
   const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
 
-  const [openModal, setOpenModal] = useState(false);
-
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
-  };
+  useEffect(() => {
+    sendRequest();
+  }, []);
 
   return (
     <main className='p-10 py-0 flex flex-col'>
@@ -39,7 +31,7 @@ const Clients = () => {
         {isLoading && <Loader />}
         {error && <p>Error loading companies.</p>}
       </div>
-      {!isLoading && !error && companies && (
+      {!loading && !error && companies && (
         <CardsGrid>
           {companies.map(company => (
             <ClientCard
