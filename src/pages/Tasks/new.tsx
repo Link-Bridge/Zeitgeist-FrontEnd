@@ -1,5 +1,7 @@
 import { Grid, Input, Sheet, Textarea } from '@mui/joy';
 import { styled } from '@mui/material/styles';
+import { Moment } from 'moment';
+import { useState } from 'react';
 import CancelButton from '../../components/common/CancelButton';
 import CustomDatePicker from '../../components/common/DatePicker';
 import GenericDropdown from '../../components/common/GenericDropdown';
@@ -50,14 +52,66 @@ const Item = styled(Sheet)(({ theme }) => ({
 }));
 
 const newTask = () => {
+  const [title, setTitle] = useState('');
+  const [description, setDescription] = useState('');
+  const [startDate, setStartDate] = useState<Moment | null>(null);
+  const [dueDate, setDueDate] = useState<Moment | null>(null);
+  const [status, setStatus] = useState<TaskStatus | ''>('');
+  const [waitingFor, setWaitingFor] = useState<WaitingFor | ''>('');
+
+  const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    setTitle(event.target.value);
+  };
+
+  const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    setDescription(event.target.value);
+  };
+
+  const handleStartDateChange = (date: Moment | null) => {
+    setStartDate(date);
+  };
+
+  const handleDueDateChange = (date: Moment | null) => {
+    setDueDate(date);
+  };
+
+  const handleStatusSelect = (value: TaskStatus) => {
+    setStatus(value);
+  };
+
+  const handleWaitingForSelect = (value: WaitingFor) => {
+    setWaitingFor(value);
+  };
+
+  const handleSend = () => {
+    const data = {
+      title,
+      description,
+      startDate,
+      dueDate,
+      status,
+      waitingFor,
+    };
+
+    console.log('Sending data: ', data);
+  };
+
   return (
     <StyledSheet>
       <Header>Title *</Header>
-      <Input type='text' placeholder='Write your text here... ' sx={{ color: '#BDBDBD' }} />
+      <Input
+        type='text'
+        placeholder='Write your text here... '
+        value={title}
+        onChange={handleTitleChange}
+        sx={{ color: '#BDBDBD' }}
+      />
 
       <Header>Description *</Header>
       <Textarea
         placeholder='Write your text here... '
+        value={description}
+        onChange={handleDescriptionChange}
         sx={{
           color: '#BDBDBD',
           width: '100%',
@@ -76,13 +130,13 @@ const newTask = () => {
         <Grid xs={2}>
           <Item>
             <Header>Start Date *</Header>
-            <CustomDatePicker />
+            <CustomDatePicker value={startDate} onChange={handleStartDateChange} />
           </Item>
         </Grid>
         <Grid xs={2}>
           <Item>
             <Header>Due Date *</Header>
-            <CustomDatePicker />
+            <CustomDatePicker value={dueDate} onChange={handleDueDateChange} />
           </Item>
         </Grid>
         <Grid xs={2}>
@@ -90,7 +144,7 @@ const newTask = () => {
             <Header>Status *</Header>
             <GenericDropdown
               options={Object.values(TaskStatus)}
-              onSelect={value => console.log(value)}
+              onSelect={handleStatusSelect}
               placeholder='Select status'
               colorMap={statusColorMap}
             />
@@ -105,7 +159,7 @@ const newTask = () => {
             <Header>Waiting For ...</Header>
             <GenericDropdown
               options={Object.values(WaitingFor)}
-              onSelect={value => console.log(value)}
+              onSelect={handleWaitingForSelect}
               placeholder='Select status'
             />
           </Item>
@@ -133,7 +187,7 @@ const newTask = () => {
         </Grid>
         <Grid>
           <Item>
-            <SendButton />
+            <SendButton onClick={handleSend} />
           </Item>
         </Grid>
       </Grid>

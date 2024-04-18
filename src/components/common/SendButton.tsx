@@ -1,9 +1,22 @@
 import Button from '@mui/material/Button';
 
-const SendButton = () => {
+interface SendButtonProps {
+  onClick?: () => void;
+}
+
+/**
+ * Generic send button component
+ *
+ * @component
+ *
+ * @param props: Object - The component props
+ * @returns
+ */
+const SendButton = ({ onClick }: SendButtonProps) => {
   return (
     <Button
       variant='contained'
+      onClick={onClick}
       sx={{
         bgcolor: '#9C844C',
         color: '#fff',
