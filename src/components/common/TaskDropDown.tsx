@@ -35,7 +35,7 @@ function colorForStatus(status: string) {
 }
 
 /**
- * ClickableChip component
+ * ClickableChip component for tasks 
  * @description Chip component with Select component
  * @returns JSX.Element
  */
