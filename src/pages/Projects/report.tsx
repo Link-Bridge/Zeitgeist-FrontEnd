@@ -23,12 +23,14 @@ const ProjectReport: React.FC = () => {
       return <div>Loading...</div>;
     }
 
-    else if (error){
+    if (error){
       return <div>Error al cargar el reporte-</div>
     }
 
-    else return (
+    return (
       <main className='p-10 py-4'>
+
+
         {data?.data? (
           <>
             <h1>Project Report</h1> 
@@ -45,12 +47,12 @@ const ProjectReport: React.FC = () => {
             <div className='p-10 py-4 flex'>
               <div>
                 <p>Matter</p>
-                <ColorChip label = {`${data?.data.project.matter}`} color={`${colors.null}`}></ColorChip>
+                <ColorChip label = {data?.data.project.matter || ""} color={`${colors.null}`}></ColorChip>
               </div>
     
               <div>
                 <p>Category</p>
-                <ColorChip label = {`${data?.data.project.category}`} color={`${colors.null}`}></ColorChip>
+                <ColorChip label = {data?.data.project.category || "" } color={`${colors.null}`}></ColorChip>
               </div>
     
               <div>
@@ -73,7 +75,7 @@ const ProjectReport: React.FC = () => {
             </div>
           </>
         ):  (
-          <p>No se econtró el reporte</p>
+          <p>No se encontró el reporte</p>
         )}
         
         
