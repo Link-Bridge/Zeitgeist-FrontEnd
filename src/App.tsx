@@ -6,6 +6,7 @@ import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
 import Clients from './pages/Clients';
+import ClientDetails from './pages/Clients/ClientDetails';
 import Employees from './pages/Employees/';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
@@ -37,6 +38,7 @@ function App() {
               <Route path={`${RoutesPath.PROJECTS}/*`} element={<Projects />} />
               <Route path={RoutesPath.TASKS} element={<Tasks />} />
               <Route path={RoutesPath.CLIENTS} element={<Clients />} />
+              <Route path='/clients/:clientId' element={<ClientDetails />} />
               <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
             </Routes>
           </Layout>

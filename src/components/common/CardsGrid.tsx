@@ -1,14 +1,14 @@
-import { ReactNode } from "react";
+import { ReactNode } from 'react';
 
 interface CardsGridProps {
-    children: ReactNode;
+  children: ReactNode;
 }
-const CardsGrid = ({children}: CardsGridProps) => {
+const CardsGrid = ({ children }: CardsGridProps) => {
   return (
     <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 bg-white rounded-xl shadow-xl p-7'>
-        {children}
+      {children}
     </section>
-  )
-}
+  );
+};
 
-export default CardsGrid
+export default CardsGrid;
