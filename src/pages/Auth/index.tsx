@@ -58,6 +58,7 @@ const Auth: React.FC = () => {
             paddingY: '16px',
             justifyContent: 'start',
             fontWeight: 'normal',
+            fontSize: '16px',
           }}
           startDecorator={<img src={googleImage} alt='Google' style={{ width: 24, height: 24 }} />}
           size='lg'

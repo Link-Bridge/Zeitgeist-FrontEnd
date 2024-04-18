@@ -1,4 +1,5 @@
-import { Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
+import Layout from './components/common/Layout';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
@@ -13,46 +14,48 @@ function App() {
     <Router>
       <Routes>
         <Route path={RoutesPath.ROOT} element={<Auth />} />
-        <Route
-          path={RoutesPath.HOME}
-          element={
-            <ProtectedRoute>
-              <Home />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={RoutesPath.PROJECTS}
-          element={
-            <ProtectedRoute>
-              <Projects />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={RoutesPath.TASKS}
-          element={
-            <ProtectedRoute>
-              <Tasks />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={RoutesPath.CLIENTS}
-          element={
-            <ProtectedRoute>
-              <Clients />
-            </ProtectedRoute>
-          }
-        />
-        <Route
-          path={RoutesPath.EMPLOYEES}
-          element={
-            <ProtectedRoute>
-              <Employees />
-            </ProtectedRoute>
-          }
-        />
+        <Route element={<Layout children={<Outlet />} />}>
+          <Route
+            path={RoutesPath.HOME}
+            element={
+              <ProtectedRoute>
+                <Home />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={RoutesPath.PROJECTS}
+            element={
+              <ProtectedRoute>
+                <Projects />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={RoutesPath.TASKS}
+            element={
+              <ProtectedRoute>
+                <Tasks />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={RoutesPath.CLIENTS}
+            element={
+              <ProtectedRoute>
+                <Clients />
+              </ProtectedRoute>
+            }
+          />
+          <Route
+            path={RoutesPath.EMPLOYEES}
+            element={
+              <ProtectedRoute>
+                <Employees />
+              </ProtectedRoute>
+            }
+          />
+        </Route>
       </Routes>
     </Router>
   );

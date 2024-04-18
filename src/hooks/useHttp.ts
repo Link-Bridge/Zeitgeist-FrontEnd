@@ -60,6 +60,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
     customHeaders: Record<string, string> = {}
   ): Promise<void> => {
     setLoading(true);
+<<<<<<< HEAD
     const idToken = sessionStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
@@ -80,6 +81,30 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
     }
 
     try {
+=======
+    try {
+      // TODO: Uncomment the following lines when authentication is implemented
+      //   const idToken = sessionStorage.getItem('idToken');
+
+      //   const headers = {
+      //     ...customHeaders,
+      //     Authorization: `Bearer ${idToken}`,
+      //     'Content-Type': 'application/json',
+      //   };
+
+      const options: AxiosRequestConfig = {
+        method: method,
+        url: `${BASE_URL}${endpoint}`,
+        headers: customHeaders, // TODO: Change to 'headers' when auth is implemented
+        params: method === RequestMethods.GET ? params : {},
+        data: method === RequestMethods.POST || method === RequestMethods.PUT ? body : null,
+      };
+
+      if (method === RequestMethods.DELETE) {
+        options.params = params;
+      }
+
+>>>>>>> develop
       const response = await axios(options);
       setData(response.data as T);
     } catch (error) {
