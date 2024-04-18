@@ -1,12 +1,14 @@
-import EmployeeDummyComponent from '../../components/modules/Employees/Table';
+import { Card } from '@mui/joy';
+import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
+//import EmployeeDummyComponent from '../../components/modules/Employees/Table';
+
+
 
 const Employees = () => {
   return (
-    <main className='p-10 py-4 flex gap-4'>
-      <h1>Employees Page</h1>
-      <EmployeeDummyComponent />
-      <p>Welcome to the Employees page!</p>
-    </main>
+    <Card className='flex-1'>
+      <EmployeeTable employees={employees} />
+    </Card>
   );
 };
 
