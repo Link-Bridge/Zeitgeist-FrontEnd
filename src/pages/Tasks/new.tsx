@@ -71,7 +71,11 @@ const newTask = () => {
         <Grid xs={2}>
           <Item>
             <Header>Status *</Header>
-            <GenericDropdown options={Object.values(TaskStatus)} backgroundColor='#EDEDED' />
+            <GenericDropdown
+              options={Object.values(TaskStatus)}
+              onSelect={value => console.log(value)}
+              placeholder='Select status'
+            />
           </Item>
         </Grid>
       </Grid>
