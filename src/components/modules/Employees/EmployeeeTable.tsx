@@ -5,6 +5,8 @@ import Table from '@mui/joy/Table';
 import { useState } from 'react';
 import colors from '../../../colors';
 import DeleteModal from '../../common/DeleteModal';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import { Option, Select, selectClasses } from '@mui/joy';
 
 type Employee = {
   // photo: string;
@@ -36,7 +38,23 @@ export default function EmployeeTable({ employees }: { employees: Employee[] }) 
               <AccountCircleIcon></AccountCircleIcon>{' '}
             </td>
             <td>{employee.fullName}</td>
-            <td>{employee.role}</td>
+            <td>
+              <Select
+                variant='outlined'
+                color='neutral'
+                indicator={<KeyboardArrowDown />}
+                sx={{
+                  [`& .${selectClasses.indicator}`]: {
+                    transition: '0.2s',
+                    [`&.${selectClasses.expanded}`]: {
+                      transform: 'rotate(-180deg)',
+                    },
+                  },
+                }}
+              >
+                <Option value='employee.role'>{employee.role}</Option>
+              </Select>
+            </td>
             <td>{employee.email}</td>
             <td>
               <IconButton>

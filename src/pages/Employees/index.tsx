@@ -19,7 +19,7 @@ const employees = [
     email: 'i@gmail.com',
     phoneNumber: '987654321',
     department: 'legal',
-    role: 'employee',
+    role: 'admin',
   },
   {
     firstName: 'John',
@@ -28,7 +28,7 @@ const employees = [
     email: 'love@gmail.com',
     phoneNumber: '123456789',
     department: 'accounting',
-    role: 'employee',
+    role: 'legal',
   },
   {
     firstName: 'Jane',
@@ -37,7 +37,7 @@ const employees = [
     email: 'you@gmail.com',
     phoneNumber: '987654321',
     department: 'legal',
-    role: 'employee',
+    role: 'accounting',
     //imageUrl: 'https://media.istockphoto.com/id/1361394182/photo/funny-british-shorthair-cat-portrait-looking-shocked-or-surprised.jpg?b=1&s=612x612&w=0&k=20&c=-niqIUX8Kfiyn50xgUzxxUYX6H2q9BlGc3PX5PVM-iA='
   },
 ];
