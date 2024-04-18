@@ -6,20 +6,20 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import SendButton from '../../components/common/SendButton';
 
 enum TaskStatus {
-  NOT_STARTED = 'NOT STARTED',
-  IN_PROGRESS = 'IN PROGRESS',
-  UNDER_REVISSION = 'UNDER REVISSION',
-  DELAYED = 'DELAYED',
-  POSTPONED = 'POSTPONED',
-  DONE = 'DONE',
-  CANCELLED = 'CANCELLED',
+  NOT_STARTED = 'Not Started',
+  IN_PROGRESS = 'In Progress',
+  UNDER_REVISSION = 'Under Revission',
+  DELAYED = 'Delayed',
+  POSTPONED = 'Postponed',
+  DONE = 'Done',
+  CANCELLED = 'Cancelled',
 }
 
 enum WaitingFor {
-  CLIENT = 'CLIENT',
-  TEAM = 'TEAM',
-  VENDOR = 'VENDOR',
-  OTHER = 'OTHER',
+  CLIENT = 'Client',
+  TEAM = 'Team',
+  VENDOR = 'Vendor',
+  OTHER = 'Other',
 }
 
 const StyledSheet = styled(Sheet)(({ theme }) => ({
