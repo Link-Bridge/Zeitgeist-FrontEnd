@@ -29,15 +29,12 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
   const [companyPhone, setCompanyPhone] = useState('');
   const [companyRFC, setCompanyRFC] = useState('');
   const [companyConstitution, setCompanyConstitution] = useState('');
-  const [companyFiscalDomain, setCompanyFiscalDomain] = useState('');
-  const [companySocialDomain, setCompanySocialDomain] = useState('');
-  
+  const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
   const handleSubmit = event => {
     event.preventDefault();
     const validData = true;
-    if(validData){
-      
+    if (validData) {
     }
     const data = {
       name: companyName,
@@ -45,8 +42,7 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
       phone: companyPhone,
       rfc: companyRFC,
       constitution: companyConstitution,
-      socialDomain: companySocialDomain,
-      fiscalDomain: companyFiscalDomain
+      taxResidence: companyTaxResidence,
     };
 
     console.log('sending data', data);
@@ -79,19 +75,19 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
           autoComplete='off'
           onSubmit={handleSubmit}
         >
-          <TextField
-            required
-            id='clientName'
-            label='Clients name'
-            variant='outlined'
-            value={companyName}
-            onChange={event => {
-              setCompanyName(event.target.value);
-            }}
-            sx={{ width: '100ch' }}
-          />
-          
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
+            <TextField
+              required
+              id='clientName'
+              label='Clients name'
+              variant='outlined'
+              value={companyName}
+              onChange={event => {
+                setCompanyName(event.target.value);
+              }}
+              sx={{ width: '100ch' }}
+            />
+
             <TextField
               required
               id='clientEmail'
@@ -103,6 +99,9 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
                 setCompanyEmail(event.target.value);
               }}
             />
+          </Box>
+
+          <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               required
               id='clientPhone'
@@ -115,9 +114,7 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
                 setCompanyPhone(input);
               }}
             />
-          </Box>
 
-          <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               required
               id='clientRFC'
@@ -128,6 +125,9 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
                 setCompanyRFC(event.target.value);
               }}
             />
+          </Box>
+
+          <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               required
               id='clientConstituton'
@@ -140,27 +140,15 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
                 setCompanyConstitution(event.target.value);
               }}
             />
-          </Box>
 
-          <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               required
-              id='clientSocialDomain'
-              label='Social Domain'
+              id='clientTaxResidence'
+              label='Tax residence'
               variant='outlined'
-              value={companySocialDomain}
+              value={companyTaxResidence}
               onChange={event => {
-                setCompanySocialDomain(event.target.value);
-              }}
-            />
-            <TextField
-              required
-              id='clientFiscalDomain'
-              label='Fiscal Domain'
-              variant='outlined'
-              value={companyFiscalDomain}
-              onChange={event => {
-                setCompanyFiscalDomain(event.target.value);
+                setCompanyTaxResidence(event.target.value);
               }}
             />
           </Box>

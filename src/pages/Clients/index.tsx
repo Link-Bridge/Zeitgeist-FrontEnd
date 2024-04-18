@@ -12,6 +12,9 @@ const Clients = () => {
   const { data, isLoading, error } = useFetch<Response<CompanyEntity[]>>(
     'http://localhost:4000/company'
   );
+
+  
+  
   const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
 
   const [openModal, setOpenModal] = useState(false);
