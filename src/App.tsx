@@ -9,22 +9,18 @@ import { RoutesPath } from './utils/constants';
 
 function App() {
   return (
-    <>
-      <Router>
-        <Layout>
-          <div>
-            {/* Configuración de las rutas */}
-            <Routes>
-              <Route path={RoutesPath.HOME} element={<Home />} />
-              <Route path={RoutesPath.PROJECTS} element={<Projects />} />
-              <Route path={RoutesPath.TASKS} element={<Tasks />} />
-              <Route path={RoutesPath.CLIENTS} element={<Clients />} />
-              <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
-            </Routes>
-          </div>
-        </Layout>
-      </Router>
-    </>
+    <Router>
+      <Layout>
+        {/* Configuración de las rutas */}
+        <Routes>
+          <Route path={RoutesPath.HOME} element={<Home />} />
+          <Route path={`${RoutesPath.PROJECTS}/*`} element={<Projects />} />
+          <Route path={RoutesPath.TASKS} element={<Tasks />} />
+          <Route path={RoutesPath.CLIENTS} element={<Clients />} />
+          <Route path={RoutesPath.EMPLOYEES} element={<Employees />} />
+        </Routes>
+      </Layout>
+    </Router>
   );
 }
 
