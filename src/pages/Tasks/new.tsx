@@ -1,4 +1,4 @@
-import { Dropdown, Grid, Input, Sheet, Textarea } from '@mui/joy';
+import { Grid, Input, Sheet, Textarea } from '@mui/joy';
 import { styled } from '@mui/material/styles';
 import CancelButton from '../../components/common/CancelButton';
 import CustomDatePicker from '../../components/common/DatePicker';
@@ -13,6 +13,13 @@ enum TaskStatus {
   POSTPONED = 'POSTPONED',
   DONE = 'DONE',
   CANCELLED = 'CANCELLED',
+}
+
+enum WaitingFor {
+  CLIENT = 'CLIENT',
+  TEAM = 'TEAM',
+  VENDOR = 'VENDOR',
+  OTHER = 'OTHER',
 }
 
 const StyledSheet = styled(Sheet)(({ theme }) => ({
@@ -85,7 +92,11 @@ const newTask = () => {
         <Grid xs={2}>
           <Item>
             <Header>Waiting For ...</Header>
-            <Dropdown children={['Option 1', 'Option 2', 'Option 3']} />
+            <GenericDropdown
+              options={Object.values(WaitingFor)}
+              onSelect={value => console.log(value)}
+              placeholder='Select status'
+            />
           </Item>
         </Grid>
         <Grid xs={2}>

@@ -36,6 +36,7 @@ const GenericDropdown = <T extends string | number>({
   placeholder,
 }: GenericDropdownProps<T>) => {
   const [option, setOptions] = useState<T | ''>('');
+  const [isEmpty, setIsEmpty] = useState(true);
 
   const handleChange = (event: SelectChangeEvent<T>) => {
     const selectedOption = event.target.value as T;
@@ -44,11 +45,16 @@ const GenericDropdown = <T extends string | number>({
     onSelect(selectedOption);
   };
 
+  const handleOpen = () => {
+    setIsEmpty(false);
+  };
+
   return (
     <FormControl>
       <Select
         value={option}
         onChange={handleChange}
+        onOpen={handleOpen}
         displayEmpty
         renderValue={
           renderValue ||
@@ -57,6 +63,10 @@ const GenericDropdown = <T extends string | number>({
               sx={{
                 padding: '1px 10px',
                 lineHeight: '30px',
+                height: 30,
+                overflow: 'hidden',
+                whiteSpace: 'nowrap',
+                minWidth: 150,
               }}
             >
               {String(value)}
@@ -71,6 +81,10 @@ const GenericDropdown = <T extends string | number>({
             fontSize: '0.875rem',
             textAlign: 'center',
             lineHeight: '30px',
+            height: isEmpty ? 30 : 'auto',
+            minHeight: 30,
+            transition: 'height 0.2s ease',
+            overflow: 'hidden',
           },
         }}
       >
