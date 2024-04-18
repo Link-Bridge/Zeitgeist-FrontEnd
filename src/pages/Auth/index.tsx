@@ -3,7 +3,7 @@ import { signInWithPopup } from 'firebase/auth';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
-import loginImage from '../../assets/images/login_image.png';
+import loginImage from '../../assets/images/login-image.png';
 import { auth, provider } from '../../config/firebase.config';
 import { RoutesPath } from '../../utils/constants';
 
@@ -50,17 +50,19 @@ const Auth: React.FC = () => {
           sx={{
             backgroundColor: 'white',
             color: 'black',
-            borderRadius: '9999px',
+            borderRadius: '999px',
             ':hover': {
               backgroundColor: '#f0f0f0',
             },
             paddingX: '40px',
             paddingY: '16px',
+            justifyContent: 'start',
+            fontWeight: 'normal',
           }}
           startDecorator={<img src={googleImage} alt='Google' style={{ width: 24, height: 24 }} />}
           size='lg'
         >
-          Sign in to LinkBridge with Google
+          Sign in to Link Bridge with Google
         </Button>
       </div>
     </div>
