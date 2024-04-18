@@ -1,12 +1,13 @@
-import { Button, Card, FormControl, FormLabel, Input, Snackbar, Switch, Textarea } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useFetch from '../../hooks/useFetch';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
@@ -14,7 +15,7 @@ import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/p
 import { Response } from '../../types/response';
 
 const NewProject = () => {
-  const [openSnack, setOpenSnack] = useState(false);
+  const { setState } = useContext(SnackbarContext);
   const form = useNewProject();
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -22,11 +23,18 @@ const NewProject = () => {
   const req = useFetch<Response<CompanyEntity>>('http://localhost:4000/api/v1/company');
 
   useEffect(() => {
-    setOpenSnack(!!req.error || !!form.error);
-    return () => {
-      setTimeout(() => setOpenSnack(false), 2000);
-    };
-  }, [req.error, form.error]);
+    if (req.error) {
+      setState({ open: true, message: req.error.message, type: 'danger' });
+    }
+
+    if (form.error) {
+      setState({ open: true, message: form.error.message, type: 'danger' });
+    }
+
+    if (form.success) {
+      setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
+    }
+  }, [req.error, form.error, form.success, setState]);
 
   if (form.success) {
     return <Navigate to='/projects' />;
@@ -174,9 +182,6 @@ const NewProject = () => {
           </form>
         )}
       </Card>
-      <Snackbar color='danger' variant='solid' open={openSnack}>
-        {(req.error && 'Error getting clients') || form.error?.message}
-      </Snackbar>
     </>
   );
 };
