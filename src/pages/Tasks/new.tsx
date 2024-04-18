@@ -15,6 +15,16 @@ enum TaskStatus {
   CANCELLED = 'Cancelled',
 }
 
+const statusColorMap: Record<TaskStatus, string> = {
+  [TaskStatus.NOT_STARTED]: '#E6A9A9',
+  [TaskStatus.IN_PROGRESS]: '#FFE598',
+  [TaskStatus.UNDER_REVISSION]: '#D7B2F0',
+  [TaskStatus.DELAYED]: '#FFC774',
+  [TaskStatus.POSTPONED]: '#A0C5E8',
+  [TaskStatus.DONE]: '#6AA84F',
+  [TaskStatus.CANCELLED]: '#FF7A7A',
+};
+
 enum WaitingFor {
   CLIENT = 'Client',
   TEAM = 'Team',
@@ -82,6 +92,7 @@ const newTask = () => {
               options={Object.values(TaskStatus)}
               onSelect={value => console.log(value)}
               placeholder='Select status'
+              colorMap={statusColorMap}
             />
           </Item>
         </Grid>

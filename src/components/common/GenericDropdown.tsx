@@ -7,6 +7,7 @@ interface GenericDropdownProps<T extends string | number> {
   onSelect: (value: T) => void;
   renderValue?: (value: T) => React.ReactNode;
   placeholder?: string;
+  colorMap?: Record<T, string>;
 }
 
 /**
@@ -15,18 +16,19 @@ interface GenericDropdownProps<T extends string | number> {
  * @component
  * @template T - The type of the options in the dropdown
  *
- * @param {Object} props - The component props
- * @param {string} [props.backgroundColor] - The background color of the
- *                                           dropdown
- * @param {T[]} props.options - The options to display in the dropdown
- * @param {(value: T) => void} props.onSelect - The callback function invoked
- *                                              when an option is selected
- * @param {(value: T) => React.ReactNode} [props.renderValue] - Optional custom
- *                                         rendering function for selected value
- * @param {string} [props.placeholder] - Optional placeholder text when no
- *                                       option is selected
+ * @param props: Object - The component props
+ * @param props.backgroundColor: string - The background color of the dropdown
+ * @param props.options: T[] - The options to display in the dropdown
+ * @param props.onSelect: (value: T) => void - The callback function invoked
+ *                                             when an option is selected
+ * @param props.renderValue: (value: T) => React.ReactNode - Optional custom
+ *                                        rendering function for selected value
+ * @param props.placeholder: string - Optional placeholder text when no
+ *                                    option is selected
+ * @param props.colorMap: Record<T, string> - Optional color map for the
+ *                                            options in the dropdown
  *
- * @returns {JSX.element} - The dropdown component
+ * @returns {TSX.element} - The dropdown component
  */
 const GenericDropdown = <T extends string | number>({
   backgroundColor,
@@ -34,6 +36,7 @@ const GenericDropdown = <T extends string | number>({
   onSelect,
   renderValue,
   placeholder,
+  colorMap,
 }: GenericDropdownProps<T>) => {
   const [option, setOptions] = useState<T | ''>('');
   const [isEmpty, setIsEmpty] = useState(true);
@@ -75,7 +78,7 @@ const GenericDropdown = <T extends string | number>({
         }
         sx={{
           borderRadius: 30,
-          backgroundColor: backgroundColor || '#EDEDED',
+          backgroundColor: colorMap?.[option as T] || backgroundColor || '#EDEDED',
           '& .MuiSelect-select': {
             padding: '1px 6px',
             fontSize: '0.875rem',
