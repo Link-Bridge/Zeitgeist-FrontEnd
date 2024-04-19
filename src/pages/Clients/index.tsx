@@ -1,23 +1,35 @@
-import { useState } from 'react';
-import NewClientFormModal from '../../components/NewClientFormModal';
+import { useEffect, useState } from 'react';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
 import Loader from '../../components/common/Loader';
-import useFetch from '../../hooks/useFetch';
+import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
+import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { Response } from '../../types/response';
+import { RequestMethods } from '../../utils/constants';
 
 const Clients = () => {
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity[]>>(
     '/company',
     RequestMethods.GET
   );
+
   const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
 
   useEffect(() => {
     sendRequest();
   }, []);
+
+  const [openModal, setOpenModal] = useState(false);
+
+  const handleOpenModal = () => {
+    setOpenModal(true);
+  };
+
+  const handleCloseModal = () => {
+    setOpenModal(false);
+  };
 
   return (
     <main className='p-10 py-0 flex flex-col'>
@@ -28,7 +40,7 @@ const Clients = () => {
       <NewClientFormModal open={openModal} onClose={handleCloseModal} />
 
       <div className='flex justify-center w-full'>
-        {isLoading && <Loader />}
+        {loading && <Loader />}
         {error && <p>Error loading companies.</p>}
       </div>
       {!loading && !error && companies && (

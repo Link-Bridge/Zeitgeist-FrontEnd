@@ -17,7 +17,8 @@ function CancelButton ({onClick}: CancelButtonProps) {
             color: "white"
           },
           borderColor: colors.darkGold,
-          color: colors.darkGold
+          color: colors.darkGold,
+          borderRadius: 1.5
         }}
       >
         Cancel

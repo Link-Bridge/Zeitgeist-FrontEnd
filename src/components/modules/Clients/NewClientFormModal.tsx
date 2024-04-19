@@ -1,10 +1,13 @@
 import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
-import Button from '@mui/material/Button';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useState } from 'react';
-import CancelButton from './common/CancelButton';
+import useHttp from '../../../hooks/useHttp';
+import { ResponsePOST } from '../../../types/response.post';
+import { RequestMethods } from '../../../utils/constants';
+import CancelButton from '../../common/CancelButton';
+import CreateClientButton from './CreateClientButton';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -13,14 +16,19 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 620,
   bgcolor: 'background.paper',
-  border: '2px solid #000',
+  border: '2px solid #9C844C',
   boxShadow: 24,
   p: 4,
+  borderRadius: 3,
 };
 
 interface NewClientFormModalProps {
   open: boolean;
   onClose: () => void;
+}
+
+interface NewClientRes {
+  id: string;
 }
 
 const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
@@ -31,21 +39,27 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
   const [companyConstitution, setCompanyConstitution] = useState('');
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
-  const handleSubmit = event => {
+  const { data, error, loading, sendRequest } = useHttp<ResponsePOST<NewClientRes>>(
+    '/company/new',
+    RequestMethods.POST
+  );
+
+  const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
-    const validData = true;
-    if (validData) {
-    }
-    const data = {
-      name: companyName,
-      email: companyEmail,
-      phone: companyPhone,
-      rfc: companyRFC,
-      constitution: companyConstitution,
-      taxResidence: companyTaxResidence,
+
+    const body = {
+      company: {
+        name: companyName,
+        email: companyEmail,
+        phone: companyPhone,
+        rfc: companyRFC,
+        constitution: companyConstitution,
+        taxResidence: companyTaxResidence,
+      },
     };
 
-    console.log('sending data', data);
+    sendRequest({}, body, { 'Content-Type': 'application/json' });
+    console.log(data)
   };
 
   return (
@@ -57,11 +71,11 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
       BackdropProps={{ onClick: () => {} }}
     >
       <Box sx={style}>
-        <Typography id='modal-modal-title' variant='h6' component='h2'>
+        <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
           Create Client
         </Typography>
 
-        <Typography id='modal-modal-description' sx={{ mt: 2 }}>
+        <Typography id='modal-modal-description' sx={{ mt: 1, mb: -1, marginLeft: '10px' }}>
           Add a client to the platform
         </Typography>
 
@@ -122,7 +136,10 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
               variant='outlined'
               value={companyRFC}
               onChange={event => {
-                setCompanyRFC(event.target.value);
+                const inputValue = event.target.value;
+                if (inputValue.length <= 12) {
+                  setCompanyRFC(event.target.value);
+                }
               }}
             />
           </Box>
@@ -153,9 +170,9 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
             />
           </Box>
 
-          <Box sx={{ display: 'flex', justifyContent: 'center', mt: 2, gap: 2.5 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
             <CancelButton onClick={onClose} />
-            <Button type='submit'>Enviar</Button>
+            <CreateClientButton/>  
           </Box>
         </Box>
       </Box>
