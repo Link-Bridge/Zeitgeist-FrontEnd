@@ -8,9 +8,9 @@ interface ProtectedRouteProps {
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
   const isAuthenticated = sessionStorage.getItem('idToken'); // ¿cambiar a localStorage ?
 
-  if (!isAuthenticated) {
+  /**if (!isAuthenticated) {
     return <Navigate to='/' replace />;
-  }
+  }*/
 
   return <>{children}</>;
 };

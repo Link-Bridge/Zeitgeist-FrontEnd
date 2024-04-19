@@ -13,7 +13,8 @@ function App() {
   return (
     <Router>
       <Routes>
-        <Route path={RoutesPath.ROOT} element={<Auth />} />
+        {//<Route path={RoutesPath.ROOT} element={<Auth />} />
+        }
         <Route element={<Layout children={<Outlet />} />}>
           <Route
             path={RoutesPath.HOME}
