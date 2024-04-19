@@ -2,7 +2,8 @@ import { useEffect } from "react";
 import colors from "../../colors";
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
-import Divider from '@mui/joy/Divider'
+import Divider from '@mui/joy/Divider';
+import Grid from '@mui/joy/Grid';
 import { Report } from "../../types/project-report";
 import useHttp from "../../hooks/useHttp";
 import { RequestMethods, APIPath } from "../../utils/constants";
@@ -26,6 +27,16 @@ const ProjectReport: React.FC = () => {
     const { id } = useParams();
     const navigate = useNavigate();
     const { data, loading, sendRequest, error } = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
+    let totalTasks: any;
+    const keyMap = new Map<string, string>([
+      ['done', 'Done'],
+      ['inprogress', 'In process'],
+      ['underrevision', 'Under Revision'],
+      ['delayed', 'Delayed'],
+      ['postponed', 'Postponed'],
+      ['notstarted', 'Not started'],
+      ['cancelled', 'Cancelled']
+    ]);
 
     const handleClick = () => {
       navigate('/projects');
@@ -33,7 +44,7 @@ const ProjectReport: React.FC = () => {
 
     useEffect (() => {
       if (!data){
-        sendRequest()
+        sendRequest();
       }
       
     }, [data]);
@@ -41,6 +52,8 @@ const ProjectReport: React.FC = () => {
     if (loading) {
       return <div>Loading...</div>;
     }
+
+    totalTasks = data?.statistics?.total || 1;
 
     if (error){
       return <div>Error al cargar el reporte-</div>
@@ -150,14 +163,44 @@ const ProjectReport: React.FC = () => {
                   }
 
                 </Box>
-
-
               </Box>
-              <Box bgcolor={colors.extra} sx= {{
+
+              <Box bgcolor={colors.lighterGray} sx= {{
                 width: "50%",
                 borderRadius: "8px",
+                
               }}>
-              
+                {data.statistics && (    
+                  Object.entries(data.statistics).filter(([key, _]) => key !== 'total').map(([item, value]) => {
+                    
+                      return (
+                        <>
+                          <Grid container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
+                            <Grid xs={3}>
+                              <p>{keyMap.get(item)}</p>
+                            </Grid>
+
+                            <Grid xs={8}>
+                              <Box bgcolor={'#D5C7AD'} sx = {{
+                                borderRadius: "10px",
+                                width: "100%",
+                                gridColumn: "1/3",
+                                height: "15px",
+                              }}>
+                                <Box width = {`${(value * 100 / totalTasks).toString()}%`} bgcolor={colors.gold} sx = {{
+                                  borderRadius: "10px",
+                                  gridColumn: "1/3",
+                                  height: "15px",
+                                }}/>
+                              </Box>
+                            </Grid>
+
+                            <Grid xs={1}>
+                            <p>{value * 100 / totalTasks}%</p>
+                            </Grid>
+                          </Grid>
+                        </>
+                      )}))}
               </Box>
             </Box>
 
@@ -168,7 +211,7 @@ const ProjectReport: React.FC = () => {
               flexDirection: "column",
               gap: "10px",
             }}>
-              {data.tasks?.map((item, index) => {
+              {data.tasks?.map((item) => {
                 return (
                 <>
                   <Box>

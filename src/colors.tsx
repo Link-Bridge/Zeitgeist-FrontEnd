@@ -1,4 +1,5 @@
 const colors = {
+  lighterGray: '#E1E1E1',
   lightGray: '#929292',
   gray: '#686868',
   darkGray: '#515151',
@@ -24,7 +25,6 @@ const colors = {
   lightOrange: '#FFC774',
   null: '#C4C4C4',
   extra: '#D6CFBE',
-
 };
 
 export default colors;
