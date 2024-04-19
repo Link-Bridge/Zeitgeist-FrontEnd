@@ -2,6 +2,7 @@ import { useEffect } from "react";
 import colors from "../../colors";
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
+import Divider from '@mui/joy/Divider'
 import { Report } from "../../types/project-report";
 import useHttp from "../../hooks/useHttp";
 import { RequestMethods, APIPath } from "../../utils/constants";
@@ -66,10 +67,10 @@ const ProjectReport: React.FC = () => {
 
             <Box sx = {{
               display: "flex",
-              gap: "80px",
+              gap: "15px",
             }}>
               <Box sx= {{
-                width: "50%"
+                width: "50%",
               }}>
                 <Box sx = {{
                   display: "flex",
@@ -78,7 +79,7 @@ const ProjectReport: React.FC = () => {
                   <h1
                     style={{
                       color: "black",
-                      fontSize: '1.5rem',
+                      fontSize: '2rem',
                       lineHeight: '1.1',
                       letterSpacing: '1.5px',
                     }}
@@ -129,8 +130,8 @@ const ProjectReport: React.FC = () => {
                     <Box sx= {{
                       display: "flex",
                     }}>
-                      <img src={calendar} alt='calendar' className='w-3.5' />
-                      <p style={{fontSize: '.9rem'}}>&nbsp;Start Date</p>
+                      <img src={calendar} alt='calendar' className='w-5' />
+                      <p style={{fontSize: '1em'}}>&nbsp;Start Date</p>
                     </Box>
                     <p>{dateParser(data.project.startDate)}</p>
                   </Box>
@@ -140,8 +141,8 @@ const ProjectReport: React.FC = () => {
                       <Box sx= {{
                         display: "flex",
                       }}>
-                        <img src={calendar} alt='calendar' className='w-3.5' />
-                        <p style={{fontSize: '.9rem'}}>&nbsp;End Date</p>
+                        <img src={calendar} alt='calendar' className='w-5' />
+                        <p style={{fontSize: '1rem'}}>&nbsp;End Date</p>
                       </Box>
                       <p>{dateParser(data.project.endDate)}</p>
                     </Box>
@@ -152,23 +153,92 @@ const ProjectReport: React.FC = () => {
 
 
               </Box>
-              <Box sx= {{
+              <Box bgcolor={colors.extra} sx= {{
                 width: "50%",
                 borderRadius: "8px",
-                bgcolor: "primary.239",
               }}>
-              STATISTICS
+              
               </Box>
             </Box>
 
-            <br/><br/>
+            <br/><br/><br/>
 
             <Box sx = {{
               display: "flex",
+              flexDirection: "column",
               gap: "10px",
-              bgcolor: "primary.300",
             }}>
-              TASKS
+              {data.tasks?.map((item, index) => {
+                return (
+                <>
+                  <Box>
+                    <h3
+                      style={{
+                        color: "black",
+                        fontSize: '1.5rem',
+                        lineHeight: '1.1',
+                        letterSpacing: '1.5px',
+                      }}
+                    >{item.title}
+                    </h3>
+                    <p>{item.description}</p>
+
+                    <br/>
+
+                    <Box sx = {{
+                      display: "flex",
+                      gap: "20px",
+                    }}>
+                      <StatusChip status = {`${item.status || '-'}`}/>  
+                      <ColorChip label = {`TOTAL HOURS: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
+                      <ColorChip label = {`${item.waitingFor}`} color={`${colors.null}`}></ColorChip>
+                    </Box>
+
+                    <br/>
+
+                    <Box sx = {{
+                      display: "flex",
+                      gap: "60px"
+                    }}>
+                      <Box sx = {{
+                      display: "flex",
+                    }}>
+                        <img src={calendar} alt='calendar' className='w-5' />
+                        <p style={{
+                          color: "gray",
+                          fontSize: '1rem',
+                          letterSpacing: '1.5px',
+                        }}>
+                          &nbsp;Start Date:
+                        </p>
+                        <p>&nbsp;{dateParser(item.startDate)}</p>
+                      </Box>
+
+                      {item.endDate && (
+                        <Box sx = {{
+                          display: "flex"
+                        }}>
+                          <img src={calendar} alt='calendar' className='w-5' />
+                          <p style={{
+                            color: "gray",
+                            fontSize: '1rem',
+                            letterSpacing: '1.5px',
+                          }}>
+                            &nbsp;Due Date:
+                          </p>
+                          <p>&nbsp;{dateParser(item.endDate)}</p>
+                        </Box>
+                      )}
+                      
+                    </Box>
+
+                    <br/>
+
+                  </Box>
+                  <Divider/>
+                  <br />
+                </>
+              )})}
             </Box>
           </>
         ):  (
@@ -182,56 +252,3 @@ const ProjectReport: React.FC = () => {
   
   export default ProjectReport;
   
-
-  /*
-  <h2>{data.project.name}</h2>
-            <p>{data.project.description}</p>
-            <div className='p-10 py-4 flex'>
-              <StatusChip status = {`${data.project.status || '-'}`}/>
-              <ColorChip label = {`${data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
-              <ColorChip label = {`${data.project.totalHours}`} color={`${colors.null}`}></ColorChip>
-            </div>
-    
-            <div className='p-10 py-4 flex'>
-              <div>
-                <p>Matter</p>
-                <ColorChip label = {data.project.matter || ""} color={`${colors.null}`}></ColorChip>
-              </div>
-    
-              <div>
-                <p>Category</p>
-                <ColorChip label = {data.project.category || "" } color={`${colors.null}`}></ColorChip>
-              </div>
-    
-              <div>
-                <p>Chargeable</p>
-                <ColorChip label = {`${data.project.isChargeable}`? 'YES' : 'NO'} color={`${colors.null}`}></ColorChip>
-              </div>
-    
-            </div>
-    
-            <div className='p-10 py-4 flex'>
-            <div>
-                {
-                  data.project.startDate &&
-                  <>
-                    <p>Start Date</p>
-                    <p>{data.project.startDate.toString() || ''}</p>
-                  </>
-                }
-              </div>
-
-              <div>
-                {
-                  data.project.endDate &&
-                  <>
-                    <p>End Date</p>
-                    <p>{data.project.endDate.toString() || ''}</p>
-                  </>
-                }
-              </div>
-
-            </div>
-
-
-  */
