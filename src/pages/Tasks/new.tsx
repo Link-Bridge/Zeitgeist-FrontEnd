@@ -6,16 +6,11 @@ import CancelButton from '../../components/common/CancelButton';
 import CustomDatePicker from '../../components/common/DatePicker';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import SendButton from '../../components/common/SendButton';
-
-enum TaskStatus {
-  NOT_STARTED = 'Not Started',
-  IN_PROGRESS = 'In Progress',
-  UNDER_REVISSION = 'Under Revission',
-  DELAYED = 'Delayed',
-  POSTPONED = 'Postponed',
-  DONE = 'Done',
-  CANCELLED = 'Cancelled',
-}
+import useHttp from '../../hooks/useHttp';
+import { TaskEntity } from '../../types/task';
+import { TaskStatus } from '../../types/task-status';
+import { WaitingFor } from '../../types/waiting-for';
+import { RequestMethods } from '../../utils/constants';
 
 const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
@@ -26,13 +21,6 @@ const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.DONE]: '#6AA84F',
   [TaskStatus.CANCELLED]: '#FF7A7A',
 };
-
-enum WaitingFor {
-  CLIENT = 'Client',
-  TEAM = 'Team',
-  VENDOR = 'Vendor',
-  OTHER = 'Other',
-}
 
 const StyledSheet = styled(Sheet)(({ theme }) => ({
   padding: theme.spacing(3),
@@ -51,7 +39,7 @@ const Item = styled(Sheet)(({ theme }) => ({
   borderRadius: 8,
 }));
 
-const newTask = () => {
+const NewTask = () => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<Moment | null>(null);
@@ -83,17 +71,22 @@ const newTask = () => {
     setWaitingFor(value);
   };
 
+  const { sendRequest } = useHttp<TaskEntity>('/tasks/create', RequestMethods.POST);
+
   const handleSend = () => {
     const data = {
       title,
       description,
-      startDate,
-      dueDate,
-      status,
+      startDate: startDate ? startDate.toISOString() : null,
+      dueDate: dueDate ? dueDate.toISOString() : null,
+      status: status.toUpperCase(),
       waitingFor,
+      // TODO: Add project id when all project view is implemented
+      projectId: '7b31b84b-8862-4fd2-bb6f-ef63e1c9c5c6',
     };
 
     console.log('Sending data: ', data);
+    sendRequest({}, data, { 'Content-Type': 'application/json' });
   };
 
   return (
@@ -160,7 +153,7 @@ const newTask = () => {
             <GenericDropdown
               options={Object.values(WaitingFor)}
               onSelect={handleWaitingForSelect}
-              placeholder='Select status'
+              placeholder='Select waiting for ...'
             />
           </Item>
         </Grid>
@@ -195,4 +188,4 @@ const newTask = () => {
   );
 };
 
-export default newTask;
+export default NewTask;
