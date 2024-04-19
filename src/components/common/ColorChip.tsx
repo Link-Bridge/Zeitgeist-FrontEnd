@@ -8,7 +8,7 @@ interface ColorChipProps {
 function ColorChip(props: ColorChipProps) {
   return (
     <Chip label = {props.label}
-    style={{ backgroundColor: props.color, color: "black" }}/>
+    style={{ backgroundColor: props.color, color: "black", fontSize: '1rem'}}/>
   );
 }
 

@@ -33,7 +33,7 @@ function statusColor(status: string) {
 function StatusChip(props: StatusChipProps) {
   return (
     <Chip label = {props.status}
-    style={{ backgroundColor: statusColor(props.status), color: "black" }}/>
+    style={{ backgroundColor: statusColor(props.status), color: "black", fontSize: '1rem'}}/>
   );
 }
 
