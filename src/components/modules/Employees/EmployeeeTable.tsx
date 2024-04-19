@@ -56,7 +56,7 @@ export default function EmployeeTable({ employees }: { employees: Employee[] }) 
                 <Option value='employee.role'>{employee.role}</Option>
               </Select>
             </td>
-            <td><Chip variant='soft'> {employee.email} </Chip></td>
+            <td><Chip variant='soft' > {employee.email} </Chip></td>
             <td>
               <IconButton>
                 <DeleteOutlineIcon onClick={openModal} style={{ color: colors.gold }} />
