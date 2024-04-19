@@ -7,6 +7,7 @@ import colors from '../../../colors';
 import DeleteModal from '../../common/DeleteModal';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { Option, Select, selectClasses } from '@mui/joy';
+import Chip from '@mui/joy/chip';
 
 type Employee = {
   // photo: string;
@@ -55,7 +56,7 @@ export default function EmployeeTable({ employees }: { employees: Employee[] }) 
                 <Option value='employee.role'>{employee.role}</Option>
               </Select>
             </td>
-            <td>{employee.email}</td>
+            <td><Chip variant='soft'> {employee.email} </Chip></td>
             <td>
               <IconButton>
                 <DeleteOutlineIcon onClick={openModal} style={{ color: colors.gold }} />
