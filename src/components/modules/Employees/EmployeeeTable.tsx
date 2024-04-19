@@ -18,7 +18,7 @@ type Employee = {
   role: string;
 };
 
-export default function EmployeeTable({ employees }: { employees: Employee[] }) {
+export default function EmployeeTable() {
   const [open, setOpen] = useState(false);
   const req = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
   const openModal = () => setOpen(true);
