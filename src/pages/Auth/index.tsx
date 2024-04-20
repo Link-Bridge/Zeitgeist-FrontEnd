@@ -1,13 +1,19 @@
-import Button from '@mui/joy/Button';
-import { signInWithPopup } from 'firebase/auth';
 import React from 'react';
 import { useNavigate } from 'react-router-dom';
+
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
-import { auth, provider } from '../../config/firebase.config';
 import { RoutesPath } from '../../utils/constants';
 
+import Button from '@mui/joy/Button';
+
+import { signInWithPopup } from 'firebase/auth';
+import { getToken } from 'firebase/messaging';
+import { messaging, auth, provider } from '../../config/firebase.config';
+
+
 const Auth: React.FC = () => {
+  
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
@@ -42,6 +48,17 @@ const Auth: React.FC = () => {
     }
   };
 
+  const handleGetDevToken = async () => {
+    try {
+      const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
+      console.log('DeviceToken:', token)
+    } catch (error) {
+      console.error('Error getting token:', error)
+    }
+  }
+
+  handleGetDevToken();
+  
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>
       <div className='flex justify-end pr-16 pt-10'>
