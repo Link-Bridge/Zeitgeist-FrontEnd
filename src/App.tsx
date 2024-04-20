@@ -34,9 +34,8 @@ function App() {
       <SnackbarContext.Provider value={{ state, setState }}>
         <Router>
           <Routes>
-            {//<Route path={RoutesPath.ROOT} element={<Auth />} />
-            }
-        <Route element={<Layout children={<Outlet />} />}>
+            {<Route path={RoutesPath.ROOT} element={<Auth />} />}
+            <Route element={<Layout children={<Outlet />} />}>
               <Route
                 path={RoutesPath.HOME}
                 element={
