@@ -60,8 +60,6 @@ function App() {
               }
             />
           </Route>
-
-          <Route path={'/tasks/create'} element={<NewTaskPage />} />
         </Routes>
       </Router>
     </LocalizationProvider>
