@@ -21,23 +21,19 @@ const Clients = () => {
     sendRequest();
   }, []);
 
-  const [openModal, setOpenModal] = useState(false);
+  const [open, setOpen] = useState(false);
 
-  const handleOpenModal = () => {
-    setOpenModal(true);
-  };
-
-  const handleCloseModal = () => {
-    setOpenModal(false);
+  const openModal = () => {
+    setOpen(true);
   };
 
   return (
     <main className='p-10 py-0 flex flex-col'>
       <section className='flex flex-row justify-end p-5 gap-6'>
         <button>Not Archived</button>
-        <AddButton onClick={handleOpenModal} />
+        <AddButton onClick={openModal} />
       </section>
-      <NewClientFormModal open={openModal} onClose={handleCloseModal} />
+      <NewClientFormModal open={open} setOpen={setOpen} />
 
       <div className='flex justify-center w-full'>
         {loading && <Loader />}

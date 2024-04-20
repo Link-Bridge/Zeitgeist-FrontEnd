@@ -2,12 +2,13 @@ import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import useHttp from '../../../hooks/useHttp';
 import { ResponsePOST } from '../../../types/response.post';
 import { RequestMethods } from '../../../utils/constants';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 
 const style = {
   position: 'absolute' as 'absolute',
@@ -24,20 +25,22 @@ const style = {
 
 interface NewClientFormModalProps {
   open: boolean;
-  onClose: () => void;
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>
 }
 
 interface NewClientRes {
   id: string;
 }
 
-const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
+const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
   const [companyRFC, setCompanyRFC] = useState('');
   const [companyConstitution, setCompanyConstitution] = useState('');
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
+
+  const { setState } = useContext(SnackbarContext)
 
   const { data, error, loading, sendRequest } = useHttp<ResponsePOST<NewClientRes>>(
     '/company/new',
@@ -59,13 +62,20 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
     };
 
     sendRequest({}, body, { 'Content-Type': 'application/json' });
-    console.log(data)
+
+    if (data && data.status == 200) {
+      {
+        setState({ open: true, message: 'New client created', type: 'success'  })
+      }
+    }
   };
+
+ 
 
   return (
     <Modal
       open={open}
-      onClose={onClose}
+      onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
       BackdropProps={{ onClick: () => {} }}
@@ -171,7 +181,7 @@ const NewClientFormModal = ({ open, onClose }: NewClientFormModalProps) => {
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
-            <CancelButton onClick={onClose} />
+            <CancelButton onClick={() => setOpen(false)} />
             <CreateClientButton/>  
           </Box>
         </Box>
