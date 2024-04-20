@@ -3,7 +3,7 @@ import colors from '../../../colors';
 
 
 
-function CreateClientButton() {
+function CreateClientButton({}) {
   return (
     <Button 
       type='submit'

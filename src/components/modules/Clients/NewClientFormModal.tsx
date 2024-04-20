@@ -47,9 +47,21 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
     RequestMethods.POST
   );
 
+  const validateForm = () => {
+    return !!companyName && !!companyEmail && !!companyPhone && !!companyRFC && !!companyConstitution && !!companyTaxResidence;
+  };
+
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if(!validateForm){
+      alert('Please fill all the information');
+    } else{
+      setState({ open: true, message: 'A message', type: 'success' })
+      setOpen(false)
+      window.location.reload();
+    }
+    
     const body = {
       company: {
         name: companyName,
@@ -62,15 +74,8 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
     };
 
     sendRequest({}, body, { 'Content-Type': 'application/json' });
-
-    if (data && data.status == 200) {
-      {
-        setState({ open: true, message: 'New client created', type: 'success'  })
-      }
-    }
   };
 
- 
 
   return (
     <Modal
