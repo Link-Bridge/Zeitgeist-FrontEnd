@@ -60,10 +60,11 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
     customHeaders: Record<string, string> = {}
   ): Promise<void> => {
     setLoading(true);
+
     const idToken = sessionStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
+      // Authorization: `Bearer ${idToken}`,
       ...customHeaders,
     };
 
