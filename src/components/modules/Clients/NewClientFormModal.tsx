@@ -2,16 +2,16 @@ import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
-import { ResponsePOST } from '../../../types/response.post';
+import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
-import { SnackbarContext } from '../../../hooks/snackbarContext';
 
 const style = {
-  position: 'absolute' as 'absolute',
+  position: 'absolute' as const,
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
@@ -25,14 +25,11 @@ const style = {
 
 interface NewClientFormModalProps {
   open: boolean;
-  setOpen: React.Dispatch<React.SetStateAction<boolean>>
+  setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
 }
 
-interface NewClientRes {
-  id: string;
-}
-
-const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
+const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalProps) => {
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
@@ -40,28 +37,33 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
   const [companyConstitution, setCompanyConstitution] = useState('');
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
-  const { setState } = useContext(SnackbarContext)
+  const { setState } = useContext(SnackbarContext);
 
-  const { data, error, loading, sendRequest } = useHttp<ResponsePOST<NewClientRes>>(
-    '/company/new',
-    RequestMethods.POST
-  );
+  const { data, error, sendRequest } = useHttp<CompanyEntity>('/company/new', RequestMethods.POST);
+
+  useEffect(() => {
+    handleError();
+    handleSuccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error]);
 
   const validateForm = () => {
-    return !!companyName && !!companyEmail && !!companyPhone && !!companyRFC && !!companyConstitution && !!companyTaxResidence;
+    return (
+      companyName != '' &&
+      companyEmail != '' &&
+      companyPhone != '' &&
+      companyRFC != '' &&
+      companyConstitution != '' &&
+      companyTaxResidence != ''
+    );
   };
 
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    if(!validateForm){
-      alert('Please fill all the information');
-    } else{
-      setState({ open: true, message: 'A message', type: 'success' })
-      setOpen(false)
-      window.location.reload();
-    }
-    
+    if (!validateForm())
+      return setState({ open: true, message: 'All fields are required', type: 'danger' });
+
     const body = {
       company: {
         name: companyName,
@@ -76,6 +78,26 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
     sendRequest({}, body, { 'Content-Type': 'application/json' });
   };
 
+  const handleError = () => {
+    if (error) setState({ open: true, message: error.response.data.error, type: 'danger' });
+    console.log(error)
+  };
+
+  const handleSuccess = () => {
+    if (!error && data && data.id) {
+      setState({ open: true, message: 'Company created', type: 'success' });
+      setOpen(false);
+
+      setCompanyName('');
+      setCompanyEmail('');
+      setCompanyPhone('');
+      setCompanyRFC('');
+      setCompanyConstitution('');
+      setCompanyTaxResidence('');
+
+      setRefetch(true);
+    }
+  };
 
   return (
     <Modal
@@ -106,7 +128,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
         >
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              required
+              // required
               id='clientName'
               label='Clients name'
               variant='outlined'
@@ -118,7 +140,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
             />
 
             <TextField
-              required
+              // required
               id='clientEmail'
               label='Email'
               type='email'
@@ -132,7 +154,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              required
+              // required
               id='clientPhone'
               label='Phone number'
               type='tel'
@@ -145,7 +167,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
             />
 
             <TextField
-              required
+              // required
               id='clientRFC'
               label='RFC'
               variant='outlined'
@@ -161,7 +183,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              required
+              // required
               id='clientConstituton'
               label='Constitucion date'
               type='Date'
@@ -174,7 +196,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
             />
 
             <TextField
-              required
+              // required
               id='clientTaxResidence'
               label='Tax residence'
               variant='outlined'
@@ -187,7 +209,7 @@ const NewClientFormModal = ({ open, setOpen}: NewClientFormModalProps) => {
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
             <CancelButton onClick={() => setOpen(false)} />
-            <CreateClientButton/>  
+            <CreateClientButton />
           </Box>
         </Box>
       </Box>

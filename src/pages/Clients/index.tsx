@@ -16,12 +16,13 @@ const Clients = () => {
   );
 
   const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
+  const [open, setOpen] = useState(false);
+  const [refetch, setRefetch] = useState(false);
 
   useEffect(() => {
     sendRequest();
-  }, []);
-
-  const [open, setOpen] = useState(false);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch]);
 
   const openModal = () => {
     setOpen(true);
@@ -33,7 +34,7 @@ const Clients = () => {
         <button>Not Archived</button>
         <AddButton onClick={openModal} />
       </section>
-      <NewClientFormModal open={open} setOpen={setOpen} />
+      <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
 
       <div className='flex justify-center w-full'>
         {loading && <Loader />}

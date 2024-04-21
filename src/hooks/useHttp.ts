@@ -60,6 +60,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
     customHeaders: Record<string, string> = {}
   ): Promise<void> => {
     setLoading(true);
+    setError(null);
     const idToken = sessionStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
@@ -84,7 +85,6 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
       setData(response.data as T);
     } catch (error) {
       setError(error as Error);
-      console.error(error);
     } finally {
       setLoading(false);
     }
