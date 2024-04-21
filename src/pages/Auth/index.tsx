@@ -35,6 +35,9 @@ const Auth: React.FC = () => {
         throw new Error('Failed to sign up');
       }
 
+      const responseData = await response.json();
+      localStorage.setItem('employee', JSON.stringify(responseData.data));
+
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
