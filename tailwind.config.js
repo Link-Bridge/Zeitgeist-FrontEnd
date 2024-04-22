@@ -5,6 +5,7 @@ export default {
   theme: {
     extend: {
       colors: {
+        lighterGray: '#BDBDBD',
         lightGray: '#929292',
         gray: '#686868',
         darkGray: '#515151',
@@ -28,6 +29,7 @@ export default {
         montserrat: ['montserrat', 'sans-serif'],
       },
     },
+
   },
   plugins: [],
 };
