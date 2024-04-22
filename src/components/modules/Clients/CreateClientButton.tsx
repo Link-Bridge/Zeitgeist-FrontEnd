@@ -12,6 +12,8 @@ function CreateClientButton({ loading }: CreateClientButtonProps) {
       variant='solid'
       size='sm'
       sx={{
+        height: '36px',
+        marginTop: '10px',
         backgroundColor: colors.darkGold, // Llamar el color correspondiente
         '&:hover': {
           backgroundColor: colors.darkerGold,
@@ -19,7 +21,7 @@ function CreateClientButton({ loading }: CreateClientButtonProps) {
       }}
     >
       {loading && 'Creating...'}
-      {!loading && 'Create'}
+      {!loading && 'Create Client'}
     </Button>
   );
 }
