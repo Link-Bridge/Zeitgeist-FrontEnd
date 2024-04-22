@@ -5,9 +5,10 @@ interface AddButtonProps {
   onClick: () => void;
 }
 
-function AddButton({ onClick } : AddButtonProps) {
+function AddButton({ onClick }: AddButtonProps) {
   return (
-    <Button onClick={onClick}
+    <Button
+      onClick={onClick}
       variant='solid'
       size='sm'
       sx={{

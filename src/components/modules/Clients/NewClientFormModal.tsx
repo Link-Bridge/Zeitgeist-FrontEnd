@@ -39,7 +39,10 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
   const { setState } = useContext(SnackbarContext);
 
-  const { data, error, sendRequest } = useHttp<CompanyEntity>('/company/new', RequestMethods.POST);
+  const { data, error, loading, sendRequest } = useHttp<CompanyEntity>(
+    '/company/new',
+    RequestMethods.POST
+  );
 
   useEffect(() => {
     handleError();
@@ -79,8 +82,15 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   };
 
   const handleError = () => {
-    if (error) setState({ open: true, message: error.response.data.error, type: 'danger' });
-    console.log(error)
+    if (error && error.code && error.code == 'ERR_NETWORK')
+      return setState({
+        open: true,
+        message: 'An unexpected error occurred. Please try again',
+        type: 'danger',
+      });
+
+    if (error && error.response.data)
+      return setState({ open: true, message: error.response.data.error, type: 'danger' });
   };
 
   const handleSuccess = () => {
@@ -209,7 +219,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
             <CancelButton onClick={() => setOpen(false)} />
-            <CreateClientButton />
+            <CreateClientButton loading={loading} />
           </Box>
         </Box>
       </Box>
