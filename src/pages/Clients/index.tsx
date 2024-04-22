@@ -20,17 +20,16 @@ const Clients = () => {
   }, []);
 
   return (
-<<<<<<<<< Temporary merge branch 1
-    <main className="p-10 py-0 flex flex-col">
+    <main className='p-10 py-0 flex flex-col'>
       <section className='flex flex-row justify-end p-5 gap-6'>
         <button>Not Archived</button>
         <AddButton />
       </section>
-      <div className="flex justify-center w-full">
-        {isLoading && <Loader />}
+      <div className='flex justify-center w-full'>
+        {loading && <Loader />}
         {error && <p>Error loading companies.</p>}
       </div>
-      {!isLoading && !error && companies && (
+      {!loading && !error && companies && (
         <CardsGrid>
           {companies.map(company => (
             <ClientCard
