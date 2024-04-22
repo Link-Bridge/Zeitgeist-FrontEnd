@@ -1,6 +1,6 @@
 import { makeStyles } from '@mui/styles';
 import { DatePicker } from '@mui/x-date-pickers';
-import moment, { Moment } from 'moment';
+import dayjs from 'dayjs';
 
 const useStyles = makeStyles(theme => ({
   datePicker: {
@@ -31,8 +31,8 @@ const useStyles = makeStyles(theme => ({
 }));
 
 interface CustomDatePickerProps {
-  value: Moment | null;
-  onChange: (date: Moment | null) => void;
+  value: dayjs.Dayjs | null;
+  onChange: (date: dayjs.Dayjs | null) => void;
 }
 
 /**
@@ -46,8 +46,8 @@ interface CustomDatePickerProps {
 const CustomDatePicker = ({ value, onChange }: CustomDatePickerProps) => {
   const classes = useStyles();
 
-  const handleDateChange = (date: Moment | null) => {
-    onChange(date ? moment(date).startOf('day') : null);
+  const handleDateChange = (date: dayjs.Dayjs | null) => {
+    onChange(date);
   };
 
   return (
@@ -55,7 +55,7 @@ const CustomDatePicker = ({ value, onChange }: CustomDatePickerProps) => {
       className={classes.datePicker}
       sx={{ focus: 'outlined-none' }}
       format='DD/MM/YYYY'
-      value={value ? moment(value) : null}
+      value={value}
       onChange={handleDateChange}
     />
   );

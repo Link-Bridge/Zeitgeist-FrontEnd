@@ -9,7 +9,7 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
-  const location = useLocation();
+  const location = useLocation();  
 
   const pathToText = () => {
     if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
@@ -17,6 +17,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
     if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
     if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}report/`)) return 'Project Report';
 
     return 'Welcome Back';
   };

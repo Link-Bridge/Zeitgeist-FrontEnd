@@ -1,4 +1,5 @@
 /** @type {import('tailwindcss').Config} */
+
 export default {
   content: ['./index.html', './src/**/*.{vue,jsx,tsx}'],
   theme: {
@@ -25,7 +26,7 @@ export default {
         darkerBlue: '#273086',
       },
       fontFamily: {
-        sans: ['Montserrat', 'sans-serif'],
+        montserrat: ['montserrat', 'sans-serif'],
       },
     },
 

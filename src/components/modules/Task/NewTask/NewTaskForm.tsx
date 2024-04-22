@@ -1,5 +1,5 @@
 import { Grid, Input, Textarea } from '@mui/joy';
-import { Moment } from 'moment';
+import dayjs from 'dayjs';
 import { useState } from 'react';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
@@ -35,8 +35,8 @@ interface NewTaskFormProps {
 const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps): JSX.Element => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
-  const [startDate, setStartDate] = useState<Moment | null>(null);
-  const [dueDate, setDueDate] = useState<Moment | null>(null);
+  const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
+  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [waitingFor, setWaitingFor] = useState<WaitingFor | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
@@ -50,11 +50,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
     setDescription(event.target.value);
   };
 
-  const handleStartDateChange = (date: Moment | null) => {
+  const handleStartDateChange = (date: dayjs.Dayjs | null) => {
     setStartDate(date);
   };
 
-  const handleDueDateChange = (date: Moment | null) => {
+  const handleDueDateChange = (date: dayjs.Dayjs | null) => {
     setDueDate(date);
   };
 
