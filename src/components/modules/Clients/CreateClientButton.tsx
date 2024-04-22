@@ -1,11 +1,13 @@
 import Button from '@mui/joy/Button';
 import colors from '../../../colors';
 
+interface CreateClientButtonProps {
+  loading: boolean;
+}
 
-
-function CreateClientButton({}) {
+function CreateClientButton({ loading }: CreateClientButtonProps) {
   return (
-    <Button 
+    <Button
       type='submit'
       variant='solid'
       size='sm'
@@ -16,7 +18,8 @@ function CreateClientButton({}) {
         },
       }}
     >
-      Create Client
+      {loading && 'Creating...'}
+      {!loading && 'Create'}
     </Button>
   );
 }
