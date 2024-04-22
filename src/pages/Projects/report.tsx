@@ -196,7 +196,7 @@ const ProjectReport: React.FC = () => {
                             </Grid>
 
                             <Grid xs={1}>
-                            <p>{value * 100 / totalTasks}%</p>
+                            <p>{Math.round(value * 100 / totalTasks)}%</p>
                             </Grid>
                           </Grid>
                         </>

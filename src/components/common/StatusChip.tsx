@@ -6,24 +6,26 @@ interface StatusChipProps {
 }
   
 function statusColor(status: string) {
+    status = status.toUpperCase();
+
     switch (status) {
-        case "Accepted":
+        case "ACCEPTED":
             return colors.lightSuccess;
-        case "Not Started":
+        case "NOT STARTED":
             return colors.lightRed;
-        case "In Progress":
+        case "IN PROGRESS":
             return colors.warning;
-        case "Under Revision":
+        case "UNDER REVISION":
             return colors.purple;
-        case "Delayed":
+        case "DELAYED":
             return colors.lightOrange;
-        case "Postponed":
+        case "POSTPONED":
             return colors.blue;
-        case "Done":
+        case "DONE":
             return colors.success;
-        case "Cancelled":
+        case "CANCELLED":
             return colors.warning;
-        case "In quotation":
+        case "IN QUOTATION":
             return colors.darkBlue
         default:
             return colors.null;
