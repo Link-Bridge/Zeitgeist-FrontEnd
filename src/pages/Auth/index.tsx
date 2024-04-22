@@ -42,23 +42,40 @@ const Auth: React.FC = () => {
       }
 
       navigate(RoutesPath.HOME);
+      handleGetDevToken(result.user.email)
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
       throw error;
     }
   };
 
-  const handleGetDevToken = async () => {
+  const handleGetDevToken = async (userEmail: string | null) => {
     try {
       const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
       console.log('DeviceToken:', token)
+
+      if(token){
+        const response = await fetch('http://localhost:4000/api/v1/employee/deviceToken', {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            DeviceToken: token,
+          },
+          body: JSON.stringify({
+            email: userEmail,
+          }),
+        });
+
+        if (!response.ok) {
+          throw new Error('Failed to get deviceToken');
+        }
+      }
+      
     } catch (error) {
       console.error('Error getting token:', error)
     }
   }
 
-  handleGetDevToken();
-  
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>
       <div className='flex justify-end pr-16 pt-10'>
