@@ -11,6 +11,10 @@ export enum RoutesPath {
   EMPLOYEES = '/employees',
 }
 
+export enum APIPath {
+  PROJECT_REPORT = '/project/report',
+}
+
 export enum RequestMethods {
   GET = 'GET',
   POST = 'POST',
