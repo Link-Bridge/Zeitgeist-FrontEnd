@@ -40,9 +40,10 @@ const Auth: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to sign up');
       }
-
-      navigate(RoutesPath.HOME);
+      
       handleGetDevToken(result.user.email)
+      navigate(RoutesPath.HOME);
+      
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
       throw error;
@@ -52,22 +53,24 @@ const Auth: React.FC = () => {
   const handleGetDevToken = async (userEmail: string | null) => {
     try {
       const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
-      console.log('DeviceToken:', token)
 
       if(token){
-        const response = await fetch('http://localhost:4000/api/v1/employee/deviceToken', {
+        const response = await fetch('http://localhost:4000/api/v1/employee/token/save', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            DeviceToken: token,
           },
           body: JSON.stringify({
             email: userEmail,
+            deviceToken: token,
           }),
         });
 
         if (!response.ok) {
           throw new Error('Failed to get deviceToken');
+        }
+        else{
+          //console.log(response)
         }
       }
       
