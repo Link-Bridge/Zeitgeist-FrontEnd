@@ -14,10 +14,6 @@ Descripción clara y concisa de los cambios realizados. Incluye el contexto rele
 
 Estima la complejidad de la tarea en puntos de historia.
 
-### Pruebas
-
-Describe la prueba unitaria de pruebas utilizada para este cambio. Incluye detalles sobre pruebas unitarias, pruebas de integración, pruebas de aceptación y cualquier manual realizado.
-
 ### Criterios de aceptación
 
 Describe los criterios que deben cumplirse para que este PR sea aceptado. Esto debe estar alineado con la historia de usuario o tarea original.
@@ -35,6 +31,6 @@ Enumera cualquier dependencia o PR relacionado que deba fusionarse antes o despu
 - [ ] Cualquier nueva dependencia está documentada y justificada.
 - [ ] Los cambios han sido probados en un entorno de preparación (si corresponde).
 
-### Notas Adicionales
+### ScreenShot de la pagina 
 
-Cualquier información adicional que el revisor o el autor del PR necesite saber. Aquí es donde se puede incluir imagenes, gifs, etc.
+Las imagenes deben coincidir con los prototipos de Figma
