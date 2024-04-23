@@ -1,6 +1,7 @@
 import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import { RoutesPath } from '../../utils/constants';
+import ProjectReport from './report';
 import NewProject from './new';
 
 const Projects = () => {
@@ -19,6 +20,7 @@ const Projects = () => {
         }
       />
       <Route path='/new' element={<NewProject />} />
+      <Route path='/report/:id'element={<ProjectReport />} />
     </Routes>
   );
 };
