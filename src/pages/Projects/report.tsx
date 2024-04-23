@@ -14,6 +14,9 @@ import left_arrow from '../../assets/icons/left_arrow.svg';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
 import { useParams } from "react-router-dom";
+import { PDFDownloadLink } from "@react-pdf/renderer";
+import ProjectReportPDF from "./report-pdf";
+import { renderToStaticMarkup } from 'react-dom/server';
 
 function dateParser (date: Date): string  {
   const arr = date.toString().split('-');
@@ -23,11 +26,16 @@ function dateParser (date: Date): string  {
   return `${day}-${month}-${year}`;
 }
 
+function GeneratePDF():  string {
+  const html = renderToStaticMarkup(<ProjectReport />);
+  return html;
+}
+
 const ProjectReport: React.FC = () => {
     const { id } = useParams();
-    const navigate = useNavigate();
+    //const navigate = useNavigate();
     const { data, loading, sendRequest, error } = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
-    let totalTasks: any;
+    let totalTasks: number;
     const keyMap = new Map<string, string>([
       ['done', 'Done'],
       ['inprogress', 'In process'],
@@ -38,9 +46,9 @@ const ProjectReport: React.FC = () => {
       ['cancelled', 'Cancelled']
     ]);
 
-    const handleClick = () => {
+    /*const handleClick = () => {
       navigate('/projects');
-    }
+    }*/
 
     useEffect (() => {
       if (!data){
@@ -53,7 +61,7 @@ const ProjectReport: React.FC = () => {
       return <div>Loading...</div>;
     }
 
-    totalTasks = data?.statistics?.total || 1;
+    totalTasks = Number(data?.statistics?.total) || 1;
 
     if (error){
       return <div>Error al cargar el reporte-</div>
@@ -63,7 +71,7 @@ const ProjectReport: React.FC = () => {
       <main className='p-10 py-4'>
         {data? (
           <>
-            <Box onClick={handleClick} sx= {{
+            {/*<Box onClick={handleClick} sx= {{
               display: "flex",
               justifyContent: "flex-end",
             }}>
@@ -74,7 +82,7 @@ const ProjectReport: React.FC = () => {
                   color: colors.darkerGold,
                 },
               }}> &nbsp;{'Go Back'} </Link>
-            </Box>
+            </Box>*/}
 
             <br/>
 
@@ -98,7 +106,9 @@ const ProjectReport: React.FC = () => {
                     }}
                   >{data.project.name}
                   </h1>
-                  <img src={download} alt='Download' className='w-6' />
+                  <PDFDownloadLink document={<ProjectReportPDF html={GeneratePDF()}/>} fileName={`report_${data.project.name}`}>
+                    <img src={download} alt='Download' className='w-6' />
+                  </PDFDownloadLink>
                 </Box>
                 <p>{data.project.description}</p>
                 
@@ -175,7 +185,7 @@ const ProjectReport: React.FC = () => {
                     
                       return (
                         <>
-                          <Grid container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
+                          <Grid key={item} container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
                             <Grid xs={3}>
                               <p>{keyMap.get(item)}</p>
                             </Grid>
@@ -214,7 +224,7 @@ const ProjectReport: React.FC = () => {
               {data.tasks?.map((item) => {
                 return (
                 <>
-                  <Box>
+                  <Box key={item.title}>
                     <h3
                       style={{
                         color: "black",
