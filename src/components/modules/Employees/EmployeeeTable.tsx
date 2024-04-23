@@ -1,9 +1,8 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { IconButton, Option, Select, selectClasses } from '@mui/joy';
-import Table from '@mui/joy/Table';
 import Chip from '@mui/joy/Chip';
+import Table from '@mui/joy/Table';
 import { Avatar } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
@@ -19,13 +18,18 @@ type Employee = {
   lastName: string;
   email: string;
   role: string;
+  id: string;
 };
 
 export default function EmployeeTable() {
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
   const req = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
-  const openModal = () => setOpen(true);
+  const openModal = (id: string) => {
+    setOpen(true);
+    setId(id);
+  };
+  const [id, setId] = useState('');
   console.log(req.data?.data);
 
   useEffect(() => {
@@ -54,11 +58,7 @@ export default function EmployeeTable() {
               req.data?.data.map(employee => (
                 <tr>
                   <td>
-                    {employee.imageUrl ? (
-                      <Avatar src={employee.imageUrl}></Avatar>
-                    ) : (
-                      <AccountCircleIcon></AccountCircleIcon>
-                    )}
+                    {employee.imageUrl ? <Avatar src={employee.imageUrl}></Avatar> : <Avatar />}
                   </td>
                   <td>
                     {employee.firstName} {employee.lastName}{' '}
@@ -85,7 +85,10 @@ export default function EmployeeTable() {
                   </td>
                   <td>
                     <IconButton>
-                      <DeleteOutlineIcon onClick={openModal} style={{ color: colors.gold }} />
+                      <DeleteOutlineIcon
+                        onClick={() => openModal(employee.id)}
+                        style={{ color: colors.gold }}
+                      />
                     </IconButton>
                   </td>
                 </tr>
@@ -95,6 +98,7 @@ export default function EmployeeTable() {
             open={open}
             title='Delete Employee'
             description='Are you sure you want to delete this employee?'
+            id={id}
             setOpen={setOpen}
           />
         </>

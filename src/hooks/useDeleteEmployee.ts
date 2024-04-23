@@ -6,7 +6,7 @@ const useDeleteEmployee = () => {
 
   const deleteEmployee = async (id: string) => {
     try {
-      await axios.delete(`http://localhost:4000/api/v1/employees/${id}`);
+      await axios.delete(`http://localhost:4000/api/v1/employee/delete/${id}`);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(new Error(err.response?.data?.message || err.message));
