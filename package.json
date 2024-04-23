@@ -21,6 +21,8 @@
     "@mui/x-date-pickers": "^7.2.0",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",
+    "dayjs": "^1.11.10",
+    "firebase": "^10.11.0",
     "react": "^18.2.0",
     "react-dom": "^18.2.0",
     "react-router-dom": "6"
