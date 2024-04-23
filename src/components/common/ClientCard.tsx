@@ -2,6 +2,13 @@ import { Chip } from '@mui/joy';
 import WorkIcon from '../../assets/icons/work_filled.svg';
 import CardContainer from './CardContainer';
 
+/**
+ * @brief Displays and organizes client information.
+ * @param ClientCardProps props: properties of a client information
+ * @return CardContainer and the visual elements that
+ * organize each client information
+ */
+
 interface ClientCardProps {
   name: string;
   accountingHours: number;
