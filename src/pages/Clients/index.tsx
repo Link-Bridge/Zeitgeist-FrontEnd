@@ -89,6 +89,11 @@ const clients = [
 ];
 
 const Clients = () => {
+  const { data, isLoading, error } = useFetch<Response<CompanyEntity[]>>(
+    'http://localhost:4000/api/v1/company'
+  );
+  const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
+
   return (
     <main>
       <section className='py-0 flex flex-col gap-4'>

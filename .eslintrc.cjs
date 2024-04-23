@@ -22,7 +22,7 @@ module.exports = {
       'warn',
       { allowConstantExport: true },
     ],
-    'prettier/prettier': ['error', {}, { usePrettierrc: true }],
+    'prettier/prettier': ['error', {"endOfLine": "auto"}, { usePrettierrc: true, }],
   },
   settings: {
     react: {
