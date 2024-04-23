@@ -1,26 +1,9 @@
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 
-import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
-import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import PersonPinOutlinedIcon from '@mui/icons-material/PersonPinOutlined';
-import SnippetFolderOutlinedIcon from '@mui/icons-material/SnippetFolderOutlined';
-import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-
-import Chip from '@mui/joy/Chip';
-import Divider from '@mui/joy/Divider';
-import Dropdown from '@mui/joy/Dropdown';
-import Menu from '@mui/joy/Menu';
-import MenuButton from '@mui/joy/MenuButton';
-import MenuItem from '@mui/joy/MenuItem';
-import AddButton from '../../../components/common/AddButton';
-import CardProject from '../../../components/common/CardProject';
-import DeleteModal from '../../../components/common/DeleteModal';
+import useHttp from '../../../hooks/useHttp';
+import { CompanyEntity } from '../../../types/company';
+import { Response } from '../../../types/response';
+import { RequestMethods } from '../../../utils/constants';
 
 const Items = [
   { projectId: 1, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Accounting' },
@@ -34,19 +17,42 @@ const Items = [
   { projectId: 9, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Legal' },
 ];
 
-type Props = {};
+// const company = {
+//   name: 'Pollmann Mexico',
+//   created_at: '24/01/2000',
+//   email: 'nameemailtest@gmail.com',
+//   rfc: 'VECJ880326',
+//   mexican_address: 'Direccion Fiscal',
+//   phone_number: '(212)-456-7890',
+//   constitution_date: '24/01/2000',
+// };
 
-const index = (props: Props) => {
-  const { clientId } = useParams();
+type ClientDetailProps = {
+  clientId: string;
+};
+
+const index = ({ clientId }: ClientDetailProps) => {
   const [open, setOpen] = useState<boolean>(false);
+
+  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
+    `/company/${clientId}`,
+    RequestMethods.GET
+  );
+
+  // const company: CompanyEntity = data && data.data ? data.data.flat() : {};
 
   const ToggleModal = () => {
     setOpen(!open);
   };
 
-  useEffect(() => {}, [clientId]);
+  useEffect(() => {
+    sendRequest();
+    console.log(data);
+  }, [data]);
 
-  return (
+  return <h1>s</h1>;
+
+  /*  return (
     <main className='bg-white rounded-xl p-6'>
       <DeleteModal
         ToggleModal={ToggleModal}
@@ -55,58 +61,60 @@ const index = (props: Props) => {
         title={'Delete Client'}
         description={'Are you sure you want to delete this client?'}
       ></DeleteModal>
-      <section className='flex justify-between'>
-        <h2 className='text-2xl text-gold font-medium'>Pollmann Mexico</h2>
-        <section className='flex items-center gap-5'>
-          <Chip size='lg' color='primary' variant='outlined'>
-            01/01/2021
-          </Chip>
-          <EditOutlinedIcon
-            sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-            className='text-gold'
-          />
-          <ArchiveOutlinedIcon
-            sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-            className='text-gold'
-          />
-          <DeleteOutlineOutlinedIcon
-            sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-            className='text-gold'
-            onClick={() => {
-              ToggleModal();
-            }}
-          />
+      {data && !loading && company && (
+        <section className='flex justify-between'>
+          <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
+          <section className='flex items-center gap-5'>
+            <Chip size='lg' color='primary' variant='outlined'>
+              {company.created_at}
+            </Chip>
+            <EditOutlinedIcon
+              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+              className='text-gold'
+            />
+            <ArchiveOutlinedIcon
+              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+              className='text-gold'
+            />
+            <DeleteOutlineOutlinedIcon
+              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+              className='text-gold'
+              onClick={() => {
+                ToggleModal();
+              }}
+            />
+          </section>
         </section>
-      </section>
+      )}
 
-      <section className='flex gap-20 mt-7 font-montserrat'>
-        <article className='flex gap-4 w-full'>
-          <EmailOutlinedIcon />
-          <p>nameemailtest@gmail.com</p>
-        </article>
-        <article className='flex gap-4 w-full'>
-          <AbcOutlinedIcon />
-          <p>VECJ880326</p>
-        </article>
-        <article className='flex gap-4 w-full'>
-          <BusinessOutlinedIcon />
-          <p>D.Social</p>
-        </article>
-      </section>
-      <section className='flex gap-20 mt-5 mb-8'>
-        <article className='flex gap-4 w-full'>
-          <StayPrimaryPortraitOutlinedIcon />
-          <p>(212)-456-7890</p>
-        </article>
-        <article className='flex gap-4 w-full'>
-          <SnippetFolderOutlinedIcon />
-          <p>Constitución</p>
-        </article>
-        <article className='flex gap-4 w-full'>
-          <PersonPinOutlinedIcon />
-          <p>test@gmail.com</p>
-        </article>
-      </section>
+      {!loading && company && (
+        <>
+          <section className='flex mt-7 font-montserrat'>
+            <article className='flex gap-4 w-full'>
+              <EmailOutlinedIcon />
+              <p>{company.email}</p>
+            </article>
+            <article className='flex gap-4 w-full'>
+              <AbcOutlinedIcon />
+              <p>{company.rfc}</p>
+            </article>
+            <article className='flex gap-4 w-full'>
+              <BusinessOutlinedIcon />
+              <p>{company.mexican_address}</p>
+            </article>
+          </section>
+          <section className='flex mt-5 mb-8'>
+            <article className='flex gap-4 w-1/3'>
+              <StayPrimaryPortraitOutlinedIcon />
+              <p>{company.phone_number}</p>
+            </article>
+            <article className='flex gap-4 w-1/3'>
+              <SnippetFolderOutlinedIcon />
+              <p>{company.constitution_date}</p>
+            </article>
+          </section>
+        </>
+      )}
 
       <Divider />
 
@@ -139,7 +147,7 @@ const index = (props: Props) => {
         </section>
       </section>
     </main>
-  );
+  ); */
 };
 
 export default index;
