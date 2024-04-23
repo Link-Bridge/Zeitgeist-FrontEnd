@@ -21,7 +21,6 @@ const Clients = () => {
 
   useEffect(() => {
     sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   const openModal = () => {

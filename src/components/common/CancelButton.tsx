@@ -5,6 +5,13 @@ interface CancelButtonProps {
   onClick: () => void;
 }
 
+/**
+ * @brief Button to cancel action
+ *
+ * @param onClick provide clickable property to the button
+ * @return Button component to cancel an action
+ */
+
 const CancelButton = ({ onClick }: CancelButtonProps) => {
   return (
     <Button

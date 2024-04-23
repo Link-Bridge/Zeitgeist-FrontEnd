@@ -5,6 +5,13 @@ interface CreateClientButtonProps {
   loading: boolean;
 }
 
+/**
+ * @brief Button to create a new client
+ *
+ * @param loading indicates the loading process
+ * @return Button component acording the loading state
+ */
+
 function CreateClientButton({ loading }: CreateClientButtonProps) {
   return (
     <Button
