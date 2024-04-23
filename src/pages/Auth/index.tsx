@@ -9,11 +9,9 @@ import Button from '@mui/joy/Button';
 
 import { signInWithPopup } from 'firebase/auth';
 import { getToken } from 'firebase/messaging';
-import { messaging, auth, provider } from '../../config/firebase.config';
-
+import { auth, messaging, provider } from '../../config/firebase.config';
 
 const Auth: React.FC = () => {
-  
   const navigate = useNavigate();
 
   const handleGoogleSignIn = async () => {
@@ -42,10 +40,9 @@ const Auth: React.FC = () => {
       if (!response.ok) {
         throw new Error('Failed to sign up');
       }
-      
-      handleGetDevToken(result.user.email)
+
+      handleGetDevToken(result.user.email);
       navigate(RoutesPath.HOME);
-      
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
       throw error;
@@ -54,9 +51,11 @@ const Auth: React.FC = () => {
 
   const handleGetDevToken = async (userEmail: string | null) => {
     try {
-      const token = await getToken(messaging, { vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY })
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      });
 
-      if(token){
+      if (token) {
         const response = await fetch('http://localhost:4000/api/v1/employee/token/save', {
           method: 'POST',
           headers: {
@@ -70,16 +69,14 @@ const Auth: React.FC = () => {
 
         if (!response.ok) {
           throw new Error('Failed to get deviceToken');
-        }
-        else{
+        } else {
           //console.log(response)
         }
       }
-      
     } catch (error) {
-      console.error('Error getting token:', error)
+      console.error('Error getting token:', error);
     }
-  }
+  };
 
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>

@@ -1,6 +1,6 @@
-import firebase from 'firebase/compat/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
-import "firebase/compat/messaging"
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/messaging';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -21,4 +21,4 @@ provider.setCustomParameters({
 
 const messaging = firebase.messaging(app);
 
-export { app, auth, provider, firebaseConfig, messaging};
+export { app, auth, firebaseConfig, messaging, provider };
