@@ -108,7 +108,7 @@ const ProjectReport: React.FC = () => {
                     </PDFDownloadLink>
                   </Box>
                 </Box>
-                <p>{data.project.description}</p>
+                {data.project.description && (<p>{data.project.description}</p>)}
                 
                 <br/>
 
@@ -117,7 +117,7 @@ const ProjectReport: React.FC = () => {
                   gap: "40px"
                 }}>
                   <StatusChip status = {`${data.project.status || '-'}`}/>
-                  <ColorChip label = {`Total Hours: ${data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
+                  {data.project.totalHours && (<ColorChip label = {`Total Hours: ${data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>)}
                   <ColorChip label = {`${data.project.companyName}`} color={`${colors.null}`}></ColorChip>
                 </Box>
 
@@ -258,10 +258,10 @@ const ProjectReport: React.FC = () => {
                         <StatusChip status = {`${item.status || '-'}`}/> 
                       </Box>
 
-                      <Box>
+                      {item.workedHours && (<Box>
                         <p style={{fontSize: '.9rem'}}>Worked Hours</p>
                         <ColorChip label = {`Total Hours: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
-                      </Box>
+                      </Box>)}
     
                       {item.employeeFirstName && item.employeeLastName && (
                       

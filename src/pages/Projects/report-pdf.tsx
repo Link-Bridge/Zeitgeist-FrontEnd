@@ -69,21 +69,26 @@ const ProjectReportPDF = (props: reportProps) => {
       <Page size="A4" style={{ backgroundColor: 'white' }}>
         <View style={{ color: 'black', textAlign:"justify", margin: 30, gap: "20px"}}>
           <Text style={{textAlign:"center", fontSize: 26, fontFamily: "Times-Bold"}}>{props.data.project.name}</Text>
-          <Text style={{fontSize: 14}}>{props.data.project.description}</Text> 
+          {props.data.project.description && (
+            <Text style={{fontSize: 14}}>{props.data.project.description}</Text>)}
 
           <View style={{gap: "20px"}}>
             <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
               {infoComponent("Status", `${props.data.project.status}`, `${props.data.project.status}`)}
-              {infoComponent("Total hours", `${props.data.project.totalHours}`)}
+              {props.data.project.totalHours && (
+                infoComponent("Total hours", `${props.data.project.totalHours}`))}
               {infoComponent("Company", `${props.data.project.companyName}`)}
             </View>
 
 
             <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
-              {infoComponent("Area", `${props.data.project.area}`)}
-              {infoComponent("Matter", `${props.data.project.matter}`)}
+              {props.data.project.area && (
+                infoComponent("Area", `${props.data.project.area}`))}
+              {props.data.project.matter && (
+                infoComponent("Matter", `${props.data.project.matter}`))}
               {infoComponent("Category", `${props.data.project.category}`)}
-              {infoComponent("Chargeable", `${props.data.project.isChargeable? "Yes" : "No"}`)}
+              {props.data.project.isChargeable && (
+                infoComponent("Chargeable", `${props.data.project.isChargeable? "Yes" : "No"}`))}
             </View>
 
             <View style={{ fontSize: 14, gap: "20px", display: "flex", flexDirection: "row" }}>
@@ -135,13 +140,12 @@ const ProjectReportPDF = (props: reportProps) => {
 
                 <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
                   {infoComponent("Status", `${item.status}`, `${item.status}`)}
-                  {infoComponent("Total hours", `${item.workedHours}`, "extra")}
+                  {item.workedHours && (
+                    infoComponent("Total hours", `${item.workedHours}`, "extra"))}
                   {item.employeeFirstName && item.employeeLastName && (
-                    infoComponent("Responsible", `${item.employeeFirstName} ${item.employeeLastName}`)
-                  )}
+                    infoComponent("Responsible", `${item.employeeFirstName} ${item.employeeLastName}`))}
                   {item.waitingFor && (
-                    infoComponent("Responsible", `${item.waitingFor}`)
-                  )}
+                    infoComponent("Waiting For", `${item.waitingFor}`))}
                   
                 </View>
 
