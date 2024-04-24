@@ -29,6 +29,3 @@ jobs:
 
       - name: Compile
         run: pnpm run build
-
-      - name: Build and Preview
-        run: pnpm run preview
