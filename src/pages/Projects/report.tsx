@@ -253,12 +253,33 @@ const ProjectReport: React.FC = () => {
                       display: "flex",
                       gap: "20px",
                     }}>
-                      <StatusChip status = {`${item.status || '-'}`}/>  
-                      <ColorChip label = {`Total Hours: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
-                      <ColorChip label = {`${item.waitingFor}`} color={`${colors.null}`}></ColorChip>
+                      <Box>
+                        <p style={{fontSize: '.9rem'}}>Status</p>
+                        <StatusChip status = {`${item.status || '-'}`}/> 
+                      </Box>
+
+                      <Box>
+                        <p style={{fontSize: '.9rem'}}>Worked Hours</p>
+                        <ColorChip label = {`Total Hours: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
+                      </Box>
+    
+                      {item.employeeFirstName && item.employeeLastName && (
+                      
+                      <Box>
+                        <p style={{fontSize: '.9rem'}}>Responsible</p>
+                        <ColorChip label = {`${item.employeeFirstName} ${item.employeeLastName}`} color={`${colors.null}`}></ColorChip>
+                      </Box>
+                    )}
+
+                    {item.waitingFor && (
+                      <Box>
+                        <p style={{fontSize: '.9rem'}}>Waiting For</p>
+                        <ColorChip label = {item.waitingFor} color={`${colors.null}`}></ColorChip>
+                      </Box>
+                    )}
                     </Box>
 
-                    <br/>
+                    <br />
 
                     <Box sx = {{
                       display: "flex",

@@ -74,7 +74,7 @@ const ProjectReportPDF = (props: reportProps) => {
           <View style={{gap: "20px"}}>
             <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
               {projectInfoComponent("Status", `${props.data.project.status}`, `${props.data.project.status}`)}
-              {projectInfoComponent("Total hours", `${props.data.project.totalHours}`, "extra")}
+              {projectInfoComponent("Total hours", `${props.data.project.totalHours}`)}
               {projectInfoComponent("Company", `${props.data.project.companyName}`)}
             </View>
 
@@ -84,17 +84,21 @@ const ProjectReportPDF = (props: reportProps) => {
               {projectInfoComponent("Matter", `${props.data.project.matter}`)}
               {projectInfoComponent("Category", `${props.data.project.category}`)}
               {projectInfoComponent("Chargeable", `${props.data.project.isChargeable? "Yes" : "No"}`)}
-          </View>
+            </View>
 
-          <View style={{fontSize: 14}}>
-            <Text>{`Start date: ${dateParser(props.data.project.startDate)}`}</Text>
-            {props.data.project.endDate && (
-                <>
-                  <Text>{`End date: ${dateParser(props.data.project.endDate)}`}</Text>
-                </>
+            <View style={{ fontSize: 14, gap: "20px", display: "flex", flexDirection: "row" }}>
+              <View>
+                <Text style={{fontSize: 10}}>Start Date</Text>
+                <Text>{dateParser(props.data.project.startDate)}</Text>  
+              </View>
+
+              {props.data.project.endDate && (
+                <View>
+                  <Text style={{fontSize: 10}}>End Date</Text>
+                  <Text>{dateParser(props.data.project.endDate)}</Text>  
+                </View>
               )}
-          </View>
-
+            </View>
           </View>
         </View>
 
@@ -106,7 +110,7 @@ const ProjectReportPDF = (props: reportProps) => {
               Object.entries(props.data.statistics).filter(([key, _]) => key !== 'total').map(([item, value]) => {
                 return (
                   <View style={{ display: "flex", flexDirection: "row", justifyContent: "space-around"  }}>
-                    <Text style={{width: "25%"}}>{keyMap.get(item)}</Text>
+                    <Text style={{width: "20%"}}>{keyMap.get(item)}</Text>
 
                     <View style={{width: "50%", backgroundColor: colors.null, borderRadius: "10px" }}>
                       <View style={{width: `${Math.round(value * 100 / totalTasks)}%`, backgroundColor: colors.gold, borderRadius: "10px"}}>
@@ -122,23 +126,30 @@ const ProjectReportPDF = (props: reportProps) => {
       </Page>
 
       <Page size="A4" style={{ backgroundColor: 'white' }}>
-        <View style={{ color: 'black', textAlign:"justify", margin: 30, gap: "20px"}}>
+        <View style={{ color: 'black', textAlign:"justify", margin: 30, gap: "30px"}}>
           {props.data.tasks?.map((item, _) => {
             return (
-              <View>
+              <View style={{gap: "10px"}}>
                 <Text style={{fontSize: 20}}>{item.title}</Text>
-                <Text style={{fontSize: 16}}>{item.description}</Text>
+                <Text style={{fontSize: 14}}>{item.description}</Text>
 
-                <View style={{display: "flex", flexDirection: "row"}}>
-                {projectInfoComponent("Status", `${item.status}`, `${item.status}`)}
-                {projectInfoComponent("Total hours", `${item.workedHours}`, "extra")}
-                {projectInfoComponent("Employee", `${item.waitingFor}`)}
+                <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
+                  {projectInfoComponent("Status", `${item.status}`, `${item.status}`)}
+                  {projectInfoComponent("Total hours", `${item.workedHours}`, "extra")}
+                  {projectInfoComponent("Employee", `${item.waitingFor}`)}
                 </View>
 
-                <View style={{fontSize: 16}}>
-                <Text>{`Start date: ${dateParser(item.startDate)}`}</Text>
-                {item.endDate && (
-                   <Text>{`End date: ${dateParser(item.endDate)}`}</Text>
+                <View style={{ fontSize: 14, gap: "20px", display: "flex", flexDirection: "row" }}>
+                  <View>
+                    <Text style={{fontSize: 10}}>Start Date</Text>
+                    <Text>{dateParser(item.startDate)}</Text>  
+                  </View>
+
+                  {item.endDate && (
+                    <View>
+                      <Text style={{fontSize: 10}}>End Date</Text>
+                      <Text>{dateParser(item.endDate)}</Text>  
+                    </View>
                   )}
                 </View>
               </View>
