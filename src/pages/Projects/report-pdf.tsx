@@ -41,10 +41,10 @@ function statusColor(status: string) {
   }
 }
 
-function projectInfoComponent(title: string, value: string, style: string = "-") {
+function infoComponent(title: string, value: string, style: string = "-") {
   return(
     <View>
-      <Text style={{fontSize: 8}}>{title}</Text>
+      <Text style={{fontSize: 9}}>{title}</Text>
       <View style={{textAlign: "center", borderRadius: "10px", backgroundColor: `${statusColor(style)}`}}>
         <Text style={{paddingLeft: "15px", paddingRight: "15px", paddingTop: "3px", paddingBottom: "3px"}}>{value}</Text>
       </View>    
@@ -73,17 +73,17 @@ const ProjectReportPDF = (props: reportProps) => {
 
           <View style={{gap: "20px"}}>
             <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
-              {projectInfoComponent("Status", `${props.data.project.status}`, `${props.data.project.status}`)}
-              {projectInfoComponent("Total hours", `${props.data.project.totalHours}`)}
-              {projectInfoComponent("Company", `${props.data.project.companyName}`)}
+              {infoComponent("Status", `${props.data.project.status}`, `${props.data.project.status}`)}
+              {infoComponent("Total hours", `${props.data.project.totalHours}`)}
+              {infoComponent("Company", `${props.data.project.companyName}`)}
             </View>
 
 
             <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
-              {projectInfoComponent("Area", `${props.data.project.area}`)}
-              {projectInfoComponent("Matter", `${props.data.project.matter}`)}
-              {projectInfoComponent("Category", `${props.data.project.category}`)}
-              {projectInfoComponent("Chargeable", `${props.data.project.isChargeable? "Yes" : "No"}`)}
+              {infoComponent("Area", `${props.data.project.area}`)}
+              {infoComponent("Matter", `${props.data.project.matter}`)}
+              {infoComponent("Category", `${props.data.project.category}`)}
+              {infoComponent("Chargeable", `${props.data.project.isChargeable? "Yes" : "No"}`)}
             </View>
 
             <View style={{ fontSize: 14, gap: "20px", display: "flex", flexDirection: "row" }}>
@@ -105,7 +105,7 @@ const ProjectReportPDF = (props: reportProps) => {
         <View style={{ color: 'black', textAlign:"justify", margin: 30, gap: "10px"}}>
           <Text style={{textAlign:"center", fontSize: 26, fontFamily: "Times-Bold"}}>Tasks status</Text>
           
-          <View style={{ gap: "10px", padding:8, fontSize: 12, backgroundColor: colors.lighterGray, borderRadius: "10px" }}>
+          <View style={{ display: "flex", flexDirection:"column", justifyContent: "space-between", height: 250, padding:8, fontSize: 12, backgroundColor: colors.lighterGray, borderRadius: "10px" }}>
             {props.data.statistics && (    
               Object.entries(props.data.statistics).filter(([key, _]) => key !== 'total').map(([item, value]) => {
                 return (
@@ -134,9 +134,15 @@ const ProjectReportPDF = (props: reportProps) => {
                 <Text style={{fontSize: 14}}>{item.description}</Text>
 
                 <View style={{ gap: "20px", fontSize: 14, display: "flex", flexDirection: "row", justifyContent: "flex-start"}}>
-                  {projectInfoComponent("Status", `${item.status}`, `${item.status}`)}
-                  {projectInfoComponent("Total hours", `${item.workedHours}`, "extra")}
-                  {projectInfoComponent("Employee", `${item.waitingFor}`)}
+                  {infoComponent("Status", `${item.status}`, `${item.status}`)}
+                  {infoComponent("Total hours", `${item.workedHours}`, "extra")}
+                  {item.employeeFirstName && item.employeeLastName && (
+                    infoComponent("Responsible", `${item.employeeFirstName} ${item.employeeLastName}`)
+                  )}
+                  {item.waitingFor && (
+                    infoComponent("Responsible", `${item.waitingFor}`)
+                  )}
+                  
                 </View>
 
                 <View style={{ fontSize: 14, gap: "20px", display: "flex", flexDirection: "row" }}>
