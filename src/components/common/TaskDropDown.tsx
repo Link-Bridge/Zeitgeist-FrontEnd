@@ -4,12 +4,11 @@ import Chip from '@mui/joy/Chip';
 import colors from '../../colors';
 
 /**
- *  colorForStatus function 
+ *  colorForStatus function
  * @description  returns color for status
  * @param status  string
  * @returns  string
  */
-
 
 function colorForStatus(status: string) {
   switch (status) {
@@ -35,7 +34,7 @@ function colorForStatus(status: string) {
 }
 
 /**
- * ClickableChip component for tasks 
+ * ClickableChip component for tasks
  * @description Chip component with Select component
  * @returns JSX.Element
  */

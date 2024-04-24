@@ -1,6 +1,3 @@
-import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
-
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import ArrowDropDown from '@mui/icons-material/ArrowDropDown';
@@ -11,32 +8,18 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import PersonPinOutlinedIcon from '@mui/icons-material/PersonPinOutlined';
 import SnippetFolderOutlinedIcon from '@mui/icons-material/SnippetFolderOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-
 import Chip from '@mui/joy/Chip';
 import Divider from '@mui/joy/Divider';
 import Dropdown from '@mui/joy/Dropdown';
 import Menu from '@mui/joy/Menu';
 import MenuButton from '@mui/joy/MenuButton';
 import MenuItem from '@mui/joy/MenuItem';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import AddButton from '../../../components/common/AddButton';
-import CardProject from '../../../components/common/CardProject';
 import DeleteModal from '../../../components/common/DeleteModal';
 
-const Items = [
-  { projectId: 1, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Accounting' },
-  { projectId: 2, projectTitle: 'sadsadsadsad', status: 'In process', department: 'Legal' },
-  { projectId: 3, projectTitle: 'sadsadsadsad', status: 'Delayed', department: 'Legal' },
-  { projectId: 4, projectTitle: 'sadsadsadsad', status: 'In quotation', department: 'Legal' },
-  { projectId: 5, projectTitle: 'sadsadsadsad', status: 'Under Revision', department: 'Legal' },
-  { projectId: 6, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Legal' },
-  { projectId: 7, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Legal' },
-  { projectId: 8, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Legal' },
-  { projectId: 9, projectTitle: 'sadsadsadsad', status: 'Done', department: 'Legal' },
-];
-
-type Props = {};
-
-const index = (props: Props) => {
+const ClientDetails = () => {
   const { clientId } = useParams();
   const [open, setOpen] = useState<boolean>(false);
 
@@ -49,7 +32,7 @@ const index = (props: Props) => {
   return (
     <main className='bg-white rounded-xl p-6'>
       <DeleteModal
-        ToggleModal={ToggleModal}
+        toggleModal={ToggleModal}
         open={open}
         setOpen={setOpen}
         title={'Delete Client'}
@@ -127,19 +110,10 @@ const index = (props: Props) => {
           </section>
         </section>
 
-        <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 rounded-xl mt-6'>
-          {Items.map(project => (
-            <CardProject
-              key={project.projectId}
-              projectTitle={project.projectTitle}
-              status={project.status}
-              department={project.department}
-            />
-          ))}
-        </section>
+        <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 rounded-xl mt-6'></section>
       </section>
     </main>
   );
 };
 
-export default index;
+export default ClientDetails;
