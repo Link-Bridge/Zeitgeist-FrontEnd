@@ -16,7 +16,6 @@ import download from '../../assets/icons/download.svg';
 import { useParams } from "react-router-dom";
 import { PDFDownloadLink } from "@react-pdf/renderer";
 import ProjectReportPDF from "./report-pdf";
-import { renderToStaticMarkup } from 'react-dom/server';
 
 function dateParser (date: Date): string  {
   const arr = date.toString().split('-');
@@ -26,14 +25,9 @@ function dateParser (date: Date): string  {
   return `${day}-${month}-${year}`;
 }
 
-function GeneratePDF():  string {
-  const html = renderToStaticMarkup(<ProjectReport />);
-  return html;
-}
-
 const ProjectReport: React.FC = () => {
     const { id } = useParams();
-    //const navigate = useNavigate();
+    const navigate = useNavigate();
     const { data, loading, sendRequest, error } = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
     let totalTasks: number;
     const keyMap = new Map<string, string>([
@@ -46,9 +40,9 @@ const ProjectReport: React.FC = () => {
       ['cancelled', 'Cancelled']
     ]);
 
-    /*const handleClick = () => {
+    const handleClick = () => {
       navigate('/projects');
-    }*/
+    }
 
     useEffect (() => {
       if (!data){
@@ -71,7 +65,7 @@ const ProjectReport: React.FC = () => {
       <main className='p-10 py-4'>
         {data? (
           <>
-            {/*<Box onClick={handleClick} sx= {{
+            <Box onClick={handleClick} sx= {{
               display: "flex",
               justifyContent: "flex-end",
             }}>
@@ -82,7 +76,7 @@ const ProjectReport: React.FC = () => {
                   color: colors.darkerGold,
                 },
               }}> &nbsp;{'Go Back'} </Link>
-            </Box>*/}
+            </Box>
 
             <br/>
 
@@ -106,9 +100,13 @@ const ProjectReport: React.FC = () => {
                     }}
                   >{data.project.name}
                   </h1>
-                  <PDFDownloadLink document={<ProjectReportPDF html={GeneratePDF()}/>} fileName={`report_${data.project.name}`}>
-                    <img src={download} alt='Download' className='w-6' />
-                  </PDFDownloadLink>
+                  <Box sx = {{
+                    alignContent:"center"
+                  }}>
+                    <PDFDownloadLink document={<ProjectReportPDF data={data}/>} fileName={`report_${data.project.name}`}>
+                      <img src={download} alt='Download' className='w-6' />
+                    </PDFDownloadLink>
+                  </Box>
                 </Box>
                 <p>{data.project.description}</p>
                 
@@ -119,7 +117,7 @@ const ProjectReport: React.FC = () => {
                   gap: "40px"
                 }}>
                   <StatusChip status = {`${data.project.status || '-'}`}/>
-                  <ColorChip label = {`TOTAL HOURS: ${data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
+                  <ColorChip label = {`Total Hours: ${data.project.totalHours}`} color={`${colors.extra}`}></ColorChip>
                   <ColorChip label = {`${data.project.companyName}`} color={`${colors.null}`}></ColorChip>
                 </Box>
 
@@ -129,20 +127,33 @@ const ProjectReport: React.FC = () => {
                   display: "flex",
                   gap: "40px"
                 }}>
-                  <Box>
+                  {data.project.area && (
+                    <Box>
+                      <p style={{fontSize: '.9rem'}}>Area</p>
+                      <ColorChip label = {data.project.area} color={`${colors.null}`}></ColorChip>
+                    </Box>
+                  )}
+                  {data.project.matter && (
+                    <Box>
                     <p style={{fontSize: '.9rem'}}>Matter</p>
-                    <ColorChip label = {data.project.matter || ""} color={`${colors.null}`}></ColorChip>
+                    <ColorChip label = {data.project.matter} color={`${colors.null}`}></ColorChip>
                   </Box>
-                  <Box>
-                    <p style={{fontSize: '.9rem'}}>Category</p>
-                    <ColorChip label = {data.project.category || ""} color={`${colors.null}`}></ColorChip>
-                  </Box>
-                  <Box>
-                    <p style={{fontSize: '.9rem'}}>Chargeable</p>
-                    <ColorChip label = {`${data.project.isChargeable}`? 'YES' : 'NO'} color={`${colors.null}`}></ColorChip>
-                  </Box> 
-                </Box>
+                  )}
+                  {data.project.category && (
+                    <Box>
+                      <p style={{fontSize: '.9rem'}}>Category</p>
+                      <ColorChip label = {data.project.category || ""} color={`${colors.null}`}></ColorChip>
+                    </Box>
+                  )}
 
+                  {data.project.isChargeable && (
+                    <Box>
+                        <p style={{fontSize: '.9rem'}}>Chargeable</p>
+                        <ColorChip label = {`${data.project.isChargeable}`? 'Yes' : 'No'} color={`${colors.null}`}></ColorChip>
+                      </Box> 
+                  )}
+                  
+                </Box>
                 <br/>
 
                 <Box sx= {{
@@ -243,7 +254,7 @@ const ProjectReport: React.FC = () => {
                       gap: "20px",
                     }}>
                       <StatusChip status = {`${item.status || '-'}`}/>  
-                      <ColorChip label = {`TOTAL HOURS: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
+                      <ColorChip label = {`Total Hours: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
                       <ColorChip label = {`${item.waitingFor}`} color={`${colors.null}`}></ColorChip>
                     </Box>
 
