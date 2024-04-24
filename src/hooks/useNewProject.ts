@@ -81,7 +81,10 @@ const useNewProject = () => {
         return;
       }
       setIsPosting(true);
-      const res = await axios.post('http://localhost:4000/api/v1/project', formState);
+      const res = await axios.post('http://localhost:4000/api/v1/project/create', {
+        ...formState,
+        status: '-',
+      });
       if (res.status === 201) {
         setSuccess(true);
       }

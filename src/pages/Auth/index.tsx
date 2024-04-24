@@ -22,7 +22,9 @@ const Auth: React.FC = () => {
 
       // TODO: Had trouble using the useHttp hook
 
-      const response = await fetch('http://localhost:4000/api/v1/employee/signup', {
+      const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
+
+      const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
