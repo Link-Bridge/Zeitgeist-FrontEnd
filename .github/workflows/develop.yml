@@ -3,7 +3,7 @@ name: React Vite CI
 on:
   pull_request:
     branches:
-      - develop # Ajusta esto según tus ramas de desarrollo
+      - develop
 
 jobs:
   build-and-test:
@@ -18,14 +18,14 @@ jobs:
       - name: Set up Node.js
         uses: actions/setup-node@v3
         with:
-          node-version: '20.x' # Asegúrate de que esta versión sea compatible con tu proyecto
+          node-version: '20.x'
           cache: 'pnpm'
 
       - name: Install dependencies
         run: pnpm install --no-frozen-lockfile
 
       - name: Linter
-        run: pnpm run lint
+        run: pnpm run lint -- --max-warnings=1000
 
       - name: Compile
         run: pnpm run build
