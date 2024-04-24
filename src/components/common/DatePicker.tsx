@@ -2,7 +2,7 @@ import { makeStyles } from '@mui/styles';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 
-const useStyles = makeStyles(theme => ({
+const useStyles = makeStyles({
   datePicker: {
     background: '#F0F0F0',
     borderRadius: '12px',
@@ -28,7 +28,7 @@ const useStyles = makeStyles(theme => ({
       border: 'none !important',
     },
   },
-}));
+});
 
 interface CustomDatePickerProps {
   value: dayjs.Dayjs | null;
