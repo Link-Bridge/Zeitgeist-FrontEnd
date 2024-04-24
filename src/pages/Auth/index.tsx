@@ -1,19 +1,23 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
-import React from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
 import { auth, provider } from '../../config/firebase.config';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import { RoutesPath } from '../../utils/constants';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
 
+  const { setEmployee } = useContext(EmployeeContext);
+
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
+      console.log(idToken);
       sessionStorage.setItem('idToken', idToken);
 
       // TODO: Had trouble using the useHttp hook
@@ -36,7 +40,8 @@ const Auth: React.FC = () => {
       }
 
       const responseData = await response.json();
-      localStorage.setItem('employee', JSON.stringify(responseData.data));
+      console.log(responseData);
+      setEmployee(responseData.data);
 
       navigate(RoutesPath.HOME);
     } catch (error) {
