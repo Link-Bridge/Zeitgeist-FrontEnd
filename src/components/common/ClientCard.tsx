@@ -1,6 +1,14 @@
 import { Chip } from '@mui/joy';
 import WorkIcon from '../../assets/icons/work_filled.svg';
+import colors from '../../colors';
 import CardContainer from './CardContainer';
+
+/**
+ * @brief Displays and organizes client information.
+ * @param ClientCardProps props: properties of a client information
+ * @return CardContainer and the visual elements that
+ * organize each client information
+ */
 
 interface ClientCardProps {
   name: string;
@@ -25,7 +33,7 @@ const ClientCard = ({
       <div className='grid grid-cols-2 gap-2'>
         <Chip
           sx={{
-            bgcolor: '#EAD3AA',
+            bgcolor: colors.orangeChip,
             fontSize: '13px',
           }}
         >
@@ -33,14 +41,14 @@ const ClientCard = ({
         </Chip>
         <Chip
           sx={{
-            bgcolor: '#EAD3AA',
+            bgcolor: colors.orangeChip,
           }}
         >
           Legal Hours: {legalHours}
         </Chip>
         <Chip
           sx={{
-            bgcolor: '#B39C844C',
+            bgcolor: colors.brownChip,
             fontSize: '13px',
           }}
         >
@@ -48,7 +56,7 @@ const ClientCard = ({
         </Chip>
         <Chip
           sx={{
-            bgcolor: '#E3EFFB',
+            bgcolor: colors.blueChip,
             color: '#0B6BCB',
             border: '1px solid #97C3F0',
             fontSize: '13px',

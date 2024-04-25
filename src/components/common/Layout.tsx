@@ -9,7 +9,7 @@ type LayoutProps = {
 };
 
 const Layout = ({ children }: LayoutProps) => {
-  const location = useLocation();  
+  const location = useLocation();
 
   const pathToText = () => {
     if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
