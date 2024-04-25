@@ -62,24 +62,25 @@ const ProjectReport: React.FC = () => {
     }
 
     return (
-      <main className='p-10 py-4'>
+      <>
+      <Box onClick={handleClick} sx= {{
+        display: "flex",
+        justifyContent: "flex-end",
+      }}>
+        <img src={left_arrow} alt='Left arrow' className='w-3.5' />
+        <Link  underline="none" className="ml-auto" sx={{
+          color: colors.darkGold, // Llamar el color correspondiente
+          '&:hover': {
+            color: colors.darkerGold,
+          },
+        }}> &nbsp;{'Go Back'} </Link>
+      </Box>
+
+      <br/>
+
+      <main className='p-10 py-4 h-1/2 overflow-y-scroll'>
         {data? (
           <>
-            <Box onClick={handleClick} sx= {{
-              display: "flex",
-              justifyContent: "flex-end",
-            }}>
-              <img src={left_arrow} alt='Left arrow' className='w-3.5' />
-              <Link  underline="none" className="ml-auto" sx={{
-                color: colors.darkGold, // Llamar el color correspondiente
-                '&:hover': {
-                  color: colors.darkerGold,
-                },
-              }}> &nbsp;{'Go Back'} </Link>
-            </Box>
-
-            <br/>
-
             <Box sx = {{
               display: "flex",
               gap: "15px",
@@ -330,8 +331,8 @@ const ProjectReport: React.FC = () => {
           <p>No se encontró el reporte</p>
         )}
         
-        
       </main>
+      <></></>
     );
   };
   
