@@ -13,12 +13,11 @@ const firebaseConfig = {
 
 const app = firebase.initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const messaging = firebase.messaging(app);
 
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
   login_hint: 'user@example.com',
 });
-
-const messaging = firebase.messaging(app);
 
 export { app, auth, firebaseConfig, messaging, provider };
