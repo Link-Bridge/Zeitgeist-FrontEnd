@@ -185,25 +185,24 @@ const ProjectReport: React.FC = () => {
                   </Box>
                   <p>{dateParser(data.project.startDate)}</p>
                 </Box>
-            
-                {data.project.endDate &&
-                  (
+
+                {data.project.endDate && (
                   <Box>
-                    <Box sx= {{
-                      display: "flex",
-                    }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                      }}
+                    >
                       <img src={calendar} alt='calendar' className='w-5' />
-                      <p style={{fontSize: '1rem'}}>&nbsp;End Date</p>
+                      <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                     </Box>
                     <p>{dateParser(data.project.endDate)}</p>
                   </Box>
-                  )
-                }
-                
-                </Box>
+                )}
               </Box>
+            </Box>
 
-              <Box
+            <Box
               bgcolor={colors.lighterGray}
               sx={{
                 width: '50%',
@@ -251,7 +250,7 @@ const ProjectReport: React.FC = () => {
                     );
                   })}
             </Box>
-            </Box>
+          </Box>
 
           <br />
           <br />
@@ -282,34 +281,43 @@ const ProjectReport: React.FC = () => {
 
                     <br />
 
-                    <Box sx = {{
-                      display: "flex",
-                      gap: "20px",
-                    }}>
+                    <Box
+                      sx={{
+                        display: 'flex',
+                        gap: '20px',
+                      }}
+                    >
                       <Box>
-                        <p style={{fontSize: '.9rem'}}>Status</p>
-                        <StatusChip status = {`${item.status || '-'}`}/> 
+                        <p style={{ fontSize: '.9rem' }}>Status</p>
+                        <StatusChip status={`${item.status || '-'}`} />
                       </Box>
 
-                      {item.workedHours && (<Box>
-                        <p style={{fontSize: '.9rem'}}>Worked Hours</p>
-                        <ColorChip label = {`Total Hours: ${item.workedHours}`} color={`${colors.extra}`}></ColorChip>
-                      </Box>)}
-    
+                      {item.workedHours && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
+                          <ColorChip
+                            label={`Total Hours: ${item.workedHours}`}
+                            color={`${colors.extra}`}
+                          ></ColorChip>
+                        </Box>
+                      )}
+
                       {item.employeeFirstName && item.employeeLastName && (
-                      
-                      <Box>
-                        <p style={{fontSize: '.9rem'}}>Responsible</p>
-                        <ColorChip label = {`${item.employeeFirstName} ${item.employeeLastName}`} color={`${colors.null}`}></ColorChip>
-                      </Box>
-                    )}
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Responsible</p>
+                          <ColorChip
+                            label={`${item.employeeFirstName} ${item.employeeLastName}`}
+                            color={`${colors.null}`}
+                          ></ColorChip>
+                        </Box>
+                      )}
 
-                    {item.waitingFor && (
-                      <Box>
-                        <p style={{fontSize: '.9rem'}}>Waiting For</p>
-                        <ColorChip label = {item.waitingFor} color={`${colors.null}`}></ColorChip>
-                      </Box>
-                    )}
+                      {item.waitingFor && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Waiting For</p>
+                          <ColorChip label={item.waitingFor} color={`${colors.null}`}></ColorChip>
+                        </Box>
+                      )}
                     </Box>
 
                     <br />
@@ -364,15 +372,15 @@ const ProjectReport: React.FC = () => {
                   <Divider />
                   <br />
                 </>
-              )})}
-            </Box>
-          </>
-        ):  (
-          <p>No se encontró el reporte</p>
-        )}       
-      </main>
-    )};
+              );
+            })}
+          </Box>
+        </>
+      ) : (
+        <p>No se encontró el reporte</p>
+      )}
+    </main>
+  );
+};
 
-  
-  export default ProjectReport;
-  
+export default ProjectReport;
