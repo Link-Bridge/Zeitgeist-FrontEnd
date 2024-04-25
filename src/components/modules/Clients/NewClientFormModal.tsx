@@ -51,10 +51,45 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     RequestMethods.POST
   );
 
+  /**
+   * @brief Manage error
+   */
+  const handleError = () => {
+    if (error && error.code && error.code == 'ERR_NETWORK')
+      return setState({
+        open: true,
+        message: 'An unexpected error occurred. Please try again',
+        type: 'danger',
+      });
+
+    if (error && error.response.data)
+      return setState({ open: true, message: error.response.data.error, type: 'danger' });
+  };
+
+  /**
+   * @brief Supervise the're no error, if it's clean, send a succuess message, close the modal
+   * and refetch
+   */
+  const handleSuccess = () => {
+    if (!error && data && data.id) {
+      setState({ open: true, message: 'Company created', type: 'success' });
+      setOpen(false);
+
+      setCompanyName('');
+      setCompanyEmail('');
+      setCompanyPhone('');
+      setCompanyRFC('');
+      setCompanyConstitution('');
+      setCompanyTaxResidence('');
+
+      setRefetch(true);
+    }
+  };
+
   useEffect(() => {
     handleError();
     handleSuccess();
-  }, [data, error]);
+  }, [data, error, handleError, handleSuccess]);
 
   /**
    * @brief The required information
@@ -92,41 +127,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     };
 
     sendRequest({}, body, { 'Content-Type': 'application/json' });
-  };
-
-  /**
-   * @brief Manage error
-   */
-  const handleError = () => {
-    if (error && error.code && error.code == 'ERR_NETWORK')
-      return setState({
-        open: true,
-        message: 'An unexpected error occurred. Please try again',
-        type: 'danger',
-      });
-
-    if (error && error.response.data)
-      return setState({ open: true, message: error.response.data.error, type: 'danger' });
-  };
-
-  /**
-   * @brief Supervise the're no error, if it's clean, send a succuess message, close the modal
-   * and refetch
-   */
-  const handleSuccess = () => {
-    if (!error && data && data.id) {
-      setState({ open: true, message: 'Company created', type: 'success' });
-      setOpen(false);
-
-      setCompanyName('');
-      setCompanyEmail('');
-      setCompanyPhone('');
-      setCompanyRFC('');
-      setCompanyConstitution('');
-      setCompanyTaxResidence('');
-
-      setRefetch(true);
-    }
   };
 
   /**
