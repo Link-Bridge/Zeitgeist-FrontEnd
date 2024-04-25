@@ -16,6 +16,9 @@ const Projects = () => {
             <Link to={`${RoutesPath.PROJECTS}/new`}>
               <AddButton></AddButton>
             </Link>
+            <Link to={`${RoutesPath.PROJECTS}/details`}>
+              <AddButton></AddButton>
+            </Link>
           </main>
         }
       />
