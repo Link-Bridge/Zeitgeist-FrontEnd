@@ -12,7 +12,7 @@ function AddButton({ onClick }: AddButtonProps) {
       variant='solid'
       size='sm'
       sx={{
-        backgroundColor: colors.darkGold, // Llamar el color correspondiente
+        backgroundColor: colors.darkGold,
         '&:hover': {
           backgroundColor: colors.darkerGold,
         },
@@ -21,6 +21,6 @@ function AddButton({ onClick }: AddButtonProps) {
       + New
     </Button>
   );
-}
+};
 
 export default AddButton;

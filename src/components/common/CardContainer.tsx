@@ -1,7 +1,6 @@
 import Card from '@mui/joy/Card';
 import CardContent from '@mui/joy/CardContent';
 import { ReactNode } from 'react';
-import { Link } from 'react-router-dom';
 
 /**
  * @brief background card
@@ -28,9 +27,7 @@ export default function CardContainer({ children }: CardContainerProps) {
         },
       }}
     >
-      <Link to={'#'}>
-        <CardContent>{children}</CardContent>
-      </Link>
+      <CardContent>{children}</CardContent>
     </Card>
   );
 }

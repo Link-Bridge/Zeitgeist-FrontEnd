@@ -93,9 +93,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
 
     try {
       await onSubmit(payload);
-    } catch (error: any) {
-      console.error('Error creating task', error.code);
-    }
+    } catch (error: unknown) {}
   };
 
   return (
