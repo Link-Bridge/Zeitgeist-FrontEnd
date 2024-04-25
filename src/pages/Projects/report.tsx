@@ -6,8 +6,6 @@ import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
-import { PDFDownloadLink } from "@react-pdf/renderer";
-import ProjectReportPDF from "./report-pdf";
 import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
@@ -187,78 +185,25 @@ const ProjectReport: React.FC = () => {
                   </Box>
                   <p>{dateParser(data.project.startDate)}</p>
                 </Box>
-                {data.project.endDate && (
+            
+                {data.project.endDate &&
+                  (
                   <Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                      }}
-                    >
+                    <Box sx= {{
+                      display: "flex",
+                    }}>
                       <img src={calendar} alt='calendar' className='w-5' />
-                      <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
+                      <p style={{fontSize: '1rem'}}>&nbsp;End Date</p>
                     </Box>
                     <p>{dateParser(data.project.endDate)}</p>
                   </Box>
-                )};
-
-                  {data.project.endDate &&
-                    (
-                    <Box>
-                      <Box sx= {{
-                        display: "flex",
-                      }}>
-                        <img src={calendar} alt='calendar' className='w-5' />
-                        <p style={{fontSize: '1rem'}}>&nbsp;End Date</p>
-                      </Box>
-                      <p>{dateParser(data.project.endDate)}</p>
-                    </Box>
-                    )
-                  }
-
+                  )
+                }
+                
                 </Box>
               </Box>
 
-              <Box bgcolor={colors.lighterGray} sx= {{
-                width: "50%",
-                borderRadius: "8px",
-                
-              }}>
-                {data.statistics && (    
-                  Object.entries(data.statistics).filter(([key, _]) => key !== 'total').map(([item, value]) => {
-                    
-                      return (
-                        <>
-                          <Grid key={item} container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
-                            <Grid xs={3}>
-                              <p>{keyMap.get(item)}</p>
-                            </Grid>
-
-                            <Grid xs={8}>
-                              <Box bgcolor={'#D5C7AD'} sx = {{
-                                borderRadius: "10px",
-                                width: "100%",
-                                gridColumn: "1/3",
-                                height: "15px",
-                              }}>
-                                <Box width = {`${(value * 100 / totalTasks).toString()}%`} bgcolor={colors.gold} sx = {{
-                                  borderRadius: "10px",
-                                  gridColumn: "1/3",
-                                  height: "15px",
-                                }}/>
-                              </Box>
-                            </Grid>
-
-                            <Grid xs={1}>
-                            <p>{Math.round(value * 100 / totalTasks)}%</p>
-                            </Grid>
-                          </Grid>
-                        </>
-                      )}))}
-              
-              </Box>
-            </Box>
-
-            <Box
+              <Box
               bgcolor={colors.lighterGray}
               sx={{
                 width: '50%',
@@ -305,6 +250,7 @@ const ProjectReport: React.FC = () => {
                       </>
                     );
                   })}
+            </Box>
             </Box>
 
           <br />
