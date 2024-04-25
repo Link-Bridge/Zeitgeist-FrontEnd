@@ -2,6 +2,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import { RoutesPath } from '../../utils/constants';
 import NewProject from './new';
+import ProjectReport from './report';
 
 const Projects = () => {
   return (
@@ -19,6 +20,7 @@ const Projects = () => {
         }
       />
       <Route path='/new' element={<NewProject />} />
+      <Route path='/report/:id' element={<ProjectReport />} />
     </Routes>
   );
 };

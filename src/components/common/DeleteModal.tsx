@@ -16,6 +16,7 @@ interface ModalInterface {
   description: string;
   id: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleModal?: () => void;
 }
 
  export default function DeleteModal({ open, setOpen, title, description, id }: ModalInterface) {
