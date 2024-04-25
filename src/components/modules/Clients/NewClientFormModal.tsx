@@ -169,7 +169,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
         >
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientName'
               label='Clients name'
               variant='outlined'
@@ -181,7 +180,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientEmail'
               label='Email'
               type='email'
@@ -195,7 +193,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientPhone'
               label='Phone number'
               type='tel'
@@ -208,7 +205,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientRFC'
               label='RFC'
               variant='outlined'
@@ -224,7 +220,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientConstituton'
               label='Constitucion date'
               type='Date'
@@ -237,7 +232,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientTaxResidence'
               label='Tax residence'
               variant='outlined'

@@ -21,7 +21,7 @@ function CreateClientButton({ loading }: CreateClientButtonProps) {
       sx={{
         height: '36px',
         marginTop: '10px',
-        backgroundColor: colors.darkGold, // Llamar el color correspondiente
+        backgroundColor: colors.darkGold,
         '&:hover': {
           backgroundColor: colors.darkerGold,
         },
