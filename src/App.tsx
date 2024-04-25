@@ -61,7 +61,7 @@ function App() {
                 }
               />
               <Route
-                path={RoutesPath.CLIENTS}
+                path={`${RoutesPath.CLIENTS}/*`}
                 element={
                   <ProtectedRoute>
                     <Clients />
