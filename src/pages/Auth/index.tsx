@@ -56,7 +56,7 @@ const Auth: React.FC = () => {
       });
 
       if (token) {
-        const response = await fetch('http://localhost:4000/api/v1/employee/token/save', {
+        const response = await fetch('http://localhost:4000/api/v1/notification/token', {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
