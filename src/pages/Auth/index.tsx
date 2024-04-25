@@ -13,6 +13,7 @@ import { auth, messaging, provider } from '../../config/firebase.config';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
+  const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
 
   const handleGoogleSignIn = async () => {
     try {
@@ -21,8 +22,6 @@ const Auth: React.FC = () => {
       sessionStorage.setItem('idToken', idToken);
 
       // TODO: Had trouble using the useHttp hook
-
-      const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
 
       const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
         method: 'POST',
@@ -41,7 +40,7 @@ const Auth: React.FC = () => {
         throw new Error('Failed to sign up');
       }
 
-      handleGetDevToken(result.user.email);
+      handleGetDeviceToken(result.user.email);
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
@@ -49,14 +48,14 @@ const Auth: React.FC = () => {
     }
   };
 
-  const handleGetDevToken = async (userEmail: string | null) => {
+  const handleGetDeviceToken = async (userEmail: string | null) => {
     try {
       const token = await getToken(messaging, {
         vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
       });
 
       if (token) {
-        const response = await fetch('http://localhost:4000/api/v1/notification/token', {
+        await fetch(`${API_BASE_ROUTE}/notification/token`, {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
@@ -66,15 +65,10 @@ const Auth: React.FC = () => {
             deviceToken: token,
           }),
         });
-
-        if (!response.ok) {
-          throw new Error('Failed to get deviceToken');
-        } else {
-          //console.log(response)
-        }
       }
     } catch (error) {
       console.error('Error getting token:', error);
+      throw error;
     }
   };
 
