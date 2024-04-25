@@ -2,6 +2,7 @@ import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useEffect } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -13,6 +14,7 @@ import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import ProjectReportPDF from './report-pdf';
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -115,8 +117,21 @@ const ProjectReport: React.FC = () => {
                 >
                   {data.project.name}
                 </h1>
-                <img src={download} alt='Download' className='w-6' />
+
+                <Box
+                  sx={{
+                    alignContent: 'center',
+                  }}
+                >
+                  <PDFDownloadLink
+                    document={<ProjectReportPDF data={data} />}
+                    fileName={`report_${data.project.name}`}
+                  >
+                    <img src={download} alt='Download' className='w-6' />
+                  </PDFDownloadLink>
+                </Box>
               </Box>
+
               <p>{data.project.description}</p>
 
               <br />
@@ -185,6 +200,7 @@ const ProjectReport: React.FC = () => {
                   </Box>
                   <p>{dateParser(data.project.startDate)}</p>
                 </Box>
+
                 {data.project.endDate && (
                   <Box>
                     <Box
@@ -265,7 +281,7 @@ const ProjectReport: React.FC = () => {
             {data.tasks?.map(item => {
               return (
                 <>
-                  <Box>
+                  <Box key={item.title}>
                     <h3
                       style={{
                         color: 'black',
@@ -286,12 +302,37 @@ const ProjectReport: React.FC = () => {
                         gap: '20px',
                       }}
                     >
-                      <StatusChip status={`${item.status || '-'}`} />
-                      <ColorChip
-                        label={`TOTAL HOURS: ${item.workedHours}`}
-                        color={`${colors.extra}`}
-                      ></ColorChip>
-                      <ColorChip label={`${item.waitingFor}`} color={`${colors.null}`}></ColorChip>
+                      <Box>
+                        <p style={{ fontSize: '.9rem' }}>Status</p>
+                        <StatusChip status={`${item.status || '-'}`} />
+                      </Box>
+
+                      {item.workedHours && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
+                          <ColorChip
+                            label={`Total Hours: ${item.workedHours}`}
+                            color={`${colors.extra}`}
+                          ></ColorChip>
+                        </Box>
+                      )}
+
+                      {item.employeeFirstName && item.employeeLastName && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Responsible</p>
+                          <ColorChip
+                            label={`${item.employeeFirstName} ${item.employeeLastName}`}
+                            color={`${colors.null}`}
+                          ></ColorChip>
+                        </Box>
+                      )}
+
+                      {item.waitingFor && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Waiting For</p>
+                          <ColorChip label={item.waitingFor} color={`${colors.null}`}></ColorChip>
+                        </Box>
+                      )}
                     </Box>
 
                     <br />
