@@ -24,6 +24,7 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
+  CLIENT = 'Client',
 }
 
 export enum ProjectStatus {
@@ -45,6 +46,7 @@ export interface ProjectEntity {
   category: string;
   startDate: Date;
   endDate: Date;
+  area: string;
   totalHours: number;
   periodicty: ProjectPeriodicity;
   isChargeable: boolean;

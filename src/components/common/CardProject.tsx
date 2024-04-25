@@ -1,38 +1,65 @@
 import Chip from '@mui/joy/Chip';
-import { DepartmentAreas, ProjectStatus } from '../../types/projects';
+import colors from '../../colors';
+import { ProjectAreas } from '../../types/project';
+import { ProjectStatus } from '../../types/projects';
 
-type CardProjectInterface = {
+type CardProjectProps = {
   name: string;
   status: ProjectStatus;
-  department: DepartmentAreas;
+  department: ProjectAreas;
 };
 
 const getStatusColor = (status: ProjectStatus) => {
   switch (status) {
     case ProjectStatus.DONE:
-      return 'success';
+      return colors.success;
     case ProjectStatus.IN_QUOTATION:
-      return 'warning';
+      return colors.darkerBlue;
     case ProjectStatus.ACCEPTED:
-      return 'blue';
+      return colors.gold;
     case ProjectStatus.NOT_STARTED:
-      return 'lightGray';
+      return colors.notStarted;
     case ProjectStatus.IN_PROCESS:
-      return 'darkBlue';
+      return colors.darkBlue;
     case ProjectStatus.UNDER_REVISION:
-      return 'darkPurple';
+      return colors.darkPurple;
     case ProjectStatus.DELAYED:
-      return 'danger';
+      return colors.delayed;
     case ProjectStatus.POSTPONED:
-      return 'darkGray';
+      return colors.lightRed;
     case ProjectStatus.CANCELLED:
-      return 'darkGold';
+      return colors.danger;
     default:
-      return 'lightGray';
+      return colors.gray;
   }
 };
 
-const CardProject = ({ name, status, category }: CardProjectInterface) => {
+const getColorArea = (department: ProjectAreas) => {
+  switch (department) {
+    case ProjectAreas.ACCOUNTING:
+      return colors.darkGold;
+    case ProjectAreas.CLIENT:
+      return colors.darkPurple;
+    case ProjectAreas.LEGAL:
+      return colors.darkerGold;
+    default:
+      return colors.darkestGray;
+  }
+};
+
+/**
+ * Client Card component
+ *
+ * @component
+ * @param {CardProjectProps} props - Component props
+ * @param {string} props.name - The name of the client
+ * @param {ProjectStatus} props.status - The status of the project
+ * @param {ProjectAreas} props.department - The areas of the organization
+ *
+ * @returns {JSX.Element} Client Card component
+ */
+
+const CardProject = ({ name, status, department }: CardProjectProps) => {
   return (
     <main className='bg-[#EFEFEF] rounded-lg p-4'>
       <section className='flex gap-3'>
@@ -40,11 +67,11 @@ const CardProject = ({ name, status, category }: CardProjectInterface) => {
         <h5 className='text-[#424242] font-montserrat'>{name}</h5>
       </section>
       <section className='mt-3 flex gap-3'>
-        <Chip variant='solid' color={getStatusColor(status)}>
+        <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
           {status}
         </Chip>
-        <Chip variant='solid' color='primary'>
-          {category}
+        <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
+          {department}
         </Chip>
       </section>
     </main>
