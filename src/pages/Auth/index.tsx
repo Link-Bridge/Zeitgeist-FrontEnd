@@ -59,6 +59,7 @@ const Auth: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('idToken'),
           },
           body: JSON.stringify({
             email: userEmail,
