@@ -41,7 +41,7 @@ const Clients = () => {
               <button>Not Archived</button>
               <AddButton onClick={openModal} />
             </section>
-      <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
+            <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
 
             <div className='flex justify-center w-full'>
               {loading && <Loader />}

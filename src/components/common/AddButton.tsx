@@ -21,6 +21,6 @@ function AddButton({ onClick }: AddButtonProps) {
       + New
     </Button>
   );
-};
+}
 
 export default AddButton;
