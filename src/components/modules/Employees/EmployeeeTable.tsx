@@ -32,6 +32,11 @@ export default function EmployeeTable() {
   const [id, setId] = useState('');
   console.log(req.data?.data);
 
+  const handleDeleteEmployee = (id:string) => {
+    if (req.data) req.data.data= req.data.data.filter((employee) => employee.id !== id);
+  } 
+
+
   useEffect(() => {
     if (req.error) {
       setState({ open: true, message: req.error.message, type: 'danger' });
@@ -100,6 +105,7 @@ export default function EmployeeTable() {
             description='Are you sure you want to delete this employee?'
             id={id}
             setOpen={setOpen}
+            handleDeleteEmployee={handleDeleteEmployee}
           />
         </>
       )}

@@ -17,10 +17,21 @@ interface ModalInterface {
   id: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleModal?: () => void;
+  handleDeleteEmployee: (id: string) => void;
 }
 
- export default function DeleteModal({ open, setOpen, title, description, id }: ModalInterface) {
+
+
+export default function DeleteModal({ open, setOpen, title, description, id, handleDeleteEmployee }: ModalInterface) {
   const useDeleteEmployees = useDeleteEmployee();
+
+  const handleDelete = () => {
+    useDeleteEmployees.deleteEmployee(id);
+    setOpen(false); // This will close the modal or dialog
+    handleDeleteEmployee(id); // This will update the UI
+
+  };
+
   return (
     <>
       <Modal
@@ -82,7 +93,7 @@ interface ModalInterface {
                   backgroundColor: Colors.darkerGold,
                 },
               }}
-              onClick={() => useDeleteEmployees.deleteEmployee(id)} 
+              onClick={() => handleDelete()}
             >
               Delete
             </Button>
@@ -91,4 +102,7 @@ interface ModalInterface {
       </Modal>
     </>
   );
+}
+function sendRequest() {
+  throw new Error('Function not implemented.');
 }
