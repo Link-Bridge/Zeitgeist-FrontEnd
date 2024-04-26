@@ -25,7 +25,7 @@ const colors = {
   lightOrange: '#FFC774',
   orangeChip: '#EAD3AA',
   brownChip: '#B39C844C',
-  blueChip: 'E3EFFB',
+  blueChip: '#E3EFFB',
   null: '#C4C4C4',
   extra: '#D6CFBE',
 };

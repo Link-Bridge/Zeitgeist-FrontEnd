@@ -15,20 +15,14 @@ const Layout = ({ children }: LayoutProps) => {
   const { employee } = useContext(EmployeeContext);
 
   const pathToText = () => {
-    switch (location.pathname) {
-      case RoutesPath.CLIENTS:
-        return 'Clients';
-      case RoutesPath.PROJECTS:
-        return 'Projects';
-      case RoutesPath.TASKS:
-        return 'Tasks';
-      case RoutesPath.EMPLOYEES:
-        return 'Employees';
-      case `${RoutesPath.PROJECTS}/new`:
-        return 'New Project';
-      default:
-        return `Welcome Back, ${employee?.employee.firstName}!`;
-    }
+    if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
+    if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
+    if (location.pathname === RoutesPath.TASKS) return 'Tasks';
+    if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
+    if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
+
+    return `Welcome Back, ${employee?.employee.firstName}!`;
   };
 
   return (
