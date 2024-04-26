@@ -1,7 +1,8 @@
-import { KeyboardArrowDownSharp, MoreHoriz } from '@mui/icons-material';
-import { Card, CardContent, IconButton } from '@mui/joy';
+import { KeyboardArrowDown, MoreHoriz } from '@mui/icons-material';
 import {
+  Card,
   Chip,
+  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -26,144 +27,96 @@ const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.CANCELLED]: '#FF7A7A',
 };
 
-// TODO:
-// - Change the layout so that the card is the whole background,
-//   and the tables are inside the card (separated by a margin)
-// - Add project name and tasks associated with it to the table
-// - Change text color according to the background in the generic dropdown
-// - Add the ability to change the status of a task
-
 interface TaskTableProps {
-  projectName: string;
   tasks: Task[];
   onUpdateStatus: (taskId: string, status: TaskStatus) => void;
 }
 
-/**
- * Table task component for displaying task data in a Monday-like table
- *
- * @component
- * @param {TaskTableProps} props - The props for the component
- */
-const TaskTable = ({ projectName, tasks, onUpdateStatus }: TaskTableProps) => {
-  const [taskStatus, setTaskStatus] = useState<TaskStatus | ''>('');
+const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
+  const [collapsed, setCollapsed] = useState(false);
+
+  const handleCollapseToggle = () => {
+    setCollapsed(!collapsed);
+  };
 
   const handleStatusSelect = (taskId: string, status: TaskStatus) => {
     onUpdateStatus(taskId, status);
   };
 
   return (
-    <Card sx={{ borderRadius: '12px' }}>
-      <CardContent>
-        <Typography variant='h5'>{projectName}</Typography>
-      </CardContent>
-
-      <TableContainer>
+    <Card sx={{ borderRadius: '12px', margin: '10px' }}>
+      <TableContainer sx={{ padding: '1rem' }}>
         <Table>
-          {/* Header  */}
           <TableHead>
             <TableRow>
-              <TableCell
-                style={{ width: '50%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                Task
+              <TableCell style={{ width: '50%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                  Task
+                </Typography>
               </TableCell>
-              <TableCell
-                style={{ width: '15%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                Status
+              <TableCell style={{ width: '15%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                  Status
+                </Typography>
               </TableCell>
-              <TableCell
-                style={{ width: '10%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                Waiting For
+              <TableCell style={{ width: '10%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                  Waiting For
+                </Typography>
               </TableCell>
-              <TableCell
-                style={{ width: '10%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                Hours
+              <TableCell style={{ width: '10%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                  Hours
+                </Typography>
               </TableCell>
-              <TableCell
-                style={{ width: '10%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                Due Date
+              <TableCell style={{ width: '10%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                  Due Date
+                </Typography>
               </TableCell>
-              <TableCell
-                style={{ width: '10%' }}
-                sx={{
-                  color: colors.grey[700],
-                  fontWeight: 600,
-                  fontSize: '1rem',
-                }}
-              >
-                <KeyboardArrowDownSharp />
+              <TableCell style={{ width: '10%' }}>
+                <Typography
+                  variant='body1'
+                  sx={{ fontWeight: 600, cursor: 'pointer' }}
+                  onClick={handleCollapseToggle}
+                >
+                  <KeyboardArrowDown />
+                </Typography>
               </TableCell>
             </TableRow>
           </TableHead>
-
-          {/* Table Contents */}
           <TableBody>
-            {tasks.map(task => (
-              <TableRow key={task.id}>
-                <TableCell>{task.title}</TableCell>
-                <TableCell>
-                  <GenericDropdown
-                    options={Object.values(TaskStatus)}
-                    onSelect={(status: TaskStatus) => handleStatusSelect(task.id, status)}
-                    colorMap={statusColorMap}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={task.waitingFor}
-                    style={{
-                      backgroundColor: colors.grey[300],
-                      color: colors.grey[900],
-                    }}
-                  />
-                </TableCell>
-                <TableCell>
-                  <Chip
-                    label={task.workedHours}
-                    style={{
-                      backgroundColor: '#D6CFBE',
-                      color: colors.grey[700],
-                    }}
-                  />
-                </TableCell>
-                <TableCell>{task.dueDate}</TableCell>
-                <TableCell>
-                  <IconButton aria-label='more'>
-                    <MoreHoriz />
-                  </IconButton>
-                </TableCell>
-              </TableRow>
-            ))}
+            {!collapsed &&
+              tasks.map(task => (
+                <TableRow key={task.id}>
+                  <TableCell>{task.title}</TableCell>
+                  <TableCell>
+                    <GenericDropdown
+                      options={Object.values(TaskStatus)}
+                      onSelect={(status: TaskStatus) => handleStatusSelect(task.id, status)}
+                      colorMap={statusColorMap}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={task.waitingFor}
+                      sx={{ backgroundColor: colors.grey[300], color: colors.grey[900] }}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={task.workedHours}
+                      sx={{ backgroundColor: '#D6CFBE', color: colors.grey[700] }}
+                    />
+                  </TableCell>
+                  <TableCell>{task.dueDate}</TableCell>
+                  <TableCell>
+                    <IconButton aria-label='more'>
+                      <MoreHoriz />
+                    </IconButton>
+                  </TableCell>
+                </TableRow>
+              ))}
           </TableBody>
         </Table>
       </TableContainer>

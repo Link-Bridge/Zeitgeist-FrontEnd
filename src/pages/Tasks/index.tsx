@@ -1,3 +1,5 @@
+import { Sheet, Typography } from '@mui/joy';
+import { colors } from '@mui/material';
 import { useState } from 'react';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
 import { Task } from '../../types/task';
@@ -61,9 +63,25 @@ const Tasks = () => {
   };
 
   return (
-    <>
-      <TaskTable projectName={firstProject} tasks={tasks} onUpdateStatus={updateTaskStatus} />
-    </>
+    <Sheet
+      sx={{
+        display: 'flex',
+        flexDirection: 'column',
+        gap: 2,
+        borderRadius: 12,
+        padding: 2,
+        maxHeight: '100vh',
+        overflowY: 'auto',
+      }}
+    >
+      <Typography
+        variant='h1'
+        sx={{ fontWeight: 600, fontSize: '1.4rem', color: colors.grey[800] }}
+      >
+        {firstProject}
+      </Typography>
+      <TaskTable tasks={tasks} onUpdateStatus={updateTaskStatus} />
+    </Sheet>
   );
 };
 
