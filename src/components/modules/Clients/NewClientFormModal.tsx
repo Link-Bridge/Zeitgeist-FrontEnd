@@ -64,6 +64,8 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
     if (error && error.response.data)
       return setState({ open: true, message: error.response.data.error, type: 'danger' });
+    if (error)
+      return setState({ open: true, message: "Error", type: 'danger' });
   };
 
   /**
@@ -89,7 +91,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   useEffect(() => {
     handleError();
     handleSuccess();
-  }, [data, error, handleError, handleSuccess]);
+  }, [data, error]);
 
   /**
    * @brief The required information
@@ -109,24 +111,29 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
    * @brief Handle form submission validating form data, preparing
    * request body and send the request to the server
    */
-  const handleSubmit = (event: { preventDefault: () => void }) => {
+  const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
     if (!validateForm())
       return setState({ open: true, message: 'All fields are required', type: 'danger' });
 
+    // Parse date
+    const dateString = companyConstitution;
+    const dateParts = dateString.split('-').map(Number);
+    const date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+
     const body = {
       company: {
         name: companyName,
         email: companyEmail,
-        phone: companyPhone,
+        phoneNumber: companyPhone,
         rfc: companyRFC,
-        constitution: companyConstitution,
+        constitutionDate: date.toUTCString(),
         taxResidence: companyTaxResidence,
       },
     };
 
-    sendRequest({}, body, { 'Content-Type': 'application/json' });
+    await sendRequest({}, body, { 'Content-Type': 'application/json' });
   };
 
   /**
@@ -146,7 +153,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => {} }}
+      BackdropProps={{ onClick: () => { } }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
@@ -211,7 +218,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               value={companyRFC}
               onChange={event => {
                 const inputValue = event.target.value;
-                if (inputValue.length <= 12) {
+                if (inputValue.length <= 13) {
                   setCompanyRFC(event.target.value);
                 }
               }}
