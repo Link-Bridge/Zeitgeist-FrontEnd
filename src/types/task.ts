@@ -9,4 +9,8 @@ export interface BareboneTask {
   dueDate: string | null;
   workedHours: string | null;
   idProject: string;
+  notification: {
+    title: string;
+    description: string;
+  }
 }

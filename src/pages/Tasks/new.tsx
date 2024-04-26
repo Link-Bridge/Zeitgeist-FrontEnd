@@ -2,12 +2,23 @@ import NewTaskForm from '../../components/modules/Task/NewTask/NewTaskForm';
 import useHttp from '../../hooks/useHttp';
 import { BareboneTask } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
+import { NotificationTitles } from '../../utils/constants';
+import { NotificationDescriptions } from '../../utils/constants';
 
 const NewTaskPage = () => {
   const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
 
   const handleOnSubmit = async (payload: BareboneTask) => {
-    await sendRequest({}, { ...payload });
+
+    const modifiedPayload = {
+      ...payload,
+      notification: {
+        title: NotificationTitles.NEW_TASK,
+        description: NotificationDescriptions.NEW_TASK,
+      }
+    };
+
+    await sendRequest({}, { modifiedPayload });
   };
 
   return <NewTaskForm onSubmit={handleOnSubmit} />;
