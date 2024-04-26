@@ -9,6 +9,7 @@ import { EmployeeContext } from '../../hooks/employeeContext';
 import { RoutesPath } from '../../utils/constants';
 
 const Auth: React.FC = () => {
+  const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
   const navigate = useNavigate();
 
   const { setEmployee } = useContext(EmployeeContext);
@@ -17,12 +18,9 @@ const Auth: React.FC = () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-      console.log(idToken);
       sessionStorage.setItem('idToken', idToken);
 
       // TODO: Had trouble using the useHttp hook
-
-      const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
 
       const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
         method: 'POST',
@@ -30,11 +28,6 @@ const Auth: React.FC = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${idToken}`,
         },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          imageUrl: result.user.photoURL,
-        }),
       });
 
       if (!response.ok) {
@@ -42,7 +35,6 @@ const Auth: React.FC = () => {
       }
 
       const responseData = await response.json();
-      console.log(responseData);
       setEmployee(responseData.data);
 
       navigate(RoutesPath.HOME);
