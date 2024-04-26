@@ -12,5 +12,5 @@ export interface BareboneTask {
   notification: {
     title: string;
     description: string;
-  }
+  };
 }
