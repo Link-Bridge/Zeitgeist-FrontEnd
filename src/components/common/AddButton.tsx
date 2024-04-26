@@ -1,5 +1,5 @@
 import Button from '@mui/joy/Button';
-import colors from '../../colors'; // Importar los colores del archivo colors.tsx
+import colors from '../../colors';
 
 interface AddButtonProps {
   onClick: () => void;
