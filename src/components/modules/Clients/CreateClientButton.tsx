@@ -5,6 +5,13 @@ interface CreateClientButtonProps {
   loading: boolean;
 }
 
+/**
+ * @brief Button to create a new client
+ *
+ * @param loading indicates the loading process
+ * @return Button component acording the loading state
+ */
+
 function CreateClientButton({ loading }: CreateClientButtonProps) {
   return (
     <Button
@@ -12,14 +19,16 @@ function CreateClientButton({ loading }: CreateClientButtonProps) {
       variant='solid'
       size='sm'
       sx={{
-        backgroundColor: colors.darkGold, // Llamar el color correspondiente
+        height: '36px',
+        marginTop: '10px',
+        backgroundColor: colors.darkGold,
         '&:hover': {
           backgroundColor: colors.darkerGold,
         },
       }}
     >
       {loading && 'Creating...'}
-      {!loading && 'Create'}
+      {!loading && 'Create Client'}
     </Button>
   );
 }

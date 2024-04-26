@@ -27,7 +27,7 @@ const ClientCard = ({
 }: ClientCardProps) => {
   return (
     <CardContainer>
-      <header className='mb-3 text-xl flex text-[#876F39]'>
+      <header className='mb-3 text-xl flex'>
         <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' /> {name}
       </header>
       <div className='grid grid-cols-2 gap-2'>

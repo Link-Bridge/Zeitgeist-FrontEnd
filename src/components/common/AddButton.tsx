@@ -18,9 +18,9 @@ const AddButton: React.FC<AddButtonProps> = ({ children }) => {
         },
       }}
     >
-      {children}+ New
+      + New
     </Button>
   );
-};
+}
 
 export default AddButton;

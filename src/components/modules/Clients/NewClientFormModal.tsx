@@ -3,6 +3,7 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import { useContext, useEffect, useState } from 'react';
+import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
@@ -10,6 +11,9 @@ import { RequestMethods } from '../../../utils/constants';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
 
+/**
+ * @brief style object for box component
+ */
 const style = {
   position: 'absolute' as const,
   top: '50%',
@@ -17,7 +21,7 @@ const style = {
   transform: 'translate(-50%, -50%)',
   width: 620,
   bgcolor: 'background.paper',
-  border: '2px solid #9C844C',
+  border: '2px solid' && colors.darkGold,
   boxShadow: 24,
   p: 4,
   borderRadius: 3,
@@ -39,17 +43,57 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
   const { setState } = useContext(SnackbarContext);
 
+  /**
+   * @brief using http hook being able to send new client information
+   */
   const { data, error, loading, sendRequest } = useHttp<CompanyEntity>(
     '/company/new',
     RequestMethods.POST
   );
 
+  /**
+   * @brief Manage error
+   */
+  const handleError = () => {
+    if (error && error.code && error.code == 'ERR_NETWORK')
+      return setState({
+        open: true,
+        message: 'An unexpected error occurred. Please try again',
+        type: 'danger',
+      });
+
+    if (error && error.response.data)
+      return setState({ open: true, message: error.response.data.error, type: 'danger' });
+  };
+
+  /**
+   * @brief Supervise the're no error, if it's clean, send a succuess message, close the modal
+   * and refetch
+   */
+  const handleSuccess = () => {
+    if (!error && data && data.id) {
+      setState({ open: true, message: 'Company created', type: 'success' });
+      setOpen(false);
+
+      setCompanyName('');
+      setCompanyEmail('');
+      setCompanyPhone('');
+      setCompanyRFC('');
+      setCompanyConstitution('');
+      setCompanyTaxResidence('');
+
+      setRefetch(true);
+    }
+  };
+
   useEffect(() => {
     handleError();
     handleSuccess();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error]);
+  }, [data, error, handleError, handleSuccess]);
 
+  /**
+   * @brief The required information
+   */
   const validateForm = () => {
     return (
       companyName != '' &&
@@ -61,6 +105,10 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     );
   };
 
+  /**
+   * @brief Handle form submission validating form data, preparing
+   * request body and send the request to the server
+   */
   const handleSubmit = (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
@@ -81,33 +129,16 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     sendRequest({}, body, { 'Content-Type': 'application/json' });
   };
 
-  const handleError = () => {
-    if (error && error.code && error.code == 'ERR_NETWORK')
-      return setState({
-        open: true,
-        message: 'An unexpected error occurred. Please try again',
-        type: 'danger',
-      });
-
-    if (error && error.response.data)
-      return setState({ open: true, message: error.response.data.error, type: 'danger' });
-  };
-
-  const handleSuccess = () => {
-    if (!error && data && data.id) {
-      setState({ open: true, message: 'Company created', type: 'success' });
-      setOpen(false);
-
-      setCompanyName('');
-      setCompanyEmail('');
-      setCompanyPhone('');
-      setCompanyRFC('');
-      setCompanyConstitution('');
-      setCompanyTaxResidence('');
-
-      setRefetch(true);
-    }
-  };
+  /**
+   * @brief A modal component with forms for creating a new client
+   *
+   * A form is used to request required information to create clients,
+   * with success and error messages displayed.
+   *
+   * @param open open the modal
+   * @param setOpen modal state
+   * @param setRefetch obtain the current clients and show them on screen
+   */
 
   return (
     <Modal
@@ -138,7 +169,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
         >
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientName'
               label='Clients name'
               variant='outlined'
@@ -150,7 +180,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientEmail'
               label='Email'
               type='email'
@@ -164,7 +193,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientPhone'
               label='Phone number'
               type='tel'
@@ -177,7 +205,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientRFC'
               label='RFC'
               variant='outlined'
@@ -193,7 +220,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
-              // required
               id='clientConstituton'
               label='Constitucion date'
               type='Date'
@@ -206,7 +232,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             />
 
             <TextField
-              // required
               id='clientTaxResidence'
               label='Tax residence'
               variant='outlined'
