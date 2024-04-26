@@ -1,5 +1,6 @@
-import { initializeApp } from 'firebase/app';
 import { getAuth, GoogleAuthProvider } from 'firebase/auth';
+import firebase from 'firebase/compat/app';
+import 'firebase/compat/messaging';
 
 const firebaseConfig = {
   apiKey: import.meta.env.VITE_FIREBASE_API_KEY,
@@ -10,11 +11,13 @@ const firebaseConfig = {
   appId: import.meta.env.VITE_FIREBASE_APP_ID,
 };
 
-const app = initializeApp(firebaseConfig);
+const app = firebase.initializeApp(firebaseConfig);
 const auth = getAuth(app);
+const messaging = firebase.messaging(app);
+
 const provider = new GoogleAuthProvider();
 provider.setCustomParameters({
   login_hint: 'user@example.com',
 });
 
-export { app, auth, provider };
+export { app, auth, firebaseConfig, messaging, provider };
