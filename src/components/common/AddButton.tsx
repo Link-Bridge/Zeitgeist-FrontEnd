@@ -3,9 +3,10 @@ import colors from '../../colors';
 
 interface AddButtonProps {
   children?: React.ReactNode;
+  onClick: () => void;
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ children }) => {
+const AddButton: React.FC<AddButtonProps> = ({ children, onClick }: AddButtonProps) => {
   return (
     <Button
       onClick={onClick}

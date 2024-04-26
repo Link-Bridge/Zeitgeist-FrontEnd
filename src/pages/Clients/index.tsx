@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -7,19 +7,18 @@ import Loader from '../../components/common/Loader';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { Response } from '../../types/response';
-import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { RequestMethods } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
   const [clientId, setClientId] = useState<string>('');
 
-  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity[]>>(
+  const { data, error, loading, sendRequest } = useHttp<CompanyEntity[]>(
     '/company',
     RequestMethods.GET
   );
 
-  const companies: CompanyEntity[] = data && data.data ? data.data.flat() : [];
+  const companies: CompanyEntity[] = data ? data.flat() : [];
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
 
