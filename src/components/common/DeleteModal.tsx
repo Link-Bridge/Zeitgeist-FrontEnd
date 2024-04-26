@@ -20,16 +20,20 @@ interface ModalInterface {
   handleDeleteEmployee: (id: string) => void;
 }
 
-
-
-export default function DeleteModal({ open, setOpen, title, description, id, handleDeleteEmployee }: ModalInterface) {
+export default function DeleteModal({
+  open,
+  setOpen,
+  title,
+  description,
+  id,
+  handleDeleteEmployee,
+}: ModalInterface) {
   const useDeleteEmployees = useDeleteEmployee();
 
   const handleDelete = () => {
     useDeleteEmployees.deleteEmployee(id);
     setOpen(false); // This will close the modal or dialog
     handleDeleteEmployee(id); // This will update the UI
-
   };
 
   return (

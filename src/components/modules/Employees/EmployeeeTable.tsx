@@ -32,10 +32,10 @@ export default function EmployeeTable() {
   const [id, setId] = useState('');
   console.log(req.data?.data);
 
-  const handleDeleteEmployee = (id:string) => {
-    if (req.data) req.data.data= req.data.data.filter((employee) => employee.id !== id);
-  } 
-
+  const handleDeleteEmployee = (id: string) => {
+    if (req.data) req.data.data = req.data.data.filter(employee => employee.id !== id);
+    setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
+  };
 
   useEffect(() => {
     if (req.error) {
