@@ -15,7 +15,6 @@ import {
 import { useState } from 'react';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import GenericDropdown from '../../../common/GenericDropdown';
 
 const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
@@ -32,6 +31,14 @@ interface TaskTableProps {
   onUpdateStatus: (taskId: string, status: TaskStatus) => void;
 }
 
+/**
+ * Table component to display the tasks assigned to the employee
+ *
+ * @param tasks: Task[] - List of tasks assigned to the employee
+ * @param onUpdateStatus: (taskId: string, status: TaskStatus) => void -
+ *                         Function to update the status of the task
+ * @returns JSX.Element - React component
+ */
 const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
   const [collapsed, setCollapsed] = useState(false);
 
@@ -91,10 +98,14 @@ const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
                 <TableRow key={task.id}>
                   <TableCell>{task.title}</TableCell>
                   <TableCell>
-                    <GenericDropdown
+                    {/* <GenericDropdown
                       options={Object.values(TaskStatus)}
                       onSelect={(status: TaskStatus) => handleStatusSelect(task.id, status)}
                       colorMap={statusColorMap}
+                    /> */}
+                    <Chip
+                      label={task.status}
+                      sx={{ backgroundColor: statusColorMap[task.status], color: colors.grey[800] }}
                     />
                   </TableCell>
                   <TableCell>

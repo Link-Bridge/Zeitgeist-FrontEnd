@@ -1,66 +1,43 @@
 import { Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
-import { useState } from 'react';
+import { User } from 'firebase/auth';
+import { useEffect, useState } from 'react';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
+import useHttp from '../../hooks/useHttp';
 import { Task } from '../../types/task';
-import { TaskStatus } from '../../types/task-status';
+import { RequestMethods } from '../../utils/constants';
 
+/**
+ * Shows the tasks assigned for the signed in employee
+ *
+ * @page
+ * @returns JSX.Element - React component
+ */
 const Tasks = () => {
   const firstProject = 'CIE Renovation';
+  const [tasks, setTasks] = useState<Task[] | null>([]);
 
-  const [tasks, setTasks] = useState<Task[]>([
-    {
-      id: '1',
-      title: 'Update of personal and professional information',
-      description: 'Description 1',
-      status: TaskStatus.NOT_STARTED,
-      waitingFor: 'Sebastián',
-      startDate: '2022-01-01',
-      dueDate: '14-02-2024',
-      workedHours: '65',
-      idProject: '1',
-    },
-    {
-      id: '2',
-      title: 'Collection of necessary documentation',
-      description: 'Description 2',
-      status: TaskStatus.DONE,
-      waitingFor: 'Sebastián',
-      startDate: '2022-01-01',
-      dueDate: '15-02-2024',
-      workedHours: '65',
-      idProject: '1',
-    },
-    {
-      id: '3',
-      title: 'Scheduling an appointment at the embassy',
-      description: 'Description 2',
-      status: TaskStatus.DONE,
-      waitingFor: 'Sebastián',
-      startDate: '2022-01-01',
-      dueDate: '16-02-2024',
-      workedHours: '65',
-      idProject: '1',
-    },
-    {
-      id: '4',
-      title: 'Financial preparation',
-      description: 'Description 2',
-      status: TaskStatus.DONE,
-      waitingFor: 'Sebastián',
-      startDate: '2022-01-01',
-      dueDate: '17-02-2024',
-      workedHours: '65',
-      idProject: '1',
-    },
-  ]);
+  // TODO:
+  // - Fetch the signed in user ID. Since the user is already signed in,
+  //   the ID must be fetched from the backend using the ID token
+  // - Fetch the tasks assigned to the user using the user ID
+  // - Update the tasks state with the fetched tasks
+  let userEmail = sessionStorage.getItem('userEmail');
 
-  const updateTaskStatus = (taskId: string, status: TaskStatus) => {
-    // TODO: If the status is changed, POST request to the backend
+  const { data: userData, sendRequest: userIdRequest } = useHttp<User>(
+    `/employee/${userEmail}`,
+    RequestMethods.GET
+  );
 
-    // Update the status in local state
-    setTasks(prevTasks => prevTasks.map(task => (task.id === taskId ? { ...task, status } : task)));
-  };
+  // TODO: Stop the infinite fetch loop
+  useEffect(() => {
+    userIdRequest();
+  }, []);
+
+  console.log(userData);
+
+  // TODO: Implement the updateTaskStatus function
+  const updateTaskStatus = (taskId: string, status: string) => {};
 
   return (
     <Sheet
@@ -80,7 +57,7 @@ const Tasks = () => {
       >
         {firstProject}
       </Typography>
-      <TaskTable tasks={tasks} onUpdateStatus={updateTaskStatus} />
+      <TaskTable tasks={tasks || []} onUpdateStatus={updateTaskStatus} />
     </Sheet>
   );
 };

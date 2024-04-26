@@ -16,6 +16,10 @@ const Auth: React.FC = () => {
       const idToken = await result.user.getIdToken();
       sessionStorage.setItem('idToken', idToken);
 
+      if (result.user.email) {
+        sessionStorage.setItem('userEmail', result.user.email);
+      }
+
       // TODO: Had trouble using the useHttp hook
 
       const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
