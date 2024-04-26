@@ -1,4 +1,4 @@
-import axios, { AxiosRequestConfig } from 'axios';
+import axios, { AxiosError, AxiosRequestConfig } from 'axios';
 import { useState } from 'react';
 import { RequestMethods } from '../utils/constants';
 
@@ -38,7 +38,7 @@ import { RequestMethods } from '../utils/constants';
 
 interface HttpHook<T> {
   data: T | null;
-  error: Error | null;
+  error: Error | AxiosError | null;
   loading: boolean;
   sendRequest: (
     params?: Record<string, unknown>,
@@ -49,7 +49,7 @@ interface HttpHook<T> {
 
 const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   const [data, setData] = useState<T | null>(null);
-  const [error, setError] = useState<Error | null>(null);
+  const [error, setError] = useState<Error | AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
   const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
@@ -84,7 +84,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
       const response = await axios(options);
       setData(response.data as T);
     } catch (error) {
-      setError(error as Error);
+      setError(error as Error | AxiosError);
     } finally {
       setLoading(false);
     }

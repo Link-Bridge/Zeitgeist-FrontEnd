@@ -11,7 +11,7 @@ import { RequestMethods } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
-  const [clientId, setClientId] = useState<string>('');
+  const [clientId] = useState<string>('');
 
   const { data, error, loading, sendRequest } = useHttp<CompanyEntity[]>(
     '/company',
@@ -24,6 +24,7 @@ const Clients = () => {
 
   useEffect(() => {
     sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [refetch]);
 
   const openModal = () => {

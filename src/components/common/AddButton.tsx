@@ -6,7 +6,7 @@ interface AddButtonProps {
   onClick: () => void;
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ children, onClick }: AddButtonProps) => {
+const AddButton: React.FC<AddButtonProps> = ({ onClick }: AddButtonProps) => {
   return (
     <Button
       onClick={onClick}
@@ -22,6 +22,6 @@ const AddButton: React.FC<AddButtonProps> = ({ children, onClick }: AddButtonPro
       + New
     </Button>
   );
-}
+};
 
 export default AddButton;

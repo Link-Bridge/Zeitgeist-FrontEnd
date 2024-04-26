@@ -42,7 +42,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
   const { setState } = useContext(SnackbarContext);
-
   /**
    * @brief using http hook being able to send new client information
    */
@@ -54,18 +53,18 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   /**
    * @brief Manage error
    */
+  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleError = () => {
-    if (error && error.code && error.code == 'ERR_NETWORK')
+    if (error && 'code' in error && error.code == 'ERR_NETWORK')
       return setState({
         open: true,
         message: 'An unexpected error occurred. Please try again',
         type: 'danger',
       });
 
-    if (error && error.response.data)
-      return setState({ open: true, message: error.response.data.error, type: 'danger' });
-    if (error)
-      return setState({ open: true, message: "Error", type: 'danger' });
+    if (error && 'response' in error && error.response?.data)
+      return setState({ open: true, message: error.response.data?.error, type: 'danger' });
+    if (error) return setState({ open: true, message: 'Error', type: 'danger' });
   };
 
   /**
@@ -91,6 +90,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   useEffect(() => {
     handleError();
     handleSuccess();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
   /**
