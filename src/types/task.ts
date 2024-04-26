@@ -10,3 +10,7 @@ export interface BareboneTask {
   workedHours: string | null;
   idProject: string;
 }
+
+export interface Task extends BareboneTask {
+  id: string;
+}
