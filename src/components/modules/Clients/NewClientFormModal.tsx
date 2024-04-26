@@ -53,7 +53,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   /**
    * @brief Manage error
    */
-  // eslint-disable-next-line @typescript-eslint/no-explicit-any
   const handleError = () => {
     if (error && 'code' in error && error.code == 'ERR_NETWORK')
       return setState({
@@ -153,7 +152,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => { } }}
+      BackdropProps={{ onClick: () => {} }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
