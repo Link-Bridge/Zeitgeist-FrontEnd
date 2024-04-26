@@ -23,31 +23,48 @@ const Tasks = () => {
     RequestMethods.GET
   );
 
+  const userId = userData?.data.id;
+
+  const {
+    data: tasksData,
+    sendRequest: tasksRequest,
+    error,
+  } = useHttp<Task[]>(`/employee-task/${userId}/tasks`, RequestMethods.GET);
+
   useEffect(() => {
     if (userEmail) {
       userIdRequest();
     }
   }, []);
 
-  const { data: tasksData, sendRequest: tasksRequest } = useHttp<{ data: Task[] }>(
-    `/employee-task/${userData?.data.id}/tasks`,
-    RequestMethods.GET
-  );
-
   useEffect(() => {
-    if (userData?.data) {
+    if (userId) {
       tasksRequest();
     }
-  }, [userData]);
+  }, [userId]);
 
   useEffect(() => {
     if (tasksData) {
-      setTasks(tasksData.data);
+      setTasks(tasksData);
     }
   }, [tasksData]);
 
   // TODO: Implement the updateTaskStatus function
-  const updateTaskStatus = (taskId: string, status: string) => {};
+  const updateTaskStatus = (taskId: string, status: string) => {
+    console.log(taskId, status);
+  };
+
+  if (error)
+    return (
+      <>
+        <Typography level='h1' variant='plain'>
+          Error
+        </Typography>
+        <Typography level='h4' variant='plain'>
+          {error.message}
+        </Typography>
+      </>
+    );
 
   return (
     <>
@@ -63,8 +80,21 @@ const Tasks = () => {
             overflowY: 'auto',
           }}
         >
-          {tasks && tasks.length > 0 ? (
-            <TaskTable tasks={tasks} onUpdateStatus={updateTaskStatus} />
+          {tasks ? (
+            <>
+              <Typography
+                variant='plain'
+                level='h1'
+                sx={{
+                  color: colors.grey[800],
+                  fontWeight: 'bold',
+                  fontSize: '1.5rem',
+                }}
+              >
+                {firstProject}
+              </Typography>
+              <TaskTable tasks={tasks} onUpdateStatus={updateTaskStatus} />
+            </>
           ) : (
             <Box
               sx={{
@@ -76,10 +106,10 @@ const Tasks = () => {
                 color: colors.grey[500],
               }}
             >
-              <Typography variant='h2' align='center' gutterBottom>
+              <Typography variant='plain' level='h1'>
                 Your task list is empty
               </Typography>
-              <Typography variant='body1' align='center' gutterBottom>
+              <Typography variant='plain' level='h4'>
                 Get started by adding tasks to visualize your project.
               </Typography>
             </Box>
