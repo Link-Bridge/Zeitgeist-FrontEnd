@@ -37,7 +37,6 @@ const Task: React.FC = () => {
     if (!data) {
       sendRequest();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   if (loading) {
@@ -62,7 +61,7 @@ const Task: React.FC = () => {
           underline='none'
           className='ml-auto'
           sx={{
-            color: colors.darkGold, // Llamar el color correspondiente
+            color: colors.darkGold,
             '&:hover': {
               color: colors.darkerGold,
             },
