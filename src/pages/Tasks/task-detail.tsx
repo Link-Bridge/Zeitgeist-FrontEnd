@@ -205,7 +205,7 @@ const Task: React.FC = () => {
                 )}
 
                 <Box>
-                  <p style={{ fontSize: '.9rem' }}>Project Name</p>
+                  <p style={{ fontSize: '.9rem' }}>Project</p>
                   <ColorChip
                     label={`${data.projectName}`}
                     color={`${colors.lightGold}`}
