@@ -30,7 +30,6 @@ export default function EmployeeTable() {
     setId(id);
   };
   const [id, setId] = useState('');
-  console.log(req.data?.data);
 
   const handleDeleteEmployee = (id: string) => {
     if (req.data) req.data.data = req.data.data.filter(employee => employee.id !== id);
