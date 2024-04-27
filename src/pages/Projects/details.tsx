@@ -9,10 +9,15 @@ import colors from '../../colors';
 const ProjectDetails = () => {
   return (
     <>
-      <Card className='bg-white flex-1 font-montserrat' sx={{ padding: '30px' }}>
+      <Card
+        className='bg-white font-montserrat'
+        sx={{ Maxwidth: '300px', padding: '20px', marginTop: '20px' }}
+      >
         <section className='font-montserrat'>
           <section className='flex justify-between'>
-            <h3 className='text-[22px] font-medium'>Alexander Volkmann VISA renovation</h3>
+            <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
+              Alexander Volkmann VISA renovation
+            </h3>
             <section className='flex justify-end gap-3'>
               <EditOutlinedIcon
                 sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
@@ -106,7 +111,7 @@ const ProjectDetails = () => {
             </div>
           </div>
 
-          <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: -2.5, mr: 1, gap: 18 }}>
+          <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
               <EventNoteIcon sx={{ marginRight: '5px' }} />
               <p>Start Date: 14-02-2024</p>
