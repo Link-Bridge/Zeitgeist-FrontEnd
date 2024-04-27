@@ -49,6 +49,7 @@ const ProjectReport: React.FC = () => {
     if (!data) {
       sendRequest();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   if (loading) {

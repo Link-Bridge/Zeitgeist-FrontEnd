@@ -21,7 +21,7 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
 
   useEffect(() => {
     if (data && data.data) {
-      setProjectsGroup(data.data);
+      setProjectsGroup(data.data.flat());
     }
   }, [data]);
 
@@ -29,6 +29,7 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
     if (!data || data.data.length === 0) {
       sendRequest();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   /**
