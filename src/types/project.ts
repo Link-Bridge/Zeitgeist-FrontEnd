@@ -35,6 +35,8 @@ export enum ProjectStatus {
   POSTPONED = 'Postponed',
   DONE = 'Done',
   CANCELLED = 'Cancelled',
+  IN_QUOTATION = 'In quotation',
+  ACCEPTED = 'Accepted',
 }
 
 export interface ProjectEntity {
@@ -46,7 +48,7 @@ export interface ProjectEntity {
   category: string;
   startDate: Date;
   endDate: Date;
-  area: string;
+  area: ProjectAreas;
   totalHours: number;
   periodicty: ProjectPeriodicity;
   isChargeable: boolean;

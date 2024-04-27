@@ -3,11 +3,13 @@ import colors from '../../colors';
 
 interface AddButtonProps {
   children?: React.ReactNode;
+  onClick: () => void;
 }
 
-const AddButton: React.FC<AddButtonProps> = ({ children }) => {
+const AddButton: React.FC<AddButtonProps> = ({ onClick }: AddButtonProps) => {
   return (
     <Button
+      onClick={onClick}
       variant='solid'
       size='sm'
       sx={{
@@ -17,7 +19,7 @@ const AddButton: React.FC<AddButtonProps> = ({ children }) => {
         },
       }}
     >
-      {children}+ New
+      + New
     </Button>
   );
 };
