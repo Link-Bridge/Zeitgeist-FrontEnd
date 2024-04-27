@@ -1,3 +1,7 @@
+/**
+ * @brief Hook to handle success or error messages within the system.
+ */
+
 import { createContext } from 'react';
 
 export interface SnackbarState {
