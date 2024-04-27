@@ -1,11 +1,23 @@
-import { NotificationsNone } from '@mui/icons-material';
+import { NotificationsNone, Palette } from '@mui/icons-material';
 import { Avatar } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import Colors from '../../colors';
+import { IconButton } from '@mui/material';
+import { styled } from '@mui/material/styles';
+import Badge, { BadgeProps } from '@mui/material/Badge';
 
 interface HeaderProps {
   pageTitle: string;
 }
+
+const StyledBadge = styled(Badge)<BadgeProps>(({ theme }) => ({
+  '& .MuiBadge-badge': {
+    right: -2,
+    top: 0,
+    backgroundColor: Colors.gold,
+    padding: '0 4px',
+  },
+}));
 
 const Header = ({ pageTitle }: HeaderProps) => {
   const [currentDate, setCurrentDate] = useState('');
@@ -21,11 +33,10 @@ const Header = ({ pageTitle }: HeaderProps) => {
   }, []);
 
   return (
-    <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
+    <header className='flex flex-row flex-wrap justify-between items-start pt-2 basis-1/6'>
       <section>
         <h1
           style={{
-            color: Colors.gold,
             fontFamily: 'Didot',
             fontSize: '3.5rem',
             lineHeight: '1.1',
@@ -37,10 +48,12 @@ const Header = ({ pageTitle }: HeaderProps) => {
         <p className='py-2 text-[#686868]'>{currentDate}</p>
       </section>
 
-      <section className='flex flex-row align-items justify-between items-center g-10 mt-3'>
-        <button className='mx-8 text-[#C29A51]'>
-          <NotificationsNone fontSize='large' />
-        </button>
+      <section className='flex flex-row align-items justify-between items-center g-10 mt-3 space-x-2'>
+        <IconButton className='mx-8 text-[#C29A51]'>
+          <StyledBadge badgeContent={326} style={{ color: 'white' }}>
+            <NotificationsNone fontSize='large' style={{color: Colors.gold}}/>
+          </StyledBadge>
+        </IconButton>
         <Avatar variant='solid'>OP</Avatar>
       </section>
     </header>
