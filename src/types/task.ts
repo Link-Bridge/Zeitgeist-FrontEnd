@@ -25,5 +25,5 @@ export interface TaskDetail {
   idProject: string;
   projectName: string;
   employeeFirstName?: string;
-  employeeLastName?: string
+  employeeLastName?: string;
 }

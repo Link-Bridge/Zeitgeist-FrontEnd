@@ -13,7 +13,7 @@ export enum RoutesPath {
 
 export enum APIPath {
   PROJECT_REPORT = '/project/report',
-  TASK_DETAIL = '/tasks'
+  TASK_DETAIL = '/tasks',
 }
 
 export enum RequestMethods {
