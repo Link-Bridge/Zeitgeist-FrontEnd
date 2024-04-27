@@ -1,19 +1,19 @@
-import React from 'react';
-import { useNavigate } from 'react-router-dom';
-
-import googleImage from '../../assets/images/google-logo.webp';
-import loginImage from '../../assets/images/login-image.png';
-import { RoutesPath } from '../../utils/constants';
-
 import Button from '@mui/joy/Button';
-
 import { signInWithPopup } from 'firebase/auth';
 import { getToken } from 'firebase/messaging';
+import React, { useContext } from 'react';
+import { useNavigate } from 'react-router-dom';
+import googleImage from '../../assets/images/google-logo.webp';
+import loginImage from '../../assets/images/login-image.png';
 import { auth, messaging, provider } from '../../config/firebase.config';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import { RoutesPath } from '../../utils/constants';
 
 const Auth: React.FC = () => {
-  const navigate = useNavigate();
   const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
+  const navigate = useNavigate();
+
+  const { setEmployee } = useContext(EmployeeContext);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -29,18 +29,17 @@ const Auth: React.FC = () => {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${idToken}`,
         },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          imageUrl: result.user.photoURL,
-        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to sign up');
       }
 
+      const responseData = await response.json();
+
+      setEmployee(responseData.data);
       handleGetDeviceToken(result.user.email);
+
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
