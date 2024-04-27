@@ -5,6 +5,7 @@ import { IconButton, Option, Select, selectClasses } from '@mui/joy';
 import Chip from '@mui/joy/Chip';
 import Table from '@mui/joy/Table';
 import { Avatar } from '@mui/material';
+import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -12,15 +13,11 @@ import useFetch from '../../../hooks/useFetch';
 import { Response } from '../../../types/response';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
-import axios from 'axios';
 
 function toTitleCase(str: string) {
-  return str.replace(
-    /\w\S*/g,
-    function (txt: string) {
-      return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
-    }
-  );
+  return str.replace(/\w\S*/g, function (txt: string) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
 }
 
 type Employee = {
@@ -33,11 +30,11 @@ type Employee = {
 };
 
 interface Role {
-  id: string,
-  title: string,
-  createdAt: Date,
-  updatedAt: Date | null
-};
+  id: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
 
 export default function EmployeeTable() {
   const { setState } = useContext(SnackbarContext);
@@ -55,10 +52,10 @@ export default function EmployeeTable() {
   const handleRolChange = (newRoleId: string, userId: string): void => {
     if (newRoleId === undefined || userId === undefined) return;
     const doFetch = async (): Promise<void> => {
-        await axios.put('http://localhost:4000/api/v1/admin/role', {
-          userId: userId,
-          roleId: newRoleId
-        });
+      await axios.put('http://localhost:4000/api/v1/admin/role', {
+        userId: userId,
+        roleId: newRoleId,
+      });
     };
     void doFetch();
   };
@@ -115,7 +112,7 @@ export default function EmployeeTable() {
                           <Option aria-label={role.id} key={idxRole} value={role.id}>
                             {toTitleCase(role.title)}
                           </Option>
-                        )
+                        );
                       })}
                     </Select>
                   </td>
