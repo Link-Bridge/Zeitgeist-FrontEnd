@@ -57,7 +57,7 @@ function App() {
                   }
                 />
                 <Route
-                  path={RoutesPath.TASKS}
+                  path={`${RoutesPath.TASKS}/*`}
                   element={
                     <ProtectedRoute>
                       <Tasks />
