@@ -9,9 +9,9 @@ import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useFetch from '../../../hooks/useFetch';
 import { Response } from '../../../types/response';
+import { EnvKeysValues } from '../../../utils/constants';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
-import { EnvKeysValues } from '../../../utils/constants';
 
 type Employee = {
   imageUrl?: string;
@@ -111,4 +111,8 @@ export default function EmployeeTable() {
       )}
     </Table>
   );
+}
+
+function sendRequest() {
+  throw new Error('Function not implemented.');
 }
