@@ -1,5 +1,5 @@
 export enum EnvKeysValues {
-  BASE_API_URL = 'http://localhost:4001/api/v1',
+  BASE_API_URL = 'http://localhost:4000/api/v1',
 }
 
 export enum RoutesPath {
