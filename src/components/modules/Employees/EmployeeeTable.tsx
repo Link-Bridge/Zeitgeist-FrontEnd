@@ -1,4 +1,3 @@
-import AccountCircleIcon from '@mui/icons-material/AccountCircle';
 import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
 import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { IconButton, Option, Select, selectClasses } from '@mui/joy';
@@ -10,6 +9,7 @@ import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useFetch from '../../../hooks/useFetch';
 import { Response } from '../../../types/response';
+import { EnvKeysValues } from '../../../utils/constants';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
@@ -19,14 +19,23 @@ type Employee = {
   lastName: string;
   email: string;
   role: string;
+  id: string;
 };
 
 export default function EmployeeTable() {
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
-  const req = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
-  const openModal = () => setOpen(true);
-  console.log(req.data?.data);
+  const req = useFetch<Response<Employee>>(`${EnvKeysValues.BASE_API_URL}/employee`);
+  const openModal = (id: string) => {
+    setOpen(true);
+    setId(id);
+  };
+  const [id, setId] = useState('');
+
+  const handleDeleteEmployee = (id: string) => {
+    if (req.data) req.data.data = req.data.data.filter(employee => employee.id !== id);
+    setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
+  };
 
   useEffect(() => {
     if (req.error) {
@@ -54,11 +63,7 @@ export default function EmployeeTable() {
               req.data?.data.map(employee => (
                 <tr>
                   <td>
-                    {employee.imageUrl ? (
-                      <Avatar src={employee.imageUrl}></Avatar>
-                    ) : (
-                      <AccountCircleIcon></AccountCircleIcon>
-                    )}
+                    {employee.imageUrl ? <Avatar src={employee.imageUrl}></Avatar> : <Avatar />}
                   </td>
                   <td>
                     {employee.firstName} {employee.lastName}{' '}
@@ -85,7 +90,10 @@ export default function EmployeeTable() {
                   </td>
                   <td>
                     <IconButton>
-                      <DeleteOutlineIcon onClick={openModal} style={{ color: colors.gold }} />
+                      <DeleteOutlineIcon
+                        onClick={() => openModal(employee.id)}
+                        style={{ color: colors.gold }}
+                      />
                     </IconButton>
                   </td>
                 </tr>
@@ -95,10 +103,16 @@ export default function EmployeeTable() {
             open={open}
             title='Delete Employee'
             description='Are you sure you want to delete this employee?'
+            id={id}
             setOpen={setOpen}
+            handleDeleteEmployee={handleDeleteEmployee}
           />
         </>
       )}
     </Table>
   );
+}
+
+function sendRequest() {
+  throw new Error('Function not implemented.');
 }
