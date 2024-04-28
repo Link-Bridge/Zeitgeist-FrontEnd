@@ -107,6 +107,4 @@ export default function DeleteModal({
     </>
   );
 }
-function sendRequest() {
-  throw new Error('Function not implemented.');
-}
+

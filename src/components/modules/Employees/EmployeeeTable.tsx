@@ -11,6 +11,7 @@ import useFetch from '../../../hooks/useFetch';
 import { Response } from '../../../types/response';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
+import { EnvKeysValues } from '../../../utils/constants';
 
 type Employee = {
   imageUrl?: string;
@@ -24,7 +25,7 @@ type Employee = {
 export default function EmployeeTable() {
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
-  const req = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
+  const req = useFetch<Response<Employee>>(`${EnvKeysValues.BASE_API_URL}/employee`);
   const openModal = (id: string) => {
     setOpen(true);
     setId(id);
