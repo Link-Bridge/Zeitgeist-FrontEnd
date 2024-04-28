@@ -1,6 +1,6 @@
 import { Sheet, Typography } from '@mui/joy';
 import { Box, colors } from '@mui/material';
-import { useEffect, useState } from 'react';
+import { useEffect, useMemo, useState } from 'react';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
@@ -14,9 +14,9 @@ import { RequestMethods } from '../../utils/constants';
  * @returns JSX.Element - React component
  */
 const Tasks = () => {
-  const firstProject = 'CIE Renovation';
   const userEmail = sessionStorage.getItem('userEmail');
   const [tasks, setTasks] = useState<Task[] | null>([]);
+  const [projectNames, setProjectNames] = useState<string[]>([]);
 
   const { data: userData, sendRequest: userIdRequest } = useHttp<{ data: EmployeeEntity }>(
     `/employee/${userEmail}`,
@@ -49,6 +49,16 @@ const Tasks = () => {
     }
   }, [tasksData]);
 
+  const projectIds = useMemo(
+    () => (tasks ? Array.from(new Set(tasks.map(task => task.idProject))) : []),
+    [tasks]
+  );
+
+  // TODO: Implement the getProjectNames function without crashing the app
+  const getProjectNames = async (ids: string[]) => {
+    console.log(ids);
+  };
+
   // TODO: Implement the updateTaskStatus function
   const updateTaskStatus = (taskId: string, status: string) => {
     console.log(taskId, status);
@@ -80,7 +90,7 @@ const Tasks = () => {
             overflowY: 'auto',
           }}
         >
-          {tasks ? (
+          {tasks && projectNames ? (
             <>
               <Typography
                 variant='plain'
@@ -91,7 +101,7 @@ const Tasks = () => {
                   fontSize: '1.5rem',
                 }}
               >
-                {firstProject}
+                TITLE GOES HERE
               </Typography>
               <TaskTable tasks={tasks} onUpdateStatus={updateTaskStatus} />
             </>
