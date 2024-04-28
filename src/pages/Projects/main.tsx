@@ -33,6 +33,9 @@ const ProjectMain = () => {
         <Link to={`${RoutesPath.PROJECTS}/new`}>
           <AddButton></AddButton>
         </Link>
+        <Link to={`${RoutesPath.PROJECTS}/details`}>
+          <AddButton></AddButton>
+        </Link>
       </section>
       <section className='flex-1 overflow-scroll'>
         <div className='bg-[#FAFAFA] rounded-xl overflow-y-scroll grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
