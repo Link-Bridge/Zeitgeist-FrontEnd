@@ -14,6 +14,10 @@ import { Response } from '../../../types/response';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
+/**
+ * @param str The text to be formated to Capitalized Camel Case
+ * @returns The formatted text
+ */
 function toTitleCase(str: string) {
   return str.replace(/\w\S*/g, function (txt: string) {
     return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
@@ -37,10 +41,12 @@ interface Role {
 }
 
 export default function EmployeeTable() {
+  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
-  const reqEmployees = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
-  const reqRoles = useFetch<Response<Role>>('http://localhost:4000/api/v1/admin/roles');
+  const reqEmployees = useFetch<Response<Employee>>(`${BASE_URL}/employee`);
+  const reqRoles = useFetch<Response<Role>>(`${BASE_URL}/admin/roles`);
   const openModal = () => setOpen(true);
 
   useEffect(() => {
@@ -52,7 +58,7 @@ export default function EmployeeTable() {
   const handleRolChange = (newRoleId: string, userId: string): void => {
     if (newRoleId === undefined || userId === undefined) return;
     const doFetch = async (): Promise<void> => {
-      await axios.put('http://localhost:4000/api/v1/admin/role', {
+      await axios.put(`${BASE_URL}/admin/role`, {
         userId: userId,
         roleId: newRoleId,
       });
@@ -95,8 +101,10 @@ export default function EmployeeTable() {
                       color='neutral'
                       indicator={<KeyboardArrowDown />}
                       defaultValue={employee.idRole}
-                      onChange={(e: any) => {
-                        handleRolChange(e.target.ariaLabel, employee.id);
+                      onChange={e => {
+                        if (e === null) return;
+                        // eslint-disable-next-line
+                        handleRolChange((e.target as any)?.ariaLabel || '', employee.id);
                       }}
                       sx={{
                         [`& .${selectClasses.indicator}`]: {
