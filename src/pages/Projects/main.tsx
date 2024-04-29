@@ -3,22 +3,31 @@ import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
-import useFetch from '../../hooks/useFetch';
+import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { RoutesPath } from '../../utils/constants';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
 
 const ProjectMain = () => {
-  const req = useFetch<Response<ProjectEntity>>('http://localhost:4000/api/v1/project');
+  const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(req.isLoading);
+  const [isLoading, setIsLoading] = useState(req.loading);
+
+  useEffect(() => {
+    req.sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     async function getNames() {
       setIsLoading(true);
       const res: string[] = [];
       if (req.data) {
+        const idToken = sessionStorage.getItem('idToken');
         for (const project of req.data.data) {
-          const r = await fetch(`http://localhost:4000/api/v1/company/${project.idCompany}`);
+          const r = await fetch(`http://localhost:4000/api/v1/company/${project.idCompany}`, {
+            headers: { Authorization: `Bearer ${idToken}` },
+          });
           const d = await r.json();
           res.push(d.data.name);
         }

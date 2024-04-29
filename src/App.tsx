@@ -21,6 +21,13 @@ function App() {
   const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 
   useEffect(() => {
+    const currentEmployee = JSON.parse(sessionStorage.getItem('employee') ?? '{}');
+    if (currentEmployee) {
+      setEmployee(currentEmployee);
+    }
+  }, []);
+
+  useEffect(() => {
     if (state.open) {
       setTimeout(
         () =>

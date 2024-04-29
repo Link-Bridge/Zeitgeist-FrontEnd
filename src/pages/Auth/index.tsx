@@ -37,6 +37,7 @@ const Auth: React.FC = () => {
 
       const responseData = await response.json();
 
+      sessionStorage.setItem('employee', JSON.stringify(responseData.data));
       setEmployee(responseData.data);
       handleGetDeviceToken(result.user.email);
 
