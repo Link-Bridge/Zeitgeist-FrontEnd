@@ -2,11 +2,12 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import colors from '../../colors';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
+import { CompanyEntity } from '../../types/company';
 import { ProjectEntity } from '../../types/project';
 import { APIPath, RequestMethods } from '../../utils/constants';
 
@@ -22,13 +23,23 @@ const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
   minWidth: '100px',
-  textAlign: 'left',
 };
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const [companyName, setCompanyName] = useState<string>('');
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
+    RequestMethods.GET
+  );
+
+  const {
+    data: company,
+    loading: loadingCompany,
+    sendRequest: getCompany,
+    error: errorCompany,
+  } = useHttp<{ data: CompanyEntity }>(
+    `${APIPath.COMPANIES}/${data?.idCompany}`,
     RequestMethods.GET
   );
 
@@ -36,13 +47,19 @@ const ProjectDetails = () => {
     if (!data) {
       sendRequest();
     }
-  }, [data]);
+    if (data && !company) {
+      getCompany();
+    }
+    if (company) {
+      setCompanyName(company.data.name);
+    }
+  }, [data, company]);
 
-  if (loading) {
+  if (loading && loadingCompany) {
     return <div>Loading...</div>;
   }
 
-  if (error) {
+  if (error && errorCompany) {
     return <div>Error loading task</div>;
   }
 
@@ -64,14 +81,14 @@ const ProjectDetails = () => {
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
-          <div className='grid grid-cols-7 gap-4 pt-5 text-[10px]' style={{ color: colors.gray }}>
-            <div>
-              <p>{data?.status}</p>
+          <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Status</p>
               {data && data.status !== undefined && <StatusChip status={data.status} />}
             </div>
 
-            <div>
-              <p>Hours</p>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Hours</p>
               <Chip
                 sx={{
                   bgcolor: colors.extra,
@@ -82,28 +99,28 @@ const ProjectDetails = () => {
               />
             </div>
 
-            <div>
-              <p>Client</p>
-              <Chip sx={chipStyle} />
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Client</p>
+              <Chip sx={chipStyle} label={companyName} />
             </div>
 
-            <div>
-              <p>Matter</p>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Matter</p>
               <Chip sx={chipStyle} label={data?.matter} />
             </div>
 
-            <div>
-              <p>Category</p>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Category</p>
               <Chip sx={chipStyle} label={data?.category} />
             </div>
 
-            <div>
-              <p>Area</p>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Area</p>
               <Chip sx={chipStyle} label={data?.area} />
             </div>
 
-            <div>
-              <p>Chargeable</p>
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Chargeable</p>
               <Chip sx={chipStyle} label={data?.isChargeable ? 'Yes' : 'No'} />
             </div>
           </div>
