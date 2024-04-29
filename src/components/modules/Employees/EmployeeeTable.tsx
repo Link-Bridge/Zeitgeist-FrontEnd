@@ -5,6 +5,7 @@ import { IconButton, Option, Select, selectClasses } from '@mui/joy';
 import Chip from '@mui/joy/Chip';
 import Table from '@mui/joy/Table';
 import { Avatar } from '@mui/material';
+import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -13,30 +14,61 @@ import { Response } from '../../../types/response';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
+/**
+ * @param str The text to be formated to Capitalized Camel Case
+ * @returns The formatted text
+ */
+function toTitleCase(str: string) {
+  return str.replace(/\w\S*/g, function (txt: string) {
+    return txt.charAt(0).toUpperCase() + txt.substr(1).toLowerCase();
+  });
+}
+
 type Employee = {
   imageUrl?: string;
   firstName: string;
   lastName: string;
   email: string;
-  role: string;
+  id: string;
+  idRole: string;
 };
 
+interface Role {
+  id: string;
+  title: string;
+  createdAt: Date;
+  updatedAt: Date | null;
+}
+
 export default function EmployeeTable() {
+  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
-  const req = useFetch<Response<Employee>>('http://localhost:4000/api/v1/employee');
+  const reqEmployees = useFetch<Response<Employee>>(`${BASE_URL}/employee`);
+  const reqRoles = useFetch<Response<Role>>(`${BASE_URL}/admin/roles`);
   const openModal = () => setOpen(true);
-  console.log(req.data?.data);
 
   useEffect(() => {
-    if (req.error) {
-      setState({ open: true, message: req.error.message, type: 'danger' });
+    if (reqEmployees.error) {
+      setState({ open: true, message: reqEmployees.error.message, type: 'danger' });
     }
-  }, [req.error, setState]);
+  }, [reqEmployees.error, setState]);
+
+  const handleRolChange = (newRoleId: string, userId: string): void => {
+    if (newRoleId === undefined || userId === undefined) return;
+    const doFetch = async (): Promise<void> => {
+      await axios.put(`${BASE_URL}/admin/role`, {
+        userId: userId,
+        roleId: newRoleId,
+      });
+    };
+    void doFetch();
+  };
 
   return (
     <Table variant={'outlined'}>
-      {req.isLoading ? (
+      {reqEmployees.isLoading ? (
         <Loader />
       ) : (
         <>
@@ -50,8 +82,8 @@ export default function EmployeeTable() {
             </tr>
           </thead>
           <tbody>
-            {!req.isLoading &&
-              req.data?.data.map(employee => (
+            {!reqEmployees.isLoading &&
+              reqEmployees.data?.data.map(employee => (
                 <tr>
                   <td>
                     {employee.imageUrl ? (
@@ -68,6 +100,12 @@ export default function EmployeeTable() {
                       variant='outlined'
                       color='neutral'
                       indicator={<KeyboardArrowDown />}
+                      defaultValue={employee.idRole}
+                      onChange={e => {
+                        if (e === null) return;
+                        // eslint-disable-next-line
+                        handleRolChange((e.target as any)?.ariaLabel || '', employee.id);
+                      }}
                       sx={{
                         [`& .${selectClasses.indicator}`]: {
                           transition: '0.2s',
@@ -77,7 +115,13 @@ export default function EmployeeTable() {
                         },
                       }}
                     >
-                      <Option value='employee.role'>{employee.role}</Option>
+                      {reqRoles.data?.data.map((role: Role, idxRole: number) => {
+                        return (
+                          <Option aria-label={role.id} key={idxRole} value={role.id}>
+                            {toTitleCase(role.title)}
+                          </Option>
+                        );
+                      })}
                     </Select>
                   </td>
                   <td>
