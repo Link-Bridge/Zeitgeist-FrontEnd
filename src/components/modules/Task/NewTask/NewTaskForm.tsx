@@ -94,17 +94,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       'projectName',
     ];
 
-    const missingFields: string[] = [];
-    requiredFields.forEach(field => {
-      if (!field || field === '') {
-        missingFields.push(field);
-      }
-    });
-
-    if (missingFields.length > 0) {
+    if (!requiredFields.every(field => !!field && field !== '')) {
       setErrors({
         ...errors,
-        ...missingFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
+        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
       });
       return;
     }
@@ -123,16 +116,15 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       title,
       description,
       status: status.toUpperCase() as TaskStatus,
-      startDate: startDate ? startDate.toISOString() : '',
-      dueDate: dueDate ? dueDate.toISOString() : '',
+      startDate: startDate?.toISOString() ?? '',
+      dueDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
       idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
-      idEmployee: employees.find(
-        employee => employee.firstName + ' ' + employee.lastName === assignedEmployee
-      )?.id as string,
+      idEmployee: employees.find(employee => {
+        const fullName = employee.firstName + ' ' + employee.lastName;
+        return fullName === assignedEmployee;
+      })?.id as string,
     };
-
-    console.log(payload);
 
     try {
       await onSubmit(payload);
