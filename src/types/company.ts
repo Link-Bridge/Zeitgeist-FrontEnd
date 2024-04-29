@@ -13,4 +13,7 @@ export interface CompanyEntity {
   legalHours?: number;
   chargeableHours?: number;
   totalProjects?: number;
+  rfc: string;
+  taxResidence: string;
+  constitutionDate: Date;
 }
