@@ -14,6 +14,7 @@ import Employees from './pages/Employees';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
+import NewTaskPage from './pages/Tasks/new';
 import { RoutesPath } from './utils/constants';
 
 function App() {
@@ -81,6 +82,15 @@ function App() {
                   }
                 />
               </Route>
+
+              <Route
+                path='tasks/create'
+                element={
+                  <ProtectedRoute>
+                    <NewTaskPage />
+                  </ProtectedRoute>
+                }
+              />
             </Routes>
           </Router>
           <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
