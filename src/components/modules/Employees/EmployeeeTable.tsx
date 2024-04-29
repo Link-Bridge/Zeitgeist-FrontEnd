@@ -8,8 +8,9 @@ import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
-import useFetch from '../../../hooks/useFetch';
+import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
+import { RequestMethods } from '../../../utils/constants';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
@@ -44,8 +45,8 @@ export default function EmployeeTable() {
 
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
-  const reqEmployees = useFetch<Response<Employee>>(`${BASE_URL}/employee`);
-  const reqRoles = useFetch<Response<Role>>(`${BASE_URL}/admin/roles`);
+  const reqEmployees = useHttp<Response<Employee>>(`/employee`, RequestMethods.GET);
+  const reqRoles = useHttp<Response<Role>>(`/admin/roles`, RequestMethods.GET);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
 
   useEffect(() => {
@@ -73,7 +74,7 @@ export default function EmployeeTable() {
 
   return (
     <Table variant={'outlined'}>
-      {reqEmployees.isLoading ? (
+      {reqEmployees.loading ? (
         <Loader />
       ) : (
         <>
@@ -87,7 +88,7 @@ export default function EmployeeTable() {
             </tr>
           </thead>
           <tbody>
-            {!reqEmployees.isLoading &&
+            {!reqEmployees.loading &&
               reqEmployees.data?.data.map(employee => (
                 <tr>
                   <td>
