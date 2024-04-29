@@ -68,6 +68,7 @@ function infoComponent(title: string, value: string, style: string = '-') {
 }
 
 const ProjectReportPDF = (props: reportProps) => {
+  let tasks: number = 0;
   const totalTasks: number = Number(props.data?.statistics?.total) || 1;
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
@@ -196,11 +197,16 @@ const ProjectReportPDF = (props: reportProps) => {
       </Page>
 
       <Page size='A4' style={{ backgroundColor: 'white' }}>
-        <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }}>
-          {props.data.tasks?.map(item => {
-            return (
+        {props.data.tasks?.map(item => {
+          return (
+            <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }}>
               <View style={{ gap: '10px' }}>
-                <Text style={{ fontSize: 20 }}>{item.title}</Text>
+                {tasks % 4 == 0 && (
+                  <Text break style={{ fontSize: 20 }}>
+                    {item.title}
+                  </Text>
+                )}
+                {tasks++ % 4 != 0 && <Text style={{ fontSize: 20 }}>{item.title}</Text>}
                 <Text style={{ fontSize: 14 }}>{item.description}</Text>
 
                 <View
@@ -237,9 +243,9 @@ const ProjectReportPDF = (props: reportProps) => {
                   )}
                 </View>
               </View>
-            );
-          })}
-        </View>
+            </View>
+          );
+        })}
       </Page>
     </Document>
   );
