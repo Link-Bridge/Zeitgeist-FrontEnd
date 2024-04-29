@@ -7,6 +7,7 @@ import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
 
 import { Snackbar } from '@mui/joy';
 import ProtectedRoute from './components/common/ProtectedRoute';
+import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
@@ -17,6 +18,7 @@ import { RoutesPath } from './utils/constants';
 
 function App() {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 
   useEffect(() => {
     if (state.open) {
@@ -29,61 +31,64 @@ function App() {
       );
     }
   }, [state]);
+
   return (
-    <LocalizationProvider dateAdapter={AdapterDayjs}>
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Router>
-          <Routes>
-            {<Route path={RoutesPath.ROOT} element={<Auth />} />}
-            <Route element={<Layout children={<Outlet />} />}>
-              <Route
-                path={RoutesPath.HOME}
-                element={
-                  <ProtectedRoute>
-                    <Home />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={`${RoutesPath.PROJECTS}/*`}
-                element={
-                  <ProtectedRoute>
-                    <Projects />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RoutesPath.TASKS}
-                element={
-                  <ProtectedRoute>
-                    <Tasks />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={`${RoutesPath.CLIENTS}/*`}
-                element={
-                  <ProtectedRoute>
-                    <Clients />
-                  </ProtectedRoute>
-                }
-              />
-              <Route
-                path={RoutesPath.EMPLOYEES}
-                element={
-                  <ProtectedRoute>
-                    <Employees />
-                  </ProtectedRoute>
-                }
-              />
-            </Route>
-          </Routes>
-        </Router>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
-    </LocalizationProvider>
+    <EmployeeContext.Provider value={{ employee, setEmployee }}>
+      <LocalizationProvider dateAdapter={AdapterDayjs}>
+        <SnackbarContext.Provider value={{ state, setState }}>
+          <Router>
+            <Routes>
+              {<Route path={RoutesPath.ROOT} element={<Auth />} />}
+              <Route element={<Layout children={<Outlet />} />}>
+                <Route
+                  path={RoutesPath.HOME}
+                  element={
+                    <ProtectedRoute>
+                      <Home />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${RoutesPath.PROJECTS}/*`}
+                  element={
+                    <ProtectedRoute>
+                      <Projects />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${RoutesPath.TASKS}/*`}
+                  element={
+                    <ProtectedRoute>
+                      <Tasks />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${RoutesPath.CLIENTS}/*`}
+                  element={
+                    <ProtectedRoute>
+                      <Clients />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={RoutesPath.EMPLOYEES}
+                  element={
+                    <ProtectedRoute>
+                      <Employees />
+                    </ProtectedRoute>
+                  }
+                />
+              </Route>
+            </Routes>
+          </Router>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
+      </LocalizationProvider>
+    </EmployeeContext.Provider>
   );
 }
 

@@ -49,6 +49,7 @@ const ProjectReport: React.FC = () => {
     if (!data) {
       sendRequest();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   if (loading) {
@@ -58,7 +59,7 @@ const ProjectReport: React.FC = () => {
   const totalTasks = data?.statistics?.total || 1;
 
   if (error) {
-    return <div>Error al cargar el reporte</div>;
+    return <div>Error laoding the report</div>;
   }
 
   return (
@@ -144,7 +145,7 @@ const ProjectReport: React.FC = () => {
                 >
                   <StatusChip status={`${data.project.status || '-'}`} />
                   <ColorChip
-                    label={`TOTAL HOURS: ${data.project.totalHours}`}
+                    label={`Total Hours: ${data.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
                   <ColorChip
@@ -178,7 +179,7 @@ const ProjectReport: React.FC = () => {
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Chargeable</p>
                     <ColorChip
-                      label={`${data.project.isChargeable}` ? 'YES' : 'NO'}
+                      label={`${data.project.isChargeable}` ? 'Yes' : 'No'}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
@@ -395,7 +396,7 @@ const ProjectReport: React.FC = () => {
             </Box>
           </>
         ) : (
-          <p>No se encontró el reporte</p>
+          <p>Report not found</p>
         )}
       </main>
     </>
