@@ -20,6 +20,28 @@ const Tasks = () => {
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
 
+  if (!employeeId) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.grey[500],
+        }}
+      >
+        <Typography variant='plain' level='h1'>
+          No employee found
+        </Typography>
+        <Typography variant='plain' level='h2'>
+          Please sign in to view your tasks
+        </Typography>
+      </Box>
+    );
+  }
+
   const {
     data: taskData,
     sendRequest: fetchTasks,
