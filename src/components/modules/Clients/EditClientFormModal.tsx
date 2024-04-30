@@ -1,9 +1,12 @@
 import { Box, Grid, Modal, TextField, Typography } from '@mui/material';
+import { DatePicker } from '@mui/x-date-pickers';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors'; // Adjust the path as needed
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
-import { CompanyEntity } from '../../../types/company';
+import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
+import { RequestMethods } from '../../../utils/constants';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
 
@@ -42,7 +45,10 @@ const EditClientFormModal = ({
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
 
   const { setState } = useContext(SnackbarContext);
-  const { sendRequest, data, error, loading } = useHttp<any>('/company/update', 'PUT');
+  const { sendRequest, data, error, loading } = useHttp<UpdateCompanyData>(
+    `/company/${clientData.id}`,
+    RequestMethods.PUT
+  );
 
   useEffect(() => {
     if (error) {
@@ -50,22 +56,26 @@ const EditClientFormModal = ({
     }
     if (data) {
       setState({ open: true, message: 'Client updated successfully.', type: 'success' });
-      setOpen(false);
-      setRefetch(true);
+      if (open) {
+        setOpen(false);
+        setRefetch(true);
+      }
     }
-  }, [data, error, setState, setOpen, setRefetch]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data, error]);
 
   const handleUpdate = async () => {
     if (!companyName) {
-      setState({ open: true, message: 'The name field is required.', type: 'error' });
+      setState({ open: true, message: 'The name field is required.', type: 'danger' });
       return;
     }
     const updatedClientData = {
+      id: clientData.id,
       name: companyName,
       email: companyEmail,
       phoneNumber: companyPhone,
       rfc: companyRFC,
-      constitutionDate: companyConstitution ? companyConstitution.toISOString() : null,
+      constitutionDate: companyConstitution,
       taxResidence: companyTaxResidence,
     };
 
@@ -124,14 +134,12 @@ const EditClientFormModal = ({
               />
             </Grid>
             <Grid item xs={6}>
-              <TextField
+              <DatePicker
                 label='Constitution Date'
-                type='date'
-                fullWidth
-                margin='normal'
-                InputLabelProps={{ shrink: true }}
-                value={companyConstitution}
-                onChange={e => setCompanyConstitution(e.target.value)}
+                value={dayjs(companyConstitution)}
+                onChange={e => {
+                  setCompanyConstitution(e?.toDate() ?? companyConstitution);
+                }}
               />
             </Grid>
             <Grid item xs={6}>

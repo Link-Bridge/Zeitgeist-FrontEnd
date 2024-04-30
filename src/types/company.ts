@@ -5,9 +5,9 @@ export interface CompanyEntity {
   phoneNumber?: string | null;
   landlinePhone?: string | null;
   archived: boolean;
-  rfc?: string;
-  taxResidence?: string;
-  constitutionDate?: Date;
+  rfc?: string | null;
+  taxResidence?: string | null;
+  constitutionDate?: Date | null;
   idCompanyDirectContact?: string | null;
   idForm?: string | null;
   created_at: Date;
@@ -16,7 +16,14 @@ export interface CompanyEntity {
   legalHours?: number;
   chargeableHours?: number;
   totalProjects?: number;
-  rfc: string;
-  taxResidence: string;
-  constitutionDate: Date;
+}
+
+export interface UpdateCompanyData {
+  id: string;
+  name: string;
+  email?: string | null;
+  phoneNumber?: string | null;
+  constitutionDate?: Date | null;
+  rfc?: string | null;
+  taxResidence?: string | null;
 }
