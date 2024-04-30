@@ -73,6 +73,7 @@ const ProjectDetails = () => {
           display: 'flex',
           alignItems: 'center',
           justifyContent: 'flex-end',
+          marginBottom: '10px',
         }}
       >
         <Link
@@ -87,7 +88,7 @@ const ProjectDetails = () => {
         </Link>
       </Box>
 
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', marginTop: '20px' }}>
+      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <section className='font-montserrat'>
           <section className='flex justify-between'>
             <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
