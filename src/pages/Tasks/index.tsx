@@ -1,6 +1,7 @@
 import { Box, Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
@@ -46,12 +47,14 @@ const Tasks = () => {
     data: taskData,
     sendRequest: fetchTasks,
     error: taskError,
+    loading: taskLoading,
   } = useHttp<Response<Task>>(`/tasks/employee/${employeeId}`, RequestMethods.GET);
 
   const {
     data: projectData,
     sendRequest: fetchProjects,
     error: projectError,
+    loading: projectLoading,
   } = useHttp<Response<ProjectEntity>>(`/project/`, RequestMethods.GET);
 
   useEffect(() => {
@@ -95,6 +98,27 @@ const Tasks = () => {
           {taskError?.message || projectError?.message}
         </Typography>
       </>
+    );
+  }
+
+  if (taskLoading || projectLoading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.grey[500],
+        }}
+      >
+        <Typography variant='plain' level='h1'>
+          Loading tasks
+        </Typography>
+
+        <Loader />
+      </Box>
     );
   }
 
