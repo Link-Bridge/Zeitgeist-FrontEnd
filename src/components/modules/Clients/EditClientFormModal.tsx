@@ -56,15 +56,8 @@ const EditClientFormModal = ({
   }, [data, error, setState, setOpen, setRefetch]);
 
   const handleUpdate = async () => {
-    if (
-      !companyName ||
-      !companyEmail ||
-      !companyPhone ||
-      !companyRFC ||
-      !companyConstitution ||
-      !companyTaxResidence
-    ) {
-      setState({ open: true, message: 'All fields are required.', type: 'error' });
+    if (!companyName) {
+      setState({ open: true, message: 'The name field is required.', type: 'error' });
       return;
     }
     const updatedClientData = {
@@ -72,7 +65,7 @@ const EditClientFormModal = ({
       email: companyEmail,
       phoneNumber: companyPhone,
       rfc: companyRFC,
-      constitutionDate: companyConstitution.toISOString(),
+      constitutionDate: companyConstitution ? companyConstitution.toISOString() : null,
       taxResidence: companyTaxResidence,
     };
 
