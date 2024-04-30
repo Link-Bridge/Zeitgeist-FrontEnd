@@ -5,6 +5,7 @@ import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
@@ -67,6 +68,25 @@ const ProjectDetails = () => {
 
   return (
     <>
+      <Box
+        sx={{
+          display: 'flex',
+          alignItems: 'center',
+          justifyContent: 'flex-end',
+        }}
+      >
+        <Link
+          to='/projects'
+          className='ml-auto'
+          style={{ textDecoration: 'none', color: colors.darkGold }}
+        >
+          <div style={{ display: 'flex', alignItems: 'center' }}>
+            <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
+            {'Go Back'}
+          </div>
+        </Link>
+      </Box>
+
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', marginTop: '20px' }}>
         <section className='font-montserrat'>
           <section className='flex justify-between'>
