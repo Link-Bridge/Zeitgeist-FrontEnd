@@ -94,13 +94,13 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
             <EditOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
-              onClick={handleEditClick} // Attach the handler here
+              onClick={handleEditClick}
             />
             {company && (
               <EditClientFormModal
                 open={editModalOpen}
                 setOpen={setEditModalOpen}
-                clientData={company} // Pass the client data to the modal
+                clientData={company}
                 setRefetch={() => {}}
               />
             )}
