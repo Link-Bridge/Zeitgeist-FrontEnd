@@ -3,6 +3,7 @@ import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors'; // Adjust the path as needed
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
+import { CompanyEntity } from '../../../types/company';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
 
@@ -24,7 +25,7 @@ interface EditClientFormModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
   setRefetch: (refetch: boolean) => void;
-  clientData: any; // Specify your type for client data
+  clientData: CompanyEntity;
 }
 
 const EditClientFormModal = ({
