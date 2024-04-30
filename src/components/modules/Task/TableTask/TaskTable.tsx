@@ -68,11 +68,6 @@ const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
               </TableCell>
               <TableCell style={{ width: '10%' }}>
                 <Typography variant='body1' sx={{ fontWeight: 600 }}>
-                  Waiting For
-                </Typography>
-              </TableCell>
-              <TableCell style={{ width: '10%' }}>
-                <Typography variant='body1' sx={{ fontWeight: 600 }}>
                   Hours
                 </Typography>
               </TableCell>
@@ -106,12 +101,6 @@ const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
                     <Chip
                       label={task.status}
                       sx={{ backgroundColor: statusColorMap[task.status], color: colors.grey[800] }}
-                    />
-                  </TableCell>
-                  <TableCell>
-                    <Chip
-                      label={task.idEmployee}
-                      sx={{ backgroundColor: colors.grey[300], color: colors.grey[900] }}
                     />
                   </TableCell>
                   <TableCell>
