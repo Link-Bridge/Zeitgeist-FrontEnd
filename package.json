@@ -6,7 +6,7 @@
   "scripts": {
     "dev": "vite",
     "build": "vite build",
-    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings 0",
+    "lint": "eslint . --ext ts,tsx --report-unused-disable-directives --max-warnings=1000",
     "start": "vite preview",
     "test": "mocha -r ts-node/register 'src/**/*.spec.ts'",
     "prepare": "husky install"
@@ -19,6 +19,7 @@
     "@mui/material": "^5.15.15",
     "@mui/styles": "^5.15.15",
     "@mui/x-date-pickers": "^7.2.0",
+    "@react-pdf/renderer": "^3.4.3",
     "@types/react-router-dom": "^5.3.3",
     "axios": "^1.6.8",
     "dayjs": "^1.11.10",

@@ -16,7 +16,7 @@ export default {
         darkGold: '#9C844C',
         darkerGold: '#876F39',
         lightSuccess: '#B7D7A8',
-        success: '#6AA84F',
+        success: '#FFFFFF',
         warning: '#FFE598',
         danger: '#FF7A7A',
         purple: '#D7B2F0',
@@ -29,7 +29,6 @@ export default {
         montserrat: ['montserrat', 'sans-serif'],
       },
     },
-
   },
   plugins: [],
 };

@@ -14,7 +14,9 @@ const Items = [
 
 const SideBar = () => {
   return (
-    <aside className={`bg-darkerGray h-screen flex flex-col items-center pt-16 gap-10 w-[200px]`}>
+    <aside
+      className={`bg-darkerGray h-screen top-0 left-0 flex flex-col items-center pt-16 gap-10 w-[200px]`}
+    >
       <Link to={RoutesPath.HOME}>
         <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
       </Link>

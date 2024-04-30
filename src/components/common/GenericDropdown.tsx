@@ -1,10 +1,11 @@
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent } from '@mui/material';
+import { Box, FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
 import React, { useState } from 'react';
 
-interface GenericDropdownProps<T extends string | number> {
+interface GenericDropdownProps<T extends string | number>
+  extends Omit<SelectProps<T>, 'onChange' | 'value'> {
   backgroundColor?: string;
   options: T[];
-  onSelect: (value: T) => void;
+  onValueChange: (value: T) => void;
   renderValue?: (value: T) => React.ReactNode;
   placeholder?: string;
   colorMap?: Record<T, string>;
@@ -19,7 +20,7 @@ interface GenericDropdownProps<T extends string | number> {
  * @param props: Object - The component props
  * @param props.backgroundColor: string - The background color of the dropdown
  * @param props.options: T[] - The options to display in the dropdown
- * @param props.onSelect: (value: T) => void - The callback function invoked
+ * @param props.onValueChange: (value: T) => void - The callback function invoked
  *                                             when an option is selected
  * @param props.renderValue: (value: T) => React.ReactNode - Optional custom
  *                                        rendering function for selected value
@@ -33,7 +34,7 @@ interface GenericDropdownProps<T extends string | number> {
 const GenericDropdown = <T extends string | number>({
   backgroundColor,
   options,
-  onSelect,
+  onValueChange,
   renderValue,
   placeholder,
   colorMap,
@@ -45,7 +46,7 @@ const GenericDropdown = <T extends string | number>({
     const selectedOption = event.target.value as T;
 
     setOptions(selectedOption);
-    onSelect(selectedOption);
+    onValueChange(selectedOption);
   };
 
   const handleOpen = () => {

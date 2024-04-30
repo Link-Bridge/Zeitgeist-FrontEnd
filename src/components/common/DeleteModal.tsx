@@ -8,15 +8,34 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import * as React from 'react';
 import Colors from '../../colors';
+import useDeleteEmployee from '../../hooks/useDeleteEmployee';
 
 interface ModalInterface {
   open: boolean;
   title: string;
   description: string;
+  id: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  toggleModal?: () => void;
+  handleDeleteEmployee: (id: string) => void;
 }
 
-export default function DeleteModal({ open, setOpen, title, description }: ModalInterface) {
+export default function DeleteModal({
+  open,
+  setOpen,
+  title,
+  description,
+  id,
+  handleDeleteEmployee,
+}: ModalInterface) {
+  const useDeleteEmployees = useDeleteEmployee();
+
+  const handleDelete = () => {
+    useDeleteEmployees.deleteEmployee(id);
+    setOpen(false); // This will close the modal or dialog
+    handleDeleteEmployee(id); // This will update the UI
+  };
+
   return (
     <>
       <Modal
@@ -78,6 +97,7 @@ export default function DeleteModal({ open, setOpen, title, description }: Modal
                   backgroundColor: Colors.darkerGold,
                 },
               }}
+              onClick={() => handleDelete()}
             >
               Delete
             </Button>

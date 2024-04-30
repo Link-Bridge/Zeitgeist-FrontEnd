@@ -1,14 +1,19 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
-import React from 'react';
+import { getToken } from 'firebase/messaging';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
-import { auth, provider } from '../../config/firebase.config';
+import { auth, messaging, provider } from '../../config/firebase.config';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import { RoutesPath } from '../../utils/constants';
 
 const Auth: React.FC = () => {
+  const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
   const navigate = useNavigate();
+
+  const { setEmployee } = useContext(EmployeeContext);
 
   const handleGoogleSignIn = async () => {
     try {
@@ -18,28 +23,52 @@ const Auth: React.FC = () => {
 
       // TODO: Had trouble using the useHttp hook
 
-      const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
-
       const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
         method: 'POST',
         headers: {
           'Content-Type': 'application/json',
           Authorization: `Bearer ${idToken}`,
         },
-        body: JSON.stringify({
-          name: result.user.displayName,
-          email: result.user.email,
-          imageUrl: result.user.photoURL,
-        }),
       });
 
       if (!response.ok) {
         throw new Error('Failed to sign up');
       }
 
+      const responseData = await response.json();
+
+      sessionStorage.setItem('employee', JSON.stringify(responseData.data));
+      setEmployee(responseData.data);
+      handleGetDeviceToken(result.user.email);
+
       navigate(RoutesPath.HOME);
     } catch (error) {
       console.error('Firebase Sign-in error:', error);
+      throw error;
+    }
+  };
+
+  const handleGetDeviceToken = async (userEmail: string | null) => {
+    try {
+      const token = await getToken(messaging, {
+        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
+      });
+
+      if (token) {
+        await fetch(`${API_BASE_ROUTE}/notification/token`, {
+          method: 'POST',
+          headers: {
+            'Content-Type': 'application/json',
+            Authorization: 'Bearer ' + sessionStorage.getItem('idToken'),
+          },
+          body: JSON.stringify({
+            email: userEmail,
+            deviceToken: token,
+          }),
+        });
+      }
+    } catch (error) {
+      console.error('Error getting token:', error);
       throw error;
     }
   };

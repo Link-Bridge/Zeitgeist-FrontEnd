@@ -1,21 +1,8 @@
 import { useEffect, useState } from 'react';
-import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { Response } from '../../../types/response';
 import { RequestMethods } from '../../../utils/constants';
-
-import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import SnippetFolderOutlinedIcon from '@mui/icons-material/SnippetFolderOutlined';
-import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-
-import Chip from '@mui/joy/Chip';
-import Divider from '@mui/joy/Divider';
 
 type ClientDetailProps = {
   clientId: string;
@@ -53,7 +40,7 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
 
   return (
     <main className='bg-white rounded-xl p-6'>
-      <DeleteModal
+      {/* <DeleteModal
         ToggleModal={ToggleModal}
         open={open}
         setOpen={setOpen}
@@ -115,6 +102,8 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
         </>
       )}
       <Divider />
+      <ProjectsClientList clientId={clientId} /> */}
+      test
     </main>
   );
 };

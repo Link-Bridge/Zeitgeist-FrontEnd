@@ -1,9 +1,9 @@
 import { Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import { WaitingFor } from '../../../../types/waiting-for';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
 import GenericDropdown from '../../../common/GenericDropdown';
@@ -22,6 +22,7 @@ const statusColorMap: Record<TaskStatus, string> = {
 
 interface NewTaskFormProps {
   onSubmit: (payload: BareboneTask) => Promise<void>;
+  employees: EmployeeEntity[];
 }
 
 /**
@@ -32,15 +33,20 @@ interface NewTaskFormProps {
  *
  * @returns {JSX.Element} New Task form component
  */
-const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps): JSX.Element => {
+const NewTaskForm: React.FC<NewTaskFormProps> = ({
+  onSubmit,
+  employees,
+}: NewTaskFormProps): JSX.Element => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
-  const [waitingFor, setWaitingFor] = useState<WaitingFor | ''>('');
+  const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
   const [projectName, setProjectName] = useState<string | null>('');
+
+  const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -62,8 +68,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
     setStatus(value);
   };
 
-  const handleWaitingForSelect = (value: WaitingFor) => {
-    setWaitingFor(value);
+  const handleAssignedEmployee = (value: string) => {
+    setAssignedEmployee(value);
   };
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -74,28 +80,68 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
     setProjectName(event.target.value);
   };
 
+  const getEmployeeNames = () => {
+    return employees.map(employee => employee.firstName + ' ' + employee.lastName);
+  };
+
   const handleSubmit = async () => {
-    if (!title || !description || !startDate || !dueDate || !status || !projectName) {
-      console.error('Please fill in all required fields');
+    const requiredFields = [
+      'title',
+      'description',
+      'startDate',
+      'dueDate',
+      'status',
+      'projectName',
+    ];
+
+    if (!requiredFields.every(field => !!field && field !== '')) {
+      setErrors({
+        ...errors,
+        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
+      });
       return;
     }
 
-    const payload = {
+    if (dueDate && startDate && dueDate.isBefore(startDate)) {
+      setErrors({
+        ...errors,
+        dueDate: 'Due date cannot be before start date',
+      });
+      return;
+    }
+
+    setErrors({});
+
+    const payload: BareboneTask = {
       title,
       description,
       status: status.toUpperCase() as TaskStatus,
-      waitingFor: waitingFor,
-      startDate: startDate.toISOString() ?? null,
-      dueDate: dueDate.toISOString() ?? null,
+      startDate: startDate?.toISOString() ?? '',
+      dueDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
       idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
+      idEmployee: employees.find(employee => {
+        const fullName = employee.firstName + ' ' + employee.lastName;
+        return fullName === assignedEmployee;
+      })?.id as string,
     };
 
     try {
       await onSubmit(payload);
-    } catch (error: any) {
-      console.error('Error creating task', error.code);
+    } catch (error) {
+      console.error(error);
     }
+  };
+
+  const handleCancel = () => {
+    setTitle('');
+    setDescription('');
+    setStartDate(null);
+    setDueDate(null);
+    setStatus('');
+    setAssignedEmployee('');
+    setWorkedHours(null);
+    setProjectName(null);
   };
 
   return (
@@ -106,7 +152,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
         placeholder='Write your text here... '
         value={title}
         onChange={handleTitleChange}
-        sx={{ color: '#BDBDBD' }}
+        sx={{
+          color: '#BDBDBD',
+          borderColor: errors['title'] ? '#FF7A7A' : undefined,
+        }}
       />
 
       <Header>Description *</Header>
@@ -120,7 +169,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
           height: '200px',
           padding: '10px',
           borderRadius: '4px',
-          border: '1px solid #E0E0E0',
+          border: `1px solid ${errors['description'] ? '#FF7A7A' : '#E0E0E0'}`,
           '&:focus': {
             border: '1px solid #9C844C',
           },
@@ -132,13 +181,25 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
         <Grid xs={2}>
           <Item>
             <Header>Start Date *</Header>
-            <CustomDatePicker value={startDate} onChange={handleStartDateChange} />
+            <CustomDatePicker
+              value={startDate}
+              onChange={handleStartDateChange}
+              sx={{
+                borderColor: errors['startDate'] ? '#FF7A7A' : undefined,
+              }}
+            />
           </Item>
         </Grid>
         <Grid xs={2}>
           <Item>
             <Header>Due Date *</Header>
-            <CustomDatePicker value={dueDate} onChange={handleDueDateChange} />
+            <CustomDatePicker
+              value={dueDate}
+              onChange={handleDueDateChange}
+              sx={{
+                borderColor: errors['dueDate'] ? '#FF7A7A' : undefined,
+              }}
+            />
           </Item>
         </Grid>
         <Grid xs={2}>
@@ -146,9 +207,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
             <Header>Status *</Header>
             <GenericDropdown
               options={Object.values(TaskStatus)}
-              onSelect={handleStatusSelect}
+              onValueChange={handleStatusSelect}
               placeholder='Select status'
               colorMap={statusColorMap}
+              sx={{
+                color: '#BDBDBD',
+                borderColor: errors['status'] ? '#FF7A7A' : undefined,
+              }}
             />
           </Item>
         </Grid>
@@ -158,11 +223,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
       <Grid container spacing={2}>
         <Grid xs={2}>
           <Item>
-            <Header>Waiting For ...</Header>
+            <Header>Assign Employee</Header>
             <GenericDropdown
-              options={Object.values(WaitingFor)}
-              onSelect={handleWaitingForSelect}
-              placeholder='Select waiting for ...'
+              options={getEmployeeNames()}
+              onValueChange={handleAssignedEmployee}
+              placeholder='Select employee ...'
             />
           </Item>
         </Grid>
@@ -174,6 +239,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
               type='text'
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
+              sx={{
+                color: '#BDBDBD',
+              }}
             />
           </Item>
         </Grid>
@@ -185,6 +253,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
               placeholder='Project name'
               value={projectName ?? ''}
               onChange={handleProjectNameChange}
+              sx={{
+                color: '#BDBDBD',
+                borderColor: errors['projectName'] ? '#FF7A7A' : undefined,
+              }}
             />
           </Item>
         </Grid>
@@ -194,7 +266,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({ onSubmit }: NewTaskFormProps)
       <Grid container justifyContent='flex-end'>
         <Grid>
           <Item>
-            <CancelButton />
+            <CancelButton onClick={handleCancel} />
           </Item>
         </Grid>
         <Grid>
