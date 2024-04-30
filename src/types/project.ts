@@ -24,4 +24,34 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
+  CLIENT = 'Client',
+}
+
+export enum ProjectStatus {
+  NOT_STARTED = 'Not Started',
+  IN_PROCESS = 'In Process',
+  UNDER_REVISION = 'Under Revision',
+  DELAYED = 'Delayed',
+  POSTPONED = 'Postponed',
+  DONE = 'Done',
+  CANCELLED = 'Cancelled',
+  IN_QUOTATION = 'In quotation',
+  ACCEPTED = 'Accepted',
+}
+
+export interface ProjectEntity {
+  id: string;
+  name: string;
+  matter: string;
+  description: string;
+  status: ProjectStatus;
+  category: string;
+  startDate: Date;
+  endDate: Date;
+  area: ProjectAreas;
+  totalHours: number;
+  periodicty: ProjectPeriodicity;
+  isChargeable: boolean;
+  created_at: Date;
+  idCompany: PerformanceServerTiming;
 }

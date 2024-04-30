@@ -1,12 +1,14 @@
 import Chip from '@mui/joy/Chip';
-import colors from '../../colors';
-import { ProjectAreas } from '../../types/project';
-import { ProjectStatus } from '../../types/projects';
+import { Link } from 'react-router-dom';
+import colors from '../../../colors';
+import { ProjectAreas, ProjectStatus } from '../../../types/project';
 
 type CardProjectProps = {
   name: string;
   status: ProjectStatus;
   department: ProjectAreas;
+  company: string;
+  id: string;
 };
 
 const getStatusColor = (status: ProjectStatus) => {
@@ -51,31 +53,33 @@ const getColorArea = (department: ProjectAreas) => {
  * Client Card component
  *
  * @component
- * @param {CardProjectProps} props - Component props
- * @param {string} props.name - The name of the client
- * @param {ProjectStatus} props.status - The status of the project
- * @param {ProjectAreas} props.department - The areas of the organization
+ * @param props - Component props
+ * @param props.name - The name of the client
+ * @param props.status - The status of the project
+ * @param props.department - The areas of the organization
  *
- * @returns {JSX.Element} Client Card component
+ * @returns Client Card component
  */
-
-const CardProject = ({ name, status, department }: CardProjectProps) => {
+const ProjectCard = ({ name, status, department, company, id }: CardProjectProps): JSX.Element => {
   return (
-    <main className='bg-[#EFEFEF] rounded-lg p-4'>
-      <section className='flex gap-3'>
-        <div className='border border-2 h-10 border-[#9C844C]' />
-        <h5 className='text-[#424242] font-montserrat'>{name}</h5>
+    <Link to={`/projects/${id}`}>
+      <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
+        <section className='flex gap-3'>
+          <div className='border-2 h-8 border-[#9C844C]' />
+          <h5 className='text-[#424242] font-montserrat'>{name}</h5>
+        </section>
+        <span className='text-sm text-gold'>{company}</span>
+        <section className='mt-3 flex gap-3'>
+          <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
+            {status}
+          </Chip>
+          <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
+            {department}
+          </Chip>
+        </section>
       </section>
-      <section className='mt-3 flex gap-3'>
-        <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
-          {status}
-        </Chip>
-        <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
-          {department}
-        </Chip>
-      </section>
-    </main>
+    </Link>
   );
 };
 
-export default CardProject;
+export default ProjectCard;
