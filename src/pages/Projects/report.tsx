@@ -4,8 +4,6 @@ import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
 import { DatePicker } from '@mui/x-date-pickers';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import axios from 'axios';
-import { Dayjs } from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -30,11 +28,18 @@ function dateParser(date: Date): string {
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
 
-  const [request, setRequest] = useState<string>(`${APIPath.PROJECT_REPORT}/${id}`);
-  const reqReport = useHttp<Report>(request, RequestMethods.GET);
-  const [date, setDate] = useState<string | null>(null);
+  //let date: string = '';
+  // const [year, setYear] = useState<string | null>(null);
+  // const [month, setMonth] = useState<string | null>(null);
+  const [date, setDate] = useState<Date | null>();
+  const [report, setReport] = useState<Report>();
+
+  const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
+  const reqFilteredReport = useHttp<Report>(
+    `${APIPath.PROJECT_REPORT}/${id}?date=${date}`,
+    RequestMethods.GET
+  );
 
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
@@ -50,37 +55,27 @@ const ProjectReport: React.FC = () => {
     navigate('/projects');
   };
 
-  const handleChange = (filterDate: Dayjs | null) => {
-    if (filterDate === null) return;
-    setDate(new Date(filterDate.year(), filterDate.month(), filterDate.day()).toISOString());
-  };
-
   const handleClose = () => {
-    if (date === null) return;
-    console.log(`${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date}`);
-    setRequest(`${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date}`);
-
-    const doFetch = async (): Promise<void> => {
-      await axios.get(`${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
-      });
-      reqReport.sendRequest();
-    };
-    void doFetch();
+    console.log(date);
+    console.log(`${APIPath.PROJECT_REPORT}/${id}?date=${date}`);
+    reqFilteredReport.sendRequest();
   };
 
   useEffect(() => {
-    console.log('RENDERIZANDING...');
-    if (!reqReport.data) {
+    if (reqFilteredReport.data) {
+      setReport(reqFilteredReport.data);
+    } else if (!reqReport.data) {
       reqReport.sendRequest();
+    } else {
+      setReport(reqReport.data);
     }
-  }, [reqReport.data]);
+  }, [reqReport.data, reqFilteredReport.data]);
 
   if (reqReport.loading) {
     return <div>Loading...</div>;
   }
 
-  const totalTasks = reqReport.data?.statistics?.total || 1;
+  const totalTasks = report?.statistics?.total || 1;
 
   if (reqReport.error) {
     return <div>Error laoding the report</div>;
@@ -113,7 +108,7 @@ const ProjectReport: React.FC = () => {
 
       <br />
       <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-        {reqReport.data ? (
+        {report ? (
           <>
             <Box
               sx={{
@@ -147,29 +142,29 @@ const ProjectReport: React.FC = () => {
                         letterSpacing: '1.5px',
                       }}
                     >
-                      {reqReport.data.project.name}
+                      {report.project.name}
                     </h1>
 
                     <Box>
                       <PDFDownloadLink
-                        document={<ProjectReportPDF data={reqReport.data} />}
-                        fileName={`report_${reqReport.data.project.name}`}
+                        document={<ProjectReportPDF data={report} />}
+                        fileName={`report_${report.project.name}`}
                       >
                         <img src={download} alt='Download' className='w-6' />
                       </PDFDownloadLink>
                     </Box>
                   </Box>
                   <DatePicker
-                    label='Selecciona un mes y año'
+                    label='Select a month and a year'
                     views={['year', 'month']}
                     slotProps={{ textField: { size: 'small' } }}
-                    onChange={filterDate => handleChange(filterDate)}
+                    onChange={filterDate => setDate(filterDate?.toDate())}
                     onClose={handleClose}
                   />
                 </Box>
 
                 <br />
-                <p>{reqReport.data.project.description}</p>
+                <p>{report.project.description}</p>
 
                 <br />
 
@@ -179,13 +174,13 @@ const ProjectReport: React.FC = () => {
                     gap: '40px',
                   }}
                 >
-                  <StatusChip status={`${reqReport.data.project.status || '-'}`} />
+                  <StatusChip status={`${report.project.status || '-'}`} />
                   <ColorChip
-                    label={`Total Hours: ${reqReport.data.project.totalHours}`}
+                    label={`Total Hours: ${report.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
                   <ColorChip
-                    label={`${reqReport.data.project.companyName}`}
+                    label={`${report.project.companyName}`}
                     color={`${colors.null}`}
                   ></ColorChip>
                 </Box>
@@ -201,21 +196,21 @@ const ProjectReport: React.FC = () => {
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Matter</p>
                     <ColorChip
-                      label={reqReport.data.project.matter || ''}
+                      label={report.project.matter || ''}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Category</p>
                     <ColorChip
-                      label={reqReport.data.project.category || ''}
+                      label={report.project.category || ''}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Chargeable</p>
                     <ColorChip
-                      label={`${reqReport.data.project.isChargeable}` ? 'Yes' : 'No'}
+                      label={`${report.project.isChargeable}` ? 'Yes' : 'No'}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
@@ -238,10 +233,10 @@ const ProjectReport: React.FC = () => {
                       <img src={calendar} alt='calendar' className='w-5' />
                       <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                     </Box>
-                    <p>{dateParser(reqReport.data.project.startDate)}</p>
+                    <p>{dateParser(report.project.startDate)}</p>
                   </Box>
 
-                  {reqReport.data.project.endDate && (
+                  {report.project.endDate && (
                     <Box>
                       <Box
                         sx={{
@@ -251,7 +246,7 @@ const ProjectReport: React.FC = () => {
                         <img src={calendar} alt='calendar' className='w-5' />
                         <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                       </Box>
-                      <p>{dateParser(reqReport.data.project.endDate)}</p>
+                      <p>{dateParser(report.project.endDate)}</p>
                     </Box>
                   )}
                 </Box>
@@ -264,8 +259,8 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                 }}
               >
-                {reqReport.data.statistics &&
-                  Object.entries(reqReport.data.statistics)
+                {report.statistics &&
+                  Object.entries(report.statistics)
                     .filter(([key]) => key !== 'total')
                     .map(([item, value]) => {
                       return (
@@ -318,7 +313,7 @@ const ProjectReport: React.FC = () => {
                 gap: '10px',
               }}
             >
-              {reqReport.data.tasks?.map(item => {
+              {report.tasks?.map(item => {
                 return (
                   <>
                     <Box key={item.title}>
