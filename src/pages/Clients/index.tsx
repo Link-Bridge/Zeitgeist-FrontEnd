@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Route, Routes } from 'react-router-dom';
+import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -7,11 +7,11 @@ import Loader from '../../components/common/Loader';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { RequestMethods } from '../../utils/constants';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
-  const [clientId] = useState<string>('');
+  const [clientId, setClientId] = useState<string>('');
 
   const { data, error, loading, sendRequest } = useHttp<CompanyEntity[]>(
     '/company',
@@ -50,14 +50,21 @@ const Clients = () => {
             {!loading && !error && companies && (
               <CardsGrid>
                 {companies.map(company => (
-                  <ClientCard
+                  <Link
+                    to={`${RoutesPath.CLIENTS}/${company.id}`}
                     key={company.id}
-                    name={company.name}
-                    accountingHours={company.accountingHours || 0}
-                    legalHours={company.legalHours || 0}
-                    chargeableHours={company.chargeableHours || 0}
-                    totalProjects={company.totalProjects || 0}
-                  />
+                    onClick={() => {
+                      setClientId(company.id);
+                    }}
+                  >
+                    <ClientCard
+                      name={company.name}
+                      accountingHours={company.accountingHours || 0}
+                      legalHours={company.legalHours || 0}
+                      chargeableHours={company.chargeableHours || 0}
+                      totalProjects={company.totalProjects || 0}
+                    />
+                  </Link>
                 ))}
               </CardsGrid>
             )}

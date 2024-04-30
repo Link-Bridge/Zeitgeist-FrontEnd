@@ -53,5 +53,5 @@ export interface ProjectEntity {
   periodicty: ProjectPeriodicity;
   isChargeable: boolean;
   created_at: Date;
-  idCompany: PerformanceServerTiming;
+  idCompany: string;
 }

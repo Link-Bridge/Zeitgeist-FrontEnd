@@ -110,7 +110,7 @@ const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={task.waitingFor}
+                      label={task.idEmployee}
                       sx={{ backgroundColor: colors.grey[300], color: colors.grey[900] }}
                     />
                   </TableCell>
