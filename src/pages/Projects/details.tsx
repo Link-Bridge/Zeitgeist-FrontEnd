@@ -129,6 +129,11 @@ const ProjectDetails = () => {
             </div>
 
             <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Periodicity</p>
+              <Chip sx={chipStyle} label={data?.periodicity} />
+            </div>
+
+            <div style={{ fontSize: '15px' }}>
               <p style={{ marginLeft: '7px' }}>Chargeable</p>
               <Chip sx={chipStyle} label={data?.isChargeable ? 'Yes' : 'No'} />
             </div>
