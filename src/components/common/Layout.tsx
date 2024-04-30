@@ -22,6 +22,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
     if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
 
     return `Welcome Back, ${employee?.employee.firstName}!`;
   };

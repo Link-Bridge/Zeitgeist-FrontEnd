@@ -62,7 +62,7 @@ const getColorArea = (department: ProjectAreas) => {
  */
 const ProjectCard = ({ name, status, department, company, id }: CardProjectProps): JSX.Element => {
   return (
-    <Link to={`/projects/${id}`}>
+    <Link to={`/projects/details/${id}`}>
       <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
         <section className='flex gap-3'>
           <div className='border-2 h-8 border-[#9C844C]' />
