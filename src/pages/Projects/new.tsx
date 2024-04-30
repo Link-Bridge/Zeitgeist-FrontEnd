@@ -8,11 +8,11 @@ import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import useFetch from '../../hooks/useFetch';
+import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
-import { Response } from '../../types/response';
+import { RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
   const { setState } = useContext(SnackbarContext);
@@ -20,7 +20,11 @@ const NewProject = () => {
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
   const projectAreas = Object.values(ProjectAreas) as string[];
-  const req = useFetch<Response<CompanyEntity>>('http://localhost:4000/api/v1/company');
+  const req = useHttp<CompanyEntity[]>('/company', RequestMethods.GET);
+
+  useEffect(() => {
+    req.sendRequest();
+  }, []);
 
   useEffect(() => {
     if (req.error) {
@@ -42,8 +46,11 @@ const NewProject = () => {
 
   return (
     <>
-      <Card className='bg-white flex-1 font-montserrat' sx={{ padding: '30px' }}>
-        {req.isLoading ? (
+      <Card
+        className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+        sx={{ padding: '30px' }}
+      >
+        {req.loading ? (
           <Loader />
         ) : (
           <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
@@ -64,7 +71,7 @@ const NewProject = () => {
                   Client <span className='text-red-600'>*</span>
                 </FormLabel>
                 <ClientDropdown
-                  values={req.data?.data ?? []}
+                  values={req.data ?? []}
                   name='client'
                   handleChange={form.handleChange}
                 />
