@@ -76,12 +76,8 @@ const ProjectDetails = () => {
           marginBottom: '10px',
         }}
       >
-        <Link
-          to='/projects'
-          className='ml-auto'
-          style={{ textDecoration: 'none', color: colors.darkGold }}
-        >
-          <div style={{ display: 'flex', alignItems: 'center' }}>
+        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
+          <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
           </div>
