@@ -5,6 +5,9 @@ export interface CompanyEntity {
   phoneNumber?: string | null;
   landlinePhone?: string | null;
   archived: boolean;
+  rfc: string;
+  taxResidence: string;
+  constitutionDate: Date;
   idCompanyDirectContact?: string | null;
   idForm?: string | null;
   created_at: Date;
