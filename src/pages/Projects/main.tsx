@@ -3,28 +3,30 @@ import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
-import useFetch from '../../hooks/useFetch';
+import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { RoutesPath } from '../../utils/constants';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
 
 const ProjectMain = () => {
-  const req = useFetch<Response<ProjectEntity>>('http://localhost:4000/api/v1/project');
-  const [companyNames, setCompanyNames] = useState<string[]>([]);
-  const [isLoading, setIsLoading] = useState(req.isLoading);
+  const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
+  const [companyNames, setCompanyNames] = useState(new Map<string, string>());
+  const [isLoading, setIsLoading] = useState(req.loading);
+
+  useEffect(() => {
+    req.sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     async function getNames() {
       setIsLoading(true);
-      const res: string[] = [];
       if (req.data) {
-        for (const project of req.data.data) {
-          const r = await fetch(`http://localhost:4000/api/v1/company/${project.idCompany}`);
-          const d = await r.json();
-          res.push(d.data.name);
-        }
-        setCompanyNames(res);
-        setIsLoading(false);
+        const data = await getClientsNames(req.data.data);
+        setCompanyNames(data);
+        console.log(data);
       }
+      setIsLoading(false);
     }
     getNames();
   }, [req.data]);
@@ -39,11 +41,11 @@ const ProjectMain = () => {
         <div className='bg-[#FAFAFA] rounded-xl overflow-y-scroll grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
           {isLoading && <Loader />}
           {!isLoading &&
-            req.data?.data.map((project, i) => (
+            req.data?.data.map(project => (
               <ProjectCard
                 key={project.id}
                 id={project.id}
-                company={companyNames[i]}
+                company={companyNames.get(project.idCompany) ?? ''}
                 department={project.area}
                 name={project.name}
                 status={project.status}
@@ -54,5 +56,22 @@ const ProjectMain = () => {
     </main>
   );
 };
+
+async function getClientsNames(projects: ProjectEntity[]) {
+  const idToken = sessionStorage.getItem('idToken');
+  const names = new Map<string, string>();
+  projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
+  const reqs: Promise<globalThis.Response>[] = [];
+  for (const id of names.keys()) {
+    reqs.push(
+      fetch(`http://localhost:4000/api/v1/company/${id}`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
+    );
+  }
+  const data = (await Promise.all(reqs)).map(r => r.json());
+  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
+  return names;
+}
 
 export default ProjectMain;
