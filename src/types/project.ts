@@ -50,7 +50,7 @@ export interface ProjectEntity {
   endDate: Date;
   area: ProjectAreas;
   totalHours: number;
-  periodicty: ProjectPeriodicity;
+  periodicity: ProjectPeriodicity;
   isChargeable: boolean;
   created_at: Date;
   idCompany: string;
