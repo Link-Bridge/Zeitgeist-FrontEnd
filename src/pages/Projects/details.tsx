@@ -154,7 +154,7 @@ const ProjectDetails = () => {
       </Card>
 
       <div className='ml-auto pt-5'>
-        <AddButton onClick={() => {}}></AddButton>
+        <AddButton></AddButton>
       </div>
     </>
   );
