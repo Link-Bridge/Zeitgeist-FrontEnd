@@ -1,10 +1,12 @@
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { Link, useParams } from 'react-router-dom';
 import colors from '../../colors';
+import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -72,6 +74,13 @@ const ProjectDetails = () => {
               {data?.name}
             </h3>
             <section className='flex justify-end gap-3'>
+              <Link to={`/projects/report/${id}`}>
+                <AssessmentOutlinedIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                  className='text-gold'
+                />
+              </Link>
+
               <EditOutlinedIcon
                 sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
                 className='text-gold'
@@ -138,6 +147,10 @@ const ProjectDetails = () => {
           </Box>
         </section>
       </Card>
+
+      <div className='ml-auto pt-5'>
+        <AddButton onClick={() => {}}></AddButton>
+      </div>
     </>
   );
 };
