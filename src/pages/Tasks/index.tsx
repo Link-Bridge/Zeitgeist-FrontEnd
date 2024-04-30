@@ -1,6 +1,7 @@
 import { Box, Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
@@ -11,37 +12,19 @@ import { Task } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
 
 /**
- * Shows the tasks assigned for the signed in employee
+ * Shows the tasks assigned for the signed in employee in a table format,
+ * grouped by project and sorted by status and due date.
  *
  * @page
- * @returns JSX.Element - React component
+ *
+ * @return {JSX.Element} - React component when the information is lading
+ * @return {JSX.Element} - React component when an error occurs
+ * @return {JSX.Element} - React component when the information is loaded
  */
-const Tasks = () => {
+const Tasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[] | null>(null);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
-
-  if (!employeeId) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          color: colors.grey[500],
-        }}
-      >
-        <Typography variant='plain' level='h1'>
-          No employee found
-        </Typography>
-        <Typography variant='plain' level='h2'>
-          Please sign in to view your tasks
-        </Typography>
-      </Box>
-    );
-  }
 
   const {
     data: taskData,
@@ -89,16 +72,7 @@ const Tasks = () => {
   };
 
   if (taskError || projectError) {
-    return (
-      <>
-        <Typography level='h1' variant='plain'>
-          Error
-        </Typography>
-        <Typography level='h2' variant='plain'>
-          {taskError?.message || projectError?.message}
-        </Typography>
-      </>
-    );
+    return <ErrorView error={taskError || projectError} />;
   }
 
   if (taskLoading || projectLoading) {
@@ -159,6 +133,7 @@ const Tasks = () => {
                 >
                   {project.name}
                 </Typography>
+
                 {tasks?.length && tasks.length > 0 && (
                   <Box
                     key={tasks[0].id}
@@ -189,7 +164,7 @@ const Tasks = () => {
             }}
           >
             <Typography variant='plain' level='h1'>
-              Your task list is empty
+              z Your task list is empty
             </Typography>
             <Typography variant='plain' level='h2'>
               Get started by adding tasks to your project
