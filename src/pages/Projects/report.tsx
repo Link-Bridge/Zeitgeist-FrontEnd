@@ -2,8 +2,9 @@ import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
+import { DatePicker } from '@mui/x-date-pickers';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useEffect } from 'react';
+import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
@@ -31,6 +32,7 @@ const ProjectReport: React.FC = () => {
     `${APIPath.PROJECT_REPORT}/${id}`,
     RequestMethods.GET
   );
+  const [date, setDate] = useState<any>(null);
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
     ['inprogress', 'In process'],
@@ -47,10 +49,13 @@ const ProjectReport: React.FC = () => {
 
   useEffect(() => {
     if (!data) {
-      sendRequest();
+
+      sendRequest({date: "2004-04-04"});
+   
+
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [data, date]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -94,7 +99,7 @@ const ProjectReport: React.FC = () => {
             <Box
               sx={{
                 display: 'flex',
-                gap: '15px',
+                gap: '30px',
               }}
             >
               <Box
@@ -102,6 +107,10 @@ const ProjectReport: React.FC = () => {
                   width: '50%',
                 }}
               >
+                <Box sx = {{
+                  display: 'flex',
+                  justifyContent: 'space-between'
+                }}>
                 <Box
                   sx={{
                     display: 'flex',
@@ -132,7 +141,15 @@ const ProjectReport: React.FC = () => {
                     </PDFDownloadLink>
                   </Box>
                 </Box>
-
+                <DatePicker
+                    label="Selecciona un mes y año"
+                    views={['year', 'month']}
+                    slotProps={{textField: {size: 'small'}}}
+                    onChange={(newDate) => setDate(newDate)}
+                  />
+                </Box>
+                
+                <br />
                 <p>{data.project.description}</p>
 
                 <br />
