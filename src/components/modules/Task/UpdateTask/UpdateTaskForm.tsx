@@ -1,13 +1,14 @@
 import { Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { EmployeeEntity } from '../../../../types/employee';
-import { BareboneTask } from '../../../../types/task';
+import { UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
 import GenericDropdown from '../../../common/GenericDropdown';
-import SendButton from '../../../common/SendButton';
+import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
@@ -20,8 +21,8 @@ const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.CANCELLED]: '#FF7A7A',
 };
 
-interface NewTaskFormProps {
-  onSubmit: (payload: BareboneTask) => Promise<void>;
+interface UpdateTaskFormProps {
+  onSubmit: (payload: UpdatedTask) => Promise<void>;
   employees: EmployeeEntity[];
 }
 
@@ -29,14 +30,15 @@ interface NewTaskFormProps {
  * New Task form component
  *
  * @component
- * @param {NewTaskFormProps} props - Component props
+ * @param {UpdateTaskFormProps} props - Component props
  *
  * @returns {JSX.Element} New Task form component
  */
-const NewTaskForm: React.FC<NewTaskFormProps> = ({
+const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   onSubmit,
   employees,
-}: NewTaskFormProps): JSX.Element => {
+}: UpdateTaskFormProps): JSX.Element => {
+  const { idTask } = useParams();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
@@ -112,12 +114,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     setErrors({});
 
-    const payload: BareboneTask = {
+    const payload: UpdatedTask = {
+      id: idTask as string,
       title,
       description,
       status: status.toUpperCase() as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      dueDate: dueDate?.toISOString() ?? '',
+      endDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
       idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
       idEmployee: employees.find(employee => {
@@ -223,7 +226,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       <Grid container spacing={2}>
         <Grid xs={2}>
           <Item>
-            <Header>Assign Employee</Header>
+            <Header>Assigned Employee</Header>
             <GenericDropdown
               options={getEmployeeNames()}
               onValueChange={handleAssignedEmployee}
@@ -271,7 +274,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <SendButton onClick={handleSubmit} />
+            <ModifyButton onClick={handleSubmit} />
           </Item>
         </Grid>
       </Grid>
@@ -279,4 +282,4 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   );
 };
 
-export default NewTaskForm;
+export default UpdateTaskForm;

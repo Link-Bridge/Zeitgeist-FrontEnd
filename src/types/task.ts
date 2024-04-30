@@ -27,3 +27,15 @@ export interface TaskDetail {
   employeeFirstName?: string;
   employeeLastName?: string;
 }
+
+export interface UpdatedTask {
+  id: string;
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  startDate?: string;
+  endDate?: string;
+  workedHours?: string;
+  idProject?: string;
+  idEmployee?: string
+}
