@@ -15,6 +15,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
+import AddButton from '../../components/common/AddButton';
 
 type ProjectDetailsProps = {
   setProjectId: any;
@@ -180,6 +181,10 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
         </section>
       </Card>
 
+      <section className='flex justify-between my-6'>
+        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <AddButton />
+      </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable projectId={id} />
       </Card>

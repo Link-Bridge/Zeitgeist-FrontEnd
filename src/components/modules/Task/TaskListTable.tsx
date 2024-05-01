@@ -10,6 +10,8 @@ import { TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
 import ClickableChip from '../../common/DropDown';
 
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+
 type TaskListTableProps = {
   projectId: string;
 };
@@ -58,9 +60,25 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
     return <div>Error: {error.message}</div>;
   }
 
+  /**
+   * Task List Table component
+   *
+   * @component
+   * @param {ClientDetailProps} props - Page props
+   * @param {string} props.projectId - The id of the desired project
+   *
+   * @returns {JSX.Element} Client details page
+   */
+
   return (
-    <Table variant={'outlined'}>
-      {data && data.data && (
+    <Table>
+      {data?.data.length === 0 && (
+        <div className='w-full flex flex-col items-center justify-center my-20'>
+          <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
+          <p className='mt-4'>No tasks associated to this company were found.</p>
+        </div>
+      )}
+      {data && data.data && data.data.length !== 0 && (
         <>
           <thead>
             <tr>
