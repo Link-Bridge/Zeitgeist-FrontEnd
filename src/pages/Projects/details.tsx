@@ -16,6 +16,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
+import StatusChip from '../../components/common/StatusChip';
 
 type ProjectDetailsProps = {
   setProjectId: (projectId: string) => void;
