@@ -1,13 +1,19 @@
 import Button from '@mui/joy/Button';
-import colors from '../../colors'; // Importar los colores del archivo colors.tsx
+import colors from '../../colors';
 
-function AddButton() {
+interface AddButtonProps {
+  children?: React.ReactNode;
+  onClick: () => void;
+}
+
+const AddButton: React.FC<AddButtonProps> = ({ onClick }: AddButtonProps) => {
   return (
     <Button
+      onClick={onClick}
       variant='solid'
       size='sm'
       sx={{
-        backgroundColor: colors.darkGold, // Llamar el color correspondiente
+        backgroundColor: colors.darkGold,
         '&:hover': {
           backgroundColor: colors.darkerGold,
         },
@@ -16,6 +22,6 @@ function AddButton() {
       + New
     </Button>
   );
-}
+};
 
 export default AddButton;

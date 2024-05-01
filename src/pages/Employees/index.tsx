@@ -1,12 +1,13 @@
-import EmployeeDummyComponent from '../../components/modules/Employees/Table';
+import { Card } from '@mui/joy';
+import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
 
 const Employees = () => {
   return (
-    <div>
-      <h1>Employees Page</h1>
-      <EmployeeDummyComponent />
-      <p>Welcome to the Employees page!</p>
-    </div>
+    <section className='flex-1 overflow-scroll'>
+      <Card className='flex-1'>
+        <EmployeeTable />
+      </Card>
+    </section>
   );
 };
 
