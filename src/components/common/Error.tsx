@@ -28,7 +28,9 @@ const ErrorView = <T,>({ error }: ErrorViewProps<T>): JSX.Element => {
         Error
       </Typography>
 
-      <Typography level='h3'>{String(error)}</Typography>
+      <Typography level='h3' component='p'>
+        {String(error)}
+      </Typography>
     </>
   );
 };
