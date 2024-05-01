@@ -83,6 +83,10 @@ const ProjectReport: React.FC = () => {
     void doFetch();
   };
 
+  const handleClear = () => {
+    reqReport.sendRequest();
+  };
+
   useEffect(() => {
     if(!reqReport.data) {
       reqReport.sendRequest();
@@ -107,7 +111,6 @@ const ProjectReport: React.FC = () => {
   return (
     <>
       <Box
-        onClick={handleClick}
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
@@ -115,6 +118,7 @@ const ProjectReport: React.FC = () => {
       >
         <img src={left_arrow} alt='Left arrow' className='w-3.5' />
         <Link
+          onClick={handleClick}
           underline='none'
           className='ml-auto'
           sx={{
@@ -133,6 +137,29 @@ const ProjectReport: React.FC = () => {
       <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
         {report ? (
           <>
+                            <Box sx={{
+                      display: 'flex', justifyContent: "flex-end",gap: "10px", marginBottom: "20px"}}>
+                      <TextField
+                        sx={{
+                          width: '70px',
+                        }}
+                        type="number"
+                        label="Month"
+                        inputProps={{ min: "0", max: "12", step: "1" }}
+                        onChange={e => handleMonthChange(Number(e.target.value))}
+                      />
+                      <TextField
+                      sx={{
+                        width: '100px'
+                      }}
+                        type="number"
+                        label="Year"
+                        inputProps={{ min: "0" }}
+                        onChange={e => handleYearChange(Number(e.target.value))}
+                      />
+                    <Button sx={{ bgcolor: colors.darkGold, color: colors.lighterGray ,borderRadius: '8px', borderColor: colors.lighterGray, border: 1}} onClick={handleClose}>Search</Button>
+                    <Button sx={{bgcolor: colors.danger, color: colors.lighterGray, borderRadius: '8px', borderColor: colors.lighterGray, border: 1}} onClick={handleClear}>Clear</Button>
+                  </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -154,7 +181,7 @@ const ProjectReport: React.FC = () => {
                   <Box
                     sx={{
                       display: 'flex',
-                      gap: '10px',
+
                     }}
                   >
                     <h1
@@ -176,24 +203,9 @@ const ProjectReport: React.FC = () => {
                         <img src={download} alt='Download' className='w-6' />
                       </PDFDownloadLink>
                     </Box>
+                    
                   </Box>
-                  <Box sx={{
-                      display: 'flex',}}>
-                      <TextField
-                        type="number"
-                        label="Month"
-                      //  minValue="0"
-                      //  maxValue="12"
-                        onChange={e => handleMonthChange(Number(e.target.value))}
-                      />
-                      <TextField
-                        type="number"
-                        label="Year"
-                       // minValue="0"
-                        onChange={e => handleYearChange(Number(e.target.value))}
-                      />
-                    <Button onClick={handleClose}>SEARCH</Button>
-                  </Box>
+
                 </Box>
 
                 <br />
