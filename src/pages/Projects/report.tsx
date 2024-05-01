@@ -2,7 +2,10 @@ import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -15,9 +18,6 @@ import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
 import ProjectReportPDF from './report-pdf';
-import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
-import axios from 'axios';
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -38,7 +38,7 @@ function filterteParser(date: Date): string {
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const date = useRef<string>('')
+  const date = useRef<string>('');
 
   const [report, setReport] = useState<Report>();
   const [month, setMonth] = useState<number>(0);
@@ -63,22 +63,22 @@ const ProjectReport: React.FC = () => {
 
   const handleYearChange = (value: number) => {
     setYear(value);
-  }
+  };
 
   const handleMonthChange = (value: number) => {
     setMonth(value);
-  }
+  };
 
   const handleClose = () => {
     date.current = filterteParser(new Date(year, month - 1));
-    
+
     const doFetch = async (): Promise<void> => {
-      const data =  await axios.get(
+      const data = await axios.get(
         `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
         { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
       );
 
-      setReport(data.data)
+      setReport(data.data);
     };
     void doFetch();
   };
@@ -88,15 +88,14 @@ const ProjectReport: React.FC = () => {
   };
 
   useEffect(() => {
-    if(!reqReport.data) {
+    if (!reqReport.data) {
       reqReport.sendRequest();
     } else {
       setReport(reqReport.data);
     }
   }, [reqReport.data]);
-  
-  useEffect(() => {
- }, [handleClose]);
+
+  useEffect(() => {}, [handleClose]);
 
   if (reqReport.loading) {
     return <div>Loading...</div>;
@@ -137,29 +136,57 @@ const ProjectReport: React.FC = () => {
       <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
         {report ? (
           <>
-                            <Box sx={{
-                      display: 'flex', justifyContent: "flex-end",gap: "10px", marginBottom: "20px"}}>
-                      <TextField
-                        sx={{
-                          width: '70px',
-                        }}
-                        type="number"
-                        label="Month"
-                        inputProps={{ min: "0", max: "12", step: "1" }}
-                        onChange={e => handleMonthChange(Number(e.target.value))}
-                      />
-                      <TextField
-                      sx={{
-                        width: '100px'
-                      }}
-                        type="number"
-                        label="Year"
-                        inputProps={{ min: "0" }}
-                        onChange={e => handleYearChange(Number(e.target.value))}
-                      />
-                    <Button sx={{ bgcolor: colors.darkGold, color: colors.lighterGray ,borderRadius: '8px', borderColor: colors.lighterGray, border: 1}} onClick={handleClose}>Search</Button>
-                    <Button sx={{bgcolor: colors.danger, color: colors.lighterGray, borderRadius: '8px', borderColor: colors.lighterGray, border: 1}} onClick={handleClear}>Clear</Button>
-                  </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                justifyContent: 'flex-end',
+                gap: '10px',
+                marginBottom: '20px',
+              }}
+            >
+              <TextField
+                sx={{
+                  width: '70px',
+                }}
+                type='number'
+                label='Month'
+                inputProps={{ min: '0', max: '12', step: '1' }}
+                onChange={e => handleMonthChange(Number(e.target.value))}
+              />
+              <TextField
+                sx={{
+                  width: '100px',
+                }}
+                type='number'
+                label='Year'
+                inputProps={{ min: '0' }}
+                onChange={e => handleYearChange(Number(e.target.value))}
+              />
+              <Button
+                sx={{
+                  bgcolor: colors.darkGold,
+                  color: colors.lighterGray,
+                  borderRadius: '8px',
+                  borderColor: colors.lighterGray,
+                  border: 1,
+                }}
+                onClick={handleClose}
+              >
+                Search
+              </Button>
+              <Button
+                sx={{
+                  bgcolor: colors.danger,
+                  color: colors.lighterGray,
+                  borderRadius: '8px',
+                  borderColor: colors.lighterGray,
+                  border: 1,
+                }}
+                onClick={handleClear}
+              >
+                Clear
+              </Button>
+            </Box>
             <Box
               sx={{
                 display: 'flex',
@@ -181,7 +208,6 @@ const ProjectReport: React.FC = () => {
                   <Box
                     sx={{
                       display: 'flex',
-
                     }}
                   >
                     <h1
@@ -203,9 +229,7 @@ const ProjectReport: React.FC = () => {
                         <img src={download} alt='Download' className='w-6' />
                       </PDFDownloadLink>
                     </Box>
-                    
                   </Box>
-
                 </Box>
 
                 <br />
