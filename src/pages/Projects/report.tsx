@@ -2,8 +2,11 @@ import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useEffect } from 'react';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
@@ -24,13 +27,26 @@ function dateParser(date: Date): string {
   return `${day}-${month}-${year}`;
 }
 
+function filterteParser(date: Date): string {
+  const arr = date.toISOString().split('-');
+  const day = arr[2].substring(0, 2);
+  const month = arr[1];
+  const year = arr[0];
+  return `${year}-${month}-${day}`;
+}
+
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
-  const { data, loading, sendRequest, error } = useHttp<Report>(
-    `${APIPath.PROJECT_REPORT}/${id}`,
-    RequestMethods.GET
-  );
+  const date = useRef<string>('');
+
+  const [report, setReport] = useState<Report>();
+  const [month, setMonth] = useState<number>(0);
+  const [year, setYear] = useState<number>(0);
+
+  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+  const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
+
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
     ['inprogress', 'In process'],
@@ -45,27 +61,55 @@ const ProjectReport: React.FC = () => {
     navigate('/projects');
   };
 
-  useEffect(() => {
-    if (!data) {
-      sendRequest();
-    }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  const handleYearChange = (value: number) => {
+    setYear(value);
+  };
 
-  if (loading) {
+  const handleMonthChange = (value: number) => {
+    setMonth(value);
+  };
+
+  const handleClose = () => {
+    date.current = filterteParser(new Date(year, month - 1));
+
+    const doFetch = async (): Promise<void> => {
+      const data = await axios.get(
+        `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+      );
+
+      setReport(data.data);
+    };
+    void doFetch();
+  };
+
+  const handleClear = () => {
+    reqReport.sendRequest();
+  };
+
+  useEffect(() => {
+    if (!reqReport.data) {
+      reqReport.sendRequest();
+    } else {
+      setReport(reqReport.data);
+    }
+  }, [reqReport.data]);
+
+  useEffect(() => {}, [handleClose]);
+
+  if (reqReport.loading) {
     return <div>Loading...</div>;
   }
 
-  const totalTasks = data?.statistics?.total || 1;
+  const totalTasks = report?.statistics?.total || 1;
 
-  if (error) {
+  if (reqReport.error) {
     return <div>Error laoding the report</div>;
   }
 
   return (
     <>
       <Box
-        onClick={handleClick}
         sx={{
           display: 'flex',
           justifyContent: 'flex-end',
@@ -73,10 +117,11 @@ const ProjectReport: React.FC = () => {
       >
         <img src={left_arrow} alt='Left arrow' className='w-3.5' />
         <Link
+          onClick={handleClick}
           underline='none'
           className='ml-auto'
           sx={{
-            color: colors.darkGold, // Llamar el color correspondiente
+            color: colors.darkGold,
             '&:hover': {
               color: colors.darkerGold,
             },
@@ -89,12 +134,63 @@ const ProjectReport: React.FC = () => {
 
       <br />
       <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-        {data ? (
+        {report ? (
           <>
             <Box
               sx={{
                 display: 'flex',
-                gap: '15px',
+                justifyContent: 'flex-end',
+                gap: '10px',
+                marginBottom: '20px',
+              }}
+            >
+              <TextField
+                sx={{
+                  width: '70px',
+                }}
+                type='number'
+                label='Month'
+                inputProps={{ min: '0', max: '12', step: '1' }}
+                onChange={e => handleMonthChange(Number(e.target.value))}
+              />
+              <TextField
+                sx={{
+                  width: '100px',
+                }}
+                type='number'
+                label='Year'
+                inputProps={{ min: '0' }}
+                onChange={e => handleYearChange(Number(e.target.value))}
+              />
+              <Button
+                sx={{
+                  bgcolor: colors.darkGold,
+                  color: colors.lighterGray,
+                  borderRadius: '8px',
+                  borderColor: colors.lighterGray,
+                  border: 1,
+                }}
+                onClick={handleClose}
+              >
+                Search
+              </Button>
+              <Button
+                sx={{
+                  bgcolor: colors.danger,
+                  color: colors.lighterGray,
+                  borderRadius: '8px',
+                  borderColor: colors.lighterGray,
+                  border: 1,
+                }}
+                onClick={handleClear}
+              >
+                Clear
+              </Button>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '30px',
               }}
             >
               <Box
@@ -105,35 +201,39 @@ const ProjectReport: React.FC = () => {
                 <Box
                   sx={{
                     display: 'flex',
-                    gap: '10px',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}
                 >
-                  <h1
-                    style={{
-                      color: 'black',
-                      fontSize: '2rem',
-                      lineHeight: '1.1',
-                      letterSpacing: '1.5px',
-                    }}
-                  >
-                    {data.project.name}
-                  </h1>
-
                   <Box
                     sx={{
-                      alignContent: 'center',
+                      display: 'flex',
                     }}
                   >
-                    <PDFDownloadLink
-                      document={<ProjectReportPDF data={data} />}
-                      fileName={`report_${data.project.name}`}
+                    <h1
+                      style={{
+                        color: 'black',
+                        fontSize: '1.7rem',
+                        lineHeight: '1.1',
+                        letterSpacing: '1.5px',
+                      }}
                     >
-                      <img src={download} alt='Download' className='w-6' />
-                    </PDFDownloadLink>
+                      {report.project.name}
+                    </h1>
+
+                    <Box>
+                      <PDFDownloadLink
+                        document={<ProjectReportPDF data={report} />}
+                        fileName={`report_${report.project.name}`}
+                      >
+                        <img src={download} alt='Download' className='w-6' />
+                      </PDFDownloadLink>
+                    </Box>
                   </Box>
                 </Box>
 
-                <p>{data.project.description}</p>
+                <br />
+                <p>{report.project.description}</p>
 
                 <br />
 
@@ -143,13 +243,13 @@ const ProjectReport: React.FC = () => {
                     gap: '40px',
                   }}
                 >
-                  <StatusChip status={`${data.project.status || '-'}`} />
+                  <StatusChip status={`${report.project.status || '-'}`} />
                   <ColorChip
-                    label={`Total Hours: ${data.project.totalHours}`}
+                    label={`Total Hours: ${report.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
                   <ColorChip
-                    label={`${data.project.companyName}`}
+                    label={`${report.project.companyName}`}
                     color={`${colors.null}`}
                   ></ColorChip>
                 </Box>
@@ -165,21 +265,21 @@ const ProjectReport: React.FC = () => {
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Matter</p>
                     <ColorChip
-                      label={data.project.matter || ''}
+                      label={report.project.matter || ''}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Category</p>
                     <ColorChip
-                      label={data.project.category || ''}
+                      label={report.project.category || ''}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Chargeable</p>
                     <ColorChip
-                      label={`${data.project.isChargeable}` ? 'Yes' : 'No'}
+                      label={`${report.project.isChargeable}` ? 'Yes' : 'No'}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
@@ -202,10 +302,10 @@ const ProjectReport: React.FC = () => {
                       <img src={calendar} alt='calendar' className='w-5' />
                       <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                     </Box>
-                    <p>{dateParser(data.project.startDate)}</p>
+                    <p>{dateParser(report.project.startDate)}</p>
                   </Box>
 
-                  {data.project.endDate && (
+                  {report.project.endDate && (
                     <Box>
                       <Box
                         sx={{
@@ -215,7 +315,7 @@ const ProjectReport: React.FC = () => {
                         <img src={calendar} alt='calendar' className='w-5' />
                         <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                       </Box>
-                      <p>{dateParser(data.project.endDate)}</p>
+                      <p>{dateParser(report.project.endDate)}</p>
                     </Box>
                   )}
                 </Box>
@@ -228,8 +328,8 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                 }}
               >
-                {data.statistics &&
-                  Object.entries(data.statistics)
+                {report.statistics &&
+                  Object.entries(report.statistics)
                     .filter(([key]) => key !== 'total')
                     .map(([item, value]) => {
                       return (
@@ -282,7 +382,7 @@ const ProjectReport: React.FC = () => {
                 gap: '10px',
               }}
             >
-              {data.tasks?.map(item => {
+              {report.tasks?.map(item => {
                 return (
                   <>
                     <Box key={item.title}>
@@ -396,7 +496,7 @@ const ProjectReport: React.FC = () => {
             </Box>
           </>
         ) : (
-          <p>Report not found</p>
+          <p>No data available</p>
         )}
       </main>
     </>
