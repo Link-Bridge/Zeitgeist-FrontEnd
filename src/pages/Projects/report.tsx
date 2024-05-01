@@ -2,9 +2,8 @@ import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import Link from '@mui/joy/Link';
-import { DatePicker } from '@mui/x-date-pickers';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useEffect, useState } from 'react';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
@@ -16,6 +15,9 @@ import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
 import ProjectReportPDF from './report-pdf';
+import Button from '@mui/material/Button';
+import TextField from '@mui/material/TextField';
+import axios from 'axios';
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -25,21 +27,25 @@ function dateParser(date: Date): string {
   return `${day}-${month}-${year}`;
 }
 
+function filterteParser(date: Date): string {
+  const arr = date.toISOString().split('-');
+  const day = arr[2].substring(0, 2);
+  const month = arr[1];
+  const year = arr[0];
+  return `${year}-${month}-${day}`;
+}
+
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const navigate = useNavigate();
+  const date = useRef<string>('')
 
-  //let date: string = '';
-  // const [year, setYear] = useState<string | null>(null);
-  // const [month, setMonth] = useState<string | null>(null);
-  const [date, setDate] = useState<Date | null>();
   const [report, setReport] = useState<Report>();
+  const [month, setMonth] = useState<number>(0);
+  const [year, setYear] = useState<number>(0);
 
+  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
   const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
-  const reqFilteredReport = useHttp<Report>(
-    `${APIPath.PROJECT_REPORT}/${id}?date=${date}`,
-    RequestMethods.GET
-  );
 
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
@@ -55,21 +61,38 @@ const ProjectReport: React.FC = () => {
     navigate('/projects');
   };
 
+  const handleYearChange = (value: number) => {
+    setYear(value);
+  }
+
+  const handleMonthChange = (value: number) => {
+    setMonth(value);
+  }
+
   const handleClose = () => {
-    console.log(date);
-    console.log(`${APIPath.PROJECT_REPORT}/${id}?date=${date}`);
-    reqFilteredReport.sendRequest();
+    date.current = filterteParser(new Date(year, month - 1));
+    
+    const doFetch = async (): Promise<void> => {
+      const data =  await axios.get(
+        `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+      );
+
+      setReport(data.data)
+    };
+    void doFetch();
   };
 
   useEffect(() => {
-    if (reqFilteredReport.data) {
-      setReport(reqFilteredReport.data);
-    } else if (!reqReport.data) {
+    if(!reqReport.data) {
       reqReport.sendRequest();
     } else {
       setReport(reqReport.data);
     }
-  }, [reqReport.data, reqFilteredReport.data]);
+  }, [reqReport.data]);
+  
+  useEffect(() => {
+ }, [handleClose]);
 
   if (reqReport.loading) {
     return <div>Loading...</div>;
@@ -154,13 +177,23 @@ const ProjectReport: React.FC = () => {
                       </PDFDownloadLink>
                     </Box>
                   </Box>
-                  <DatePicker
-                    label='Select a month and a year'
-                    views={['year', 'month']}
-                    slotProps={{ textField: { size: 'small' } }}
-                    onChange={filterDate => setDate(filterDate?.toDate())}
-                    onClose={handleClose}
-                  />
+                  <Box sx={{
+                      display: 'flex',}}>
+                      <TextField
+                        type="number"
+                        label="Month"
+                      //  minValue="0"
+                      //  maxValue="12"
+                        onChange={e => handleMonthChange(Number(e.target.value))}
+                      />
+                      <TextField
+                        type="number"
+                        label="Year"
+                       // minValue="0"
+                        onChange={e => handleYearChange(Number(e.target.value))}
+                      />
+                    <Button onClick={handleClose}>SEARCH</Button>
+                  </Box>
                 </Box>
 
                 <br />
