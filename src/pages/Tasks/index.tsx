@@ -17,7 +17,7 @@ import { RequestMethods } from '../../utils/constants';
  *
  * @page
  *
- * @return {JSX.Element} - React component when the information is lading
+ * @return {JSX.Element} - React component when the information is loading
  * @return {JSX.Element} - React component when an error occurs
  * @return {JSX.Element} - React component when the information is loaded
  */
