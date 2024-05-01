@@ -22,7 +22,7 @@ import { RequestMethods } from '../../utils/constants';
  * @return {JSX.Element} - React component when the information is loaded
  */
 const Tasks = (): JSX.Element => {
-  const [tasks, setTasks] = useState<Task[] | null>(null);
+  const [tasks, setTasks] = useState<Task[]>([]);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
 
@@ -31,7 +31,7 @@ const Tasks = (): JSX.Element => {
     sendRequest: fetchTasks,
     error: taskError,
     loading: taskLoading,
-  } = useHttp<Response<Task>>(`/tasks/employee/${employeeId}`, RequestMethods.GET);
+  } = useHttp<Task[]>(`/tasks/employee/${employeeId}`, RequestMethods.GET);
 
   const {
     data: projectData,
@@ -42,34 +42,24 @@ const Tasks = (): JSX.Element => {
 
   useEffect(() => {
     if (employeeId) fetchTasks();
+  }, [employeeId]);
+
+  useEffect(() => {
+    if (taskData) setTasks(taskData);
+  }, [taskData]);
+
+  useEffect(() => {
+    fetchProjects();
   }, []);
 
-  useEffect(() => {
-    if (taskData) {
-      fetchProjects();
-    }
-  }, [taskData]);
-
-  useEffect(() => {
-    if (taskData) {
-      const tasksCache = taskData.data;
-      setTasks(tasksCache);
-    }
-  }, [taskData]);
-
-  const tasksPerProject = projectData?.data.map(project => {
-    const projectTasks = tasks?.filter(task => task.idProject === project.id);
-
-    return {
-      project: project,
-      tasks: projectTasks,
-    };
-  });
-
-  // TODO: Update the task status
-  const updateTaskStatus = async (taskId: string, status: string) => {
-    console.log('Task status updated', taskId, status);
-  };
+  const tasksPerProject = projectData?.data
+    ?.map(project => {
+      const projectTasks = tasks
+        ?.filter(task => task.idProject === project.id)
+        .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
+      return { project, tasks: projectTasks };
+    })
+    .filter(item => item.tasks.length > 0);
 
   if (taskError || projectError) {
     return <ErrorView error={taskError || projectError} />;
@@ -87,7 +77,7 @@ const Tasks = (): JSX.Element => {
           color: colors.grey[500],
         }}
       >
-        <Typography variant='plain' level='h1'>
+        <Typography variant='plain' level='h1' mb={4}>
           Loading tasks
         </Typography>
 
@@ -146,7 +136,7 @@ const Tasks = (): JSX.Element => {
                       backgroundColor: colors.grey[100],
                     }}
                   >
-                    <TaskTable tasks={tasks || []} onUpdateStatus={updateTaskStatus} />
+                    <TaskTable tasks={tasks || []} />
                   </Box>
                 )}
               </Box>
@@ -164,7 +154,7 @@ const Tasks = (): JSX.Element => {
             }}
           >
             <Typography variant='plain' level='h1'>
-              z Your task list is empty
+              Your task list is empty
             </Typography>
             <Typography variant='plain' level='h2'>
               Get started by adding tasks to your project

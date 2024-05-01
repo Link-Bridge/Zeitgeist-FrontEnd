@@ -28,7 +28,6 @@ const statusColorMap: Record<TaskStatus, string> = {
 
 interface TaskTableProps {
   tasks: Task[];
-  onUpdateStatus: (taskId: string, status: TaskStatus) => void;
 }
 
 /**
@@ -39,15 +38,20 @@ interface TaskTableProps {
  *                         Function to update the status of the task
  * @returns JSX.Element - React component
  */
-const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
+const TaskTable = ({ tasks }: TaskTableProps) => {
   const [collapsed, setCollapsed] = useState(false);
 
   const handleCollapseToggle = () => {
     setCollapsed(!collapsed);
   };
 
-  const handleStatusSelect = (taskId: string, status: TaskStatus) => {
-    onUpdateStatus(taskId, status);
+  const dateToShortString = (dateString: string) => {
+    const date = new Date(dateString);
+    const day = date.getDate().toString().padStart(2, '0');
+    const month = (date.getMonth() + 1).toString().padStart(2, '0');
+    const year = date.getFullYear();
+
+    return `${day}-${month}-${year}`;
   };
 
   return (
@@ -105,11 +109,17 @@ const TaskTable = ({ tasks, onUpdateStatus }: TaskTableProps) => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={task.workedHours}
+                      label={String(task.workedHours)}
                       sx={{ backgroundColor: '#D6CFBE', color: colors.grey[700] }}
                     />
                   </TableCell>
-                  <TableCell>{task.dueDate}</TableCell>
+                  <TableCell
+                    sx={{
+                      color: '#fff',
+                    }}
+                  >
+                    {dateToShortString(String(task.endDate))}
+                  </TableCell>
                   <TableCell>
                     <IconButton aria-label='more'>
                       <MoreHoriz />
