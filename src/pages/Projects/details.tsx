@@ -18,7 +18,7 @@ import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
 
 type ProjectDetailsProps = {
-  setProjectId: any;
+  setProjectId: (projectId: string) => void;
 };
 
 function dateParser(date: Date): string {

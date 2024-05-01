@@ -7,7 +7,6 @@ type CardProjectProps = {
   status: ProjectStatus;
   department: ProjectAreas;
   company: string;
-  id: string;
 };
 
 const getStatusColor = (status: ProjectStatus) => {
@@ -59,7 +58,7 @@ const getColorArea = (department: ProjectAreas) => {
  *
  * @returns Client Card component
  */
-const ProjectCard = ({ name, status, department, company, id }: CardProjectProps): JSX.Element => {
+const ProjectCard = ({ name, status, department, company }: CardProjectProps): JSX.Element => {
   return (
     <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
       <section className='flex gap-3'>

@@ -10,10 +10,10 @@ import { RequestMethods, RoutesPath } from '../../utils/constants';
 
 type MainProjectProps = {
   idProject: string;
-  setProjectId: any;
+  setProjectId: (idProject: string) => void;
 };
 
-const ProjectMain = ({ idProject, setProjectId }: MainProjectProps) => {
+const ProjectMain = ({ setProjectId }: MainProjectProps) => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
   const [isLoading, setIsLoading] = useState(req.loading);
