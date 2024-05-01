@@ -60,7 +60,7 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '50%' }}>
+              <TableCell style={{ width: '60%' }}>
                 <Typography variant='body1' sx={{ fontWeight: 600 }}>
                   Task
                 </Typography>
