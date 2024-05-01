@@ -19,6 +19,7 @@ import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
 
 type ProjectDetailsProps = {
+  projectId: string;
   setProjectId: (projectId: string) => void;
 };
 
@@ -36,7 +37,7 @@ const chipStyle = {
   minWidth: '100px',
 };
 
-const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
+const ProjectDetails = ({ projectId, setProjectId }: ProjectDetailsProps) => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
@@ -87,7 +88,7 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
         <Link
           to='/projects'
           className='ml-auto text-darkGold no-underline'
-          onClick={setProjectId('')}
+          onClick={() => setProjectId('')}
         >
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
@@ -184,10 +185,10 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
 
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
-        <AddButton />
+        <AddButton onClick={() => console.log('Add Button')} />
       </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id} />
+        <TaskListTable projectId={id ?? ''} />
       </Card>
     </>
   );
