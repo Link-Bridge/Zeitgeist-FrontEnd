@@ -15,6 +15,7 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
+import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
 
 type ClientDetailProps = {
   clientId: string;
@@ -38,11 +39,16 @@ const formatDate = (date: Date) => {
 
 const ClientDetails = ({ clientId }: ClientDetailProps) => {
   const [open, setOpen] = useState<boolean>(false);
+  const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
+
+  const handleEditClick = () => {
+    setEditModalOpen(true);
+  };
 
   useEffect(() => {
     sendRequest();
@@ -88,7 +94,16 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
             <EditOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
+              onClick={handleEditClick}
             />
+            {company && (
+              <EditClientFormModal
+                open={editModalOpen}
+                setOpen={setEditModalOpen}
+                clientData={company}
+                setRefetch={() => {}}
+              />
+            )}
             <ArchiveOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
