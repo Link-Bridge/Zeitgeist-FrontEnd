@@ -97,11 +97,6 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
                 <TableRow key={task.id}>
                   <TableCell>{task.title}</TableCell>
                   <TableCell>
-                    {/* <GenericDropdown
-                      options={Object.values(TaskStatus)}
-                      onSelect={(status: TaskStatus) => handleStatusSelect(task.id, status)}
-                      colorMap={statusColorMap}
-                    /> */}
                     <Chip
                       label={task.status}
                       sx={{ backgroundColor: statusColorMap[task.status], color: colors.grey[800] }}
