@@ -22,7 +22,6 @@ const Auth: React.FC = () => {
       sessionStorage.setItem('idToken', idToken);
 
       // TODO: Had trouble using the useHttp hook
-
       const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
         method: 'POST',
         headers: {
