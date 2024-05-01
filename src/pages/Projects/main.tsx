@@ -8,7 +8,12 @@ import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 
-const ProjectMain = () => {
+type MainProjectProps = {
+  idProject: string;
+  setProjectId: (idProject: string) => void;
+};
+
+const ProjectMain = ({ setProjectId }: MainProjectProps) => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
   const [isLoading, setIsLoading] = useState(req.loading);
@@ -42,14 +47,17 @@ const ProjectMain = () => {
           {isLoading && <Loader />}
           {!isLoading &&
             req.data?.data.map(project => (
-              <ProjectCard
-                key={project.id}
-                id={project.id}
-                company={companyNames.get(project.idCompany) ?? ''}
-                department={project.area}
-                name={project.name}
-                status={project.status}
-              />
+              <Link to={`/projects/details/${project.id}`}>
+                <ProjectCard
+                  key={project.id}
+                  id={project.id}
+                  company={companyNames.get(project.idCompany) ?? ''}
+                  department={project.area}
+                  name={project.name}
+                  status={project.status}
+                  onClick={setProjectId(project.id)}
+                />
+              </Link>
             ))}
         </div>
       </section>

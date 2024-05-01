@@ -1,18 +1,25 @@
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import { Box, Card } from '@mui/joy';
-import { Chip } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
+
 import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
-import AddButton from '../../components/common/AddButton';
-import StatusChip from '../../components/common/StatusChip';
+import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity } from '../../types/project';
 import { APIPath, RequestMethods } from '../../utils/constants';
+
+import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import EventNoteIcon from '@mui/icons-material/EventNote';
+
+import { Box, Card } from '@mui/joy';
+import { Chip } from '@mui/material';
+import AddButton from '../../components/common/AddButton';
+
+type ProjectDetailsProps = {
+  setProjectId: (projectId: string) => void;
+};
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -28,7 +35,7 @@ const chipStyle = {
   minWidth: '100px',
 };
 
-const ProjectDetails = () => {
+const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
@@ -76,7 +83,11 @@ const ProjectDetails = () => {
           marginBottom: '10px',
         }}
       >
-        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
+        <Link
+          to='/projects'
+          className='ml-auto text-darkGold no-underline'
+          onClick={setProjectId('')}
+        >
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
@@ -170,9 +181,13 @@ const ProjectDetails = () => {
         </section>
       </Card>
 
-      <div className='ml-auto pt-5'>
-        <AddButton></AddButton>
-      </div>
+      <section className='flex justify-between my-6'>
+        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <AddButton />
+      </section>
+      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+        <TaskListTable projectId={id} />
+      </Card>
     </>
   );
 };

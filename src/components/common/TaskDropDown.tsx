@@ -2,6 +2,7 @@ import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
 import { Option, Select, selectClasses } from '@mui/joy';
 import Chip from '@mui/joy/Chip';
 import colors from '../../colors';
+import { TaskStatus } from '../../types/task-status';
 
 /**
  *  colorForStatus function
@@ -10,23 +11,23 @@ import colors from '../../colors';
  * @returns  string
  */
 
-function colorForStatus(status: string) {
+function colorForStatus(status: TaskStatus) {
   switch (status) {
-    case 'Select an option':
-      return 'neutral';
-    case 'Not Started':
+    case TaskStatus.SELECT_OPTION:
+      return 'Neutral';
+    case TaskStatus.NOT_STARTED:
       return colors.notStarted;
-    case 'In Process':
-      return colors.inProcess;
-    case 'Under Revision':
+    case TaskStatus.IN_PROGRESS:
+      return colors.darkPurple;
+    case TaskStatus.UNDER_REVISION:
       return colors.purple;
-    case 'Delayed':
+    case TaskStatus.DELAYED:
       return colors.delayed;
-    case 'Postponed':
+    case TaskStatus.POSTPONED:
       return colors.blue;
-    case 'Done':
+    case TaskStatus.DONE:
       return colors.success;
-    case 'Cancelled':
+    case TaskStatus.CANCELLED:
       return colors.danger;
     default:
       return 'neutral';
@@ -43,7 +44,7 @@ export default function ClickableChip({
   value,
   setValue,
 }: {
-  value: string;
+  value: TaskStatus;
   setValue: (newVal: string) => void;
 }) {
   return (
@@ -65,7 +66,7 @@ export default function ClickableChip({
       }}
     >
       <Option value='Not Started'>Not Started</Option>
-      <Option value='In Process'>In Process</Option>
+      <Option value='In Progress'>In Progress</Option>
       <Option value='Under Revision'>Under Revision</Option>
       <Option value='Delayed'>Delayed</Option>
       <Option value='Postponed'>Postponed</Option>

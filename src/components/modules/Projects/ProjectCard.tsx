@@ -1,5 +1,4 @@
 import Chip from '@mui/joy/Chip';
-import { Link } from 'react-router-dom';
 import colors from '../../../colors';
 import { ProjectAreas, ProjectStatus } from '../../../types/project';
 
@@ -8,7 +7,6 @@ type CardProjectProps = {
   status: ProjectStatus;
   department: ProjectAreas;
   company: string;
-  id: string;
 };
 
 const getStatusColor = (status: ProjectStatus) => {
@@ -60,25 +58,23 @@ const getColorArea = (department: ProjectAreas) => {
  *
  * @returns Client Card component
  */
-const ProjectCard = ({ name, status, department, company, id }: CardProjectProps): JSX.Element => {
+const ProjectCard = ({ name, status, department, company }: CardProjectProps): JSX.Element => {
   return (
-    <Link to={`/projects/details/${id}`}>
-      <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
-        <section className='flex gap-3'>
-          <div className='border-2 h-8 border-[#9C844C]' />
-          <h5 className='text-[#424242] font-montserrat'>{name}</h5>
-        </section>
-        <span className='text-sm text-gold'>{company}</span>
-        <section className='mt-3 flex gap-3'>
-          <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
-            {status}
-          </Chip>
-          <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
-            {department}
-          </Chip>
-        </section>
+    <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
+      <section className='flex gap-3'>
+        <div className='border-2 h-8 border-[#9C844C]' />
+        <h5 className='text-[#424242] font-montserrat'>{name}</h5>
       </section>
-    </Link>
+      <span className='text-sm text-gold'>{company}</span>
+      <section className='mt-3 flex gap-3'>
+        <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
+          {status}
+        </Chip>
+        <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
+          {department}
+        </Chip>
+      </section>
+    </section>
   );
 };
 
