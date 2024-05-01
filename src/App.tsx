@@ -59,9 +59,9 @@ function App() {
                 <Route
                   path={`${RoutesPath.PROJECTS}/*`}
                   element={
-                    <ProtectedRoute>
-                      <Projects />
-                    </ProtectedRoute>
+                    // <ProtectedRoute>
+                    <Projects />
+                    // </ProtectedRoute>
                   }
                 />
                 <Route

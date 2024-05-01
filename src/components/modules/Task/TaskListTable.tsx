@@ -32,7 +32,7 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
   };
 
   const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail[]>>(
-    `/tasks/project/fb6bde87-5890-4cf7-978b-8daa13f105f7`,
+    `/tasks/project/${projectId}`,
     RequestMethods.GET
   );
 
@@ -91,7 +91,3 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
 };
 
 export { TaskListTable };
-
-{
-  /* <TaskListTable projectId={projectId} /> */
-}
