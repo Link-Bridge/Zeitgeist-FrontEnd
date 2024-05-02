@@ -16,7 +16,7 @@ type ProjectsClientListProps = {
 
 export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
     `/project/${clientId}`,
     RequestMethods.GET
