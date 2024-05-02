@@ -34,19 +34,6 @@ const getStatusColor = (status: ProjectStatus) => {
   }
 };
 
-const getColorArea = (department: ProjectAreas) => {
-  switch (department) {
-    case ProjectAreas.ACCOUNTING:
-      return colors.darkGold;
-    case ProjectAreas.CLIENT:
-      return colors.darkPurple;
-    case ProjectAreas.LEGAL:
-      return colors.darkerGold;
-    default:
-      return colors.darkestGray;
-  }
-};
-
 /**
  * Client Card component
  *
