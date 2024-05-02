@@ -1,4 +1,4 @@
-import { Box, Grid, Modal, TextField, Typography } from '@mui/material';
+import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -89,82 +89,97 @@ const EditClientFormModal = ({
 
     await sendRequest({}, updatedClientData);
   };
-
   return (
     <Modal
       open={open}
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
+      BackdropProps={{ onClick: () => {} }}
     >
       <Box sx={style}>
-        <Typography id='modal-modal-title' variant='h6' component='h2'>
-          Edit Client
+        <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
+          Modify Client
         </Typography>
-        <form onSubmit={handleUpdate} autoComplete='off'>
-          <Grid container spacing={2}>
-            <Grid item xs={6}>
-              <TextField
-                label='Client Name'
-                fullWidth
-                margin='normal'
-                value={companyName}
-                onChange={e => setCompanyName(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label='Email'
-                type='email'
-                fullWidth
-                margin='normal'
-                value={companyEmail}
-                onChange={e => setCompanyEmail(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label='Phone Number'
-                type='tel'
-                fullWidth
-                margin='normal'
-                value={companyPhone}
-                onChange={e => setCompanyPhone(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label='RFC'
-                fullWidth
-                margin='normal'
-                value={companyRFC}
-                onChange={e => setCompanyRFC(e.target.value)}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <DatePicker
-                label='Constitution Date'
-                value={dayjs(companyConstitution)}
-                onChange={e => {
-                  setCompanyConstitution(e?.toDate() ?? companyConstitution);
-                }}
-              />
-            </Grid>
-            <Grid item xs={6}>
-              <TextField
-                label='Tax Residence'
-                fullWidth
-                margin='normal'
-                value={companyTaxResidence}
-                onChange={e => setCompanyTaxResidence(e.target.value)}
-              />
-            </Grid>
-          </Grid>
+        <Typography id='modal-modal-description' sx={{ mt: 1, mb: -1, marginLeft: '10px' }}>
+          Modify client details
+        </Typography>
+
+        <Box
+          component='form'
+          sx={{
+            '& .MuiTextField-root': { m: 1, width: '30ch' },
+            pt: 2,
+            pb: 2,
+          }}
+          autoComplete='off'
+          onSubmit={handleUpdate}
+        >
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <TextField
+              label='Client Name'
+              variant='outlined'
+              value={companyName}
+              onChange={e => setCompanyName(e.target.value)}
+              sx={{ width: '100ch' }}
+            />
+
+            <TextField
+              label='Email'
+              type='email'
+              variant='outlined'
+              value={companyEmail}
+              onChange={e => setCompanyEmail(e.target.value)}
+            />
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <TextField
+              label='Phone Number'
+              type='tel'
+              variant='outlined'
+              value={companyPhone}
+              onChange={e => {
+                const input = e.target.value.replace(/\D/g, '');
+                setCompanyPhone(input);
+              }}
+            />
+
+            <TextField
+              label='RFC'
+              variant='outlined'
+              value={companyRFC}
+              onChange={e => {
+                const inputValue = e.target.value;
+                if (inputValue.length <= 13) {
+                  setCompanyRFC(e.target.value);
+                }
+              }}
+            />
+          </Box>
+
+          <Box sx={{ display: 'flex', flexDirection: 'row' }}>
+            <DatePicker
+              label='Constitution Date'
+              value={dayjs(companyConstitution)}
+              onChange={e => {
+                setCompanyConstitution(e?.toDate() ?? companyConstitution);
+              }}
+            />
+
+            <TextField
+              label='Tax Residence'
+              variant='outlined'
+              value={companyTaxResidence}
+              onChange={e => setCompanyTaxResidence(e.target.value)}
+            />
+          </Box>
+
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
             <CancelButton onClick={() => setOpen(false)} />
             <EditClientButton loading={loading} onClick={handleUpdate} />
           </Box>
-        </form>
+        </Box>
       </Box>
     </Modal>
   );
