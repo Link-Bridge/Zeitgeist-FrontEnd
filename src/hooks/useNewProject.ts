@@ -11,8 +11,8 @@ export interface FormState {
   description: string;
   startDate: Date;
   endDate: Date | null;
-  periodicity: string;
-  isChargeable: boolean;
+  periodic: string;
+  chargable: boolean;
   area: string;
 }
 
@@ -24,8 +24,8 @@ const initialFormState: FormState = {
   description: '',
   startDate: new Date(),
   endDate: null,
-  periodicity: ProjectPeriodicity.WHEN_NEEDED,
-  isChargeable: false,
+  periodic: ProjectPeriodicity.WHEN_NEEDED,
+  chargable: false,
   area: '',
 };
 
@@ -69,6 +69,8 @@ const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
     return false;
   }
 
+  formState.area = formState.area.toUpperCase();
+
   return true;
 };
 
@@ -88,10 +90,21 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const res = await axios.post('http://localhost:4000/api/v1/project/create', {
-        ...formState,
-        status: '-',
-      });
+      const idToken = sessionStorage.getItem('idToken');
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      };
+      const res = await axios.post(
+        'http://localhost:4000/api/v1/project/create',
+        {
+          ...formState,
+          status: '-',
+        },
+        {
+          headers,
+        }
+      );
       if (res.status === 201) {
         setSuccess(true);
       }

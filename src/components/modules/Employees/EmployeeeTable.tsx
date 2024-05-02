@@ -116,6 +116,7 @@ export default function EmployeeTable() {
                           handleRolChange((e.target as any)?.ariaLabel || '', employee.id);
                         }}
                         sx={{
+                          width: 250,
                           [`& .${selectClasses.indicator}`]: {
                             transition: '0.2s',
                             [`&.${selectClasses.expanded}`]: {
@@ -134,9 +135,8 @@ export default function EmployeeTable() {
                       </Select>
                     </td>
                     <td>
-                      <Chip className='w-full overflow-x-scroll' variant='soft'>
-                        {' '}
-                        {employee.email}{' '}
+                      <Chip className='w-full overflow' variant='soft'>
+                        {employee.email}
                       </Chip>
                     </td>
                     <td>

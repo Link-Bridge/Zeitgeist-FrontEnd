@@ -14,31 +14,34 @@ const Items = [
 
 const SideBar = () => {
   return (
-    <aside
-      className={`bg-darkerGray h-screen top-0 left-0 flex flex-col items-center pt-16 gap-10 w-[200px]`}
-    >
-      <Link to={RoutesPath.HOME}>
-        <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
-      </Link>
-      <nav className='w-full flex justify-center'>
-        <ul className='w-full'>
-          {Items.map(item => (
-            <li
-              key={item.href}
-              className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
-            >
-              <Link
-                to={item.href}
-                className='flex items-center gap-3 px-9 py-5'
-                style={{ color: colors.lightGold }}
+    <aside className="relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-screen top-0 left-0 flex flex-col items-center pt-16 gap-10 w-[200px]">
+      <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
+      <div className='relative z-10 w-full'>
+        <div className='flex justify-center'>
+          <Link to={RoutesPath.HOME}>
+            <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
+          </Link>
+        </div>
+        <nav className='w-full'>
+          <ul className='w-full'>
+            {Items.map(item => (
+              <li
+                key={item.href}
+                className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
               >
-                <item.icon></item.icon>
-                <p>{item.title}</p>
-              </Link>
-            </li>
-          ))}
-        </ul>
-      </nav>
+                <Link
+                  to={item.href}
+                  className='flex items-center gap-3 px-9 py-5'
+                  style={{ color: colors.lightGold }}
+                >
+                  <item.icon></item.icon>
+                  <p>{item.title}</p>
+                </Link>
+              </li>
+            ))}
+          </ul>
+        </nav>
+      </div>
     </aside>
   );
 };

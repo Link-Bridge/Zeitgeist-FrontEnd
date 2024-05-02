@@ -31,8 +31,8 @@ const NewProject = () => {
       form.formState.description = '';
       form.formState.startDate = new Date();
       form.formState.endDate = null;
-      form.formState.periodicity = ProjectPeriodicity.WHEN_NEEDED;
-      form.formState.isChargeable = false;
+      form.formState.periodic = ProjectPeriodicity.WHEN_NEEDED;
+      form.formState.chargable = false;
       form.formState.area = '';
       setInitForm(true);
     }
@@ -140,9 +140,9 @@ const NewProject = () => {
                 <FormLabel>Chargable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
-                  checked={form.formState.isChargeable}
+                  checked={form.formState.chargable}
                   onChange={e => {
-                    form.handleChange('isChargeable', e.target.checked);
+                    form.handleChange('chargable', e.target.checked);
                   }}
                   size='lg'
                 />
@@ -160,7 +160,7 @@ const NewProject = () => {
               <FormControl>
                 <FormLabel>Periodic</FormLabel>
                 <CustomSelect
-                  name='periodicity'
+                  name='periodic'
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
                   defaultValue={ProjectPeriodicity.WHEN_NEEDED}

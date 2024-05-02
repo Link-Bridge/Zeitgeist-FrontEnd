@@ -28,9 +28,9 @@ export enum ProjectAreas {
 }
 
 export enum ProjectStatus {
-  NOT_STARTED = 'Not Started',
-  IN_PROCESS = 'In Process',
-  UNDER_REVISION = 'Under Revision',
+  NOT_STARTED = 'Not started',
+  IN_PROCESS = 'In process',
+  UNDER_REVISION = 'Under revision',
   DELAYED = 'Delayed',
   POSTPONED = 'Postponed',
   DONE = 'Done',

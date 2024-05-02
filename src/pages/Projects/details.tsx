@@ -29,7 +29,8 @@ function dateParser(date: Date): string {
 const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
-  minWidth: '100px',
+  minWidth: '5px0px',
+  textTransform: 'lowercase',
 };
 
 const ProjectDetails = () => {
@@ -128,7 +129,6 @@ const ProjectDetails = () => {
                 sx={{
                   bgcolor: colors.extra,
                   fontSize: '1rem',
-                  minWidth: '100px',
                 }}
                 label={data?.totalHours}
               />

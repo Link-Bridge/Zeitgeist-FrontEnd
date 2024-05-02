@@ -28,7 +28,8 @@ const ClientCard = ({
   return (
     <CardContainer>
       <header className='mb-3 text-xl flex'>
-        <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' /> {name}
+        <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
+        <span style={{ color: colors.darkGold }}>{name}</span>
       </header>
       <div className='grid grid-cols-2 gap-2'>
         <Chip
@@ -42,6 +43,7 @@ const ClientCard = ({
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
+            fontSize: '13px',
           }}
         >
           Legal Hours: {legalHours}

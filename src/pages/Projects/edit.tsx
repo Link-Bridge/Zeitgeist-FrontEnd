@@ -55,14 +55,17 @@ const EditProject = () => {
       form.formState.description = project.description;
       form.formState.startDate = project.startDate;
       form.formState.endDate = project.endDate;
-      form.formState.isChargeable = project.isChargeable;
+      form.formState.chargable = project.isChargeable;
       form.formState.area = project.area;
-      form.formState.periodicity = project.periodicity;
+      form.formState.periodic = project.periodicity;
     }
 
     if (project && companies) {
       companies.forEach(company => {
-        if (company.id == project?.idCompany) setCompanyName(company.name);
+        if (company.id == project?.idCompany) {
+          form.formState.client = company.id;
+          setCompanyName(company.name);
+        }
       });
     }
 
@@ -103,6 +106,7 @@ const EditProject = () => {
               <FormControl className='flex-1'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
+                  <span className='text-gray font-normal'> - Current client: {companyName}</span>
                 </FormLabel>
                 <ClientDropdown
                   values={companies ?? []}
@@ -167,9 +171,9 @@ const EditProject = () => {
                 <FormLabel>Chargable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
-                  checked={form.formState.isChargeable}
+                  checked={form.formState.chargable}
                   onChange={e => {
-                    form.handleChange('isChargeable', e.target.checked);
+                    form.handleChange('chargable', e.target.checked);
                   }}
                   size='lg'
                 />
@@ -191,10 +195,10 @@ const EditProject = () => {
               <FormControl>
                 <FormLabel>Periodic</FormLabel>
                 <CustomSelect
-                  name='periodicity'
+                  name='periodic'
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
-                  defaultValue={form.formState.periodicity}
+                  defaultValue={form.formState.periodic}
                 ></CustomSelect>
               </FormControl>
             </section>
