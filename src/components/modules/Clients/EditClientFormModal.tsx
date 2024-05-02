@@ -2,12 +2,11 @@ import { Box, Grid, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
-import colors from '../../../colors'; // Adjust the path as needed
+import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
-import { RequestMethods, RoutesPath } from '../../../utils/constants';
+import { RequestMethods } from '../../../utils/constants';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
 
@@ -44,7 +43,6 @@ const EditClientFormModal = ({
   const [companyRFC, setCompanyRFC] = useState(clientData.rfc);
   const [companyConstitution, setCompanyConstitution] = useState(clientData.constitutionDate);
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
-  const navigate = useNavigate();
 
   const { setState } = useContext(SnackbarContext);
   const { sendRequest, data, error, loading } = useHttp<UpdateCompanyData>(
@@ -61,17 +59,24 @@ const EditClientFormModal = ({
       if (open) {
         setOpen(false);
         setRefetch(true);
-        navigate(RoutesPath.CLIENTS);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
   const handleUpdate = async () => {
-    if (!companyName) {
+    if (
+      !companyName ||
+      !companyEmail ||
+      !companyPhone ||
+      !companyRFC ||
+      !companyConstitution ||
+      !companyTaxResidence
+    ) {
       setState({ open: true, message: 'The name field is required.', type: 'danger' });
       return;
     }
+
     const updatedClientData = {
       id: clientData.id,
       name: companyName,
