@@ -2,6 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
 import { ProjectPeriodicity } from '../types/project';
+import { APIPath, EnvKeysValues } from '../utils/constants';
 
 export interface FormState {
   projectName: string;
@@ -96,7 +97,7 @@ const useNewProject = () => {
         Authorization: `Bearer ${idToken}`,
       };
       const res = await axios.post(
-        'http://localhost:4000/api/v1/project/create',
+        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
           status: '-',
