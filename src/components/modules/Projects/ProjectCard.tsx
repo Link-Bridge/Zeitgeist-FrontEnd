@@ -34,19 +34,6 @@ const getStatusColor = (status: ProjectStatus) => {
   }
 };
 
-const getColorArea = (department: ProjectAreas) => {
-  switch (department) {
-    case ProjectAreas.ACCOUNTING:
-      return colors.darkGold;
-    case ProjectAreas.CLIENT:
-      return colors.darkPurple;
-    case ProjectAreas.LEGAL:
-      return colors.darkerGold;
-    default:
-      return colors.darkestGray;
-  }
-};
-
 /**
  * Client Card component
  *
@@ -70,7 +57,14 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
         <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
           {status}
         </Chip>
-        <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
+        <Chip
+          variant='solid'
+          sx={{
+            'background-color': colors.lightGold,
+            textTransform: 'lowercase',
+            color: colors.darkerGold,
+          }}
+        >
           {department}
         </Chip>
       </section>
