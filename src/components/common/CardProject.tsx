@@ -70,7 +70,10 @@ const CardProject = ({ name, status, department }: CardProjectProps) => {
         <Chip variant='solid' sx={{ 'background-color': getStatusColor(status) }}>
           {status}
         </Chip>
-        <Chip variant='solid' sx={{ 'background-color': getColorArea(department) }}>
+        <Chip
+          variant='solid'
+          sx={{ 'background-color': colors.lightGold, textTransform: 'lowercase' }}
+        >
           {department}
         </Chip>
       </section>
