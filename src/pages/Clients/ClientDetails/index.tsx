@@ -20,8 +20,12 @@ import AddButton from '../../../components/common/AddButton';
 import DeleteModal from '../../../components/common/DeleteModal';
 
 const ClientDetails = () => {
-  const { clientId } = useParams();
-  const [open, setOpen] = useState<boolean>(false);
+  const ClientDetails = () => {
+    const { clientId } = useParams();
+    const [projects, setProjects] = useState<ProjectEntity[]>([]);
+    const [isLoading, setIsLoading] = useState(true);
+    const req = useHttp('/projects/client/' + clientId, 'GET'); // Asegúrate de tener la URL correcta y el método
+  
 
   const ToggleModal = () => {
     setOpen(!open);
