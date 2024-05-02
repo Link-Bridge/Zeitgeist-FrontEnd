@@ -14,7 +14,6 @@ const ProjectMain = () => {
   const [isLoading, setIsLoading] = useState(req.loading);
 
   useEffect(() => {
-
     if (!req.data) req.sendRequest();
 
     async function getNames() {
@@ -40,7 +39,10 @@ const ProjectMain = () => {
           {isLoading && <Loader />}
           {!isLoading &&
             req.data?.data.map(project => (
-              <Link to={`/projects/details/${project.id}`} key={project.id}>
+              <Link
+                to={`/projects/details/${project.id}`}
+                key={project.id}
+              >
                 <ProjectCard
                   key={project.id}
                   id={project.id}

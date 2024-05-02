@@ -1,14 +1,12 @@
+import { Snackbar } from '@mui/joy';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
-import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
-
-import { Snackbar } from '@mui/joy';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import { TaskListTable } from './components/modules/Task/TaskListTable';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
@@ -88,7 +86,6 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path={'/test'} element={<TaskListTable />} />
               </Route>
             </Routes>
           </Router>

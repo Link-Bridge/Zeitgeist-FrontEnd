@@ -11,7 +11,7 @@ export interface FormState {
   description: string;
   startDate: Date;
   endDate: Date | null;
-  periodicity: string;
+  periodic: string;
   isChargeable: boolean;
   area: string;
 }
@@ -24,7 +24,7 @@ const initialFormState: FormState = {
   description: '',
   startDate: new Date(),
   endDate: null,
-  periodicity: ProjectPeriodicity.WHEN_NEEDED,
+  periodic: ProjectPeriodicity.WHEN_NEEDED,
   isChargeable: false,
   area: '',
 };
@@ -47,46 +47,39 @@ const formReducer = (state: FormState, action: FormAction) => {
   }
 };
 
-const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
-  if (!formState.projectName) {
-    setError(new Error('Project name must not be empty'));
-    return false;
-  }
-  if (!formState.client) {
-    setError(new Error('Project client must not be empty'));
-    return false;
-  }
-  if (!formState.category) {
-    setError(new Error('Project category must not be empty'));
-    return false;
-  }
-  if (!formState.area) {
-    setError(new Error('Project area must not be empty'));
-    return false;
-  }
-  if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
-    setError(new Error('End date must be after start date'));
-    return false;
-  }
-
-  return true;
-};
-
-const useNewProject = () => {
+const useEditProject = () => {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [error, setError] = useState<Error | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [success, setSuccess] = useState(false);
 
-  const handleChange = (field: keyof FormState, value: string | Date | boolean | null) => {
+  const handleChange = (field: keyof FormState, value: string | boolean | Date | null) => {
     dispatch({ type: 'CHANGE', field, value });
   };
 
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (!valiateForm(formState, setError)) return;
-
+      if (!formState.projectName) {
+        setError(new Error('Project name must not be empty'));
+        return;
+      }
+      if (!formState.client) {
+        setError(new Error('Project client must not be empty'));
+        return;
+      }
+      if (!formState.category) {
+        setError(new Error('Project category must not be empty'));
+        return;
+      }
+      if (!formState.area) {
+        setError(new Error('Project area must not be empty'));
+        return;
+      }
+      if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
+        setError(new Error('End date must be after start date'));
+        return;
+      }
       setIsPosting(true);
       const res = await axios.post('http://localhost:4000/api/v1/project/create', {
         ...formState,
@@ -107,33 +100,7 @@ const useNewProject = () => {
     }
   };
 
-  const handleUpdate = async (e: FormEvent) => {
-    e.preventDefault();
-    try {
-      if (!valiateForm(formState, setError)) return;
-
-      setIsPosting(true);
-      console.log('updating...');
-      // const res = await axios.post('http://localhost:4000/api/v1/project/create', {
-      //   ...formState,
-      //   status: '-',
-      // });
-      // if (res.status === 201) {
-      //   setSuccess(true);
-      // }
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        console.error(err);
-        setError(new Error(err.message));
-      } else {
-        setError(new Error('Unknown error ocurred'));
-      }
-    } finally {
-      setIsPosting(false);
-    }
-  };
-
-  return { formState, handleChange, handleSubmit, handleUpdate, error, isPosting, success };
+  return { formState, handleChange, handleSubmit, error, isPosting, success };
 };
 
-export default useNewProject;
+export default useEditProject;
