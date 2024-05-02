@@ -49,7 +49,7 @@ const EditProject = () => {
     if (!companies) getCompanies();
 
     if (project) {
-      form.formState.projectId = project.id;
+      form.formState.id = id;
       form.formState.projectName = project.name;
       form.formState.category = project.category;
       form.formState.matter = project.matter;
@@ -74,7 +74,7 @@ const EditProject = () => {
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorCompanies, form.error, form.success, setState]);
