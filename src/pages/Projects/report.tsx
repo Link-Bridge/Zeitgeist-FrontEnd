@@ -263,6 +263,13 @@ const ProjectReport: React.FC = () => {
                   }}
                 >
                   <Box>
+                    <p style={{ fontSize: '.9rem' }}>Area</p>
+                    <ColorChip
+                      label={report.project.area || ''}
+                      color={`${colors.extra}`}
+                    ></ColorChip>
+                  </Box>
+                  <Box>
                     <p style={{ fontSize: '.9rem' }}>Matter</p>
                     <ColorChip
                       label={report.project.matter || ''}

@@ -24,6 +24,8 @@ function statusColor(status: string) {
       return colors.lightRed;
     case 'IN PROGRESS':
       return colors.warning;
+    case 'IN PROCESS':
+      return colors.warning;
     case 'UNDER REVISION':
       return colors.purple;
     case 'DELAYED':
@@ -36,6 +38,8 @@ function statusColor(status: string) {
       return colors.warning;
     case 'IN QUOTATION':
       return colors.darkBlue;
+    case 'AREA':
+      return colors.extra;
     default:
       return colors.null;
   }
@@ -120,7 +124,7 @@ const ProjectReportPDF = (props: reportProps) => {
                 justifyContent: 'flex-start',
               }}
             >
-              {props.data.project.area && infoComponent('Area', `${props.data.project.area}`)}
+              {props.data.project.area && infoComponent('Area', `${props.data.project.area}`, 'AREA')}
               {props.data.project.matter && infoComponent('Matter', `${props.data.project.matter}`)}
               {infoComponent('Category', `${props.data.project.category}`)}
               {props.data.project.isChargeable &&
