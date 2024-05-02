@@ -134,9 +134,8 @@ export default function EmployeeTable() {
                       </Select>
                     </td>
                     <td>
-                      <Chip className='w-full overflow-x-scroll' variant='soft'>
-                        {' '}
-                        {employee.email}{' '}
+                      <Chip className='w-full overflow' variant='soft'>
+                        {employee.email}
                       </Chip>
                     </td>
                     <td>
