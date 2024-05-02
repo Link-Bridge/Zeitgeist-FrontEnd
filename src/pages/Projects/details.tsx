@@ -33,7 +33,8 @@ function dateParser(date: Date): string {
 const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
-  minWidth: '100px',
+  minWidth: '5px0px',
+  textTransform: 'lowercase',
 };
 
 const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
