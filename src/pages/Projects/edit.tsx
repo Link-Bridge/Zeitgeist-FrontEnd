@@ -49,6 +49,7 @@ const EditProject = () => {
     if (!companies) getCompanies();
 
     if (project) {
+      form.formState.projectId = project.id;
       form.formState.projectName = project.name;
       form.formState.category = project.category;
       form.formState.matter = project.matter;

@@ -5,6 +5,7 @@ import { ProjectPeriodicity } from '../types/project';
 import { APIPath, EnvKeysValues } from '../utils/constants';
 
 export interface FormState {
+  projectId?: string;
   projectName: string;
   client: string;
   category: string;
@@ -18,6 +19,7 @@ export interface FormState {
 }
 
 const initialFormState: FormState = {
+  projectId: '',
   projectName: '',
   client: '',
   category: '',
@@ -127,14 +129,24 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      console.log('updating...');
-      // const res = await axios.post('http://localhost:4000/api/v1/project/create', {
-      //   ...formState,
-      //   status: '-',
-      // });
-      // if (res.status === 201) {
-      //   setSuccess(true);
-      // }
+      const idToken = sessionStorage.getItem('idToken');
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      };
+      const res = await axios.put(
+        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.projectId}`,
+        {
+          ...formState,
+          status: '-',
+        },
+        {
+          headers,
+        }
+      );
+      if (res.status === 201) {
+        setSuccess(true);
+      }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         console.error(err);
