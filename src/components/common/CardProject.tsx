@@ -72,7 +72,11 @@ const CardProject = ({ name, status, department }: CardProjectProps) => {
         </Chip>
         <Chip
           variant='solid'
-          sx={{ 'background-color': colors.lightGold, textTransform: 'lowercase' }}
+          sx={{
+            'background-color': colors.lightGold,
+            textTransform: 'lowercase',
+            color: colors.darkerGold,
+          }}
         >
           {department}
         </Chip>
