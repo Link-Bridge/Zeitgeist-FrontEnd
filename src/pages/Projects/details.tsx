@@ -132,7 +132,6 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
                 sx={{
                   bgcolor: colors.extra,
                   fontSize: '1rem',
-                  minWidth: '100px',
                 }}
                 label={data?.totalHours}
               />
