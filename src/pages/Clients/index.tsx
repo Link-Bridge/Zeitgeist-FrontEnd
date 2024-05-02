@@ -36,8 +36,8 @@ const Clients = () => {
       <Route
         path='/'
         element={
-          <main className='p-10 py-0 flex flex-col min-h-0 flex-1'>
-            <section className='flex flex-row justify-end p-5 gap-6'>
+          <main className='py-0 flex flex-col min-h-0 flex-1'>
+            <section className='flex flex-row justify-end mb-8 gap-6'>
               <button>Not Archived</button>
               <AddButton onClick={openModal} />
             </section>
