@@ -13,7 +13,8 @@ import Employees from './pages/Employees';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
-import { RoutesPath } from './utils/constants';
+import NewTaskPage from './pages/Tasks/new';
+import { APIPath, RoutesPath } from './utils/constants';
 
 function App() {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
@@ -83,6 +84,15 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Employees />
+                    </ProtectedRoute>
+                  }
+                />
+
+                <Route
+                  path={APIPath.CREATE_TASK}
+                  element={
+                    <ProtectedRoute>
+                      <NewTaskPage />
                     </ProtectedRoute>
                   }
                 />

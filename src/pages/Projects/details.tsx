@@ -181,10 +181,12 @@ const ProjectDetails = () => {
 
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
-        <AddButton onClick={() => console.log('Add Button')} />
+        <Link to={id ? APIPath.CREATE_TASK.replace(':projectId', id) : ''}>
+          <AddButton onClick={() => { }} />
+        </Link>
       </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id ?? ''} />
+        <TaskListTable projectId={id ? id : ''} />
       </Card>
     </>
   );
