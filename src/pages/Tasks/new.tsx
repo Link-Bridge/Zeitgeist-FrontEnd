@@ -46,7 +46,7 @@ const NewTaskPage = () => {
       onSubmit={handleOnSubmit}
       employees={employees || []}
       projectId={projectId ? projectId : ''}
-      projectName={projectName!!}
+      projectName={projectName ? projectName : ''}
     />
   );
 };
