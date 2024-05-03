@@ -45,39 +45,44 @@ const EditProject = () => {
   } = useHttp<CompanyEntity[]>(APIPath.COMPANIES, RequestMethods.GET);
 
   useEffect(() => {
-    if (!project) getProject();
-    if (!companies) getCompanies();
+    if (!errorCompanies && !errorProject) {
 
-    if (project) {
-      form.formState.id = id;
-      form.formState.name = project.name;
-      form.formState.category = project.category;
-      form.formState.matter = project.matter;
-      form.formState.description = project.description;
-      form.formState.startDate = project.startDate;
-      form.formState.endDate = project.endDate;
-      form.formState.isChargeable = project.isChargeable;
-      form.formState.area = project.area;
-      form.formState.periodicity = project.periodicity;
-    }
+      if (!project) getProject();
+      if (!companies) getCompanies();
 
-    if (project && companies) {
-      companies.forEach(company => {
-        if (company.id == project?.idCompany) {
-          form.formState.idCompany = company.id;
-          setCompanyName(company.name);
-        }
-      });
+
+      if (project) {
+        form.formState.id = id;
+        form.formState.name = project.name;
+        form.formState.category = project.category;
+        form.formState.matter = project.matter;
+        form.formState.description = project.description;
+        form.formState.startDate = project.startDate;
+        form.formState.endDate = project.endDate;
+        form.formState.isChargeable = project.isChargeable;
+        form.formState.area = project.area;
+        form.formState.periodicity = project.periodicity;
+      }
+
+      if (project && companies) {
+        companies.forEach(company => {
+          if (company.id == project?.idCompany) {
+            form.formState.idCompany = company.id;
+            setCompanyName(company.name);
+          }
+        });
+      }
     }
 
     if (errorCompanies) setState({ open: true, message: errorCompanies.message, type: 'danger' });
+    if (errorProject) setState({ open: true, message: errorProject.message, type: 'danger' });
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' })
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [project, companies, errorCompanies, form.error, form.success, setState]);
+  }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
 
   if (form.success) {
     return <Navigate to='/projects' />;
@@ -86,7 +91,8 @@ const EditProject = () => {
   return (
     <>
       {(loadingCompanies || loadingProject) && <Loader />}
-      {!loadingCompanies && !loadingProject && (
+      {(errorCompanies || errorProject) && <h1>An unexpected error occurred. Please try again.</h1>}
+      {!(errorCompanies || errorProject) && !loadingCompanies && !loadingProject && (
         <Card
           className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
           sx={{ padding: '30px' }}
