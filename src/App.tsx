@@ -7,7 +7,6 @@ import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
 
 import { Snackbar } from '@mui/joy';
 import ProtectedRoute from './components/common/ProtectedRoute';
-import { TaskListTable } from './components/modules/Task/TaskListTable';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
@@ -15,7 +14,8 @@ import Employees from './pages/Employees';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
-import { RoutesPath } from './utils/constants';
+import NewTaskPage from './pages/Tasks/new';
+import { APIPath, RoutesPath } from './utils/constants';
 
 function App() {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
@@ -88,7 +88,15 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-                <Route path={'/test'} element={<TaskListTable />} />
+
+                <Route
+                  path={APIPath.CREATE_TASK}
+                  element={
+                    <ProtectedRoute>
+                      <NewTaskPage />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
             </Routes>
           </Router>

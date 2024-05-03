@@ -1,19 +1,22 @@
 import { Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
+import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Header, Item, StyledSheet } from './styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
+  [TaskStatus.SELECT_OPTION]: '#BDBDBD',
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
   [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISSION]: '#D7B2F0',
+  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
   [TaskStatus.DELAYED]: '#FFC774',
   [TaskStatus.POSTPONED]: '#A0C5E8',
   [TaskStatus.DONE]: '#6AA84F',
@@ -23,6 +26,7 @@ const statusColorMap: Record<TaskStatus, string> = {
 interface NewTaskFormProps {
   onSubmit: (payload: BareboneTask) => Promise<void>;
   employees: EmployeeEntity[];
+  projectId: string;
 }
 
 /**
@@ -36,6 +40,7 @@ interface NewTaskFormProps {
 const NewTaskForm: React.FC<NewTaskFormProps> = ({
   onSubmit,
   employees,
+  projectId,
 }: NewTaskFormProps): JSX.Element => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -119,7 +124,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       startDate: startDate?.toISOString() ?? '',
       dueDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
-      idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
+      idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
         return fullName === assignedEmployee;
@@ -143,6 +148,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setWorkedHours(null);
     setProjectName(null);
   };
+
+  if (projectId === '') {
+    return <ErrorView error={'Project ID is required'} />;
+  }
 
   return (
     <StyledSheet>
@@ -266,12 +275,16 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       <Grid container justifyContent='flex-end'>
         <Grid>
           <Item>
-            <CancelButton onClick={handleCancel} />
+            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+              <CancelButton onClick={handleCancel} />
+            </Link>
           </Item>
         </Grid>
         <Grid>
           <Item>
-            <SendButton onClick={handleSubmit} />
+            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+              <SendButton onClick={handleSubmit} />
+            </Link>
           </Item>
         </Grid>
       </Grid>
