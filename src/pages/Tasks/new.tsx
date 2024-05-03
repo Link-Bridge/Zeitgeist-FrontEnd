@@ -3,6 +3,7 @@ import { useParams } from 'react-router-dom';
 import NewTaskForm from '../../components/modules/Task/NewTask/NewTaskForm';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
+import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { BareboneTask } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
@@ -14,6 +15,11 @@ const NewTaskPage = () => {
   >(`/employee/getAllEmployees`, RequestMethods.GET);
 
   const [employees, setEmployees] = useState<EmployeeEntity[]>([]);
+  const { sendRequest: requestProject, data: projectData } = useHttp<ProjectEntity>(
+    `/project/details/${projectId}`,
+    RequestMethods.GET
+  );
+
   useEffect(() => {
     sendEmployeeRequest();
   }, []);
@@ -24,6 +30,11 @@ const NewTaskPage = () => {
     }
   }, [cachedEmployees]);
 
+  useEffect(() => {
+    requestProject();
+  }, []);
+
+  const projectName = projectData?.name;
   const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
 
   const handleOnSubmit = async (payload: BareboneTask) => {
@@ -35,6 +46,7 @@ const NewTaskPage = () => {
       onSubmit={handleOnSubmit}
       employees={employees || []}
       projectId={projectId ? projectId : ''}
+      projectName={projectName!!}
     />
   );
 };
