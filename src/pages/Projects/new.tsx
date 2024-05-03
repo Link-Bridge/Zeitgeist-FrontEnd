@@ -25,14 +25,14 @@ const NewProject = () => {
 
   useEffect(() => {
     if (!initForm) {
-      form.formState.projectName = '';
+      form.formState.name = '';
       form.formState.category = '';
       form.formState.matter = '';
       form.formState.description = '';
       form.formState.startDate = new Date();
       form.formState.endDate = null;
-      form.formState.periodic = ProjectPeriodicity.WHEN_NEEDED;
-      form.formState.chargable = false;
+      form.formState.periodicity = ProjectPeriodicity.WHEN_NEEDED;
+      form.formState.isChargeable = false;
       form.formState.area = '';
       setInitForm(true);
     }
@@ -68,9 +68,9 @@ const NewProject = () => {
                 Project Name <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
-                value={form.formState.projectName}
+                value={form.formState.name}
                 onChange={e => {
-                  form.handleChange('projectName', e.target.value);
+                  form.handleChange('name', e.target.value);
                 }}
               />
             </FormControl>
@@ -81,7 +81,7 @@ const NewProject = () => {
                 </FormLabel>
                 <ClientDropdown
                   values={req.data ?? []}
-                  name='client'
+                  name='idCompany'
                   handleChange={form.handleChange}
                 />
               </FormControl>
@@ -137,12 +137,12 @@ const NewProject = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Chargable</FormLabel>
+                <FormLabel>Chargeable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
-                  checked={form.formState.chargable}
+                  checked={form.formState.isChargeable}
                   onChange={e => {
-                    form.handleChange('chargable', e.target.checked);
+                    form.handleChange('isChargeable', e.target.checked);
                   }}
                   size='lg'
                 />
@@ -160,7 +160,7 @@ const NewProject = () => {
               <FormControl>
                 <FormLabel>Periodic</FormLabel>
                 <CustomSelect
-                  name='periodic'
+                  name='periodicity'
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
                   defaultValue={ProjectPeriodicity.WHEN_NEEDED}

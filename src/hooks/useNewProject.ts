@@ -6,29 +6,29 @@ import { APIPath, EnvKeysValues } from '../utils/constants';
 
 export interface FormState {
   id?: string;
-  projectName: string;
-  client: string;
+  name: string;
+  idCompany: string;
   category: string;
   matter: string;
   description: string;
   startDate: Date;
   endDate: Date | null;
-  periodic: string;
-  chargable: boolean;
+  periodicity: string;
+  isChargeable: boolean;
   area: string;
 }
 
 const initialFormState: FormState = {
   id: '',
-  projectName: '',
-  client: '',
+  name: '',
+  idCompany: '',
   category: '',
   matter: '',
   description: '',
   startDate: new Date(),
   endDate: null,
-  periodic: ProjectPeriodicity.WHEN_NEEDED,
-  chargable: false,
+  periodicity: ProjectPeriodicity.WHEN_NEEDED,
+  isChargeable: false,
   area: '',
 };
 
@@ -51,11 +51,11 @@ const formReducer = (state: FormState, action: FormAction) => {
 };
 
 const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
-  if (!formState.projectName) {
+  if (!formState.name) {
     setError(new Error('Project name must not be empty'));
     return false;
   }
-  if (!formState.client) {
+  if (!formState.idCompany) {
     setError(new Error('Project client must not be empty'));
     return false;
   }

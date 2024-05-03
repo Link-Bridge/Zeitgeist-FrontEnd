@@ -50,21 +50,21 @@ const EditProject = () => {
 
     if (project) {
       form.formState.id = id;
-      form.formState.projectName = project.name;
+      form.formState.name = project.name;
       form.formState.category = project.category;
       form.formState.matter = project.matter;
       form.formState.description = project.description;
       form.formState.startDate = project.startDate;
       form.formState.endDate = project.endDate;
-      form.formState.chargable = project.isChargeable;
+      form.formState.isChargeable = project.isChargeable;
       form.formState.area = project.area;
-      form.formState.periodic = project.periodicity;
+      form.formState.periodicity = project.periodicity;
     }
 
     if (project && companies) {
       companies.forEach(company => {
         if (company.id == project?.idCompany) {
-          form.formState.client = company.id;
+          form.formState.idCompany = company.id;
           setCompanyName(company.name);
         }
       });
@@ -97,9 +97,9 @@ const EditProject = () => {
                 Project Name <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
-                value={form.formState.projectName}
+                value={form.formState.name}
                 onChange={e => {
-                  form.handleChange('projectName', e.target.value);
+                  form.handleChange('name', e.target.value);
                 }}
               />
             </FormControl>
@@ -111,7 +111,7 @@ const EditProject = () => {
                 </FormLabel>
                 <ClientDropdown
                   values={companies ?? []}
-                  name='client'
+                  name='idCompany'
                   handleChange={form.handleChange}
                   defaultValue={companyName}
                 />
@@ -169,12 +169,12 @@ const EditProject = () => {
                 />
               </FormControl>
               <FormControl>
-                <FormLabel>Chargable</FormLabel>
+                <FormLabel>Chargeable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
-                  checked={form.formState.chargable}
+                  checked={form.formState.isChargeable}
                   onChange={e => {
-                    form.handleChange('chargable', e.target.checked);
+                    form.handleChange('isChargeable', e.target.checked);
                   }}
                   size='lg'
                 />
@@ -196,10 +196,10 @@ const EditProject = () => {
               <FormControl>
                 <FormLabel>Periodic</FormLabel>
                 <CustomSelect
-                  name='periodic'
+                  name='periodicity'
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
-                  defaultValue={form.formState.periodic}
+                  defaultValue={form.formState.periodicity}
                 ></CustomSelect>
               </FormControl>
             </section>
