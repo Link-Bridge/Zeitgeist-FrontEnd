@@ -19,6 +19,7 @@ import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
 
 function dateParser(date: Date): string {
+  if (!date) return '';
   const arr = date.toString().split('-');
   const day = arr[2].substring(0, 2);
   const month = arr[1];
