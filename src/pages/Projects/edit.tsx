@@ -46,10 +46,8 @@ const EditProject = () => {
 
   useEffect(() => {
     if (!errorCompanies && !errorProject) {
-
       if (!project) getProject();
       if (!companies) getCompanies();
-
 
       if (project) {
         form.formState.id = id;
@@ -79,7 +77,7 @@ const EditProject = () => {
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' })
+      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);

@@ -25,13 +25,14 @@ const ProjectMain = () => {
       setIsLoading(false);
     }
     getNames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [req.data]);
 
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
       <section className='h-10 flex justify-end'>
         <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => { }}></AddButton>
+          <AddButton onClick={() => {}}></AddButton>
         </Link>
       </section>
       <section className='flex-1 overflow-scroll'>
@@ -39,10 +40,7 @@ const ProjectMain = () => {
           {isLoading && <Loader />}
           {!isLoading &&
             req.data?.data.map(project => (
-              <Link
-                to={`/projects/details/${project.id}`}
-                key={project.id}
-              >
+              <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
                   id={project.id}

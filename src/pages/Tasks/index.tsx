@@ -42,6 +42,7 @@ const Tasks = (): JSX.Element => {
 
   useEffect(() => {
     if (employeeId) fetchTasks();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employeeId]);
 
   useEffect(() => {
@@ -50,6 +51,7 @@ const Tasks = (): JSX.Element => {
 
   useEffect(() => {
     fetchProjects();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const tasksPerProject = projectData?.data

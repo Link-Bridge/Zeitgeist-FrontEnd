@@ -53,15 +53,11 @@ const ProjectDetails = () => {
   );
 
   useEffect(() => {
-    if (!data) {
-      sendRequest();
-    }
-    if (data && !company) {
-      getCompany();
-    }
-    if (company) {
-      setCompanyName(company.data.name);
-    }
+    if (!data) sendRequest();
+    if (data && !company) getCompany();
+    if (company) setCompanyName(company.data.name);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company]);
 
   if (loading && loadingCompany) {
@@ -82,10 +78,7 @@ const ProjectDetails = () => {
           marginBottom: '10px',
         }}
       >
-        <Link
-          to='/projects'
-          className='ml-auto text-darkGold no-underline'
-        >
+        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
@@ -107,7 +100,7 @@ const ProjectDetails = () => {
                 />
               </Link>
 
-              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`} >
+              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
                 <EditOutlinedIcon
                   sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
                   className='text-gold'
@@ -183,7 +176,7 @@ const ProjectDetails = () => {
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
         <Link to={id ? APIPath.CREATE_TASK.replace(':projectId', id) : ''}>
-          <AddButton onClick={() => { }} />
+          <AddButton onClick={() => {}} />
         </Link>
       </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
