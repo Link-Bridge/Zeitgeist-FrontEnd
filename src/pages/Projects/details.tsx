@@ -13,6 +13,7 @@ import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
@@ -104,7 +105,11 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        sx={{
+          display: 'flex',
+          justifyContent: 'center',
+          alignItems: 'center',
+        }}
       >
         <Sheet
           variant='outlined'
@@ -188,10 +193,18 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
               {data?.name}
             </h3>
             <section className='flex justify-end gap-3'>
-              <ArchiveIcon
-                sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
-                onClick={toggleModal}
-              />
+              {company?.data.archived ? (
+                <UnarchiveIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                  onClick={toggleModal}
+                />
+              ) : (
+                <ArchiveIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                  onClick={toggleModal}
+                />
+              )}
+
               <Link to={`/projects/report/${id}`}>
                 <AssessmentOutlinedIcon
                   sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
