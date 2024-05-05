@@ -15,6 +15,8 @@ function statusColor(status: string) {
       return colors.lightRed;
     case 'IN PROGRESS':
       return colors.warning;
+    case 'IN PROCESS':
+      return colors.warning;
     case 'UNDER REVISION':
       return colors.purple;
     case 'DELAYED':
