@@ -8,12 +8,15 @@ import { RequestMethods } from '../../utils/constants';
 import AddButton from '../../components/common/AddButton';
 import CardProject from '../../components/common/CardProject';
 
+import { Link } from 'react-router-dom';
+
 type ProjectsClientListProps = {
   clientId: string;
 };
 
 export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
+  const [setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
     `/project/${clientId}`,
     RequestMethods.GET
@@ -57,12 +60,13 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
       {projectsGroup.length > 0 && (
         <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 rounded-xl mt-6'>
           {projectsGroup.map(project => (
-            <CardProject
+            <Link
+              to={`/projects/details/${project.id}`}
               key={project.id}
-              name={project.name}
-              status={project.status}
-              department={project.area}
-            />
+              onClick={() => setSelectedProjectId(project.id)}
+            >
+              <CardProject name={project.name} status={project.status} department={project.area} />
+            </Link>
           ))}
         </section>
       )}

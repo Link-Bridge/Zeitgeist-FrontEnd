@@ -33,7 +33,8 @@ function dateParser(date: Date): string {
 const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
-  minWidth: '100px',
+  minWidth: '5px0px',
+  textTransform: 'lowercase',
 };
 
 const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
@@ -131,7 +132,6 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
                 sx={{
                   bgcolor: colors.extra,
                   fontSize: '1rem',
-                  minWidth: '100px',
                 }}
                 label={data?.totalHours}
               />
@@ -184,10 +184,12 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
 
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
-        <AddButton />
+        <Link to={id ? APIPath.CREATE_TASK.replace(':projectId', id) : ''}>
+          <AddButton onClick={() => {}} />
+        </Link>
       </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id} />
+        <TaskListTable projectId={id ? id : ''} />
       </Card>
     </>
   );

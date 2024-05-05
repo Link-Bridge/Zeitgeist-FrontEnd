@@ -1,19 +1,22 @@
-import { Grid, Input, Textarea } from '@mui/joy';
+import { Box, Chip, Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
+import { Link } from 'react-router-dom';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
+import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
+  [TaskStatus.SELECT_OPTION]: '#BDBDBD',
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
   [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISSION]: '#D7B2F0',
+  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
   [TaskStatus.DELAYED]: '#FFC774',
   [TaskStatus.POSTPONED]: '#A0C5E8',
   [TaskStatus.DONE]: '#6AA84F',
@@ -23,6 +26,8 @@ const statusColorMap: Record<TaskStatus, string> = {
 interface NewTaskFormProps {
   onSubmit: (payload: BareboneTask) => Promise<void>;
   employees: EmployeeEntity[];
+  projectId: string;
+  projectName: string;
 }
 
 /**
@@ -36,6 +41,8 @@ interface NewTaskFormProps {
 const NewTaskForm: React.FC<NewTaskFormProps> = ({
   onSubmit,
   employees,
+  projectId,
+  projectName,
 }: NewTaskFormProps): JSX.Element => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -44,8 +51,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
-  const [projectName, setProjectName] = useState<string | null>('');
-
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
@@ -76,23 +81,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setWorkedHours(event.target.value);
   };
 
-  const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
-  };
-
   const getEmployeeNames = () => {
     return employees.map(employee => employee.firstName + ' ' + employee.lastName);
   };
 
   const handleSubmit = async () => {
-    const requiredFields = [
-      'title',
-      'description',
-      'startDate',
-      'dueDate',
-      'status',
-      'projectName',
-    ];
+    const requiredFields = ['title', 'description', 'startDate', 'dueDate', 'status'];
 
     if (!requiredFields.every(field => !!field && field !== '')) {
       setErrors({
@@ -119,7 +113,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       startDate: startDate?.toISOString() ?? '',
       dueDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
-      idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
+      idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
         return fullName === assignedEmployee;
@@ -141,8 +135,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours(null);
-    setProjectName(null);
   };
+
+  if (projectId === '') {
+    return <ErrorView error={'Project ID is required'} />;
+  }
 
   return (
     <StyledSheet>
@@ -170,9 +167,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           padding: '10px',
           borderRadius: '4px',
           border: `1px solid ${errors['description'] ? '#FF7A7A' : '#E0E0E0'}`,
-          '&:focus': {
-            border: '1px solid #9C844C',
-          },
         }}
       />
 
@@ -247,17 +241,21 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <Header>Project Name *</Header>
-            <Input
-              type='text'
-              placeholder='Project name'
-              value={projectName ?? ''}
-              onChange={handleProjectNameChange}
-              sx={{
-                color: '#BDBDBD',
-                borderColor: errors['projectName'] ? '#FF7A7A' : undefined,
-              }}
-            />
+            <Header>Project Name</Header>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Chip
+                variant='soft'
+                sx={{
+                  bgcolor: '#E0E0E0',
+                  color: '#000000',
+                  fontSize: '1rem',
+                  flexGrow: 1,
+                  padding: '0.3rem 1rem',
+                }}
+              >
+                {projectName}
+              </Chip>
+            </Box>
           </Item>
         </Grid>
       </Grid>
@@ -266,12 +264,16 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       <Grid container justifyContent='flex-end'>
         <Grid>
           <Item>
-            <CancelButton onClick={handleCancel} />
+            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+              <CancelButton onClick={handleCancel} />
+            </Link>
           </Item>
         </Grid>
         <Grid>
           <Item>
-            <SendButton onClick={handleSubmit} />
+            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+              <SendButton onClick={handleSubmit} />
+            </Link>
           </Item>
         </Grid>
       </Grid>
