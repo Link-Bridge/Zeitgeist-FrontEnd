@@ -2,30 +2,33 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
 import { ProjectPeriodicity } from '../types/project';
+import { APIPath, EnvKeysValues } from '../utils/constants';
 
 export interface FormState {
-  projectName: string;
-  client: string;
+  id?: string;
+  name: string;
+  idCompany: string;
   category: string;
   matter: string;
   description: string;
   startDate: Date;
   endDate: Date | null;
-  periodic: string;
-  chargable: boolean;
+  periodicity: string;
+  isChargeable: boolean;
   area: string;
 }
 
 const initialFormState: FormState = {
-  projectName: '',
-  client: '',
+  id: '',
+  name: '',
+  idCompany: '',
   category: '',
   matter: '',
   description: '',
   startDate: new Date(),
   endDate: null,
-  periodic: ProjectPeriodicity.WHEN_NEEDED,
-  chargable: false,
+  periodicity: ProjectPeriodicity.WHEN_NEEDED,
+  isChargeable: false,
   area: '',
 };
 
@@ -47,6 +50,33 @@ const formReducer = (state: FormState, action: FormAction) => {
   }
 };
 
+const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
+  if (!formState.name) {
+    setError(new Error('Project name must not be empty'));
+    return false;
+  }
+  if (!formState.idCompany) {
+    setError(new Error('Project client must not be empty'));
+    return false;
+  }
+  if (!formState.category) {
+    setError(new Error('Project category must not be empty'));
+    return false;
+  }
+  if (!formState.area) {
+    setError(new Error('Project area must not be empty'));
+    return false;
+  }
+  if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
+    setError(new Error('End date must be after start date'));
+    return false;
+  }
+
+  formState.area = formState.area.toUpperCase();
+
+  return true;
+};
+
 const useNewProject = () => {
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
   const [error, setError] = useState<Error | null>(null);
@@ -60,31 +90,24 @@ const useNewProject = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (!formState.projectName) {
-        setError(new Error('Project name must not be empty'));
-        return;
-      }
-      if (!formState.client) {
-        setError(new Error('Project client must not be empty'));
-        return;
-      }
-      if (!formState.category) {
-        setError(new Error('Project category must not be empty'));
-        return;
-      }
-      if (!formState.area) {
-        setError(new Error('Project area must not be empty'));
-        return;
-      }
-      if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
-        setError(new Error('End date must be after start date'));
-        return;
-      }
+      if (!valiateForm(formState, setError)) return;
+
       setIsPosting(true);
-      const res = await axios.post('http://localhost:4000/api/v1/project/create', {
-        ...formState,
-        status: '-',
-      });
+      const idToken = sessionStorage.getItem('idToken');
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      };
+      const res = await axios.post(
+        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/create`,
+        {
+          ...formState,
+          status: '-',
+        },
+        {
+          headers,
+        }
+      );
       if (res.status === 201) {
         setSuccess(true);
       }
@@ -100,7 +123,45 @@ const useNewProject = () => {
     }
   };
 
-  return { formState, handleChange, handleSubmit, error, isPosting, success };
+  const handleUpdate = async (e: FormEvent) => {
+    e.preventDefault();
+    try {
+      if (!valiateForm(formState, setError)) return;
+
+      console.log(formState);
+      setIsPosting(true);
+      const idToken = sessionStorage.getItem('idToken');
+      const headers = {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      };
+      const res = await axios.put(
+        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
+        {
+          ...formState,
+          status: '-',
+        },
+        {
+          headers,
+        }
+      );
+      console.log(res);
+      if (res.status === 200) {
+        setSuccess(true);
+      }
+    } catch (err: unknown) {
+      if (axios.isAxiosError(err)) {
+        console.error(err);
+        setError(new Error(err.message));
+      } else {
+        setError(new Error('Unknown error ocurred'));
+      }
+    } finally {
+      setIsPosting(false);
+    }
+  };
+
+  return { formState, handleChange, handleSubmit, handleUpdate, error, isPosting, success };
 };
 
 export default useNewProject;

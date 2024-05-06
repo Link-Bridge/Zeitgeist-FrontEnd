@@ -69,6 +69,7 @@ const ProjectReport: React.FC = () => {
     setMonth(value);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     date.current = filterteParser(new Date(year, month - 1));
 
@@ -93,6 +94,7 @@ const ProjectReport: React.FC = () => {
     } else {
       setReport(reqReport.data);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
   useEffect(() => {}, [handleClose]);

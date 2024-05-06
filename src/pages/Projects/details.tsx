@@ -7,7 +7,7 @@ import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity } from '../../types/project';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -18,11 +18,8 @@ import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
 
-type ProjectDetailsProps = {
-  setProjectId: (projectId: string) => void;
-};
-
 function dateParser(date: Date): string {
+  if (!date) return '';
   const arr = date.toString().split('-');
   const day = arr[2].substring(0, 2);
   const month = arr[1];
@@ -37,7 +34,7 @@ const chipStyle = {
   textTransform: 'lowercase',
 };
 
-const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
@@ -56,15 +53,11 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
   );
 
   useEffect(() => {
-    if (!data) {
-      sendRequest();
-    }
-    if (data && !company) {
-      getCompany();
-    }
-    if (company) {
-      setCompanyName(company.data.name);
-    }
+    if (!data) sendRequest();
+    if (data && !company) getCompany();
+    if (company) setCompanyName(company.data.name);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company]);
 
   if (loading && loadingCompany) {
@@ -85,11 +78,7 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
           marginBottom: '10px',
         }}
       >
-        <Link
-          to='/projects'
-          className='ml-auto text-darkGold no-underline'
-          onClick={setProjectId('')}
-        >
+        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
@@ -111,10 +100,12 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
                 />
               </Link>
 
-              <EditOutlinedIcon
-                sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                className='text-gold'
-              />
+              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
+                <EditOutlinedIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                  className='text-gold'
+                />
+              </Link>
             </section>
           </section>
 

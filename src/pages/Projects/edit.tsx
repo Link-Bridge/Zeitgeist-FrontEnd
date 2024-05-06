@@ -2,7 +2,7 @@ import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
@@ -11,43 +11,76 @@ import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
-import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
-import { RequestMethods } from '../../utils/constants';
+import {
+  ProjectAreas,
+  ProjectCategory,
+  ProjectEntity,
+  ProjectPeriodicity,
+} from '../../types/project';
+import { APIPath, RequestMethods } from '../../utils/constants';
 
-const NewProject = () => {
+const EditProject = () => {
+  const { id } = useParams();
   const { setState } = useContext(SnackbarContext);
-  const [initForm, setInitForm] = useState<boolean>(false);
   const form = useNewProject();
+
+  const [companyName, setCompanyName] = useState<string>('');
+
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
   const projectAreas = Object.values(ProjectAreas) as string[];
-  const req = useHttp<CompanyEntity[]>('/company', RequestMethods.GET);
+
+  const {
+    data: project,
+    loading: loadingProject,
+    sendRequest: getProject,
+    error: errorProject,
+  } = useHttp<ProjectEntity>(`${APIPath.PROJECT_DETAILS}/${id}`, RequestMethods.GET);
+
+  const {
+    data: companies,
+    loading: loadingCompanies,
+    sendRequest: getCompanies,
+    error: errorCompanies,
+  } = useHttp<CompanyEntity[]>(APIPath.COMPANIES, RequestMethods.GET);
 
   useEffect(() => {
-    if (!initForm) {
-      form.formState.name = '';
-      form.formState.category = '';
-      form.formState.matter = '';
-      form.formState.description = '';
-      form.formState.startDate = new Date();
-      form.formState.endDate = null;
-      form.formState.periodicity = ProjectPeriodicity.WHEN_NEEDED;
-      form.formState.isChargeable = false;
-      form.formState.area = '';
-      setInitForm(true);
+    if (!errorCompanies && !errorProject) {
+      if (!project) getProject();
+      if (!companies) getCompanies();
+
+      if (project) {
+        form.formState.id = id;
+        form.formState.name = project.name;
+        form.formState.category = project.category;
+        form.formState.matter = project.matter;
+        form.formState.description = project.description;
+        form.formState.startDate = project.startDate;
+        form.formState.endDate = project.endDate;
+        form.formState.isChargeable = project.isChargeable;
+        form.formState.area = project.area;
+        form.formState.periodicity = project.periodicity;
+      }
+
+      if (project && companies) {
+        companies.forEach(company => {
+          if (company.id == project?.idCompany) {
+            form.formState.idCompany = company.id;
+            setCompanyName(company.name);
+          }
+        });
+      }
     }
 
-    req.sendRequest();
-
-    if (req.error) setState({ open: true, message: req.error.message, type: 'danger' });
+    if (errorCompanies) setState({ open: true, message: errorCompanies.message, type: 'danger' });
+    if (errorProject) setState({ open: true, message: errorProject.message, type: 'danger' });
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
-
     if (form.success)
-      setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [req.error, form.error, form.success, setState]);
+  }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
 
   if (form.success) {
     return <Navigate to='/projects' />;
@@ -55,14 +88,14 @@ const NewProject = () => {
 
   return (
     <>
-      <Card
-        className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
-        sx={{ padding: '30px' }}
-      >
-        {req.loading ? (
-          <Loader />
-        ) : (
-          <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
+      {(loadingCompanies || loadingProject) && <Loader />}
+      {(errorCompanies || errorProject) && <h1>An unexpected error occurred. Please try again.</h1>}
+      {!(errorCompanies || errorProject) && !loadingCompanies && !loadingProject && (
+        <Card
+          className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+          sx={{ padding: '30px' }}
+        >
+          <form className='flex flex-col gap-4' onSubmit={form.handleUpdate}>
             <FormControl>
               <FormLabel className='font-montserrat'>
                 Project Name <span className='text-red-600'>*</span>
@@ -78,11 +111,13 @@ const NewProject = () => {
               <FormControl className='flex-1'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
+                  <span className='text-gray font-normal'> - Current client: {companyName}</span>
                 </FormLabel>
                 <ClientDropdown
-                  values={req.data ?? []}
+                  values={companies ?? []}
                   name='idCompany'
                   handleChange={form.handleChange}
+                  defaultValue={companyName}
                 />
               </FormControl>
               <FormControl className='flex-1'>
@@ -91,6 +126,7 @@ const NewProject = () => {
                 </FormLabel>
                 <CustomSelect
                   values={projectCategories}
+                  defaultValue={form.formState.category}
                   name='category'
                   handleChange={form.handleChange}
                 />
@@ -155,6 +191,10 @@ const NewProject = () => {
                   name='area'
                   handleChange={form.handleChange}
                   values={projectAreas}
+                  defaultValue={
+                    form.formState.area.charAt(0).toUpperCase() +
+                    form.formState.area.slice(1).toLowerCase()
+                  }
                 ></CustomSelect>
               </FormControl>
               <FormControl>
@@ -163,7 +203,7 @@ const NewProject = () => {
                   name='periodicity'
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
-                  defaultValue={ProjectPeriodicity.WHEN_NEEDED}
+                  defaultValue={form.formState.periodicity}
                 ></CustomSelect>
               </FormControl>
             </section>
@@ -192,14 +232,14 @@ const NewProject = () => {
                 }}
                 disabled={form.isPosting}
               >
-                Add Project
+                Update Project
               </Button>
             </section>
           </form>
-        )}
-      </Card>
+        </Card>
+      )}
     </>
   );
 };
 
-export default NewProject;
+export default EditProject;
