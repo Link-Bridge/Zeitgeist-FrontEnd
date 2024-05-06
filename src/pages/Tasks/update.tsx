@@ -20,6 +20,8 @@ const UpdateTaskPage: React.FC = () => {
     sendEmployeeRequest();
   }, []);
 
+  const [taskData, setTaskData] = useState<TaskDetail | null>(null);
+
   useEffect(() => {
     if (cachedEmployees) {
       setEmployees(cachedEmployees.data);
@@ -31,11 +33,11 @@ const UpdateTaskPage: React.FC = () => {
     RequestMethods.GET
   );
 
-  console.log(cachedTask);
-
   useEffect(() => {
     if (!cachedTask) {
       sendGetTaskRequest();
+    } else {
+      setTaskData(cachedTask);
     }
   }, []);
 

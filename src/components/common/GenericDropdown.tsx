@@ -5,6 +5,7 @@ interface GenericDropdownProps<T extends string | number>
   extends Omit<SelectProps<T>, 'onChange' | 'value'> {
   backgroundColor?: string;
   options: T[];
+  selectedOption?: T;
   onValueChange: (value: T) => void;
   renderValue?: (value: T) => React.ReactNode;
   placeholder?: string;
@@ -38,8 +39,9 @@ const GenericDropdown = <T extends string | number>({
   renderValue,
   placeholder,
   colorMap,
+  selectedOption,
 }: GenericDropdownProps<T>) => {
-  const [option, setOptions] = useState<T | ''>('');
+  const [option, setOptions] = useState<T | ''>(selectedOption || '');
   const [isEmpty, setIsEmpty] = useState(true);
 
   const handleChange = (event: SelectChangeEvent<T>) => {

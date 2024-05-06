@@ -1,7 +1,7 @@
 import { Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
-import { useState } from 'react';
-import { useLocation, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useParams } from 'react-router-dom';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
@@ -49,7 +49,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
-  const [projectName, setProjectName] = useState<string | null>('');
+  const [successMessage, setSuccessMessage] = useState(false);
 
   const [errors, setErrors] = useState<Record<string, string>>({});
 
@@ -81,12 +81,28 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     setWorkedHours(event.target.value);
   };
 
-  const handleProjectNameChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-    setProjectName(event.target.value);
-  };
-
   const getEmployeeNames = () => {
     return employees.map(employee => employee.firstName + ' ' + employee.lastName);
+  };
+
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+      setDescription(data.description);
+      setStartDate(dayjs(data.startDate));
+      setDueDate(dayjs(data.endDate));
+      setStatus(data.status);
+      setAssignedEmployee(data.employeeFirstName + ' ' + data.employeeLastName);
+      setWorkedHours(data.workedHours?.toString() ?? '');
+    }
+  }, [data]);
+
+  const getSelectedEmployee = (
+    firstName: string | undefined,
+    lastName: string | undefined
+  ): string => {
+    const fullName = firstName && lastName ? `${firstName} ${lastName}` : '';
+    return fullName.toString();
   };
 
   const handleSubmit = async () => {
@@ -119,13 +135,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
     const payload: UpdatedTask = {
       id: idTask as string,
-      title,
-      description,
+      title: title,
+      description: description,
       status: status.toUpperCase() as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       endDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
-      idProject: '5cb76036-760d-4622-8a54-ec25a872def5',
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
         return fullName === assignedEmployee;
@@ -134,6 +149,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
     try {
       await onSubmit(payload);
+      setSuccessMessage(true);
     } catch (error) {
       console.error(error);
     }
@@ -147,11 +163,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours(null);
-    setProjectName(null);
   };
-
-  const location = useLocation();
-  console.log('location: ' + location.pathname);
 
   return (
     <StyledSheet>
@@ -159,7 +171,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       <Input
         type='text'
         placeholder='Write your text here... '
-        value={data.title}
+        value={title}
         onChange={handleTitleChange}
         sx={{
           color: '#BDBDBD',
@@ -170,7 +182,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       <Header>Description *</Header>
       <Textarea
         placeholder='Write your text here... '
-        value={data.description}
+        value={description}
         onChange={handleDescriptionChange}
         sx={{
           color: '#BDBDBD',
@@ -191,7 +203,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Start Date *</Header>
             <CustomDatePicker
-              value={dayjs(data.startDate)}
+              value={startDate}
               onChange={handleStartDateChange}
               sx={{
                 borderColor: errors['startDate'] ? '#FF7A7A' : undefined,
@@ -203,7 +215,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Due Date *</Header>
             <CustomDatePicker
-              value={dayjs(data.endDate)}
+              value={dueDate}
               onChange={handleDueDateChange}
               sx={{
                 borderColor: errors['dueDate'] ? '#FF7A7A' : undefined,
@@ -215,6 +227,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Status *</Header>
             <GenericDropdown
+              selectedOption={data.status as TaskStatus}
               options={Object.values(TaskStatus)}
               onValueChange={handleStatusSelect}
               placeholder='Select status'
@@ -234,6 +247,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Assigned Employee</Header>
             <GenericDropdown
+              selectedOption={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
               options={getEmployeeNames()}
               onValueChange={handleAssignedEmployee}
               placeholder='Select employee ...'
@@ -244,27 +258,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Worked Hours</Header>
             <Input
-              placeholder='00.00'
+              placeholder='0'
               type='text'
-              value={data.workedHours ?? ''}
+              value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
                 color: '#BDBDBD',
-              }}
-            />
-          </Item>
-        </Grid>
-        <Grid>
-          <Item>
-            <Header>Project Name *</Header>
-            <Input
-              type='text'
-              placeholder='Project name'
-              value={data.projectName ?? ''}
-              onChange={handleProjectNameChange}
-              sx={{
-                color: '#BDBDBD',
-                borderColor: errors['projectName'] ? '#FF7A7A' : undefined,
               }}
             />
           </Item>
@@ -284,6 +283,11 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           </Item>
         </Grid>
       </Grid>
+      {successMessage && (
+        <div style={{ color: 'green', textAlign: 'center', marginTop: '10px' }}>
+          Se realizaron los cambios exitosamente
+        </div>
+      )}
     </StyledSheet>
   );
 };
