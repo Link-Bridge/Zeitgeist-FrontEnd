@@ -1,9 +1,9 @@
 import { Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useLocation, useParams } from 'react-router-dom';
 import { EmployeeEntity } from '../../../../types/employee';
-import { UpdatedTask } from '../../../../types/task';
+import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
@@ -14,16 +14,18 @@ import { Header, Item, StyledSheet } from '../styled';
 const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
   [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISSION]: '#D7B2F0',
+  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
   [TaskStatus.DELAYED]: '#FFC774',
   [TaskStatus.POSTPONED]: '#A0C5E8',
   [TaskStatus.DONE]: '#6AA84F',
   [TaskStatus.CANCELLED]: '#FF7A7A',
+  [TaskStatus.SELECT_OPTION]: '',
 };
 
 interface UpdateTaskFormProps {
   onSubmit: (payload: UpdatedTask) => Promise<void>;
   employees: EmployeeEntity[];
+  data: TaskDetail;
 }
 
 /**
@@ -37,6 +39,7 @@ interface UpdateTaskFormProps {
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   onSubmit,
   employees,
+  data,
 }: UpdateTaskFormProps): JSX.Element => {
   const { idTask } = useParams();
   const [title, setTitle] = useState('');
@@ -147,13 +150,16 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     setProjectName(null);
   };
 
+  const location = useLocation();
+  console.log('location: ' + location.pathname);
+
   return (
     <StyledSheet>
       <Header>Title *</Header>
       <Input
         type='text'
         placeholder='Write your text here... '
-        value={title}
+        value={data.title}
         onChange={handleTitleChange}
         sx={{
           color: '#BDBDBD',
@@ -164,7 +170,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       <Header>Description *</Header>
       <Textarea
         placeholder='Write your text here... '
-        value={description}
+        value={data.description}
         onChange={handleDescriptionChange}
         sx={{
           color: '#BDBDBD',
@@ -185,7 +191,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Start Date *</Header>
             <CustomDatePicker
-              value={startDate}
+              value={dayjs(data.startDate)}
               onChange={handleStartDateChange}
               sx={{
                 borderColor: errors['startDate'] ? '#FF7A7A' : undefined,
@@ -197,7 +203,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Due Date *</Header>
             <CustomDatePicker
-              value={dueDate}
+              value={dayjs(data.endDate)}
               onChange={handleDueDateChange}
               sx={{
                 borderColor: errors['dueDate'] ? '#FF7A7A' : undefined,
@@ -240,7 +246,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <Input
               placeholder='00.00'
               type='text'
-              value={workedHours ?? ''}
+              value={data.workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
                 color: '#BDBDBD',
@@ -254,7 +260,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <Input
               type='text'
               placeholder='Project name'
-              value={projectName ?? ''}
+              value={data.projectName ?? ''}
               onChange={handleProjectNameChange}
               sx={{
                 color: '#BDBDBD',

@@ -50,5 +50,5 @@ export interface UpdatedTask {
   endDate?: string;
   workedHours?: string;
   idProject?: string;
-  idEmployee?: string
+  idEmployee?: string;
 }

@@ -1,7 +1,7 @@
 import Box from '@mui/joy/Box';
 import Link from '@mui/joy/Link';
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import left_arrow from '../../assets/icons/left_arrow.svg';
 import pencil from '../../assets/icons/pencil.svg';
@@ -10,6 +10,7 @@ import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
+import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
 
@@ -22,7 +23,9 @@ function dateParser(date: Date): string {
 }
 
 const Task: React.FC = () => {
-  const { id } = useParams();
+  const location = useLocation();
+  const id = location.pathname.split('/').pop();
+
   const navigate = useNavigate();
   const { data, loading, sendRequest, error } = useHttp<TaskDetail>(
     `${APIPath.TASK_DETAIL}/${id}`,
@@ -31,6 +34,13 @@ const Task: React.FC = () => {
 
   const handleClick = () => {
     navigate('/tasks');
+  };
+
+  const [showUpdate, setShowUpdate] = useState(false);
+
+  const handleEdit = () => {
+    setShowUpdate(true);
+    navigate(`/tasks/update/${id}`);
   };
 
   useEffect(() => {
@@ -114,7 +124,11 @@ const Task: React.FC = () => {
                       gap: '15px',
                     }}
                   >
-                    <img src={pencil} alt='Edit' className='w-6' />
+                    <button onClick={handleEdit}>
+                      <img src={pencil} alt='Edit' className='w-6' />
+                      {showUpdate && <Update />}
+                    </button>
+
                     <img src={trash_can} alt='Delete/Archive' className='w-6' />
                   </Box>
                 </Box>

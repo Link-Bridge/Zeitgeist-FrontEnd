@@ -17,6 +17,7 @@ export enum APIPath {
   PROJECT_DETAILS = '/project/details',
   COMPANIES = '/company',
   CREATE_TASK = '/tasks/:projectId/create',
+  UPDATE_TASK = '/tasks/update',
 }
 
 export enum RequestMethods {
