@@ -28,6 +28,7 @@ export enum ProjectAreas {
 }
 
 export enum ProjectStatus {
+  SELECT_OPTION = 'Select An Option',
   NOT_STARTED = 'Not started',
   IN_PROCESS = 'In process',
   UNDER_REVISION = 'Under revision',

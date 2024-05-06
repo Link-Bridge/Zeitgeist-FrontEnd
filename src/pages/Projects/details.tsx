@@ -6,7 +6,7 @@ import colors from '../../colors';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity } from '../../types/project';
+import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { APIPath, RequestMethods } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
@@ -16,7 +16,8 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
-import StatusChip from '../../components/common/StatusChip';
+
+import ClickableChip from '../../components/common/ProjectDropDown';
 
 type ProjectDetailsProps = {
   setProjectId: (projectId: string) => void;
@@ -40,6 +41,8 @@ const chipStyle = {
 const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
+  const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
+
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
@@ -55,17 +58,36 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
     RequestMethods.GET
   );
 
+  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
+    `${APIPath.PROJECT_DETAILS}/${id}`,
+    RequestMethods.PUT
+  );
+
   useEffect(() => {
     if (!data) {
       sendRequest();
     }
     if (data && !company) {
       getCompany();
+      setProjectStatus(data.status);
     }
     if (company) {
       setCompanyName(company.data.name);
     }
-  }, [data, company]);
+  }, [data, company, updatedCompany, projectStatus]);
+
+  const handleStatusChange = async (newStatus: ProjectStatus) => {
+    try {
+      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+
+      if (updatedCompany) {
+        setProjectStatus(newStatus);
+        console.log(updatedCompany);
+      }
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
+  };
 
   if (loading && loadingCompany) {
     return <div>Loading...</div>;
@@ -123,7 +145,13 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
           <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
             <div style={{ fontSize: '15px' }}>
               <p style={{ marginLeft: '7px' }}>Status</p>
-              {data && data.status !== undefined && <StatusChip status={data.status} />}
+              {data && data.status !== undefined && (
+                <ClickableChip
+                  value={projectStatus}
+                  setValue={setProjectStatus}
+                  handleChange={handleStatusChange}
+                />
+              )}
             </div>
 
             <div style={{ fontSize: '15px' }}>
