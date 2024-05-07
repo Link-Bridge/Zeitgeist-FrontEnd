@@ -36,7 +36,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
   const { setState } = useContext(SnackbarContext);
   const [isArchived, setIsArchived] = useState(project.isArchived);
 
-  const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
+  const { data, sendRequest, error } = useHttp<ProjectEntity>(
     `/project/edit/${project.id}`,
     RequestMethods.PUT
   );
