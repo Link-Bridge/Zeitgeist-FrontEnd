@@ -162,13 +162,13 @@ const ProjectDetails = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginRight: '5px' }} />
-              <p>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginLeft: '5px' }} />
-              <p>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
             </div>
           </Box>
         </section>
@@ -180,7 +180,7 @@ const ProjectDetails = () => {
           <AddButton onClick={() => {}} />
         </Link>
       </section>
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable projectId={id ? id : ''} />
       </Card>
     </>
