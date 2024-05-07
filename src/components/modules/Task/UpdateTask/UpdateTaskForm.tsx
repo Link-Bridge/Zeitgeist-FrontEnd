@@ -1,10 +1,12 @@
-import { Grid, Input, Textarea } from '@mui/joy';
+import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
+import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import { RoutesPath } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
 import GenericDropdown from '../../../common/GenericDropdown';
@@ -49,9 +51,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
-  const [successMessage, setSuccessMessage] = useState(false);
-
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const navigate = useNavigate();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
@@ -148,10 +151,15 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     };
 
     try {
+      console.log('good payload', payload);
       await onSubmit(payload);
-      setSuccessMessage(true);
+      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(RoutesPath.TASKS);
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      console.log('bad payload', payload);
+      setState({ open: true, message: 'Failed to update task.', type: 'danger' });
     }
   };
 
@@ -283,11 +291,11 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           </Item>
         </Grid>
       </Grid>
-      {successMessage && (
-        <div style={{ color: 'green', textAlign: 'center', marginTop: '10px' }}>
-          Se realizaron los cambios exitosamente
-        </div>
-      )}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </StyledSheet>
   );
 };

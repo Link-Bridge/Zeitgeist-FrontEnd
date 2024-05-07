@@ -18,9 +18,7 @@ const UpdateTaskPage: React.FC = () => {
 
   useEffect(() => {
     sendEmployeeRequest();
-  }, []);
-
-  const [taskData, setTaskData] = useState<TaskDetail | null>(null);
+  }, [sendEmployeeRequest]);
 
   useEffect(() => {
     if (cachedEmployees) {
@@ -36,10 +34,8 @@ const UpdateTaskPage: React.FC = () => {
   useEffect(() => {
     if (!cachedTask) {
       sendGetTaskRequest();
-    } else {
-      setTaskData(cachedTask);
     }
-  }, []);
+  }, [cachedTask, sendGetTaskRequest]);
 
   const { sendRequest: sendUpdateTaskRequest } = useHttp<UpdatedTask>(
     `${APIPath.UPDATE_TASK}/${id}`,
