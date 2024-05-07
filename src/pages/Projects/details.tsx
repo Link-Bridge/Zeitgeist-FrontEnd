@@ -6,7 +6,7 @@ import colors from '../../colors';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity } from '../../types/project';
+import { ProjectAreas, ProjectEntity } from '../../types/project';
 import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
@@ -21,16 +21,16 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import { ProjectStatus } from '../../types/project';
 
 const statusColorMap: Record<ProjectStatus, string> = {
-  [ProjectStatus.SELECT_OPTION]: '#BDBDBD',
+  [ProjectStatus.ACCEPTED]: colors.gold,
   [ProjectStatus.NOT_STARTED]: colors.notStarted,
-  [ProjectStatus.IN_PROCESS]: colors.darkPurple,
+  [ProjectStatus.IN_PROGRESS]: colors.darkPurple,
   [ProjectStatus.UNDER_REVISION]: colors.purple,
+  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
   [ProjectStatus.DELAYED]: colors.delayed,
   [ProjectStatus.POSTPONED]: colors.blue,
   [ProjectStatus.DONE]: colors.success,
   [ProjectStatus.CANCELLED]: colors.danger,
-  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
-  [ProjectStatus.ACCEPTED]: colors.gold,
+  [ProjectStatus.DEFAULT]: '',
 };
 
 function dateParser(date: Date): string {
@@ -46,7 +46,6 @@ const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
   minWidth: '5px0px',
-  textTransform: 'lowercase',
 };
 
 const ProjectDetails = () => {
@@ -150,70 +149,73 @@ const ProjectDetails = () => {
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
-          <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Status</p>
-              {data && data.status !== undefined && (
-                <GenericDropdown
-                  options={Object.values(ProjectStatus)}
-                  onValueChange={handleStatusChange}
-                  defaultValue={projectStatus}
-                  colorMap={statusColorMap}
+          {data && (
+            <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Status</p>
+                {data && data.status !== undefined && (
+                  <GenericDropdown
+                    options={Object.values(ProjectStatus)}
+                    onValueChange={handleStatusChange}
+                    defaultValue={projectStatus}
+                    colorMap={statusColorMap}
+                    placeholder='Select the project status ...'
+                  />
+                )}
+              </div>
+
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Hours</p>
+                <Chip
+                  sx={{
+                    bgcolor: colors.extra,
+                    fontSize: '1rem',
+                  }}
+                  label={data.totalHours ? data.totalHours : '0'}
                 />
-              )}
-            </div>
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Hours</p>
-              <Chip
-                sx={{
-                  bgcolor: colors.extra,
-                  fontSize: '1rem',
-                }}
-                label={data?.totalHours}
-              />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Client</p>
+                <Chip sx={chipStyle} label={companyName} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Client</p>
-              <Chip sx={chipStyle} label={companyName} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Matter</p>
+                <Chip sx={chipStyle} label={data.matter} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Matter</p>
-              <Chip sx={chipStyle} label={data?.matter} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Category</p>
+                <Chip sx={chipStyle} label={data?.category} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Category</p>
-              <Chip sx={chipStyle} label={data?.category} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Area</p>
+                <Chip sx={chipStyle} label={ProjectAreas[data.area]} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Area</p>
-              <Chip sx={chipStyle} label={data?.area} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Periodicity</p>
+                <Chip sx={chipStyle} label={data.periodicity} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Periodicity</p>
-              <Chip sx={chipStyle} label={data?.periodicity} />
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Chargeable</p>
+                <Chip sx={chipStyle} label={data.isChargeable ? 'Yes' : 'No'} />
+              </div>
             </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Chargeable</p>
-              <Chip sx={chipStyle} label={data?.isChargeable ? 'Yes' : 'No'} />
-            </div>
-          </div>
+          )}
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginRight: '5px' }} />
-              <p>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginLeft: '5px' }} />
-              <p>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
             </div>
           </Box>
         </section>
@@ -225,7 +227,7 @@ const ProjectDetails = () => {
           <AddButton onClick={() => {}} />
         </Link>
       </section>
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable projectId={id ? id : ''} />
       </Card>
     </>

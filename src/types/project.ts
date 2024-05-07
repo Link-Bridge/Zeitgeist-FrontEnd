@@ -24,23 +24,24 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
-  CLIENT = 'Client',
 }
 
 export enum ProjectStatus {
-  SELECT_OPTION = 'Select An Option',
   NOT_STARTED = 'Not started',
-  IN_PROCESS = 'In process',
+  IN_PROGRESS = 'In progress',
+  IN_QUOTATION = 'In quotation',
   UNDER_REVISION = 'Under revision',
   DELAYED = 'Delayed',
   POSTPONED = 'Postponed',
-  DONE = 'Done',
   CANCELLED = 'Cancelled',
-  IN_QUOTATION = 'In quotation',
   ACCEPTED = 'Accepted',
+  DONE = 'Done',
+
 }
 
 export interface ProjectEntity {
+  [x: string]: any;
+  data: any;
   id: string;
   name: string;
   matter: string;
@@ -53,6 +54,13 @@ export interface ProjectEntity {
   totalHours: number;
   periodicity: ProjectPeriodicity;
   isChargeable: boolean;
+  isArchived: boolean;
   created_at: Date;
   idCompany: string;
+}
+
+export enum ProjectFilters {
+  ARCHIVED = 'Archived',
+  NOT_ARCHIVED = 'Not Archived',
+  ALL = 'All',
 }

@@ -6,7 +6,7 @@ const colors = {
   darkerGray: '#424242',
   darkestGray: '#313131',
   lightGold: '#E8C273',
-  inProcess: '#FFE598', //'#a98307'
+  inProcess: '#FFE598',
   gold: '#C29A51',
   darkGold: '#9C844C',
   darkerGold: '#876F39',
@@ -31,3 +31,16 @@ const colors = {
 };
 
 export default colors;
+
+export const statusChipColorCombination = {
+  cancelled: { bg: '#FF7A7A', font: '#4A0B0B' },
+  notStarted: { bg: '#E6A9A9', font: '#7D1212' },
+  delayed: { bg: '#FFC774', font: '#7A4900' },
+  inProgerss: { bg: '#FFE598', font: '#896A10' },
+  accepted: { bg: '#B7D7A8', font: '#53664B' },
+  done: { bg: '#6AA84F', font: '#BCEFA6' },
+  postpone: { bg: '#A0C5E8', font: '#485A6C' },
+  underRevision: { bg: '#D7B2F0', font: '#764D91' },
+  inQuotation: { bg: '#878FD2', font: '#273086' },
+  default: { bg: '#C4C4C4', font: '#424242' },
+};

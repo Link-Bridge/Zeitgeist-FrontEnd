@@ -1,6 +1,4 @@
-export enum EnvKeysValues {
-  BASE_API_URL = 'http://localhost:4000/api/v1',
-}
+export const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 
 export enum RoutesPath {
   ROOT = '/',
@@ -18,6 +16,7 @@ export enum APIPath {
   COMPANIES = '/company',
   PROJECTS = '/project',
   CREATE_TASK = '/tasks/:projectId/create',
+  UPDATE_TASK = '/tasks/update',
 }
 
 export enum RequestMethods {
