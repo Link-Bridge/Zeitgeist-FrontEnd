@@ -1,8 +1,7 @@
-import { useContext, useEffect, useState } from 'react';
+import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
 import left_arrow from '../../assets/icons/left_arrow.svg';
-import colors from '../../colors';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -18,14 +17,10 @@ import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
+import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import StatusChip from '../../components/common/StatusChip';
 
-import Button from '@mui/joy/Button';
-import Modal from '@mui/joy/Modal';
-import ModalClose from '@mui/joy/ModalClose';
-import Sheet from '@mui/joy/Sheet';
-import Typography from '@mui/joy/Typography';
-import { SnackbarContext } from '../../hooks/snackbarContext';
+import colors from '../../colors';
 
 type ProjectDetailsProps = {
   setProjectId: (projectId: string) => void;
@@ -48,7 +43,6 @@ const chipStyle = {
 
 const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
   const { id } = useParams();
-  const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
@@ -60,16 +54,6 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
     setOpen(!open);
   };
 
-  const updateArchive = () => {
-    try {
-      setState({ open: true, message: 'Project was archived succesfully', type: 'success' });
-    } catch (error: any) {
-      setState({ open: true, message: 'Project was could not be archived.', type: 'danger' });
-    } finally {
-      setOpen(false);
-    }
-  };
-
   const {
     data: company,
     loading: loadingCompany,
@@ -79,6 +63,8 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
     `${APIPath.COMPANIES}/${data?.idCompany}`,
     RequestMethods.GET
   );
+
+  const [projectIsArchived, setProjectIsArchived] = useState<boolean>();
 
   useEffect(() => {
     if (!data) {
@@ -102,70 +88,17 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
 
   return (
     <>
-      <Modal
-        open={open}
-        onClose={() => setOpen(false)}
-        sx={{
-          display: 'flex',
-          justifyContent: 'center',
-          alignItems: 'center',
-        }}
-      >
-        <Sheet
-          variant='outlined'
-          sx={{
-            borderRadius: 'md',
-            p: 4,
-            boxShadow: 'lg',
-            width: '500px',
-          }}
-        >
-          <ModalClose variant='plain' sx={{ m: 1 }} />
-          <Typography
-            component='h2'
-            id='modal-title'
-            level='h3'
-            textColor='inherit'
-            fontWeight='lg'
-            mb={1}
-          >
-            Archive Project
-          </Typography>
-          <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
-            Are you sure you want to this project?
-          </Typography>
-          <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
-            <Button
-              onClick={() => setOpen(false)}
-              variant='outlined'
-              size='lg'
-              sx={{
-                color: colors.darkGold,
-                borderColor: colors.darkGold,
-                '&:hover': {
-                  backgroundColor: colors.lightGold,
-                },
-              }}
-            >
-              Cancel
-            </Button>
-            <Button
-              size='lg'
-              sx={{
-                backgroundColor: colors.darkGold,
-                '&:hover': {
-                  backgroundColor: colors.darkerGold,
-                },
-              }}
-              onClick={() => {
-                updateArchive();
-              }}
-            >
-              Archive
-            </Button>
-          </Box>
-        </Sheet>
-      </Modal>
+      {open && (
+        <ModalEditConfirmation
+          projectIsArchived={projectIsArchived}
+          setProjectIsArchived={setProjectIsArchived}
+          projectId={id}
+          title='Archive Project'
+          description='Are sure you want to archive this project?'
+          open={open}
+          setOpen={setOpen}
+        />
+      )}
       <Box
         sx={{
           display: 'flex',

@@ -44,6 +44,7 @@ export interface ProjectEntity {
   name: string;
   matter: string;
   description: string;
+  isArchived: boolean;
   status: ProjectStatus;
   category: string;
   startDate: Date;
