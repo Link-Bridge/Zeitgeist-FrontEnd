@@ -227,7 +227,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Status *</Header>
             <GenericDropdown
-              selectedOption={data.status as TaskStatus}
+              defaultValue={data.status as TaskStatus}
               options={Object.values(TaskStatus)}
               onValueChange={handleStatusSelect}
               placeholder='Select status'
@@ -247,7 +247,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <Header>Assigned Employee</Header>
             <GenericDropdown
-              selectedOption={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
+              defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
               options={getEmployeeNames()}
               onValueChange={handleAssignedEmployee}
               placeholder='Select employee ...'
