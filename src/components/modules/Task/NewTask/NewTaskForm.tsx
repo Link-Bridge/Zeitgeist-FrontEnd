@@ -110,7 +110,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     const payload: BareboneTask = {
       title,
       description,
-      status: status.toUpperCase() as TaskStatus,
+      status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       dueDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
