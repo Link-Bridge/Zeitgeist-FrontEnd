@@ -1,4 +1,5 @@
 import Button from '@mui/material/Button';
+import colors from '../../colors';
 
 interface ModifyButtonProps {
   onClick?: () => void;
@@ -18,13 +19,13 @@ const ModifyButton = ({ onClick }: ModifyButtonProps) => {
       variant='contained'
       onClick={onClick}
       sx={{
-        bgcolor: '#9C844C',
+        bgcolor: colors.darkGold,
         color: '#fff',
         textTransform: 'none',
         padding: '6px 30px',
         margin: '10px 0',
         '&:hover': {
-          bgcolor: '#876F39',
+          bgcolor: colors.darkerGold,
           opacity: '0.8',
         },
       }}
