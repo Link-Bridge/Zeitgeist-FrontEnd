@@ -6,7 +6,7 @@ import colors from '../../colors';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity } from '../../types/project';
+import { ProjectAreas, ProjectEntity } from '../../types/project';
 import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
@@ -31,7 +31,6 @@ const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
   minWidth: '5px0px',
-  textTransform: 'lowercase',
 };
 
 const ProjectDetails = () => {
@@ -111,53 +110,55 @@ const ProjectDetails = () => {
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
-          <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Status</p>
-              {data && data.status !== undefined && <StatusChip status={data.status} />}
-            </div>
+          {data && (
+            <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Status</p>
+                {data && data.status !== undefined && <StatusChip status={data.status} />}
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Hours</p>
-              <Chip
-                sx={{
-                  bgcolor: colors.extra,
-                  fontSize: '1rem',
-                }}
-                label={data?.totalHours}
-              />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Hours</p>
+                <Chip
+                  sx={{
+                    bgcolor: colors.extra,
+                    fontSize: '1rem',
+                  }}
+                  label={data.totalHours ? data.totalHours : '0'}
+                />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Client</p>
-              <Chip sx={chipStyle} label={companyName} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Client</p>
+                <Chip sx={chipStyle} label={companyName} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Matter</p>
-              <Chip sx={chipStyle} label={data?.matter} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Matter</p>
+                <Chip sx={chipStyle} label={data.matter} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Category</p>
-              <Chip sx={chipStyle} label={data?.category} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Category</p>
+                <Chip sx={chipStyle} label={data?.category} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Area</p>
-              <Chip sx={chipStyle} label={data?.area} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Area</p>
+                <Chip sx={chipStyle} label={ProjectAreas[data.area]} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Periodicity</p>
-              <Chip sx={chipStyle} label={data?.periodicity} />
-            </div>
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Periodicity</p>
+                <Chip sx={chipStyle} label={data.periodicity} />
+              </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Chargeable</p>
-              <Chip sx={chipStyle} label={data?.isChargeable ? 'Yes' : 'No'} />
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Chargeable</p>
+                <Chip sx={chipStyle} label={data.isChargeable ? 'Yes' : 'No'} />
+              </div>
             </div>
-          </div>
+          )}
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
@@ -176,7 +177,7 @@ const ProjectDetails = () => {
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
         <Link to={id ? APIPath.CREATE_TASK.replace(':projectId', id) : ''}>
-          <AddButton onClick={() => {}} />
+          <AddButton onClick={() => { }} />
         </Link>
       </section>
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>

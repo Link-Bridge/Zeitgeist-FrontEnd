@@ -117,7 +117,7 @@ const EditProject = () => {
                   values={companies ?? []}
                   name='idCompany'
                   handleChange={form.handleChange}
-                  defaultValue={companyName}
+                  value={companyName}
                 />
               </FormControl>
               <FormControl className='flex-1'>

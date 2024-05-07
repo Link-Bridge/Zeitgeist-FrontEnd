@@ -62,11 +62,10 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
           variant='solid'
           sx={{
             'background-color': colors.lightGold,
-            textTransform: 'lowercase',
             color: colors.darkerGold,
           }}
         >
-          {department}
+          {ProjectAreas[department]}
         </Chip>
       </section>
     </section>
