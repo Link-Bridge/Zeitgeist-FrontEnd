@@ -39,8 +39,6 @@ export enum ProjectStatus {
 }
 
 export interface ProjectEntity {
-  [x: string]: any;
-  data: any;
   id: string;
   name: string;
   matter: string;
