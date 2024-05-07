@@ -2,6 +2,7 @@ import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
+import { default as colors, statusChipColorCombination } from '../../../../colors';
 import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
@@ -14,14 +15,14 @@ import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.NOT_STARTED]: '#E6A9A9',
-  [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
-  [TaskStatus.DELAYED]: '#FFC774',
-  [TaskStatus.POSTPONED]: '#A0C5E8',
-  [TaskStatus.DONE]: '#6AA84F',
-  [TaskStatus.CANCELLED]: '#FF7A7A',
-  [TaskStatus.SELECT_OPTION]: '',
+  [TaskStatus.SELECT_OPTION]: statusChipColorCombination.default.bg,
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
+  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
 };
 
 interface UpdateTaskFormProps {
@@ -180,8 +181,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         value={title}
         onChange={handleTitleChange}
         sx={{
-          color: '#686868',
-          borderColor: errors['title'] ? '#FF7A7A' : undefined,
+          color: colors.gray,
+          borderColor: errors['title'] ? colors.danger : undefined,
         }}
       />
 
@@ -191,14 +192,14 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         value={description}
         onChange={handleDescriptionChange}
         sx={{
-          color: '#686868',
+          color: colors.gray,
           width: '100%',
           height: '200px',
           padding: '10px',
           borderRadius: '4px',
-          border: `1px solid ${errors['description'] ? '#FF7A7A' : '#E0E0E0'}`,
+          border: `1px solid ${errors['description'] ? colors.danger : colors.lighterGray}`,
           '&:focus': {
-            border: '1px solid #9C844C',
+            border: '1px solid' + colors.darkGold,
           },
         }}
       />
@@ -212,7 +213,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               value={startDate}
               onChange={handleStartDateChange}
               sx={{
-                borderColor: errors['startDate'] ? '#FF7A7A' : undefined,
+                borderColor: errors['startDate'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -224,7 +225,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               value={dueDate}
               onChange={handleDueDateChange}
               sx={{
-                borderColor: errors['dueDate'] ? '#FF7A7A' : undefined,
+                borderColor: errors['dueDate'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -239,8 +240,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               placeholder='Select status'
               colorMap={statusColorMap}
               sx={{
-                color: '#686868',
-                borderColor: errors['status'] ? '#FF7A7A' : undefined,
+                color: colors.gray,
+                borderColor: errors['status'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -269,7 +270,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: '#686868',
+                color: colors.gray,
               }}
             />
           </Item>

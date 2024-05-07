@@ -2,6 +2,7 @@ import { Box, Chip, Grid, Input, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link } from 'react-router-dom';
+import { default as colors, statusChipColorCombination } from '../../../../colors';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
@@ -13,14 +14,14 @@ import SendButton from '../../../common/SendButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.SELECT_OPTION]: '#BDBDBD',
-  [TaskStatus.NOT_STARTED]: '#E6A9A9',
-  [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
-  [TaskStatus.DELAYED]: '#FFC774',
-  [TaskStatus.POSTPONED]: '#A0C5E8',
-  [TaskStatus.DONE]: '#6AA84F',
-  [TaskStatus.CANCELLED]: '#FF7A7A',
+  [TaskStatus.SELECT_OPTION]: statusChipColorCombination.default.bg,
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
+  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
 };
 
 interface NewTaskFormProps {
@@ -150,8 +151,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         value={title}
         onChange={handleTitleChange}
         sx={{
-          color: '#686868',
-          borderColor: errors['title'] ? '#FF7A7A' : undefined,
+          color: colors.gray,
+          borderColor: errors['title'] ? colors.danger : undefined,
         }}
       />
 
@@ -161,12 +162,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         value={description}
         onChange={handleDescriptionChange}
         sx={{
-          color: '#686868',
+          color: colors.gray,
           width: '100%',
           height: '200px',
           padding: '10px',
           borderRadius: '4px',
-          border: `1px solid ${errors['description'] ? '#FF7A7A' : '#E0E0E0'}`,
+          border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
         }}
       />
 
@@ -179,7 +180,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               value={startDate}
               onChange={handleStartDateChange}
               sx={{
-                borderColor: errors['startDate'] ? '#FF7A7A' : undefined,
+                borderColor: errors['startDate'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -191,7 +192,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               value={dueDate}
               onChange={handleDueDateChange}
               sx={{
-                borderColor: errors['dueDate'] ? '#FF7A7A' : undefined,
+                borderColor: errors['dueDate'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -205,8 +206,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               placeholder='Select status'
               colorMap={statusColorMap}
               sx={{
-                color: '#686868',
-                borderColor: errors['status'] ? '#FF7A7A' : undefined,
+                color: colors.gray,
+                borderColor: errors['status'] ? colors.danger : undefined,
               }}
             />
           </Item>
@@ -229,12 +230,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Item>
             <Header>Worked Hours</Header>
             <Input
-              placeholder='00.00'
+              placeholder='0'
               type='text'
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: '#686868',
+                color: colors.gray,
               }}
             />
           </Item>
@@ -246,8 +247,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <Chip
                 variant='soft'
                 sx={{
-                  bgcolor: '#E0E0E0',
-                  color: '#686868',
+                  bgcolor: colors.lighterGray,
+                  color: colors.gray,
                   fontSize: '1rem',
                   flexGrow: 1,
                   padding: '0.3rem 1rem',
