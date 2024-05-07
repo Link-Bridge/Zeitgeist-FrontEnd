@@ -154,7 +154,7 @@ const Task: React.FC = () => {
 
                 {data.endDate && (
                   <Box>
-                    <p style={{ fontSize: '.9rem' }}>Due date</p>
+                    <p style={{ fontSize: '.5rem' }}>Due date</p>
                     <Box
                       sx={{
                         display: 'flex',

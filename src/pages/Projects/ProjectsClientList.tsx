@@ -1,14 +1,11 @@
 import { useEffect, useState } from 'react';
-
+import { Link } from 'react-router-dom';
+import AddButton from '../../components/common/AddButton';
+import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { RequestMethods } from '../../utils/constants';
-
-import AddButton from '../../components/common/AddButton';
-import CardProject from '../../components/common/CardProject';
-
-import { Link } from 'react-router-dom';
 
 type ProjectsClientListProps = {
   clientId: string;
@@ -65,7 +62,7 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
               key={project.id}
               onClick={() => setSelectedProjectId(project.id)}
             >
-              <CardProject name={project.name} status={project.status} department={project.area} />
+              <ProjectCard name={project.name} status={project.status} department={project.area} />
             </Link>
           ))}
         </section>
