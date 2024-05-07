@@ -111,13 +111,12 @@ const EditProject = () => {
               <FormControl className='flex-1'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
-                  <span className='text-gray font-normal'> - Current client: {companyName}</span>
                 </FormLabel>
                 <ClientDropdown
                   values={companies ?? []}
                   name='idCompany'
                   handleChange={form.handleChange}
-                  value={companyName}
+                  defaultValue={form.formState.idCompany}
                 />
               </FormControl>
               <FormControl className='flex-1'>
