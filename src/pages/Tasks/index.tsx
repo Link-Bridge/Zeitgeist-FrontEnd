@@ -96,7 +96,7 @@ const Tasks = (): JSX.Element => {
           flexDirection: 'column',
           gap: 2,
           borderRadius: 12,
-          padding: 2,
+          padding: 0.5,
           overflowY: 'auto',
         }}
       >
@@ -120,7 +120,7 @@ const Tasks = (): JSX.Element => {
                   sx={{
                     color: colors.grey[800],
                     fontWeight: 'bold',
-                    fontSize: '1.5rem',
+                    fontSize: '1rem',
                   }}
                 >
                   {project.name}
@@ -133,7 +133,7 @@ const Tasks = (): JSX.Element => {
                       display: 'flex',
                       flexDirection: 'column',
                       gap: 1,
-                      padding: 2,
+                      padding: 0.5,
                       borderRadius: 12,
                       backgroundColor: colors.grey[100],
                     }}

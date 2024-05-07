@@ -56,35 +56,35 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
   };
 
   return (
-    <Card sx={{ borderRadius: '12px', margin: '10px' }}>
-      <TableContainer sx={{ padding: '1rem' }}>
+    <Card sx={{ borderRadius: '12px', margin: '5px' }}>
+      <TableContainer sx={{ padding: '0.5rem' }}>
         <Table>
           <TableHead>
             <TableRow>
-              <TableCell style={{ width: '55%' }}>
-                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+              <TableCell style={{ width: '50%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
                   Task
                 </Typography>
               </TableCell>
               <TableCell style={{ width: '15%' }}>
-                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
                   Status
                 </Typography>
               </TableCell>
               <TableCell style={{ width: '10%' }}>
-                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
                   Hours
                 </Typography>
               </TableCell>
-              <TableCell style={{ width: '10%' }}>
-                <Typography variant='body1' sx={{ fontWeight: 600 }}>
+              <TableCell style={{ width: '15%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
                   Due Date
                 </Typography>
               </TableCell>
               <TableCell style={{ width: '10%' }}>
                 <Typography
                   variant='body1'
-                  sx={{ fontWeight: 600, cursor: 'pointer' }}
+                  sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
                   onClick={handleCollapseToggle}
                 >
                   <KeyboardArrowDown />
