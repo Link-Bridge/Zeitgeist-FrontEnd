@@ -27,3 +27,9 @@ export interface UpdateCompanyData {
   rfc?: string | null;
   taxResidence?: string | null;
 }
+
+export enum CompanyFilters {
+  ARCHIVED = 'Archived',
+  NOT_ARCHIVED = 'Not Archived',
+  ALL = 'All',
+}

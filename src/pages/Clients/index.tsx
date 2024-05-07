@@ -1,43 +1,42 @@
-import Option from '@mui/joy/Option';
-import Select from '@mui/joy/Select';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
+import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import useHttp from '../../hooks/useHttp';
-import { CompanyEntity } from '../../types/company';
-import { EnvKeysValues, RequestMethods, RoutesPath } from '../../utils/constants';
+import { CompanyEntity, CompanyFilters } from '../../types/company';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
   const [clientId, setClientId] = useState<string>('');
 
-  const [companies, setClientsData] = useState<CompanyEntity[]>();
+  const [companies, setClientsData] = useState<CompanyEntity[]>([]);
+  const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
 
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
 
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
 
-  const handleClose = (event: React.SyntheticEvent | null, value: string | null) => {
-    const doFetch = async (value: string | null): Promise<void> => {
-      if (value === 'Not Archived') {
-        const data = await axios.get(`${EnvKeysValues.BASE_API_URL}/company/`, {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
-        });
-        setClientsData(data.data);
-      } else {
-        const data = await axios.get(`${EnvKeysValues.BASE_API_URL}/company/archived`, {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
-        });
-        setClientsData(data.data);
-      }
-    };
-    void doFetch(value);
+  const handleFilter = (value: string) => {
+    setFilteredClientsData(companies);
+
+    if (value == CompanyFilters.ALL) return;
+
+    if (value == CompanyFilters.ARCHIVED) {
+      setFilteredClientsData(companies => {
+        return companies.filter(company => company.archived);
+      });
+    }
+    if (value == CompanyFilters.NOT_ARCHIVED) {
+      setFilteredClientsData(companies => {
+        return companies.filter(company => !company.archived);
+      });
+    }
   };
 
   useEffect(() => {
@@ -50,11 +49,12 @@ const Clients = () => {
       clientsRequest.sendRequest();
     } else {
       setClientsData(clientsRequest.data);
+      setFilteredClientsData(clientsRequest.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => {}, [handleClose]);
+  useEffect(() => {}, [handleFilter]);
 
   const openModal = () => {
     setOpen(true);
@@ -67,10 +67,11 @@ const Clients = () => {
         element={
           <main className='py-0 flex flex-col min-h-0 flex-1'>
             <section className='flex flex-row justify-end mb-8 gap-6'>
-              <Select defaultValue='Not Archived' onChange={handleClose}>
-                <Option value='Not Archived'>Not Archived</Option>
-                <Option value='Archived'>Archived</Option>
-              </Select>
+              <GenericDropdown
+                defaultValue={CompanyFilters.ALL}
+                options={[CompanyFilters.ALL, CompanyFilters.NOT_ARCHIVED, CompanyFilters.ARCHIVED]}
+                onValueChange={value => handleFilter(value)}
+              />
               <AddButton onClick={openModal} />
             </section>
             <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
@@ -81,7 +82,7 @@ const Clients = () => {
             </div>
             {!clientsRequest.loading && !clientsRequest.error && companies && (
               <CardsGrid>
-                {companies.map(company => (
+                {filteredCompanies.map(company => (
                   <Link
                     to={`${RoutesPath.CLIENTS}/${company.id}`}
                     key={company.id}
