@@ -151,14 +151,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     };
 
     try {
-      console.log('good payload', payload);
       await onSubmit(payload);
       setState({ open: true, message: 'Task updated successfully.', type: 'success' });
       setTimeout(() => {
         navigate(RoutesPath.TASKS);
       }, 2000);
     } catch (error) {
-      console.log('bad payload', payload);
       setState({ open: true, message: 'Failed to update task.', type: 'danger' });
     }
   };
@@ -182,7 +180,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         value={title}
         onChange={handleTitleChange}
         sx={{
-          color: '#BDBDBD',
+          color: '#686868',
           borderColor: errors['title'] ? '#FF7A7A' : undefined,
         }}
       />
@@ -193,7 +191,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         value={description}
         onChange={handleDescriptionChange}
         sx={{
-          color: '#BDBDBD',
+          color: '#686868',
           width: '100%',
           height: '200px',
           padding: '10px',
@@ -241,7 +239,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               placeholder='Select status'
               colorMap={statusColorMap}
               sx={{
-                color: '#BDBDBD',
+                color: '#686868',
                 borderColor: errors['status'] ? '#FF7A7A' : undefined,
               }}
             />
@@ -249,7 +247,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
       </Grid>
 
-      {/* Waiting For, Worked Hours, Project Name */}
+      {/* Waiting For, Worked Hours */}
       <Grid container spacing={2}>
         <Grid xs={2}>
           <Item>
@@ -271,7 +269,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: '#BDBDBD',
+                color: '#686868',
               }}
             />
           </Item>
@@ -291,6 +289,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           </Item>
         </Grid>
       </Grid>
+
+      {/* Snackbar */}
       <SnackbarContext.Provider value={{ state, setState }}>
         <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
           {state.message}

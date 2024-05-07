@@ -150,7 +150,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         value={title}
         onChange={handleTitleChange}
         sx={{
-          color: '#BDBDBD',
+          color: '#686868',
           borderColor: errors['title'] ? '#FF7A7A' : undefined,
         }}
       />
@@ -161,7 +161,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         value={description}
         onChange={handleDescriptionChange}
         sx={{
-          color: '#BDBDBD',
+          color: '#686868',
           width: '100%',
           height: '200px',
           padding: '10px',
@@ -205,7 +205,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               placeholder='Select status'
               colorMap={statusColorMap}
               sx={{
-                color: '#BDBDBD',
+                color: '#686868',
                 borderColor: errors['status'] ? '#FF7A7A' : undefined,
               }}
             />
@@ -234,7 +234,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: '#BDBDBD',
+                color: '#686868',
               }}
             />
           </Item>
@@ -247,7 +247,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 variant='soft'
                 sx={{
                   bgcolor: '#E0E0E0',
-                  color: '#000000',
+                  color: '#686868',
                   fontSize: '1rem',
                   flexGrow: 1,
                   padding: '0.3rem 1rem',
