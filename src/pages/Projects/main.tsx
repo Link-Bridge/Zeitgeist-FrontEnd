@@ -38,10 +38,6 @@ const ProjectMain = () => {
   const handleFilter = (value: string) => {
     setFilteredProjects(projects);
 
-    projects.map(project => {
-      if (project.isChargeable) project.isArchived = true;
-    });
-
     if (value == ProjectFilters.ALL) return;
 
     if (value == ProjectFilters.ARCHIVED) {
