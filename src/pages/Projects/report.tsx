@@ -1,18 +1,17 @@
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
-import Link from '@mui/joy/Link';
 import Button from '@mui/material/Button';
 import TextField from '@mui/material/TextField';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
-import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import GoBack from '../../components/common/GoBack';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
@@ -35,9 +34,11 @@ function filterteParser(date: Date): string {
   return `${year}-${month}-${day}`;
 }
 
+function capitalize(data: string): string {
+  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
+}
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
-  const navigate = useNavigate();
   const date = useRef<string>('');
 
   const [report, setReport] = useState<Report>();
@@ -57,10 +58,6 @@ const ProjectReport: React.FC = () => {
     ['cancelled', 'Cancelled'],
   ]);
 
-  const handleClick = () => {
-    navigate('/projects');
-  };
-
   const handleYearChange = (value: number) => {
     setYear(value);
   };
@@ -69,6 +66,7 @@ const ProjectReport: React.FC = () => {
     setMonth(value);
   };
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     date.current = filterteParser(new Date(year, month - 1));
 
@@ -93,6 +91,7 @@ const ProjectReport: React.FC = () => {
     } else {
       setReport(reqReport.data);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
   useEffect(() => {}, [handleClose]);
@@ -115,21 +114,7 @@ const ProjectReport: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <img src={left_arrow} alt='Left arrow' className='w-3.5' />
-        <Link
-          onClick={handleClick}
-          underline='none'
-          className='ml-auto'
-          sx={{
-            color: colors.darkGold,
-            '&:hover': {
-              color: colors.darkerGold,
-            },
-          }}
-        >
-          {' '}
-          &nbsp;{'Go Back'}{' '}
-        </Link>
+        <GoBack path={`/projects/details/${id}`} />
       </Box>
 
       <br />
@@ -146,7 +131,7 @@ const ProjectReport: React.FC = () => {
             >
               <TextField
                 sx={{
-                  width: '70px',
+                  width: '90px',
                 }}
                 type='number'
                 label='Month'
@@ -176,7 +161,7 @@ const ProjectReport: React.FC = () => {
               </Button>
               <Button
                 sx={{
-                  bgcolor: colors.danger,
+                  bgcolor: colors.darkBlue,
                   color: colors.lighterGray,
                   borderRadius: '8px',
                   borderColor: colors.lighterGray,
@@ -184,7 +169,7 @@ const ProjectReport: React.FC = () => {
                 }}
                 onClick={handleClear}
               >
-                Clear
+                Reset
               </Button>
             </Box>
             <Box
@@ -243,7 +228,7 @@ const ProjectReport: React.FC = () => {
                     gap: '40px',
                   }}
                 >
-                  <StatusChip status={`${report.project.status || '-'}`} />
+                  <StatusChip status={report.project.status} />
                   <ColorChip
                     label={`Total Hours: ${report.project.totalHours}`}
                     color={`${colors.extra}`}
@@ -259,34 +244,40 @@ const ProjectReport: React.FC = () => {
                 <Box
                   sx={{
                     display: 'flex',
-                    gap: '40px',
+                    gap: '15px',
+                    flexWrap: 'wrap',
                   }}
                 >
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Area</p>
-                    <ColorChip
-                      label={report.project.area || ''}
-                      color={`${colors.extra}`}
-                    ></ColorChip>
-                  </Box>
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Matter</p>
-                    <ColorChip
-                      label={report.project.matter || ''}
-                      color={`${colors.null}`}
-                    ></ColorChip>
-                  </Box>
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Category</p>
-                    <ColorChip
-                      label={report.project.category || ''}
-                      color={`${colors.null}`}
-                    ></ColorChip>
-                  </Box>
+                  {report.project.area && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Area</p>
+                      <ColorChip
+                        label={capitalize(report.project.area)}
+                        color={`${colors.extra}`}
+                      ></ColorChip>
+                    </Box>
+                  )}
+
+                  {report.project.matter && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Matter</p>
+                      <ColorChip label={report.project.matter} color={`${colors.null}`}></ColorChip>
+                    </Box>
+                  )}
+                  {report.project.category && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Category</p>
+                      <ColorChip
+                        label={report.project.category}
+                        color={`${colors.null}`}
+                      ></ColorChip>
+                    </Box>
+                  )}
+
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Chargeable</p>
                     <ColorChip
-                      label={`${report.project.isChargeable}` ? 'Yes' : 'No'}
+                      label={report.project.isChargeable ? 'Yes' : 'No'}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
@@ -415,7 +406,7 @@ const ProjectReport: React.FC = () => {
                       >
                         <Box>
                           <p style={{ fontSize: '.9rem' }}>Status</p>
-                          <StatusChip status={`${item.status || '-'}`} />
+                          <StatusChip status={capitalize(item.status)} />
                         </Box>
 
                         {item.workedHours && (

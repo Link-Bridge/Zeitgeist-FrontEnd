@@ -4,6 +4,7 @@ import { ProjectAreas, ProjectStatus } from '../../../types/project';
 import StatusChip from '../../common/StatusChip';
 
 type CardProjectProps = {
+  id: string;
   name: string;
   status: ProjectStatus;
   department: ProjectAreas;
@@ -36,11 +37,10 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
           variant='solid'
           sx={{
             'background-color': colors.lightGold,
-            textTransform: 'lowercase',
             color: colors.darkerGold,
           }}
         >
-          {department}
+          {ProjectAreas[department]}
         </Chip>
       </section>
     </section>

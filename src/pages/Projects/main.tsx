@@ -1,29 +1,28 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
+import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
-import { ProjectEntity } from '../../types/project';
+import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
-import { BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
-type MainProjectProps = {
-  idProject: string;
-  setProjectId: (idProject: string) => void;
-};
-
-const ProjectMain = ({ setProjectId }: MainProjectProps) => {
+const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
+  const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
+  const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
 
   useEffect(() => {
-    req.sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+    if (!req.data) req.sendRequest();
+    if (req.data) {
+      setProjects(req.data.data);
+      setFilteredProjects(req.data.data);
+    }
 
-  useEffect(() => {
     async function getNames() {
       setIsLoading(true);
       if (req.data) {
@@ -33,20 +32,44 @@ const ProjectMain = ({ setProjectId }: MainProjectProps) => {
       setIsLoading(false);
     }
     getNames();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [req.data]);
+
+  const handleFilter = (value: string) => {
+    setFilteredProjects(projects);
+
+    if (value == ProjectFilters.ALL) return;
+
+    if (value == ProjectFilters.ARCHIVED) {
+      setFilteredProjects(projects => {
+        return projects.filter(project => project.isArchived);
+      });
+    }
+    if (value == ProjectFilters.NOT_ARCHIVED) {
+      setFilteredProjects(projects => {
+        return projects.filter(project => !project.isArchived);
+      });
+    }
+  };
+
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
-      <section className='h-10 flex justify-end'>
+      <section className='h-10 flex justify-end gap-4'>
+        <GenericDropdown
+          defaultValue={ProjectFilters.ALL}
+          options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
+          onValueChange={value => handleFilter(value)}
+        />
         <Link to={`${RoutesPath.PROJECTS}/new`}>
           <AddButton onClick={() => {}}></AddButton>
         </Link>
       </section>
-      <section className='flex-1 overflow-scroll'>
-        <div className='bg-[#FAFAFA] rounded-xl overflow-y-scroll grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
+      <section className='flex-1 overflow-y-scroll'>
+        <div className='bg-[#FAFAFA] rounded-xl grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5 overflow-y-hidden'>
           {isLoading && <Loader />}
-          {!isLoading &&
-            req.data?.data.map(project => (
-              <Link to={`/projects/details/${project.id}`}>
+          {!(isLoading && filteredProjects) &&
+            filteredProjects.map(project => (
+              <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
                   id={project.id}
@@ -54,7 +77,6 @@ const ProjectMain = ({ setProjectId }: MainProjectProps) => {
                   department={project.area}
                   name={project.name}
                   status={project.status}
-                  onClick={setProjectId(project.id)}
                 />
               </Link>
             ))}
@@ -71,7 +93,7 @@ async function getClientsNames(projects: ProjectEntity[]) {
   const reqs: Promise<globalThis.Response>[] = [];
   for (const id of names.keys()) {
     reqs.push(
-      fetch(`${BASE_API_URL}/company/${id}`, {
+      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       })
     );
