@@ -6,8 +6,8 @@ import colors from '../../colors';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity, ProjectStatus } from '../../types/project';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { ProjectEntity } from '../../types/project';
+import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -17,13 +17,24 @@ import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
 
-import ClickableChip from '../../components/common/ProjectDropDown';
+import GenericDropdown from '../../components/common/GenericDropdown';
+import { ProjectStatus } from '../../types/project';
 
-type ProjectDetailsProps = {
-  setProjectId: (projectId: string) => void;
+const statusColorMap: Record<ProjectStatus, string> = {
+  [ProjectStatus.SELECT_OPTION]: '#BDBDBD',
+  [ProjectStatus.NOT_STARTED]: colors.notStarted,
+  [ProjectStatus.IN_PROCESS]: colors.darkPurple,
+  [ProjectStatus.UNDER_REVISION]: colors.purple,
+  [ProjectStatus.DELAYED]: colors.delayed,
+  [ProjectStatus.POSTPONED]: colors.blue,
+  [ProjectStatus.DONE]: colors.success,
+  [ProjectStatus.CANCELLED]: colors.danger,
+  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
+  [ProjectStatus.ACCEPTED]: colors.gold,
 };
 
 function dateParser(date: Date): string {
+  if (!date) return '';
   const arr = date.toString().split('-');
   const day = arr[2].substring(0, 2);
   const month = arr[1];
@@ -38,7 +49,7 @@ const chipStyle = {
   textTransform: 'lowercase',
 };
 
-const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
@@ -107,11 +118,7 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
           marginBottom: '10px',
         }}
       >
-        <Link
-          to='/projects'
-          className='ml-auto text-darkGold no-underline'
-          onClick={setProjectId('')}
-        >
+        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
@@ -133,10 +140,12 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
                 />
               </Link>
 
-              <EditOutlinedIcon
-                sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                className='text-gold'
-              />
+              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
+                <EditOutlinedIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                  className='text-gold'
+                />
+              </Link>
             </section>
           </section>
 
@@ -146,10 +155,11 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
             <div style={{ fontSize: '15px' }}>
               <p style={{ marginLeft: '7px' }}>Status</p>
               {data && data.status !== undefined && (
-                <ClickableChip
-                  value={projectStatus}
-                  setValue={setProjectStatus}
-                  handleChange={handleStatusChange}
+                <GenericDropdown
+                  options={Object.values(ProjectStatus)}
+                  onValueChange={handleStatusChange}
+                  defaultValue={projectStatus}
+                  colorMap={statusColorMap}
                 />
               )}
             </div>
