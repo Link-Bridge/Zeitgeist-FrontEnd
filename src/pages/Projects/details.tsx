@@ -80,16 +80,7 @@ const ProjectDetails = () => {
   return (
     <>
       {open && (
-        <ModalEditConfirmation
-          project={data}
-          // projectIsArchived={projectIsArchived}
-          // setProjectIsArchived={setProjectIsArchived}
-          projectId={id}
-          title='Archive Project'
-          description='Are sure you want to archive this project?'
-          open={open}
-          setOpen={setOpen}
-        />
+        <ModalEditConfirmation project={data} open={open} setOpen={setOpen} refetch={sendRequest} />
       )}
       <Box
         sx={{
@@ -114,7 +105,7 @@ const ProjectDetails = () => {
               {data?.name}
             </h3>
             <section className='flex justify-end gap-3'>
-              {company?.data.archived ? (
+              {data?.isChargeable ? (
                 <UnarchiveIcon
                   sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
                   onClick={toggleModal}

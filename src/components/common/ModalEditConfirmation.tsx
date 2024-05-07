@@ -1,5 +1,8 @@
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
+
+import colors from '../../colors';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
 
 import { Box } from '@mui/joy';
 import Button from '@mui/joy/Button';
@@ -8,36 +11,33 @@ import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 
-import colors from '../../colors';
-import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
 
 type ModalEditProps = {
   project: ProjectEntity;
-  //   projectIsArchived: string;
-  //   setProjectIsArchived: React.Dispatch<React.SetStateAction<boolean>>;
-  projectId: string;
-  title: string;
-  description: string;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
+  refetch: () => {};
 };
 
-const ModalEditConfirmation = ({
-  project,
-  //   projectIsArchived,
-  //   setProjectIsArchived,
-  projectId,
-  title,
-  description,
-  open,
-  setOpen,
-}: ModalEditProps) => {
+/**
+ * Modal component for confirming modiyfing archived property of a project
+ *
+ * @param project: ProjectEntity - desired project object with data
+ * @param open: boolean - state of the modal
+ * @param setOpen: (open: boolean) => void -
+ *                         Function to update the state of the modal
+ * @param refetch: void - Function to refetch company info after updated isArchived property
+ * @returns JSX.Element - React component
+ */
+
+const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditProps) => {
   const { setState } = useContext(SnackbarContext);
+  const [isArchived, setIsArchived] = useState(project.isArchived);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
-    `/project/edit/${projectId}`,
+    `/project/edit/${project.id}`,
     RequestMethods.PUT
   );
 
@@ -49,29 +49,20 @@ const ModalEditConfirmation = ({
       setState({ open: true, message: 'Project updated successfully.', type: 'success' });
       if (open) {
         setOpen(false);
-        // setRefetch(true);
+        refetch();
       }
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
-  const handleUpdate = async () => {
+  const handleArchive = async () => {
+    setIsArchived(!isArchived);
+
     const updatedProjectData = {
-      id: project?.id,
-      name: project?.name,
-      matter: project?.matter,
-      description: project?.description,
-      status: project?.status,
-      area: project?.area,
-      category: project.category,
-      idCompany: project.idCompany,
-      startDate: project.startDate,
-      endDate: project.endDate,
-      isChargable: project.isChargeable,
-      periodicity: project.periodicity,
+      ...project,
+      isArchived: !isArchived,
     };
+
     await sendRequest({}, updatedProjectData);
-    console.log(project);
   };
 
   return (
@@ -102,10 +93,12 @@ const ModalEditConfirmation = ({
           fontWeight='lg'
           mb={1}
         >
-          {title}
+          {project?.isArchived ? 'Unarchive Project' : 'Archive Project'}
         </Typography>
         <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
-          {description}
+          {project?.isArchived
+            ? 'Are sure you want to unarchive this project?'
+            : 'Are sure you want to archive this project?'}
         </Typography>
         <Box
           mt={3}
@@ -113,7 +106,7 @@ const ModalEditConfirmation = ({
           alignItems='center'
           justifyContent='end'
           gap={2}
-          onSubmit={handleUpdate}
+          onSubmit={handleArchive}
         >
           <Button
             onClick={() => setOpen(false)}
@@ -138,11 +131,10 @@ const ModalEditConfirmation = ({
               },
             }}
             onClick={() => {
-              handleUpdate();
-              //   setProjectIsArchived(!projectIsArchived);
+              handleArchive();
             }}
           >
-            Archive
+            {project.isArchived ? 'Unarchive' : 'Archive'}
           </Button>
         </Box>
       </Sheet>
