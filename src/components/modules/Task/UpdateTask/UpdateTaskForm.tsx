@@ -141,7 +141,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       id: idTask as string,
       title: title,
       description: description,
-      status: status.toUpperCase() as TaskStatus,
+      status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       endDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
@@ -173,7 +173,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   return (
-    <StyledSheet>
+    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
       <Header>Title *</Header>
       <Input
         type='text'
@@ -248,9 +248,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
       </Grid>
 
-      {/* Waiting For, Worked Hours */}
+      {/* Assigned Employee, Worked Hours */}
       <Grid container spacing={2}>
-        <Grid xs={2}>
+        <Grid container xs={2} className="md mr-20">
           <Item>
             <Header>Assigned Employee</Header>
             <GenericDropdown
@@ -261,8 +261,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             />
           </Item>
         </Grid>
-        <Grid xs={2}>
-          <Item>
+        <Grid container xs={2} className="md">
+          <Item className="ml-20">
             <Header>Worked Hours</Header>
             <Input
               placeholder='0'
