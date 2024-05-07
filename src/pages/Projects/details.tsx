@@ -32,7 +32,6 @@ const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
   minWidth: '5px0px',
-  textTransform: 'lowercase',
 };
 
 const ProjectDetails = () => {
@@ -84,7 +83,7 @@ const ProjectDetails = () => {
   }
 
   const ProjectDetailsChips = [
-    { label: 'Hours', value: data?.totalHours },
+    { label: 'Hours', value: data?.totalHours ? data.totalHours : '0' },
     { label: 'Client', value: companyName },
     { label: 'Matter', value: data?.matter },
     { label: 'Category', value: data?.category },
@@ -136,44 +135,46 @@ const ProjectDetails = () => {
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
-          <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Status</p>
-              {data && data.status !== undefined && <StatusChip status={data.status} />}
-            </div>
-
-            {ProjectDetailsChips.map((chip, i) => {
-              return <InfoChip key={i} label={chip.label} value={String(chip.value ?? '')} />;
-            })}
-
-            {data?.isChargeable && (
+          {data && (
+            <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
               <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Payed</p>
-                <Chip
-                  component={Select}
-                  sx={chipStyle}
-                  value={data?.payed ?? false}
-                  onChange={(_, newVal) => {
-                    changePayed(id ?? '', Boolean(newVal));
-                  }}
-                  disabled={updating}
-                >
-                  <Option value={true}>Yes</Option>
-                  <Option value={false}>No</Option>
-                </Chip>
+                <p style={{ marginLeft: '7px' }}>Status</p>
+                {data && data.status !== undefined && <StatusChip status={data.status} />}
               </div>
-            )}
-          </div>
+
+              {ProjectDetailsChips.map((chip, i) => {
+                return <InfoChip key={i} label={chip.label} value={String(chip.value ?? '')} />;
+              })}
+
+              {data?.isChargeable && (
+                <div style={{ fontSize: '15px' }}>
+                  <p style={{ marginLeft: '7px' }}>Payed</p>
+                  <Chip
+                    component={Select}
+                    sx={chipStyle}
+                    value={data?.payed ?? false}
+                    onChange={(_, newVal) => {
+                      changePayed(id ?? '', Boolean(newVal));
+                    }}
+                    disabled={updating}
+                  >
+                    <Option value={true}>Yes</Option>
+                    <Option value={false}>No</Option>
+                  </Chip>
+                </div>
+              )}
+            </div>
+          )}
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginRight: '5px' }} />
-              <p>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon sx={{ marginLeft: '5px' }} />
-              <p>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
+              <EventNoteIcon />
+              <p className='ml-3'>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
             </div>
           </Box>
         </section>
@@ -185,7 +186,7 @@ const ProjectDetails = () => {
           <AddButton onClick={() => {}} />
         </Link>
       </section>
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable projectId={id ? id : ''} />
       </Card>
     </>
