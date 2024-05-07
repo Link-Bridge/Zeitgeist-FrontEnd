@@ -13,6 +13,7 @@ import {
   colors,
 } from '@mui/material';
 import { useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 
@@ -40,7 +41,12 @@ interface TaskTableProps {
  * @returns JSX.Element - React component
  */
 const TaskTable = ({ tasks }: TaskTableProps) => {
+  const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  const handleClick = (id: string) => {
+    navigate(`/tasks/${id}`);
+  };
 
   const handleCollapseToggle = () => {
     setCollapsed(!collapsed);
@@ -96,11 +102,16 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
             {!collapsed &&
               tasks.map(task => (
                 <TableRow key={task.id}>
-                  <TableCell>{task.title}</TableCell>
+                  <TableCell onClick={() => handleClick(task.id)} sx={{ cursor: 'pointer' }}>
+                    {task.title}
+                  </TableCell>
                   <TableCell>
                     <Chip
                       label={task.status}
-                      sx={{ backgroundColor: statusColorMap[task.status], color: colors.grey[800] }}
+                      sx={{
+                        backgroundColor: statusColorMap[task.status],
+                        color: colors.grey[800],
+                      }}
                     />
                   </TableCell>
                   <TableCell>
