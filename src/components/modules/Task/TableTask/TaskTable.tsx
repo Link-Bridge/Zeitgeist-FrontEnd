@@ -105,17 +105,11 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
                   </TableCell>
                   <TableCell>
                     <Chip
-                      label={String(task.workedHours)}
+                      label={task.workedHours ?? 0}
                       sx={{ backgroundColor: '#D6CFBE', color: colors.grey[700] }}
                     />
                   </TableCell>
-                  <TableCell
-                    sx={{
-                      color: '#fff',
-                    }}
-                  >
-                    {dateToShortString(String(task.endDate))}
-                  </TableCell>
+                  <TableCell>{dateToShortString(String(task.endDate))}</TableCell>
                   <TableCell>
                     <IconButton aria-label='more'>
                       <MoreHoriz />
