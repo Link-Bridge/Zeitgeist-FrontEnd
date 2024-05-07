@@ -93,7 +93,6 @@ const ProjectDetails = () => {
 
       if (updatedCompany) {
         setProjectStatus(newStatus);
-        console.log(updatedCompany);
       }
     } catch (error) {
       console.error('Error updating project status:', error);
