@@ -18,7 +18,7 @@ type ModalEditProps = {
   project: ProjectEntity;
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  refetch: () => {};
+  refetch: any;
 };
 
 /**
