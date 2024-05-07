@@ -6,6 +6,9 @@ import { EmployeeEntity } from '../../types/employee';
 import { Response } from '../../types/response';
 import { TaskDetail, UpdatedTask } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import { Box, Typography } from '@mui/joy';
+import Loader from '../../components/common/Loader';
+import colors from '../../colors';
 
 const UpdateTaskPage: React.FC = () => {
   const { id } = useParams();
@@ -49,6 +52,26 @@ const UpdateTaskPage: React.FC = () => {
       console.error(error);
     }
   };
+
+  if (!cachedTask) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading task
+        </Typography>
+        <Loader />
+      </Box>
+    );
+  }
 
   return (
     <UpdateTaskForm
