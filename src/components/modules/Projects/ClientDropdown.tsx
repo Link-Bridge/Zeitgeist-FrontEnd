@@ -11,10 +11,7 @@ interface ClientDropdownProps {
 
 const ClientDropdown = ({ defaultValue, handleChange, values, name }: ClientDropdownProps) => {
   return (
-    <Select
-      defaultValue={defaultValue}
-      onChange={(_, newVal) => handleChange(name, String(newVal))}
-    >
+    <Select value={defaultValue} onChange={(_, newVal) => handleChange(name, String(newVal))}>
       {values.map(value => {
         return (
           <Option key={value.id} value={value.id}>
