@@ -7,7 +7,7 @@ import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
-import { APIPath, EnvKeysValues, RequestMethods, RoutesPath } from '../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
@@ -93,7 +93,7 @@ async function getClientsNames(projects: ProjectEntity[]) {
   const reqs: Promise<globalThis.Response>[] = [];
   for (const id of names.keys()) {
     reqs.push(
-      fetch(`${EnvKeysValues.BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
+      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       })
     );
