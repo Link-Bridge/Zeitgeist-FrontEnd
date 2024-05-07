@@ -18,11 +18,11 @@ export default function CardContainer({ children }: CardContainerProps) {
       size='lg'
       variant='soft'
       sx={{
-        bgcolor: '#e1e1e1',
+        bgcolor: '#EFEFEF',
         maxWidth: '100%',
         transition: 'background-color 0.3s',
         '&:hover': {
-          bgcolor: '#c1c1c1',
+          bgcolor: '#DEDEDE',
           cursor: 'pointer',
         },
       }}
