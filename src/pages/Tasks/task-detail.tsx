@@ -1,3 +1,4 @@
+import { Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -7,11 +8,16 @@ import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
+
+function capitalize(data: string): string {
+  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
+}
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -50,7 +56,24 @@ const Task: React.FC = () => {
   }, [data]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading task
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
   }
 
   if (error) {
@@ -170,10 +193,12 @@ const Task: React.FC = () => {
                   </Box>
                 )}
 
-                <Box>
-                  <p style={{ fontSize: '.9rem' }}>Status</p>
-                  <StatusChip status={`${data.status || '-'}`} />
-                </Box>
+                {data.status && (
+                  <Box>
+                    <p style={{ fontSize: '.9rem' }}>Status</p>
+                    <StatusChip status={capitalize(data.status)} />
+                  </Box>
+                )}
               </Box>
 
               <br />
