@@ -1,7 +1,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useContext, useEffect, useState } from 'react';
+import { useContext, useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
@@ -23,8 +23,6 @@ const EditProject = () => {
   const { id } = useParams();
   const { setState } = useContext(SnackbarContext);
   const form = useNewProject();
-
-  const [companyName, setCompanyName] = useState<string>('');
 
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -66,7 +64,6 @@ const EditProject = () => {
         companies.forEach(company => {
           if (company.id == project?.idCompany) {
             form.formState.idCompany = company.id;
-            setCompanyName(company.name);
           }
         });
       }
