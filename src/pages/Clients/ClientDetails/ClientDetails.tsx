@@ -2,6 +2,7 @@ import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { useEffect, useState } from 'react';
 import DeleteModal from '../../../components/common/DeleteModal';
+import ArchiveModal from '../../../components/common/ArchiveModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { Response } from '../../../types/response';
@@ -38,7 +39,8 @@ const formatDate = (date: Date) => {
  */
 
 const ClientDetails = ({ clientId }: ClientDetailProps) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
@@ -49,6 +51,18 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
 
   const handleEditClick = () => {
     setEditModalOpen(true);
+  };
+
+  const handleArchiveClient = () => {
+    // update ui
+    setCompany(prev => {
+      if (prev === null) return null;
+
+      return {
+        ...prev,
+        archived: !prev.archived
+      }
+    })
   };
 
   useEffect(() => {
@@ -70,19 +84,30 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
     return <div>Error: {error.message}</div>;
   }
 
-  const ToggleModal = () => {
-    setOpen(!open);
+  const ToggleModalDelete = () => {
+    setOpenDelete(!openDelete);
+  };
+  const ToggleModalArchive = () => {
+    setOpenArchive(!openArchive);
   };
 
   return (
     <main className='bg-white rounded-xl p-6'>
       <DeleteModal
-        ToggleModal={ToggleModal}
-        open={open}
-        setOpen={setOpen}
+        ToggleModal={ToggleModalDelete}
+        open={openDelete}
+        setOpen={setOpenDelete}
         title={'Delete Client'}
         description={'Are you sure you want to delete this client?'}
       ></DeleteModal>
+      <ArchiveModal
+        ToggleModal={ToggleModalArchive}
+        open={openArchive}
+        setOpen={setOpenArchive}
+        title={'Archive Client'}
+        description={'Are you sure you want to archive this client?'}
+        handleArchiveClient={handleArchiveClient}
+      ></ArchiveModal>
       {company && !loading && (
         <section className='flex justify-between'>
           <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
@@ -109,12 +134,13 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
             <ArchiveOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
+              onClick={ToggleModalArchive}
             />
             <DeleteOutlineOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
               onClick={() => {
-                ToggleModal();
+                ToggleModalDelete();
               }}
             />
           </section>
