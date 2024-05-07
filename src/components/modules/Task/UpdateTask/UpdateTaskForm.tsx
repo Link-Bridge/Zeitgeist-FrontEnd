@@ -250,7 +250,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
       {/* Assigned Employee, Worked Hours */}
       <Grid container spacing={2}>
-        <Grid container xs={2} className="md mr-20">
+        <Grid container xs={2} className='md mr-20'>
           <Item>
             <Header>Assigned Employee</Header>
             <GenericDropdown
@@ -261,8 +261,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             />
           </Item>
         </Grid>
-        <Grid container xs={2} className="md">
-          <Item className="ml-20">
+        <Grid container xs={2} className='md'>
+          <Item className='ml-20'>
             <Header>Worked Hours</Header>
             <Input
               placeholder='0'

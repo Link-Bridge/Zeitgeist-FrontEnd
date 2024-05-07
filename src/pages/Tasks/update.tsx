@@ -1,14 +1,14 @@
+import { Box, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import colors from '../../colors';
+import Loader from '../../components/common/Loader';
 import UpdateTaskForm from '../../components/modules/Task/UpdateTask/UpdateTaskForm';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { Response } from '../../types/response';
 import { TaskDetail, UpdatedTask } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
-import { Box, Typography } from '@mui/joy';
-import Loader from '../../components/common/Loader';
-import colors from '../../colors';
 
 const UpdateTaskPage: React.FC = () => {
   const { id } = useParams();
