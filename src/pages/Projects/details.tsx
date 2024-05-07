@@ -30,7 +30,6 @@ const statusColorMap: Record<ProjectStatus, string> = {
   [ProjectStatus.POSTPONED]: colors.blue,
   [ProjectStatus.DONE]: colors.success,
   [ProjectStatus.CANCELLED]: colors.danger,
-  [ProjectStatus.DEFAULT]: '',
 };
 
 function dateParser(date: Date): string {
