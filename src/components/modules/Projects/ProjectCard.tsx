@@ -3,6 +3,7 @@ import colors from '../../../colors';
 import { ProjectAreas, ProjectStatus } from '../../../types/project';
 
 type CardProjectProps = {
+  id: string;
   name: string;
   status: ProjectStatus;
   department: ProjectAreas;

@@ -22,6 +22,7 @@ const NewTaskPage = () => {
 
   useEffect(() => {
     sendEmployeeRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -32,6 +33,7 @@ const NewTaskPage = () => {
 
   useEffect(() => {
     requestProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   const projectName = projectData?.name;

@@ -6,7 +6,7 @@ import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity } from '../../types/project';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
@@ -16,17 +16,13 @@ import UnarchiveIcon from '@mui/icons-material/Unarchive';
 
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
+import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import StatusChip from '../../components/common/StatusChip';
 
-import colors from '../../colors';
-
-type ProjectDetailsProps = {
-  setProjectId: (projectId: string) => void;
-};
-
 function dateParser(date: Date): string {
+  if (!date) return '';
   const arr = date.toString().split('-');
   const day = arr[2].substring(0, 2);
   const month = arr[1];
@@ -41,7 +37,7 @@ const chipStyle = {
   textTransform: 'lowercase',
 };
 
-const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
+const ProjectDetails = () => {
   const { id } = useParams();
   const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
@@ -64,18 +60,14 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
     RequestMethods.GET
   );
 
-  const [projectIsArchived, setProjectIsArchived] = useState<boolean>();
+  // const [projectIsArchived, setProjectIsArchived] = useState<boolean>();
 
   useEffect(() => {
-    if (!data) {
-      sendRequest();
-    }
-    if (data && !company) {
-      getCompany();
-    }
-    if (company) {
-      setCompanyName(company.data.name);
-    }
+    if (!data) sendRequest();
+    if (data && !company) getCompany();
+    if (company) setCompanyName(company.data.name);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company]);
 
   if (loading && loadingCompany) {
@@ -90,8 +82,9 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
     <>
       {open && (
         <ModalEditConfirmation
-          projectIsArchived={projectIsArchived}
-          setProjectIsArchived={setProjectIsArchived}
+          project={data}
+          // projectIsArchived={projectIsArchived}
+          // setProjectIsArchived={setProjectIsArchived}
           projectId={id}
           title='Archive Project'
           description='Are sure you want to archive this project?'
@@ -107,11 +100,7 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
           marginBottom: '10px',
         }}
       >
-        <Link
-          to='/projects'
-          className='ml-auto text-darkGold no-underline'
-          onClick={setProjectId('')}
-        >
+        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
           <div className='flex items-center'>
             <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
             {'Go Back'}
@@ -145,10 +134,12 @@ const ProjectDetails = ({ setProjectId }: ProjectDetailsProps) => {
                 />
               </Link>
 
-              <EditOutlinedIcon
-                sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                className='text-gold'
-              />
+              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
+                <EditOutlinedIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                  className='text-gold'
+                />
+              </Link>
             </section>
           </section>
 

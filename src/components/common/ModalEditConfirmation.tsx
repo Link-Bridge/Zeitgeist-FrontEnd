@@ -11,21 +11,23 @@ import Typography from '@mui/joy/Typography';
 import colors from '../../colors';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { RequestMethods } from '../../utils/constants';
 
 type ModalEditProps = {
-  setProjectIsArchived: React.Dispatch<React.SetStateAction<boolean>>;
+  project: ProjectEntity;
+  //   projectIsArchived: string;
+  //   setProjectIsArchived: React.Dispatch<React.SetStateAction<boolean>>;
   projectId: string;
   title: string;
   description: string;
   open: boolean;
-  projectIsArchived: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
 };
 
 const ModalEditConfirmation = ({
-  projectIsArchived,
-  setProjectIsArchived,
+  project,
+  //   projectIsArchived,
+  //   setProjectIsArchived,
   projectId,
   title,
   description,
@@ -35,7 +37,7 @@ const ModalEditConfirmation = ({
   const { setState } = useContext(SnackbarContext);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
-    `${APIPath.PROJECT_DETAILS}/${projectId}`,
+    `/project/edit/${projectId}`,
     RequestMethods.PUT
   );
 
@@ -55,9 +57,21 @@ const ModalEditConfirmation = ({
 
   const handleUpdate = async () => {
     const updatedProjectData = {
-      id: data?.id,
+      id: project?.id,
+      name: project?.name,
+      matter: project?.matter,
+      description: project?.description,
+      status: project?.status,
+      area: project?.area,
+      category: project.category,
+      idCompany: project.idCompany,
+      startDate: project.startDate,
+      endDate: project.endDate,
+      isChargable: project.isChargeable,
+      periodicity: project.periodicity,
     };
     await sendRequest({}, updatedProjectData);
+    console.log(project);
   };
 
   return (
@@ -125,7 +139,7 @@ const ModalEditConfirmation = ({
             }}
             onClick={() => {
               handleUpdate();
-              setProjectIsArchived(!projectIsArchived);
+              //   setProjectIsArchived(!projectIsArchived);
             }}
           >
             Archive

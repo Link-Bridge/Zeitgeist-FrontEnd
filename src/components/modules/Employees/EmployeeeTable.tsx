@@ -3,6 +3,7 @@ import { Avatar, Chip, IconButton, Option, Select, Table, selectClasses } from '
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
+import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
@@ -78,6 +79,9 @@ export default function EmployeeTable() {
     setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
   };
 
+  const { employee } = useContext(EmployeeContext);
+  const sessionEmployee = employee?.employee.id as string;
+
   return (
     <>
       {reqEmployees.loading ? (
@@ -140,15 +144,17 @@ export default function EmployeeTable() {
                       </Chip>
                     </td>
                     <td>
-                      <IconButton>
-                        <DeleteOutline
-                          onClick={() => {
-                            setCurrentEmployeeId(employee.id);
-                            setOpen(true);
-                          }}
-                          style={{ color: colors.gold }}
-                        />
-                      </IconButton>
+                      {sessionEmployee != employee.id && (
+                        <IconButton>
+                          <DeleteOutline
+                            onClick={() => {
+                              setCurrentEmployeeId(employee.id);
+                              setOpen(true);
+                            }}
+                            style={{ color: colors.gold }}
+                          />
+                        </IconButton>
+                      )}
                     </td>
                   </tr>
                 ))}

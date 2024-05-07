@@ -52,6 +52,7 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
 
   useEffect(() => {
     sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
