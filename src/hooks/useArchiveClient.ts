@@ -7,9 +7,13 @@ const useDeleteEmployee = () => {
 
   const archiveClient = async (id: string) => {
     try {
-      await axios.put(`${BASE_API_URL}/admin/archive/${id}`, {}, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
-      });
+      await axios.put(
+        `${BASE_API_URL}/admin/archive/${id}`,
+        {},
+        {
+          headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
+        }
+      );
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(new Error(err.response?.data?.message || err.message));

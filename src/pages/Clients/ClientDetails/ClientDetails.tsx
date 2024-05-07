@@ -1,8 +1,8 @@
 import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { useEffect, useState } from 'react';
-import DeleteModal from '../../../components/common/DeleteModal';
 import ArchiveModal from '../../../components/common/ArchiveModal';
+import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { Response } from '../../../types/response';
@@ -20,6 +20,7 @@ import EditClientFormModal from '../../../components/modules/Clients/EditClientF
 
 type ClientDetailProps = {
   clientId: string;
+  setFilteredClientsData: React.Dispatch<React.SetStateAction<CompanyEntity[]>>;
 };
 
 const formatDate = (date: Date) => {
@@ -38,7 +39,7 @@ const formatDate = (date: Date) => {
  * @returns {JSX.Element} Client details page
  */
 
-const ClientDetails = ({ clientId }: ClientDetailProps) => {
+const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) => {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
@@ -55,14 +56,25 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
 
   const handleArchiveClient = () => {
     // update ui
-    setCompany(prev => {
-      if (prev === null) return null;
+    setFilteredClientsData(prev => {
+      const aux = [];
 
-      return {
-        ...prev,
-        archived: !prev.archived
+      console.log('company?.id:', company?.id);
+      console.log('company?.name:', company?.name);
+
+      for (let i = 0; i < prev.length; i++) {
+        if (prev[i].id !== company?.id) {
+          aux.push(prev[i]);
+          continue;
+        }
+        aux.push({
+          ...prev[i],
+          archived: !prev[i].archived,
+        });
       }
-    })
+
+      return aux;
+    });
   };
 
   useEffect(() => {
@@ -104,8 +116,9 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
         ToggleModal={ToggleModalArchive}
         open={openArchive}
         setOpen={setOpenArchive}
-        title={'Archive Client'}
-        description={'Are you sure you want to archive this client?'}
+        id={company?.id}
+        title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
+        description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
         handleArchiveClient={handleArchiveClient}
       ></ArchiveModal>
       {company && !loading && (

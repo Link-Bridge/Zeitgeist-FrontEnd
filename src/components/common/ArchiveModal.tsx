@@ -99,7 +99,7 @@ export default function ArchiveModal({
               }}
               onClick={() => handleDelete()}
             >
-              Delete
+              {title}
             </Button>
           </Box>
         </Sheet>
