@@ -6,7 +6,7 @@ import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
 type MainProjectProps = {
   idProject: string;
@@ -29,7 +29,6 @@ const ProjectMain = ({ setProjectId }: MainProjectProps) => {
       if (req.data) {
         const data = await getClientsNames(req.data.data);
         setCompanyNames(data);
-        console.log(data);
       }
       setIsLoading(false);
     }
@@ -72,7 +71,7 @@ async function getClientsNames(projects: ProjectEntity[]) {
   const reqs: Promise<globalThis.Response>[] = [];
   for (const id of names.keys()) {
     reqs.push(
-      fetch(`http://localhost:4000/api/v1/company/${id}`, {
+      fetch(`${BASE_API_URL}/company/${id}`, {
         headers: { Authorization: `Bearer ${idToken}` },
       })
     );

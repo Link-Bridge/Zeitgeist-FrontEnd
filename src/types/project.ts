@@ -28,15 +28,16 @@ export enum ProjectAreas {
 }
 
 export enum ProjectStatus {
-  NOT_STARTED = 'Not started',
-  IN_PROCESS = 'In process',
-  UNDER_REVISION = 'Under revision',
-  DELAYED = 'Delayed',
-  POSTPONED = 'Postponed',
-  DONE = 'Done',
   CANCELLED = 'Cancelled',
-  IN_QUOTATION = 'In quotation',
+  NOT_STARTED = 'Not started',
+  DELAYED = 'Delayed',
+  IN_PROGRESS = 'In progress',
   ACCEPTED = 'Accepted',
+  DONE = 'Done',
+  POSTPONED = 'Postponed',
+  IN_QUOTATION = 'In quotation',
+  UNDER_REVISION = 'Under revision',
+  DEFAULT = '-',
 }
 
 export interface ProjectEntity {

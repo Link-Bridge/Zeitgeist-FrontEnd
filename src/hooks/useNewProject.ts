@@ -2,6 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
 import { ProjectPeriodicity } from '../types/project';
+import { BASE_API_URL } from '../utils/constants';
 
 export interface FormState {
   projectName: string;
@@ -81,7 +82,7 @@ const useNewProject = () => {
         return;
       }
       setIsPosting(true);
-      const res = await axios.post('http://localhost:4000/api/v1/project/create', {
+      const res = await axios.post(`${BASE_API_URL}/project/create`, {
         ...formState,
         status: '-',
       });
