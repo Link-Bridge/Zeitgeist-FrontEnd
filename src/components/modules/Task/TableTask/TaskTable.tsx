@@ -19,11 +19,12 @@ import { TaskStatus } from '../../../../types/task-status';
 const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
   [TaskStatus.IN_PROGRESS]: '#FFE598',
-  [TaskStatus.UNDER_REVISSION]: '#D7B2F0',
+  [TaskStatus.UNDER_REVISION]: '#D7B2F0',
   [TaskStatus.DELAYED]: '#FFC774',
   [TaskStatus.POSTPONED]: '#A0C5E8',
   [TaskStatus.DONE]: '#6AA84F',
   [TaskStatus.CANCELLED]: '#FF7A7A',
+  [TaskStatus.SELECT_OPTION]: '#D6CFBE',
 };
 
 interface TaskTableProps {
