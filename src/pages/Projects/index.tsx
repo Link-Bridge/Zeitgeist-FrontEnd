@@ -9,6 +9,7 @@ const Projects = () => {
   return (
     <Routes>
       <Route path='/' element={<ProjectMain />} />
+      <Route path='/' element={<ProjectMain />} />
       <Route path='/new' element={<NewProject />} />
       <Route path='/edit/:id' element={<EditProject />} />
       <Route path='/details/:id' element={<ProjectDetails />} />

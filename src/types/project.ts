@@ -54,4 +54,5 @@ export interface ProjectEntity {
   isChargeable: boolean;
   created_at: Date;
   idCompany: string;
+  payed: boolean;
 }

@@ -13,10 +13,11 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
-import { Box, Card } from '@mui/joy';
-import { Chip } from '@mui/material';
+import { Box, Card, Chip, Option, Select } from '@mui/joy';
+import axios from 'axios';
 import AddButton from '../../components/common/AddButton';
 import StatusChip from '../../components/common/StatusChip';
+import InfoChip from '../../components/modules/Projects/InfoChip';
 
 function dateParser(date: Date): string {
   if (!date) return '';
@@ -41,6 +42,7 @@ const ProjectDetails = () => {
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
+  const [updating, setUpdating] = useState(false);
 
   const {
     data: company,
@@ -67,6 +69,29 @@ const ProjectDetails = () => {
   if (error && errorCompany) {
     return <div>Error loading task</div>;
   }
+
+  async function changePayed(projectId: string, payed: boolean) {
+    if (data) {
+      setUpdating(true);
+      const res = await axios.put(
+        `http://localhost:4000/api/v1/project/edit/${projectId}`,
+        { payed, id: projectId },
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+      );
+      data.payed = res.data.data.payed;
+      setUpdating(false);
+    }
+  }
+
+  const ProjectDetailsChips = [
+    { label: 'Hours', value: data?.totalHours },
+    { label: 'Client', value: companyName },
+    { label: 'Matter', value: data?.matter },
+    { label: 'Category', value: data?.category },
+    { label: 'Area', value: data?.area },
+    { label: 'Periodicity', value: data?.periodicity },
+    { label: 'Chargeable', value: data?.isChargeable ? 'Yes' : 'No' },
+  ];
 
   return (
     <>
@@ -117,46 +142,27 @@ const ProjectDetails = () => {
               {data && data.status !== undefined && <StatusChip status={data.status} />}
             </div>
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Hours</p>
-              <Chip
-                sx={{
-                  bgcolor: colors.extra,
-                  fontSize: '1rem',
-                }}
-                label={data?.totalHours}
-              />
-            </div>
+            {ProjectDetailsChips.map((chip, i) => {
+              return <InfoChip key={i} label={chip.label} value={String(chip.value ?? '')} />;
+            })}
 
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Client</p>
-              <Chip sx={chipStyle} label={companyName} />
-            </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Matter</p>
-              <Chip sx={chipStyle} label={data?.matter} />
-            </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Category</p>
-              <Chip sx={chipStyle} label={data?.category} />
-            </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Area</p>
-              <Chip sx={chipStyle} label={data?.area} />
-            </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Periodicity</p>
-              <Chip sx={chipStyle} label={data?.periodicity} />
-            </div>
-
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Chargeable</p>
-              <Chip sx={chipStyle} label={data?.isChargeable ? 'Yes' : 'No'} />
-            </div>
+            {data?.isChargeable && (
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Payed</p>
+                <Chip
+                  component={Select}
+                  sx={chipStyle}
+                  value={data?.payed ?? false}
+                  onChange={(_, newVal) => {
+                    changePayed(id ?? '', Boolean(newVal));
+                  }}
+                  disabled={updating}
+                >
+                  <Option value={true}>Yes</Option>
+                  <Option value={false}>No</Option>
+                </Chip>
+              </div>
+            )}
           </div>
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
