@@ -158,7 +158,7 @@ const ProjectDetails = () => {
                     onValueChange={handleStatusChange}
                     defaultValue={projectStatus}
                     colorMap={statusColorMap}
-                    placeholder='Select the project status ...'
+                    placeholder='Select status ...'
                   />
                 )}
               </div>
