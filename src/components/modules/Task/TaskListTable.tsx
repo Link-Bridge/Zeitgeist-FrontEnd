@@ -1,16 +1,14 @@
-import { Table } from '@mui/joy';
-
-import CircularProgress from '@mui/joy/CircularProgress';
-
 import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Table } from '@mui/joy';
+import CircularProgress from '@mui/joy/CircularProgress';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
 import { TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
 import ClickableChip from '../../common/DropDown';
-
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 
 type TaskListTableProps = {
   projectId: string;
@@ -18,7 +16,7 @@ type TaskListTableProps = {
 
 const TaskListTable = ({ projectId }: TaskListTableProps) => {
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
-
+  const navigate = useNavigate();
   const formatDate = (date: Date) => {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
     const formattedDate = new Date(date).toLocaleDateString(options);
@@ -37,6 +35,10 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
     `/tasks/project/${projectId}`,
     RequestMethods.GET
   );
+
+  const handleClick = (id: string) => {
+    navigate(`/tasks/${id}`);
+  };
 
   useEffect(() => {
     sendRequest();
@@ -92,7 +94,9 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
           <tbody>
             {tasks.map(task => (
               <tr key={task.id}>
-                <td>{task.title}</td>
+                <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
+                  {task.title}
+                </td>
                 <td>
                   <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
                 </td>
