@@ -41,6 +41,7 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
   const [open, setOpen] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
+  const [refetch, setRefetch] = useState(false);
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
@@ -53,7 +54,7 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
   useEffect(() => {
     sendRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refetch]);
 
   useEffect(() => {
     if (data && data.data) {
@@ -102,7 +103,7 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
                 open={editModalOpen}
                 setOpen={setEditModalOpen}
                 clientData={company}
-                setRefetch={() => {}}
+                setRefetch={setRefetch}
               />
             )}
             <ArchiveOutlinedIcon

@@ -87,7 +87,7 @@ const EditClientFormModal = ({
       taxResidence: companyTaxResidence,
     };
 
-    await sendRequest({}, updatedClientData);
+    await sendRequest({ method: 'PUT' }, updatedClientData);
   };
   return (
     <Modal
