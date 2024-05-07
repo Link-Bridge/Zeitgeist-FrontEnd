@@ -73,7 +73,23 @@ const EditClientFormModal = ({
       !companyConstitution ||
       !companyTaxResidence
     ) {
-      setState({ open: true, message: 'The name field is required.', type: 'danger' });
+      setState({ open: true, message: 'All fields are required.', type: 'danger' });
+      return;
+    }
+
+    if (companyPhone.length < 8) {
+      setState({
+        open: true,
+        message: 'Phone number must have at least 8 characters.',
+        type: 'danger',
+      });
+      return;
+    } else if (companyPhone.length > 15) {
+      setState({
+        open: true,
+        message: 'Phone number must have at most 15 characters.',
+        type: 'danger',
+      });
       return;
     }
 
@@ -87,7 +103,7 @@ const EditClientFormModal = ({
       taxResidence: companyTaxResidence,
     };
 
-    await sendRequest({ method: 'PUT' }, updatedClientData);
+    await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
   };
   return (
     <Modal
@@ -172,6 +188,7 @@ const EditClientFormModal = ({
               variant='outlined'
               value={companyTaxResidence}
               onChange={e => setCompanyTaxResidence(e.target.value)}
+              inputProps={{ maxLength: 13 }}
             />
           </Box>
 
