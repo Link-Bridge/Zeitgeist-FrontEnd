@@ -1,13 +1,12 @@
 import Box from '@mui/joy/Box';
-import Link from '@mui/joy/Link';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
-import left_arrow from '../../assets/icons/left_arrow.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import GoBack from '../../components/common/GoBack';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import Update from '../../pages/Tasks/update';
@@ -67,19 +66,7 @@ const Task: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <img src={left_arrow} alt='Go back' className='w-3.5' />
-        <Link
-          underline='none'
-          className='ml-auto'
-          sx={{
-            color: colors.darkGold,
-            '&:hover': {
-              color: colors.darkerGold,
-            },
-          }}
-        >
-          &nbsp;Go Back
-        </Link>
+        <GoBack path={'/tasks'} />
       </Box>
 
       <br />

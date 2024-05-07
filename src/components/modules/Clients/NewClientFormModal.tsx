@@ -113,6 +113,22 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if (companyPhone.length < 8) {
+      setState({
+        open: true,
+        message: 'Phone number must have at least 8 characters',
+        type: 'danger',
+      });
+      return;
+    } else if (companyPhone.length > 15) {
+      setState({
+        open: true,
+        message: 'Phone number must have at most 15 characters',
+        type: 'danger',
+      });
+      return;
+    }
+
     if (!validateForm())
       return setState({ open: true, message: 'All fields are required', type: 'danger' });
 

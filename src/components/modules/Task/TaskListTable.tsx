@@ -40,6 +40,7 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
 
   useEffect(() => {
     sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {

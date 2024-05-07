@@ -1,15 +1,15 @@
 import { Box, FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
-import React, { useState } from 'react';
+import React, { useEffect, useState } from 'react';
 
 interface GenericDropdownProps<T extends string | number>
   extends Omit<SelectProps<T>, 'onChange' | 'value'> {
   backgroundColor?: string;
   options: T[];
-  selectedOption?: T;
   onValueChange: (value: T) => void;
   renderValue?: (value: T) => React.ReactNode;
   placeholder?: string;
   colorMap?: Record<T, string>;
+  defaultValue?: T;
 }
 
 /**
@@ -29,6 +29,7 @@ interface GenericDropdownProps<T extends string | number>
  *                                    option is selected
  * @param props.colorMap: Record<T, string> - Optional color map for the
  *                                            options in the dropdown
+ * @param props.defaultValue: T - Optional default value for the dropdown
  *
  * @returns {TSX.element} - The dropdown component
  */
@@ -39,9 +40,9 @@ const GenericDropdown = <T extends string | number>({
   renderValue,
   placeholder,
   colorMap,
-  selectedOption,
+  defaultValue,
 }: GenericDropdownProps<T>) => {
-  const [option, setOptions] = useState<T | ''>(selectedOption || '');
+  const [option, setOptions] = useState<T | ''>(defaultValue ?? '');
   const [isEmpty, setIsEmpty] = useState(true);
 
   const handleChange = (event: SelectChangeEvent<T>) => {
@@ -54,6 +55,10 @@ const GenericDropdown = <T extends string | number>({
   const handleOpen = () => {
     setIsEmpty(false);
   };
+
+  useEffect(() => {
+    setOptions(defaultValue ?? '');
+  }, [defaultValue]);
 
   return (
     <FormControl>

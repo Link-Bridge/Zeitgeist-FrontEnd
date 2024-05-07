@@ -24,7 +24,6 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
-  CLIENT = 'Client',
 }
 
 export enum ProjectStatus {
@@ -52,6 +51,13 @@ export interface ProjectEntity {
   totalHours: number;
   periodicity: ProjectPeriodicity;
   isChargeable: boolean;
+  isArchived: boolean;
   created_at: Date;
   idCompany: string;
+}
+
+export enum ProjectFilters {
+  ARCHIVED = 'Archived',
+  NOT_ARCHIVED = 'Not Archived',
+  ALL = 'All',
 }
