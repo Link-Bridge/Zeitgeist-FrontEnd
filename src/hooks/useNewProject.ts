@@ -2,7 +2,7 @@ import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
 import { ProjectPeriodicity } from '../types/project';
-import { APIPath, EnvKeysValues } from '../utils/constants';
+import { APIPath, BASE_API_URL } from '../utils/constants';
 
 export interface FormState {
   id?: string;
@@ -99,7 +99,7 @@ const useNewProject = () => {
         Authorization: `Bearer ${idToken}`,
       };
       const res = await axios.post(
-        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/create`,
+        `${BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
           status: '-',
@@ -128,7 +128,6 @@ const useNewProject = () => {
     try {
       if (!valiateForm(formState, setError)) return;
 
-      console.log(formState);
       setIsPosting(true);
       const idToken = sessionStorage.getItem('idToken');
       const headers = {
@@ -136,7 +135,7 @@ const useNewProject = () => {
         Authorization: `Bearer ${idToken}`,
       };
       const res = await axios.put(
-        `${EnvKeysValues.BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
+        `${BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
         {
           ...formState,
           status: '-',
