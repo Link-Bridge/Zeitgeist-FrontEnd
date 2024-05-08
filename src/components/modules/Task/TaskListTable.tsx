@@ -7,6 +7,7 @@ import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
 import { Task, TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
+import { formatDate } from '../../../utils/methods';
 import DeleteModal from '../../common/DeleteModal';
 import ClickableChip from '../../common/DropDown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
@@ -14,32 +15,33 @@ import TaskActionsMenu from '../../common/TaskActionsMenu';
 type TaskListTableProps = {
   projectId: string;
   onDelete: (id: string) => void;
+  setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
-const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
+const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
-
-  const navigate = useNavigate();
-  const formatDate = (date: Date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const formattedDate = new Date(date).toLocaleDateString(options);
-    return formattedDate;
-  };
-
-  const formatStatus = (status: string): string => {
-    const words = status.split(' ');
-    const camelCaseWords = words.map(word => {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    });
-    return camelCaseWords.join(' ');
-  };
 
   const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail>>(
     `/tasks/project/${projectId}`,
     RequestMethods.GET
   );
+
+  useEffect(() => {
+    if (!data) sendRequest();
+    if (data && data.data) {
+      const tasks = data.data;
+      setTasks(tasks);
+
+      setTotalProjectHours(() =>
+        tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
 
   const handleClick = (id: string) => {
     navigate(`/tasks/${id}`);
@@ -50,16 +52,13 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
     setDeleteDialogOpen(true);
   };
 
-  useEffect(() => {
-    sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (data && data.data) {
-      setTasks(data.data);
-    }
-  }, [data]);
+  const formatStatus = (status: string): string => {
+    const words = status.split(' ');
+    const camelCaseWords = words.map(word => {
+      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
+    });
+    return camelCaseWords.join(' ');
+  };
 
   if (loading) {
     return (
@@ -110,7 +109,7 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
                 <td>
                   <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
                 </td>
-                <td>{formatDate(task.endDate)}</td>
+                <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}

@@ -20,6 +20,7 @@ import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
+import { formatDate } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, string> = {
   [ProjectStatus.ACCEPTED]: colors.gold,
@@ -33,15 +34,6 @@ const statusColorMap: Record<ProjectStatus, string> = {
   [ProjectStatus.CANCELLED]: colors.danger,
 };
 
-function dateParser(date: Date): string {
-  if (!date) return '';
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}/${month}/${year}`;
-}
-
 const chipStyle = {
   bgcolor: colors.lighterGray,
   fontSize: '1rem',
@@ -52,6 +44,7 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
+  const [totalHours, setTotalHours] = useState<number>(0);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -84,6 +77,7 @@ const ProjectDetails = () => {
     if (company) {
       setCompanyName(company.data.name);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company, updatedCompany, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
@@ -180,7 +174,7 @@ const ProjectDetails = () => {
                     bgcolor: colors.extra,
                     fontSize: '1rem',
                   }}
-                  label={data.totalHours ? data.totalHours : '0'}
+                  label={totalHours}
                 />
               </div>
 
@@ -219,12 +213,12 @@ const ProjectDetails = () => {
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
+              <p className='ml-3'>Start Date: {data?.startDate && formatDate(data?.startDate)}</p>
             </div>
 
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
+              <p className='ml-3'>End Date: {data?.startDate && formatDate(data?.endDate)}</p>
             </div>
           </Box>
         </section>
@@ -237,7 +231,11 @@ const ProjectDetails = () => {
         </Link>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id ? id : ''} onDelete={handleDeleteTask} />
+        <TaskListTable
+          projectId={id ? id : ''}
+          onDelete={handleDeleteTask}
+          setTotalProjectHours={setTotalHours}
+        />
       </Card>
     </>
   );
