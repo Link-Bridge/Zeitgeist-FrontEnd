@@ -1,4 +1,3 @@
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
 import { useEffect, useState } from 'react';
@@ -8,6 +7,7 @@ import { Response } from '../../../types/response';
 import { Task, TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
+import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import ClickableChip from '../../common/DropDown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
@@ -88,8 +88,7 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     <Table>
       {data?.data.length === 0 && (
         <div className='w-full flex flex-col items-center justify-center my-20'>
-          <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
-          <p className='mt-4'>No tasks associated to this company were found.</p>
+          <ComponentPlaceholder text='No tasks associated to this company were found.' />
         </div>
       )}
       {data && data.data && data.data.length !== 0 && (

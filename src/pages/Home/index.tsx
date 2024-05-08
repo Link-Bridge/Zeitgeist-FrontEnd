@@ -59,7 +59,7 @@ const Home = () => {
             ))}
           </section>
         ) : (
-          <ComponentPlaceholder />
+          <ComponentPlaceholder text='No projects were found' />
         )}
       </section>
       <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
@@ -75,7 +75,7 @@ const Home = () => {
             ))}
           </Box>
         ) : (
-          <ComponentPlaceholder />
+          <ComponentPlaceholder text='No clients were found' />
         )}
       </section>
     </main>

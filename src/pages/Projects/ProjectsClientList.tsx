@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
@@ -54,7 +55,7 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error.message}</div>}
 
-      {projectsGroup.length > 0 && (
+      {projectsGroup.length > 0 ? (
         <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 rounded-xl mt-6'>
           {projectsGroup.map(project => (
             <Link
@@ -66,6 +67,10 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
             </Link>
           ))}
         </section>
+      ) : (
+        !loading && (
+          <ComponentPlaceholder text='No projects associated to this client were found.' />
+        )
       )}
     </main>
   );
