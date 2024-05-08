@@ -350,7 +350,7 @@ const ProjectReport: React.FC = () => {
                     .filter(([key]) => key !== 'total')
                     .map(([item, value]) => {
                       return (
-                        <>
+                        <Box key={item}>
                           <Grid container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
                             <Grid xs={3}>
                               <p>{keyMap.get(item)}</p>
@@ -382,7 +382,7 @@ const ProjectReport: React.FC = () => {
                               <p>{Math.round((value * 100) / totalTasks)}%</p>
                             </Grid>
                           </Grid>
-                        </>
+                        </Box>
                       );
                     })}
               </Box>
@@ -401,7 +401,7 @@ const ProjectReport: React.FC = () => {
             >
               {report.tasks?.map(item => {
                 return (
-                  <>
+                  <Box key={item.id}>
                     <Box key={item.title}>
                       <h3
                         style={{
@@ -507,7 +507,7 @@ const ProjectReport: React.FC = () => {
                     </Box>
                     <Divider />
                     <br />
-                  </>
+                  </Box>
                 );
               })}
             </Box>

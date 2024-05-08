@@ -1,7 +1,7 @@
 import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
 import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
@@ -43,7 +43,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   employees,
   data,
 }: UpdateTaskFormProps): JSX.Element => {
-  const { idTask } = useParams();
+  const idTask = data.id;
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
@@ -159,7 +159,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       await onSubmit(payload);
       setState({ open: true, message: 'Task updated successfully.', type: 'success' });
       setTimeout(() => {
-        navigate(RoutesPath.TASKS);
+        navigate(RoutesPath.TASKS + '/' + idTask);
       }, 2000);
     } catch (error) {
       setState({ open: true, message: 'Failed to update task.', type: 'danger' });
@@ -167,7 +167,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleCancel = () => {
-    navigate(RoutesPath.TASKS);
+    navigate(RoutesPath.TASKS + '/' + idTask);
   };
 
   const hasErrors = () => {
