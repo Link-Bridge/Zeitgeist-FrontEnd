@@ -15,7 +15,7 @@ const Layout = ({ children }: LayoutProps) => {
 
   const pathToText = () => {
     if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
-    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Clients Details';
+    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
     if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
     if (location.pathname.startsWith(`${RoutesPath.TASKS}/update`)) return 'Modify Task';
