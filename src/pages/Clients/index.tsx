@@ -22,6 +22,7 @@ const Clients = () => {
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
 
+  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
     setFilteredClientsData(companies);
 

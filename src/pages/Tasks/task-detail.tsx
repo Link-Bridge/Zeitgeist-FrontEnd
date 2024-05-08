@@ -6,9 +6,11 @@ import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
+import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
@@ -47,6 +49,20 @@ const Task: React.FC = () => {
     navigate(`/tasks/update/${id}`);
   };
 
+  const deleteTask = useDeleteTask();
+  const onDelete = async (taskId: string) => {
+    try {
+      await deleteTask.deleteTask(taskId ? taskId : '');
+      navigate(-1);
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<TaskDetail | null>(null);
+
   useEffect(() => {
     if (!data) {
       sendRequest();
@@ -84,7 +100,7 @@ const Task: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <GoBack path={'/tasks'} />
+        <GoBack />
       </Box>
 
       <br />
@@ -134,7 +150,9 @@ const Task: React.FC = () => {
                       {showUpdate && <Update />}
                     </button>
 
-                    <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    <button onClick={() => setTaskToDelete(data)}>
+                      <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    </button>
                   </Box>
                 </Box>
               </Box>
@@ -211,21 +229,19 @@ const Task: React.FC = () => {
                     <ColorChip label={data.employeeFirstName} color={`${colors.null}`}></ColorChip>
                   </Box>
                 )}
-
                 {data.waitingFor && (
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Waiting for</p>
                     <ColorChip label={data.waitingFor} color={`${colors.null}`}></ColorChip>
                   </Box>
                 )}
-
                 {data.workedHours && (
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
                     <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
                   </Box>
                 )}
-
+                2 2
                 <Box>
                   <p style={{ fontSize: '.9rem' }}>Project</p>
                   <ColorChip
@@ -237,6 +253,18 @@ const Task: React.FC = () => {
 
               <br />
             </Box>
+
+            <DeleteModal
+              open={taskToDelete !== null}
+              setOpen={() => setTaskToDelete(null)}
+              title='Confirm Deletion'
+              description='Are you sure you want to delete this task?'
+              id={taskToDelete?.id || ''}
+              handleDeleteEmployee={(id: string) => {
+                onDelete(id);
+                setTaskToDelete(null);
+              }}
+            />
           </>
         ) : undefined}
       </main>
