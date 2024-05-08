@@ -1,12 +1,15 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
+import { Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
-import { TaskDetail } from '../../../types/task';
+import { Task, TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
+import CancelButton from '../../common/CancelButton';
+import DeleteButton from '../../common/DeleteButton';
 import ClickableChip from '../../common/DropDown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
 
@@ -17,6 +20,9 @@ type TaskListTableProps = {
 
 const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+
   const navigate = useNavigate();
   const formatDate = (date: Date) => {
     const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -39,6 +45,18 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
 
   const handleClick = (id: string) => {
     navigate(`/tasks/${id}`);
+  };
+
+  const handleDeleteButtonClick = (task: Task) => {
+    setTaskToDelete(task);
+    setDeleteDialogOpen(true);
+  };
+
+  const handleDeleteConfirmed = async () => {
+    if (taskToDelete) {
+      await onDelete(taskToDelete.id);
+      setDeleteDialogOpen(false);
+    }
   };
 
   const deleteTask = async (taskId: string) => {
@@ -108,11 +126,27 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
                 </td>
                 <td>{formatDate(task.endDate)}</td>
                 <td>
-                  <TaskActionsMenu taskId={task.id} onDelete={deleteTask} onEdit={() => {}} />
+                  <TaskActionsMenu
+                    task={task as Task}
+                    onEdit={() => handleClick(task.id)}
+                    onOpenDeleteDialog={handleDeleteButtonClick}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
+
+          <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
+            <DialogTitle>Confirm Deletion</DialogTitle>
+            <DialogContent>
+              <Typography>Are you sure you want to delete this task?</Typography>
+            </DialogContent>
+
+            <DialogActions>
+              <CancelButton onClick={() => setDeleteDialogOpen(false)}>Cancel</CancelButton>
+              <DeleteButton onClick={handleDeleteConfirmed}>Delete</DeleteButton>
+            </DialogActions>
+          </Dialog>
         </>
       )}
     </Table>
