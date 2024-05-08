@@ -128,6 +128,7 @@ const useNewProject = () => {
     try {
       if (!valiateForm(formState, setError)) return;
 
+      setIsPosting(true);
       const idToken = sessionStorage.getItem('idToken');
       const headers = {
         'Content-Type': 'application/json',
