@@ -5,6 +5,7 @@ import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
+import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
@@ -40,6 +41,16 @@ const Tasks = (): JSX.Element => {
     loading: projectLoading,
   } = useHttp<Response<ProjectEntity>>(`/project/`, RequestMethods.GET);
 
+  const deleteTask = useDeleteTask();
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTask.deleteTask(taskId);
+      fetchTasks();
+    } catch (error) {
+      console.error(error);
+    }
+  };
+
   useEffect(() => {
     if (employeeId) fetchTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -54,14 +65,20 @@ const Tasks = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
-  const tasksPerProject = projectData?.data
-    ?.map(project => {
-      const projectTasks = tasks
-        ?.filter(task => task.idProject === project.id)
-        .sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
-      return { project, tasks: projectTasks };
+  const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
+    tasks.filter(task => task.idProject === projectId);
+
+  const sortTasksByEndDate = (tasks: Task[]): Task[] =>
+    tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
+
+  const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
+    .map(project => {
+      const projectTasks = filterTasksByProjectId(tasks, project.id);
+      const sortedTasks = sortTasksByEndDate(projectTasks);
+
+      return { project, tasks: sortedTasks };
     })
-    .filter(item => item.tasks.length > 0);
+    .filter(({ tasks }) => tasks.length > 0);
 
   if (taskError || projectError) {
     return <ErrorView error={taskError || projectError} />;
@@ -138,7 +155,7 @@ const Tasks = (): JSX.Element => {
                       backgroundColor: colors.grey[100],
                     }}
                   >
-                    <TaskTable tasks={tasks || []} />
+                    <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
                   </Box>
                 )}
               </Box>
