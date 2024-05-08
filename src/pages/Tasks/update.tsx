@@ -21,6 +21,7 @@ const UpdateTaskPage: React.FC = () => {
 
   useEffect(() => {
     sendEmployeeRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -38,6 +39,7 @@ const UpdateTaskPage: React.FC = () => {
     if (!cachedTask) {
       sendGetTaskRequest();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cachedTask]);
 
   const { sendRequest: sendUpdateTaskRequest } = useHttp<UpdatedTask>(

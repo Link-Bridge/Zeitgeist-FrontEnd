@@ -8,19 +8,39 @@ import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
 import { TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
+import { formatDate } from '../../../utils/methods';
 import ClickableChip from '../../common/DropDown';
 
 type TaskListTableProps = {
   projectId: string;
+  setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
-const TaskListTable = ({ projectId }: TaskListTableProps) => {
-  const [tasks, setTasks] = useState<TaskDetail[]>([]);
+const TaskListTable = ({ projectId, setTotalProjectHours }: TaskListTableProps) => {
   const navigate = useNavigate();
-  const formatDate = (date: Date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const formattedDate = new Date(date).toLocaleDateString(options);
-    return formattedDate;
+  const [tasks, setTasks] = useState<TaskDetail[]>([]);
+
+  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail>>(
+    `/tasks/project/${projectId}`,
+    RequestMethods.GET
+  );
+
+  useEffect(() => {
+    if (!data) sendRequest();
+    if (data && data.data) {
+      const tasks = data.data;
+      setTasks(tasks);
+
+      setTotalProjectHours(() =>
+        tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  const handleClick = (id: string) => {
+    navigate(`/tasks/${id}`);
   };
 
   const formatStatus = (status: string): string => {
@@ -30,26 +50,6 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
     });
     return camelCaseWords.join(' ');
   };
-
-  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail[]>>(
-    `/tasks/project/${projectId}`,
-    RequestMethods.GET
-  );
-
-  const handleClick = (id: string) => {
-    navigate(`/tasks/${id}`);
-  };
-
-  useEffect(() => {
-    sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (data && data.data) {
-      setTasks(data.data);
-    }
-  }, [data]);
 
   if (loading) {
     return (
@@ -100,7 +100,7 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
                 <td>
                   <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
                 </td>
-                <td>{formatDate(task.endDate)}</td>
+                <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
                   <MoreHorizIcon style={{ color: '#636B74' }} />
                 </td>
