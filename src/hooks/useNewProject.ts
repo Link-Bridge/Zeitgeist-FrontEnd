@@ -93,7 +93,7 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = sessionStorage.getItem('idToken');
+      const idToken = localStorage.getItem('idToken');
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`,
@@ -129,7 +129,7 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = sessionStorage.getItem('idToken');
+      const idToken = localStorage.getItem('idToken');
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`,

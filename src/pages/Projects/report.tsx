@@ -75,7 +75,7 @@ const ProjectReport: React.FC = () => {
     const doFetch = async (): Promise<void> => {
       const data = await axios.get(
         `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
-        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
 
       setReport(data.data);
@@ -96,7 +96,7 @@ const ProjectReport: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
-  useEffect(() => {}, [handleClose]);
+  useEffect(() => { }, [handleClose]);
 
   if (reqReport.loading) {
     return (

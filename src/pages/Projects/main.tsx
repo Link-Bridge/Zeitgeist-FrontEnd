@@ -61,7 +61,7 @@ const ProjectMain = () => {
           onValueChange={value => handleFilter(value)}
         />
         <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => {}}></AddButton>
+          <AddButton onClick={() => { }}></AddButton>
         </Link>
       </section>
       <section className='flex-1 overflow-y-scroll'>
@@ -87,7 +87,7 @@ const ProjectMain = () => {
 };
 
 async function getClientsNames(projects: ProjectEntity[]) {
-  const idToken = sessionStorage.getItem('idToken');
+  const idToken = localStorage.getItem('idToken');
   const names = new Map<string, string>();
   projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
   const reqs: Promise<globalThis.Response>[] = [];
