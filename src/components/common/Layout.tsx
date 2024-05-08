@@ -11,7 +11,6 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
-
   const { employee } = useContext(EmployeeContext);
 
   const pathToText = () => {
