@@ -48,22 +48,21 @@ const ClientDetails = () => {
     setEditModalOpen(true);
   };
 
-  // Hay que arreglar esto después
-  // const handleArchiveClient = () => {
-  //   // update ui
-  //   setFilteredClientsData(prev => {
-  //     const aux = [];
+  const handleArchiveClient = () => {
+    // update ui
+    setFilteredClientsData(prev => {
+      const aux = [];
 
-  //     for (let i = 0; i < prev.length; i++) {
-  //       if (prev[i].id !== company?.id) {
-  //         aux.push(prev[i]);
-  //         continue;
-  //       }
-  //       aux.push({
-  //         ...prev[i],
-  //         archived: !prev[i].archived,
-  //       });
-  //     }
+      for (let i = 0; i < prev.length; i++) {
+        if (prev[i].id !== company?.id) {
+          aux.push(prev[i]);
+          continue;
+        }
+        aux.push({
+          ...prev[i],
+          archived: !prev[i].archived,
+        });
+      }
 
   //     return aux;
   //   });
