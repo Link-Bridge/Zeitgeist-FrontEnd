@@ -4,6 +4,7 @@ import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
+import NotFoundPage from './components/common/NotFound';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
@@ -87,7 +88,6 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
-
                 <Route
                   path={APIPath.CREATE_TASK}
                   element={
@@ -97,6 +97,7 @@ function App() {
                   }
                 />
               </Route>
+              <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </Router>
           <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>

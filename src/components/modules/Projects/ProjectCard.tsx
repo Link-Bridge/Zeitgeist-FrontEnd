@@ -40,7 +40,7 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
             color: colors.darkerGold,
           }}
         >
-          {ProjectAreas[department]}
+          {department}
         </Chip>
       </section>
     </section>
