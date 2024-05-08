@@ -89,7 +89,7 @@ const Task: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <GoBack path={'/tasks'} />
+        <GoBack />
       </Box>
 
       <br />

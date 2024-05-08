@@ -133,7 +133,7 @@ const ProjectReport: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <GoBack path={`/projects/details/${id}`} />
+        <GoBack />
       </Box>
 
       <br />
