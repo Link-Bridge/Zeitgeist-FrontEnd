@@ -32,9 +32,21 @@ const Home = () => {
         <h1 className='text-[34px]'>MY PROJECTS </h1>
         <ComponentPlaceholder />
       </section>
-      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg'>
-        <h1 className='text-[34px]'>CLIENTS</h1>
-        <ComponentPlaceholder />
+      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
+        <h2 className='text-[34px]'>CLIENTS</h2>
+        {isLoading ? (
+          <Loader />
+        ) : homeData?.companies.length ? (
+          <Box sx={{ gap: 1, display: 'flex', flexDirection: 'column' }}>
+            {homeData?.companies.map(company => (
+              <Link to={`/clients/${company.id}`}>
+                <ClientCard name={company.name} chargeableHours={company.chargeableHours || 0} />
+              </Link>
+            ))}
+          </Box>
+        ) : (
+          <ComponentPlaceholder />
+        )}
       </section>
     </main>
   );
