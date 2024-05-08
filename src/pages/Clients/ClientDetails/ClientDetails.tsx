@@ -1,6 +1,7 @@
 import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { useEffect, useState } from 'react';
+import ArchiveModal from '../../../components/common/ArchiveModal';
 import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
@@ -19,6 +20,7 @@ import EditClientFormModal from '../../../components/modules/Clients/EditClientF
 
 type ClientDetailProps = {
   clientId: string;
+  setFilteredClientsData: React.Dispatch<React.SetStateAction<CompanyEntity[]>>;
 };
 
 const formatDate = (date: Date) => {
@@ -37,8 +39,9 @@ const formatDate = (date: Date) => {
  * @returns {JSX.Element} Client details page
  */
 
-const ClientDetails = ({ clientId }: ClientDetailProps) => {
-  const [open, setOpen] = useState<boolean>(false);
+const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) => {
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
@@ -49,6 +52,29 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
 
   const handleEditClick = () => {
     setEditModalOpen(true);
+  };
+
+  const handleArchiveClient = () => {
+    // update ui
+    setFilteredClientsData(prev => {
+      const aux = [];
+
+      console.log('company?.id:', company?.id);
+      console.log('company?.name:', company?.name);
+
+      for (let i = 0; i < prev.length; i++) {
+        if (prev[i].id !== company?.id) {
+          aux.push(prev[i]);
+          continue;
+        }
+        aux.push({
+          ...prev[i],
+          archived: !prev[i].archived,
+        });
+      }
+
+      return aux;
+    });
   };
 
   useEffect(() => {
@@ -70,19 +96,31 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
     return <div>Error: {error.message}</div>;
   }
 
-  const ToggleModal = () => {
-    setOpen(!open);
+  const ToggleModalDelete = () => {
+    setOpenDelete(!openDelete);
+  };
+  const ToggleModalArchive = () => {
+    setOpenArchive(!openArchive);
   };
 
   return (
     <main className='bg-white rounded-xl p-6'>
       <DeleteModal
-        ToggleModal={ToggleModal}
-        open={open}
-        setOpen={setOpen}
+        ToggleModal={ToggleModalDelete}
+        open={openDelete}
+        setOpen={setOpenDelete}
         title={'Delete Client'}
         description={'Are you sure you want to delete this client?'}
       ></DeleteModal>
+      <ArchiveModal
+        ToggleModal={ToggleModalArchive}
+        open={openArchive}
+        setOpen={setOpenArchive}
+        id={company?.id}
+        title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
+        description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
+        handleArchiveClient={handleArchiveClient}
+      ></ArchiveModal>
       {company && !loading && (
         <section className='flex justify-between'>
           <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
@@ -109,12 +147,13 @@ const ClientDetails = ({ clientId }: ClientDetailProps) => {
             <ArchiveOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
+              onClick={ToggleModalArchive}
             />
             <DeleteOutlineOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
               className='text-gold'
               onClick={() => {
-                ToggleModal();
+                ToggleModalDelete();
               }}
             />
           </section>
