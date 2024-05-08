@@ -18,6 +18,7 @@ import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
 
 import GenericDropdown from '../../components/common/GenericDropdown';
+import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
 import { formatDate } from '../../utils/methods';
 
@@ -87,6 +88,15 @@ const ProjectDetails = () => {
       }
     } catch (error) {
       console.error('Error updating project status:', error);
+    }
+  };
+
+  const deleteTask = useDeleteTask();
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTask.deleteTask(taskId);
+    } catch (error) {
+      console.error(error);
     }
   };
 
@@ -215,7 +225,11 @@ const ProjectDetails = () => {
         </Link>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id ? id : ''} setTotalProjectHours={setTotalHours} />
+        <TaskListTable
+          projectId={id ? id : ''}
+          onDelete={handleDeleteTask}
+          setTotalProjectHours={setTotalHours}
+        />
       </Card>
     </>
   );
