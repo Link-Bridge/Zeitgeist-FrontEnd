@@ -1,8 +1,7 @@
-import { KeyboardArrowDown, MoreHoriz } from '@mui/icons-material';
+import { KeyboardArrowDown } from '@mui/icons-material';
 import {
   Card,
   Chip,
-  IconButton,
   Table,
   TableBody,
   TableCell,
@@ -16,6 +15,7 @@ import { useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import TaskActionsMenu from '../../../common/TaskActionsMenu';
 
 const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.NOT_STARTED]: '#E6A9A9',
@@ -122,9 +122,7 @@ const TaskTable = ({ tasks }: TaskTableProps) => {
                   </TableCell>
                   <TableCell>{dateToShortString(String(task.endDate))}</TableCell>
                   <TableCell>
-                    <IconButton aria-label='more'>
-                      <MoreHoriz />
-                    </IconButton>
+                    <TaskActionsMenu taskId={task.id} onEdit={() => {}} onDelete={() => {}} />
                   </TableCell>
                 </TableRow>
               ))}
