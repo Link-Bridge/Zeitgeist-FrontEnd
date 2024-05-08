@@ -1,4 +1,3 @@
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
@@ -9,12 +8,14 @@ import { Response } from '../../../types/response';
 import { TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
 import ClickableChip from '../../common/DropDown';
+import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
   projectId: string;
+  onDelete: (id: string) => void;
 };
 
-const TaskListTable = ({ projectId }: TaskListTableProps) => {
+const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
   const navigate = useNavigate();
   const formatDate = (date: Date) => {
@@ -31,13 +32,18 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
     return camelCaseWords.join(' ');
   };
 
-  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail[]>>(
+  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail>>(
     `/tasks/project/${projectId}`,
     RequestMethods.GET
   );
 
   const handleClick = (id: string) => {
     navigate(`/tasks/${id}`);
+  };
+
+  const deleteTask = async (taskId: string) => {
+    onDelete(taskId);
+    await sendRequest();
   };
 
   useEffect(() => {
@@ -102,7 +108,7 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
                 </td>
                 <td>{formatDate(task.endDate)}</td>
                 <td>
-                  <MoreHorizIcon style={{ color: '#636B74' }} />
+                  <TaskActionsMenu taskId={task.id} onDelete={deleteTask} onEdit={() => {}} />
                 </td>
               </tr>
             ))}
