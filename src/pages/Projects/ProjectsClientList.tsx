@@ -13,7 +13,7 @@ type ProjectsClientListProps = {
 
 export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
-  const [setSelectedProjectId] = useState<string | null>(null);
+  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
     `/project/${clientId}`,
     RequestMethods.GET
@@ -64,7 +64,12 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
               key={project.id}
               onClick={() => setSelectedProjectId(project.id)}
             >
-              <ProjectCard name={project.name} status={project.status} department={project.area} />
+              <ProjectCard
+                id={project.id}
+                name={project.name}
+                status={project.status}
+                department={project.area}
+              />
             </Link>
           ))}
         </section>
