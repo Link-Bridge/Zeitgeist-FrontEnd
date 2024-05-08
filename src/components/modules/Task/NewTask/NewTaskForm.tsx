@@ -142,7 +142,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   }
 
   return (
-    <StyledSheet>
+    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
       <Header>Title *</Header>
       <Input
         type='text'
@@ -213,9 +213,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
       </Grid>
 
-      {/* Waiting For, Worked Hours, Project Name */}
+      {/* Assign Employee, Worked Hours, Project Name */}
       <Grid container spacing={2}>
-        <Grid xs={2}>
+        <Grid container xs={2} className='md mr-20'>
           <Item>
             <Header>Assign Employee</Header>
             <GenericDropdown
@@ -225,8 +225,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             />
           </Item>
         </Grid>
-        <Grid xs={2}>
-          <Item>
+        <Grid container xs={2} className='md'>
+          <Item className='ml-8'>
             <Header>Worked Hours</Header>
             <Input
               placeholder='0'
@@ -234,20 +234,20 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: colors.gray,
+                color: colors.gray
               }}
             />
           </Item>
         </Grid>
         <Grid>
-          <Item>
+          <Item className='ml-20'>
             <Header>Project Name</Header>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip
+              <Chip className='min-w-[150px] pr-6'
                 variant='soft'
                 sx={{
                   bgcolor: colors.lighterGray,
-                  color: colors.gray,
+                  color: colors.gray, 
                   fontSize: '1rem',
                   flexGrow: 1,
                   padding: '0.3rem 1rem',
