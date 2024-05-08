@@ -72,7 +72,7 @@ export default function ArchiveModal({
             variant='soft'
             color='warning'
           >
-            This action cannot be undone.
+            This action can be undone.
           </Alert>
           <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
             <Button
