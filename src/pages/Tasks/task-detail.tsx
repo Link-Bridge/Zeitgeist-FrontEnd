@@ -53,7 +53,7 @@ const Task: React.FC = () => {
   const handleDeleteTask = async () => {
     try {
       await deleteTask.deleteTask(id ? id : '');
-      navigate('/tasks');
+      navigate(-1);
     } catch (error: unknown) {
       console.error(error);
     }

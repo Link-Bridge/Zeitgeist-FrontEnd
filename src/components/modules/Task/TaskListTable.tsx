@@ -21,7 +21,7 @@ type TaskListTableProps = {
 const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
-  const [_, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail>>(

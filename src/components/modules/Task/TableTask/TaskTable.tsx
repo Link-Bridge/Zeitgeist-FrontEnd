@@ -38,7 +38,7 @@ interface TaskTableProps {
 const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
-  const [_, setDeleteDialogOpen] = useState(false);
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const handleClick = (id: string) => {
