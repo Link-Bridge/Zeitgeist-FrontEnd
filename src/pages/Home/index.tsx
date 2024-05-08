@@ -8,6 +8,7 @@ import { EmployeeContext } from '../../hooks/employeeContext';
 import { HomeEntity } from '../../types/home';
 import { ResponseEntity } from '../../types/response';
 import { RequestMethods } from '../../utils/constants';
+import { Box } from '@mui/joy';
 
 const Home = () => {
 
@@ -34,38 +35,48 @@ const Home = () => {
 
   return (
     <main className='grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
-      <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg overflow-y-hidden'>
+      <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg overflow-x-hidden'>
         <h2 className='text-[34px]'>MY PROJECTS </h2>
         {isLoading && <Loader />}
         {!(isLoading && homeData) &&
-          homeData?.projects.map(project => (
-            <Link to={`/projects/details/${project.id}`} key={project.id}>
-              <ProjectCard
-                key={project.id}
-                id={project.id}
-                company=''
-                department={project.area}
-                name={project.name}
-                status={project.status}
-              />
-            </Link>
-          ))}
+          <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 rounded-xl mt-6'>
+            {
+              homeData?.projects.map(project => (
+                <Link to={`/projects/details/${project.id}`} key={project.id}>
+                  <ProjectCard
+                    key={project.id}
+                    id={project.id}
+                    company=''
+                    department={project.area}
+                    name={project.name}
+                    status={project.status}
+                  />
+                </Link>
+              ))
+            }
+          </section>
+        }
       </section>
-      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-y-hidden'>
+      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
         <h2 className='text-[34px]'>CLIENTS</h2>
         {isLoading && <Loader />}
         {!(isLoading && homeData) &&
-          homeData?.companies.map(company => (
-            <Link to={`/clients/${company.id}`}>
-              <ClientCard
-                name={company.name}
-                accountingHours={company.accountingHours || 0}
-                legalHours={company.legalHours || 0}
-                chargeableHours={company.chargeableHours || 0}
-                totalProjects={company.totalProjects || 0}
-              />
-            </Link>
-          ))}
+          <Box sx={{ gap: 1, display: 'flex', flexDirection: 'column'}} >
+          {
+            homeData?.companies.map(company => (
+              <Link to={`/clients/${company.id}`}>
+                <ClientCard
+                  name={company.name}
+                  accountingHours={company.accountingHours || 0}
+                  legalHours={company.legalHours || 0}
+                  chargeableHours={company.chargeableHours || 0}
+                  totalProjects={company.totalProjects || 0}
+                />
+              </Link>
+            ))
+          }
+          </Box>
+        }
       </section>
     </main>
   );
