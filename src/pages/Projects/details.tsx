@@ -1,8 +1,8 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
+import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -76,7 +76,6 @@ const ProjectDetails = () => {
     if (company) {
       setCompanyName(company.data.name);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company, updatedCompany, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
@@ -109,12 +108,7 @@ const ProjectDetails = () => {
           marginBottom: '10px',
         }}
       >
-        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
-          <div className='flex items-center'>
-            <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
-            {'Go Back'}
-          </div>
-        </Link>
+        <GoBack />
       </Box>
 
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
