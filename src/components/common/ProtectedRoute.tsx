@@ -1,16 +1,19 @@
 import React, { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import { Navigate, useLocation } from 'react-router-dom';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isAuthenticated = sessionStorage.getItem('idToken'); // ¿cambiar a localStorage ?
+  const location = useLocation();
+  const isAuthenticated = localStorage.getItem('idToken');
 
   if (!isAuthenticated) {
     return <Navigate to='/' replace />;
   }
+
+  if (isAuthenticated && location.pathname === '/') return <Navigate to='/home' replace />;
 
   return <>{children}</>;
 };

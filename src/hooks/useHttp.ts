@@ -61,7 +61,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   ): Promise<void> => {
     setLoading(true);
     setError(null);
-    const idToken = sessionStorage.getItem('idToken');
+    const idToken = localStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${idToken}`,
