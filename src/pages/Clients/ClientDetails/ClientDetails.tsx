@@ -59,9 +59,6 @@ const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) 
     setFilteredClientsData(prev => {
       const aux = [];
 
-      console.log('company?.id:', company?.id);
-      console.log('company?.name:', company?.name);
-
       for (let i = 0; i < prev.length; i++) {
         if (prev[i].id !== company?.id) {
           aux.push(prev[i]);
