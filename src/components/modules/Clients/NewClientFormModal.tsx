@@ -168,7 +168,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => {} }}
+      BackdropProps={{ onClick: () => { } }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
@@ -219,9 +219,11 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               label='Phone number'
               type='tel'
               variant='outlined'
+              maxRows={10}
               value={companyPhone}
               onChange={event => {
                 const input = event.target.value.replace(/\D/g, '');
+                if (input.length > 10) return;
                 setCompanyPhone(input);
               }}
             />
