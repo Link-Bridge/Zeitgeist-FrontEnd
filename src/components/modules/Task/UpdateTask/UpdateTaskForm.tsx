@@ -15,7 +15,6 @@ import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.SELECT_OPTION]: statusChipColorCombination.default.bg,
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
   [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,

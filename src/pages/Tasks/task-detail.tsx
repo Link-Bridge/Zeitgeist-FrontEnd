@@ -10,6 +10,7 @@ import ColorChip from '../../components/common/ColorChip';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
+import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
@@ -46,6 +47,15 @@ const Task: React.FC = () => {
   const handleEdit = () => {
     setShowUpdate(true);
     navigate(`/tasks/update/${id}`);
+  };
+
+  const deleteTask = useDeleteTask();
+  const handleDeleteTask = async (id: string) => {
+    try {
+      await deleteTask.deleteTask(id);
+    } catch (error: unknown) {
+      console.error(error);
+    }
   };
 
   useEffect(() => {
@@ -139,7 +149,9 @@ const Task: React.FC = () => {
                       {showUpdate && <Update />}
                     </button>
 
-                    <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    <button onClick={handleDeleteTask}>
+                      <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    </button>
                   </Box>
                 </Box>
               </Box>

@@ -104,7 +104,12 @@ const Clients = () => {
           </main>
         }
       />
-      <Route path={`/${clientId}`} element={<ClientDetails clientId={clientId} />} />
+      <Route
+        path={`/${clientId}`}
+        element={
+          <ClientDetails setFilteredClientsData={setFilteredClientsData} clientId={clientId} />
+        }
+      />
     </Routes>
   );
 };
