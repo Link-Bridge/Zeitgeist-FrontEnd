@@ -16,12 +16,8 @@ import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
+import { useParams } from 'react-router-dom';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-
-type ClientDetailProps = {
-  clientId: string;
-  setFilteredClientsData: React.Dispatch<React.SetStateAction<CompanyEntity[]>>;
-};
 
 const formatDate = (date: Date) => {
   const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
@@ -39,12 +35,13 @@ const formatDate = (date: Date) => {
  * @returns {JSX.Element} Client details page
  */
 
-const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) => {
+const ClientDetails = () => {
   const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
+  const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
@@ -54,28 +51,29 @@ const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) 
     setEditModalOpen(true);
   };
 
-  const handleArchiveClient = () => {
-    // update ui
-    setFilteredClientsData(prev => {
-      const aux = [];
+  // Hay que arreglar esto después
+  // const handleArchiveClient = () => {
+  //   // update ui
+  //   setFilteredClientsData(prev => {
+  //     const aux = [];
 
-      console.log('company?.id:', company?.id);
-      console.log('company?.name:', company?.name);
+  //     console.log('company?.id:', company?.id);
+  //     console.log('company?.name:', company?.name);
 
-      for (let i = 0; i < prev.length; i++) {
-        if (prev[i].id !== company?.id) {
-          aux.push(prev[i]);
-          continue;
-        }
-        aux.push({
-          ...prev[i],
-          archived: !prev[i].archived,
-        });
-      }
+  //     for (let i = 0; i < prev.length; i++) {
+  //       if (prev[i].id !== company?.id) {
+  //         aux.push(prev[i]);
+  //         continue;
+  //       }
+  //       aux.push({
+  //         ...prev[i],
+  //         archived: !prev[i].archived,
+  //       });
+  //     }
 
-      return aux;
-    });
-  };
+  //     return aux;
+  //   });
+  // };
 
   useEffect(() => {
     sendRequest();
@@ -119,7 +117,9 @@ const ClientDetails = ({ clientId, setFilteredClientsData }: ClientDetailProps) 
         id={company?.id}
         title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
         description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
-        handleArchiveClient={handleArchiveClient}
+        handleArchiveClient={() => {
+          return '';
+        }}
       ></ArchiveModal>
       {company && !loading && (
         <section className='flex justify-between'>

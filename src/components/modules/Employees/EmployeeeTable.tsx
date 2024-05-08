@@ -79,8 +79,8 @@ export default function EmployeeTable() {
     setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
   };
 
-  const { employee } = useContext(EmployeeContext);
-  const sessionEmployee = employee?.employee.id as string;
+  const { employee: employeeContext } = useContext(EmployeeContext);
+  const sessionEmployee = employeeContext?.employee.id as string;
 
   return (
     <>
@@ -114,6 +114,7 @@ export default function EmployeeTable() {
                         color='neutral'
                         indicator={<KeyboardArrowDown />}
                         defaultValue={employee.idRole}
+                        disabled={sessionEmployee === employee.id}
                         onChange={e => {
                           if (e === null) return;
                           // eslint-disable-next-line

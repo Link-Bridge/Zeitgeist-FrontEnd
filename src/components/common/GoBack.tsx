@@ -3,15 +3,11 @@ import { useNavigate } from 'react-router-dom';
 import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
 
-interface GoBackProps {
-  path: string;
-}
-
-const GoBack = (props: GoBackProps) => {
+const GoBack = () => {
   const navigate = useNavigate();
 
   const handleClick = () => {
-    navigate(props.path);
+    navigate(-1);
   };
 
   return (
