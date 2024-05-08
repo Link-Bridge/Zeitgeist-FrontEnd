@@ -2,7 +2,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
-import ClientCard from '../../components/common/ClientCard';
+import ClientCard from '../../components/modules/Home/ClientCard';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { HomeEntity } from '../../types/home';
@@ -33,6 +33,11 @@ const Home = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [req.data]);
 
+  function findCompanyNameById(id: string): string | undefined {
+    const foundCompany = homeData?.companies.find(company => company.id === id);
+    return foundCompany ? foundCompany.name : undefined;
+  }
+
   return (
     <main className='grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
       <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg overflow-x-hidden'>
@@ -46,7 +51,7 @@ const Home = () => {
                   <ProjectCard
                     key={project.id}
                     id={project.id}
-                    company=''
+                    company={findCompanyNameById(project.idCompany)}
                     department={project.area}
                     name={project.name}
                     status={project.status}
@@ -67,10 +72,7 @@ const Home = () => {
               <Link to={`/clients/${company.id}`}>
                 <ClientCard
                   name={company.name}
-                  accountingHours={company.accountingHours || 0}
-                  legalHours={company.legalHours || 0}
                   chargeableHours={company.chargeableHours || 0}
-                  totalProjects={company.totalProjects || 0}
                 />
               </Link>
             ))
