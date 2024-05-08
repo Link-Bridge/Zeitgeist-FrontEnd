@@ -1,4 +1,3 @@
-import { Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -83,10 +82,6 @@ const Task: React.FC = () => {
           color: colors.gray[500],
         }}
       >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading task
-        </Typography>
-
         <Loader />
       </Box>
     );
@@ -270,9 +265,7 @@ const Task: React.FC = () => {
               }}
             />
           </>
-        ) : (
-          <p>Task not found</p>
-        )}
+        ) : undefined}
       </main>
     </>
   );
