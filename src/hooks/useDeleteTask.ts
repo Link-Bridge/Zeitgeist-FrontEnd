@@ -19,7 +19,7 @@ const useDeleteTask = () => {
     try {
       await axios.delete(`${BASE_API_URL}/tasks/delete/${id}`, {
         headers: {
-          Authorization: `Bearer ${sessionStorage.getItem('idToken')}`,
+          Authorization: `Bearer ${localStorage.getItem('idToken')}`,
         },
       });
     } catch (err: unknown) {
