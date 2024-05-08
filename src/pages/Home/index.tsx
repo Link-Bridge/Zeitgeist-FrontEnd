@@ -19,11 +19,16 @@ const Home = () => {
   const [isLoading, setIsLoading] = useState(req.loading);
 
   useEffect(() => {
-    if (!req.data) req.sendRequest();
+    if (employeeId) req.sendRequest();
+    setIsLoading(true);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [employeeId]);
+
+  useEffect(() => {
     if (req.data) {
       setHomeData(req.data?.data);
+      setIsLoading(false);
     }
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [req.data]);
 
