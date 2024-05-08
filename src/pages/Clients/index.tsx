@@ -12,8 +12,6 @@ import { RequestMethods, RoutesPath } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
-  const [clientId, setClientId] = useState<string>('');
-
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
   const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
 
@@ -84,13 +82,7 @@ const Clients = () => {
             {!clientsRequest.loading && !clientsRequest.error && companies && (
               <CardsGrid>
                 {filteredCompanies.map(company => (
-                  <Link
-                    to={`${RoutesPath.CLIENTS}/${company.id}`}
-                    key={company.id}
-                    onClick={() => {
-                      setClientId(company.id);
-                    }}
-                  >
+                  <Link to={`${RoutesPath.CLIENTS}/${company.id}`} key={company.id}>
                     <ClientCard
                       name={company.name}
                       accountingHours={company.accountingHours || 0}
@@ -105,12 +97,7 @@ const Clients = () => {
           </main>
         }
       />
-      <Route
-        path={`/${clientId}`}
-        element={
-          <ClientDetails setFilteredClientsData={setFilteredClientsData} clientId={clientId} />
-        }
-      />
+      <Route path={'/:clientId'} element={<ClientDetails />} />
     </Routes>
   );
 };
