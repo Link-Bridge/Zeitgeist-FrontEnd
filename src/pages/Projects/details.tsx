@@ -16,7 +16,21 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import { Box, Card } from '@mui/joy';
 import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
-import StatusChip from '../../components/common/StatusChip';
+
+import GenericDropdown from '../../components/common/GenericDropdown';
+import { ProjectStatus } from '../../types/project';
+
+const statusColorMap: Record<ProjectStatus, string> = {
+  [ProjectStatus.ACCEPTED]: colors.gold,
+  [ProjectStatus.NOT_STARTED]: colors.notStarted,
+  [ProjectStatus.IN_PROGRESS]: colors.darkPurple,
+  [ProjectStatus.UNDER_REVISION]: colors.purple,
+  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
+  [ProjectStatus.DELAYED]: colors.delayed,
+  [ProjectStatus.POSTPONED]: colors.blue,
+  [ProjectStatus.DONE]: colors.success,
+  [ProjectStatus.CANCELLED]: colors.danger,
+};
 
 function dateParser(date: Date): string {
   if (!date) return '';
@@ -36,6 +50,8 @@ const chipStyle = {
 const ProjectDetails = () => {
   const { id } = useParams();
   const [companyName, setCompanyName] = useState<string>('');
+  const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
+
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
@@ -51,13 +67,35 @@ const ProjectDetails = () => {
     RequestMethods.GET
   );
 
-  useEffect(() => {
-    if (!data) sendRequest();
-    if (data && !company) getCompany();
-    if (company) setCompanyName(company.data.name);
+  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
+    `${APIPath.PROJECT_DETAILS}/${id}`,
+    RequestMethods.PUT
+  );
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, company]);
+  useEffect(() => {
+    if (!data) {
+      sendRequest();
+    }
+    if (data && !company) {
+      getCompany();
+      setProjectStatus(data.status);
+    }
+    if (company) {
+      setCompanyName(company.data.name);
+    }
+  }, [data, company, updatedCompany, projectStatus]);
+
+  const handleStatusChange = async (newStatus: ProjectStatus) => {
+    try {
+      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+
+      if (updatedCompany) {
+        setProjectStatus(newStatus);
+      }
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
+  };
 
   if (loading && loadingCompany) {
     return <div>Loading...</div>;
@@ -114,7 +152,15 @@ const ProjectDetails = () => {
             <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
               <div style={{ fontSize: '15px' }}>
                 <p style={{ marginLeft: '7px' }}>Status</p>
-                {data && data.status !== undefined && <StatusChip status={data.status} />}
+                {data && data.status !== undefined && (
+                  <GenericDropdown
+                    options={Object.values(ProjectStatus)}
+                    onValueChange={handleStatusChange}
+                    defaultValue={projectStatus}
+                    colorMap={statusColorMap}
+                    placeholder='Select status ...'
+                  />
+                )}
               </div>
 
               <div style={{ fontSize: '15px' }}>
