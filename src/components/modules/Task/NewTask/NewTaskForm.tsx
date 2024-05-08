@@ -234,7 +234,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               value={workedHours ?? ''}
               onChange={handleWorkedHoursChange}
               sx={{
-                color: colors.gray
+                color: colors.gray,
               }}
             />
           </Item>
@@ -243,11 +243,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Item className='ml-20'>
             <Header>Project Name</Header>
             <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip className='min-w-[150px] pr-6'
+              <Chip
+                className='min-w-[150px] pr-6'
                 variant='soft'
                 sx={{
                   bgcolor: colors.lighterGray,
-                  color: colors.gray, 
+                  color: colors.gray,
                   fontSize: '1rem',
                   flexGrow: 1,
                   padding: '0.3rem 1rem',
