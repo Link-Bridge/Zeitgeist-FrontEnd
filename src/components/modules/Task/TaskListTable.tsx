@@ -1,28 +1,57 @@
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Table } from '@mui/joy';
-
 import CircularProgress from '@mui/joy/CircularProgress';
-
-import MoreHorizIcon from '@mui/icons-material/MoreHoriz';
 import { useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
-import { TaskDetail } from '../../../types/task';
+import { Task, TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
+import { formatDate } from '../../../utils/methods';
+import DeleteModal from '../../common/DeleteModal';
 import ClickableChip from '../../common/DropDown';
-
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
   projectId: string;
+  onDelete: (id: string) => void;
+  setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
-const TaskListTable = ({ projectId }: TaskListTableProps) => {
+const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
 
-  const formatDate = (date: Date) => {
-    const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-    const formattedDate = new Date(date).toLocaleDateString(options);
-    return formattedDate;
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
+
+  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail>>(
+    `/tasks/project/${projectId}`,
+    RequestMethods.GET
+  );
+
+  useEffect(() => {
+    if (!data) sendRequest();
+    if (data && data.data) {
+      const tasks = data.data;
+      setTasks(tasks);
+
+      setTotalProjectHours(() =>
+        tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [data]);
+
+  const handleClick = (id: string) => {
+    navigate(`/tasks/${id}`);
+  };
+
+  const handleDeleteButtonClick = (task: Task) => {
+    setTaskToDelete(task);
+    setDeleteDialogOpen(true);
   };
 
   const formatStatus = (status: string): string => {
@@ -32,22 +61,6 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
     });
     return camelCaseWords.join(' ');
   };
-
-  const { data, error, loading, sendRequest } = useHttp<Response<TaskDetail[]>>(
-    `/tasks/project/${projectId}`,
-    RequestMethods.GET
-  );
-
-  useEffect(() => {
-    sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
-  useEffect(() => {
-    if (data && data.data) {
-      setTasks(data.data);
-    }
-  }, [data]);
 
   if (loading) {
     return (
@@ -92,17 +105,35 @@ const TaskListTable = ({ projectId }: TaskListTableProps) => {
           <tbody>
             {tasks.map(task => (
               <tr key={task.id}>
-                <td>{task.title}</td>
+                <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
+                  {task.title}
+                </td>
                 <td>
                   <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
                 </td>
-                <td>{formatDate(task.endDate)}</td>
+                <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
-                  <MoreHorizIcon style={{ color: '#636B74' }} />
+                  <TaskActionsMenu
+                    task={task as Task}
+                    onEdit={() => handleClick(task.id)}
+                    onOpenDeleteDialog={handleDeleteButtonClick}
+                  />
                 </td>
               </tr>
             ))}
           </tbody>
+
+          <DeleteModal
+            open={taskToDelete !== null}
+            setOpen={() => setTaskToDelete(null)}
+            title='Confirm Deletion'
+            description='Are you sure you want to delete this task?'
+            id={taskToDelete?.id || ''}
+            handleDeleteEmployee={(id: string) => {
+              onDelete(id);
+              setTaskToDelete(null);
+            }}
+          />
         </>
       )}
     </Table>

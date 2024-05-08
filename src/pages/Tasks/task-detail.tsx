@@ -1,16 +1,25 @@
+import { Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-import { useEffect } from 'react';
-import { useNavigate, useParams } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
+import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
+import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
+
+function capitalize(data: string): string {
+  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
+}
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -21,7 +30,9 @@ function dateParser(date: Date): string {
 }
 
 const Task: React.FC = () => {
-  const { id } = useParams();
+  const location = useLocation();
+  const id = location.pathname.split('/').pop();
+
   const navigate = useNavigate();
   const { data, loading, sendRequest, error } = useHttp<TaskDetail>(
     `${APIPath.TASK_DETAIL}/${id}`,
@@ -32,6 +43,27 @@ const Task: React.FC = () => {
     navigate('/tasks');
   };
 
+  const [showUpdate, setShowUpdate] = useState(false);
+
+  const handleEdit = () => {
+    setShowUpdate(true);
+    navigate(`/tasks/update/${id}`);
+  };
+
+  const deleteTask = useDeleteTask();
+  const onDelete = async (taskId: string) => {
+    try {
+      await deleteTask.deleteTask(taskId ? taskId : '');
+      navigate(-1);
+    } catch (error: unknown) {
+      console.error(error);
+    }
+  };
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  const [taskToDelete, setTaskToDelete] = useState<TaskDetail | null>(null);
+
   useEffect(() => {
     if (!data) {
       sendRequest();
@@ -40,7 +72,24 @@ const Task: React.FC = () => {
   }, [data]);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading task
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
   }
 
   if (error) {
@@ -56,7 +105,7 @@ const Task: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <GoBack path={'/tasks'} />
+        <GoBack />
       </Box>
 
       <br />
@@ -101,8 +150,14 @@ const Task: React.FC = () => {
                       gap: '15px',
                     }}
                   >
-                    <img src={pencil} alt='Edit' className='w-6' />
-                    <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    <button onClick={handleEdit}>
+                      <img src={pencil} alt='Edit' className='w-6' />
+                      {showUpdate && <Update />}
+                    </button>
+
+                    <button onClick={() => setTaskToDelete(data)}>
+                      <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                    </button>
                   </Box>
                 </Box>
               </Box>
@@ -156,10 +211,12 @@ const Task: React.FC = () => {
                   </Box>
                 )}
 
-                <Box>
-                  <p style={{ fontSize: '.9rem' }}>Status</p>
-                  <StatusChip status={`${data.status || '-'}`} />
-                </Box>
+                {data.status && (
+                  <Box>
+                    <p style={{ fontSize: '.9rem' }}>Status</p>
+                    <StatusChip status={capitalize(data.status)} />
+                  </Box>
+                )}
               </Box>
 
               <br />
@@ -177,21 +234,19 @@ const Task: React.FC = () => {
                     <ColorChip label={data.employeeFirstName} color={`${colors.null}`}></ColorChip>
                   </Box>
                 )}
-
                 {data.waitingFor && (
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Waiting for</p>
                     <ColorChip label={data.waitingFor} color={`${colors.null}`}></ColorChip>
                   </Box>
                 )}
-
                 {data.workedHours && (
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
                     <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
                   </Box>
                 )}
-
+                2 2
                 <Box>
                   <p style={{ fontSize: '.9rem' }}>Project</p>
                   <ColorChip
@@ -203,6 +258,18 @@ const Task: React.FC = () => {
 
               <br />
             </Box>
+
+            <DeleteModal
+              open={taskToDelete !== null}
+              setOpen={() => setTaskToDelete(null)}
+              title='Confirm Deletion'
+              description='Are you sure you want to delete this task?'
+              id={taskToDelete?.id || ''}
+              handleDeleteEmployee={(id: string) => {
+                onDelete(id);
+                setTaskToDelete(null);
+              }}
+            />
           </>
         ) : (
           <p>Task not found</p>

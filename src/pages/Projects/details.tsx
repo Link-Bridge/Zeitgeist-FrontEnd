@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import left_arrow from '../../assets/icons/left_arrow.svg';
+import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -19,16 +19,23 @@ import { Chip } from '@mui/material';
 import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
-import StatusChip from '../../components/common/StatusChip';
 
-function dateParser(date: Date): string {
-  if (!date) return '';
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}/${month}/${year}`;
-}
+import GenericDropdown from '../../components/common/GenericDropdown';
+import useDeleteTask from '../../hooks/useDeleteTask';
+import { ProjectStatus } from '../../types/project';
+import { formatDate } from '../../utils/methods';
+
+const statusColorMap: Record<ProjectStatus, string> = {
+  [ProjectStatus.ACCEPTED]: colors.gold,
+  [ProjectStatus.NOT_STARTED]: colors.notStarted,
+  [ProjectStatus.IN_PROGRESS]: colors.darkPurple,
+  [ProjectStatus.UNDER_REVISION]: colors.purple,
+  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
+  [ProjectStatus.DELAYED]: colors.delayed,
+  [ProjectStatus.POSTPONED]: colors.blue,
+  [ProjectStatus.DONE]: colors.success,
+  [ProjectStatus.CANCELLED]: colors.danger,
+};
 
 const chipStyle = {
   bgcolor: colors.lighterGray,
@@ -40,6 +47,9 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
+  const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
+  const [totalHours, setTotalHours] = useState<number>(0);
+
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
@@ -59,15 +69,44 @@ const ProjectDetails = () => {
     RequestMethods.GET
   );
 
-  // const [projectIsArchived, setProjectIsArchived] = useState<boolean>();
+  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
+    `${APIPath.PROJECT_DETAILS}/${id}`,
+    RequestMethods.PUT
+  );
 
   useEffect(() => {
-    if (!data) sendRequest();
-    if (data && !company) getCompany();
-    if (company) setCompanyName(company.data.name);
+    if (!data) {
+      sendRequest();
+    }
+    if (data && !company) {
+      getCompany();
+      setProjectStatus(data.status);
+    }
+    if (company) {
+      setCompanyName(company.data.name);
+    }
+  }, [data, company, updatedCompany, projectStatus]);
 
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, company]);
+  const handleStatusChange = async (newStatus: ProjectStatus) => {
+    try {
+      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+
+      if (updatedCompany) {
+        setProjectStatus(newStatus);
+      }
+    } catch (error) {
+      console.error('Error updating project status:', error);
+    }
+  };
+
+  const deleteTask = useDeleteTask();
+  const handleDeleteTask = async (taskId: string) => {
+    try {
+      await deleteTask.deleteTask(taskId);
+    } catch (error) {
+      console.error(error);
+    }
+  };
 
   if (loading && loadingCompany) {
     return <div>Loading...</div>;
@@ -90,12 +129,7 @@ const ProjectDetails = () => {
           marginBottom: '10px',
         }}
       >
-        <Link to='/projects' className='ml-auto text-darkGold no-underline'>
-          <div className='flex items-center'>
-            <img src={left_arrow} alt='Left arrow' className='w-3.5 mr-1' />
-            {'Go Back'}
-          </div>
-        </Link>
+        <GoBack />
       </Box>
 
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
@@ -139,7 +173,15 @@ const ProjectDetails = () => {
             <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
               <div style={{ fontSize: '15px' }}>
                 <p style={{ marginLeft: '7px' }}>Status</p>
-                {data && data.status !== undefined && <StatusChip status={data.status} />}
+                {data && data.status !== undefined && (
+                  <GenericDropdown
+                    options={Object.values(ProjectStatus)}
+                    onValueChange={handleStatusChange}
+                    defaultValue={projectStatus}
+                    colorMap={statusColorMap}
+                    placeholder='Select status ...'
+                  />
+                )}
               </div>
 
               <div style={{ fontSize: '15px' }}>
@@ -149,7 +191,7 @@ const ProjectDetails = () => {
                     bgcolor: colors.extra,
                     fontSize: '1rem',
                   }}
-                  label={data.totalHours ? data.totalHours : '0'}
+                  label={totalHours}
                 />
               </div>
 
@@ -188,12 +230,12 @@ const ProjectDetails = () => {
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>Start Date: {data?.startDate && dateParser(data?.startDate)}</p>
+              <p className='ml-3'>Start Date: {data?.startDate && formatDate(data?.startDate)}</p>
             </div>
 
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>End Date: {data?.startDate && dateParser(data?.endDate)}</p>
+              <p className='ml-3'>End Date: {data?.startDate && formatDate(data?.endDate)}</p>
             </div>
           </Box>
         </section>
@@ -206,7 +248,11 @@ const ProjectDetails = () => {
         </Link>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <TaskListTable projectId={id ? id : ''} />
+        <TaskListTable
+          projectId={id ? id : ''}
+          onDelete={handleDeleteTask}
+          setTotalProjectHours={setTotalHours}
+        />
       </Card>
     </>
   );

@@ -3,6 +3,7 @@ import colors from '../../colors';
 
 interface CancelButtonProps {
   onClick: () => void;
+  children?: React.ReactNode;
 }
 
 /**
@@ -12,7 +13,7 @@ interface CancelButtonProps {
  * @return Button component to cancel an action
  */
 
-const CancelButton = ({ onClick }: CancelButtonProps) => {
+const CancelButton = ({ onClick, children }: CancelButtonProps) => {
   return (
     <Button
       onClick={onClick}
@@ -30,7 +31,7 @@ const CancelButton = ({ onClick }: CancelButtonProps) => {
         },
       }}
     >
-      Cancel
+      {children || 'Cancel'}
     </Button>
   );
 };

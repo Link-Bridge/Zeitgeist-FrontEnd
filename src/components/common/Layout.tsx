@@ -11,13 +11,13 @@ type LayoutProps = {
 
 const Layout = ({ children }: LayoutProps) => {
   const location = useLocation();
-
   const { employee } = useContext(EmployeeContext);
 
   const pathToText = () => {
     if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
     if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/update`)) return 'Modify Task';
     if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Detail';
     if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
     if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';

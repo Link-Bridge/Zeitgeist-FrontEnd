@@ -1,16 +1,17 @@
-import { Box, Chip, Grid, Input, Textarea } from '@mui/joy';
+import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
-import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useEffect, useState } from 'react';
+import { useNavigate, useParams } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
-import { BareboneTask } from '../../../../types/task';
+import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import { RoutesPath } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import CustomDatePicker from '../../../common/DatePicker';
-import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
-import SendButton from '../../../common/SendButton';
+import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
@@ -23,27 +24,26 @@ const statusColorMap: Record<TaskStatus, string> = {
   [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
 };
 
-interface NewTaskFormProps {
-  onSubmit: (payload: BareboneTask) => Promise<void>;
+interface UpdateTaskFormProps {
+  onSubmit: (payload: UpdatedTask) => Promise<void>;
   employees: EmployeeEntity[];
-  projectId: string;
-  projectName: string;
+  data: TaskDetail;
 }
 
 /**
  * New Task form component
  *
  * @component
- * @param {NewTaskFormProps} props - Component props
+ * @param {UpdateTaskFormProps} props - Component props
  *
  * @returns {JSX.Element} New Task form component
  */
-const NewTaskForm: React.FC<NewTaskFormProps> = ({
+const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   onSubmit,
   employees,
-  projectId,
-  projectName,
-}: NewTaskFormProps): JSX.Element => {
+  data,
+}: UpdateTaskFormProps): JSX.Element => {
+  const { idTask } = useParams();
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
@@ -51,14 +51,31 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const navigate = useNavigate();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
@@ -79,23 +96,41 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWorkedHours(event.target.value);
+
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const getEmployeeNames = () => {
     return employees.map(employee => employee.firstName + ' ' + employee.lastName);
   };
 
-  const handleSubmit = async () => {
-    const requiredFields = ['title', 'description', 'startDate', 'dueDate', 'status'];
-
-    if (!requiredFields.every(field => !!field && field !== '')) {
-      setErrors({
-        ...errors,
-        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
-      });
-      return;
+  useEffect(() => {
+    if (data) {
+      setTitle(data.title);
+      setDescription(data.description);
+      setStartDate(dayjs(data.startDate));
+      setDueDate(dayjs(data.endDate));
+      setStatus(data.status);
+      setAssignedEmployee(data.employeeFirstName + ' ' + data.employeeLastName);
+      setWorkedHours(data.workedHours?.toString() ?? '');
     }
+  }, [data]);
 
+  const getSelectedEmployee = (
+    firstName: string | undefined,
+    lastName: string | undefined
+  ): string => {
+    const fullName = firstName && lastName ? `${firstName} ${lastName}` : '';
+    return fullName.toString();
+  };
+
+  const handleSubmit = async () => {
     if (dueDate && startDate && dueDate.isBefore(startDate)) {
       setErrors({
         ...errors,
@@ -106,14 +141,14 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     setErrors({});
 
-    const payload: BareboneTask = {
-      title,
-      description,
+    const payload: UpdatedTask = {
+      id: idTask as string,
+      title: title,
+      description: description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      dueDate: dueDate?.toISOString() ?? '',
+      endDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
-      idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
         return fullName === assignedEmployee;
@@ -122,24 +157,22 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     try {
       await onSubmit(payload);
+      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(RoutesPath.TASKS);
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: 'Failed to update task.', type: 'danger' });
     }
   };
 
   const handleCancel = () => {
-    setTitle('');
-    setDescription('');
-    setStartDate(null);
-    setDueDate(null);
-    setStatus('');
-    setAssignedEmployee('');
-    setWorkedHours(null);
+    navigate(RoutesPath.TASKS);
   };
 
-  if (projectId === '') {
-    return <ErrorView error={'Project ID is required'} />;
-  }
+  const hasErrors = () => {
+    return Object.values(errors).some(error => !!error);
+  };
 
   return (
     <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
@@ -166,7 +199,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           height: '200px',
           padding: '10px',
           borderRadius: '4px',
-          border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
+          border: `1px solid ${errors['description'] ? colors.danger : colors.lighterGray}`,
+          '&:focus': {
+            border: '1px solid' + colors.darkGold,
+          },
         }}
       />
 
@@ -200,6 +236,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Item>
             <Header>Status *</Header>
             <GenericDropdown
+              defaultValue={data.status as TaskStatus}
               options={Object.values(TaskStatus)}
               onValueChange={handleStatusSelect}
               placeholder='Select status'
@@ -213,12 +250,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
       </Grid>
 
-      {/* Assign Employee, Worked Hours, Project Name */}
+      {/* Assigned Employee, Worked Hours */}
       <Grid container spacing={2}>
         <Grid container xs={2} className='md mr-20'>
           <Item>
-            <Header>Assign Employee</Header>
+            <Header>Assigned Employee</Header>
             <GenericDropdown
+              defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
               options={getEmployeeNames()}
               onValueChange={handleAssignedEmployee}
               placeholder='Select employee ...'
@@ -226,7 +264,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           </Item>
         </Grid>
         <Grid container xs={2} className='md'>
-          <Item className='ml-8'>
+          <Item className='ml-20'>
             <Header>Worked Hours</Header>
             <Input
               placeholder='0'
@@ -239,47 +277,30 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             />
           </Item>
         </Grid>
-        <Grid>
-          <Item className='ml-20'>
-            <Header>Project Name</Header>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip
-                className='min-w-[150px] pr-6'
-                variant='soft'
-                sx={{
-                  bgcolor: colors.lighterGray,
-                  color: colors.gray,
-                  fontSize: '1rem',
-                  flexGrow: 1,
-                  padding: '0.3rem 1rem',
-                }}
-              >
-                {projectName}
-              </Chip>
-            </Box>
-          </Item>
-        </Grid>
       </Grid>
 
       {/* Cancel & send button */}
       <Grid container justifyContent='flex-end'>
         <Grid>
           <Item>
-            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-              <CancelButton onClick={handleCancel} />
-            </Link>
+            <CancelButton onClick={handleCancel} />
           </Item>
         </Grid>
         <Grid>
           <Item>
-            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-              <SendButton onClick={handleSubmit} />
-            </Link>
+            <ModifyButton onClick={handleSubmit} disabled={hasErrors()} />
           </Item>
         </Grid>
       </Grid>
+
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </StyledSheet>
   );
 };
 
-export default NewTaskForm;
+export default UpdateTaskForm;

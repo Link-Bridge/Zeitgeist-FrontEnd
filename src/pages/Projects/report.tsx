@@ -1,3 +1,4 @@
+import { Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
@@ -12,6 +13,7 @@ import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
@@ -97,7 +99,24 @@ const ProjectReport: React.FC = () => {
   useEffect(() => {}, [handleClose]);
 
   if (reqReport.loading) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading report
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
   }
 
   const totalTasks = report?.statistics?.total || 1;
@@ -114,7 +133,7 @@ const ProjectReport: React.FC = () => {
           justifyContent: 'flex-end',
         }}
       >
-        <GoBack path={`/projects/details/${id}`} />
+        <GoBack />
       </Box>
 
       <br />
@@ -228,7 +247,7 @@ const ProjectReport: React.FC = () => {
                     gap: '40px',
                   }}
                 >
-                  <StatusChip status={report.project.status} />
+                  <StatusChip status={capitalize(report.project.status)} />
                   <ColorChip
                     label={`Total Hours: ${report.project.totalHours}`}
                     color={`${colors.extra}`}
