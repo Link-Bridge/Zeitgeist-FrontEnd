@@ -15,7 +15,6 @@ import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.SELECT_OPTION]: statusChipColorCombination.default.bg,
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
   [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
@@ -59,10 +58,24 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
@@ -83,6 +96,14 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWorkedHours(event.target.value);
+
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const getEmployeeNames = () => {
@@ -110,23 +131,6 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleSubmit = async () => {
-    const requiredFields = [
-      'title',
-      'description',
-      'startDate',
-      'dueDate',
-      'status',
-      'projectName',
-    ];
-
-    if (!requiredFields.every(field => !!field && field !== '')) {
-      setErrors({
-        ...errors,
-        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
-      });
-      return;
-    }
-
     if (dueDate && startDate && dueDate.isBefore(startDate)) {
       setErrors({
         ...errors,
@@ -141,7 +145,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       id: idTask as string,
       title: title,
       description: description,
-      status: status.toUpperCase() as TaskStatus,
+      status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       endDate: dueDate?.toISOString() ?? '',
       workedHours: workedHours ?? '0.0',
@@ -163,17 +167,15 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleCancel = () => {
-    setTitle('');
-    setDescription('');
-    setStartDate(null);
-    setDueDate(null);
-    setStatus('');
-    setAssignedEmployee('');
-    setWorkedHours(null);
+    navigate(RoutesPath.TASKS);
+  };
+
+  const hasErrors = () => {
+    return Object.values(errors).some(error => !!error);
   };
 
   return (
-    <StyledSheet>
+    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
       <Header>Title *</Header>
       <Input
         type='text'
@@ -248,9 +250,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
       </Grid>
 
-      {/* Waiting For, Worked Hours */}
+      {/* Assigned Employee, Worked Hours */}
       <Grid container spacing={2}>
-        <Grid xs={2}>
+        <Grid container xs={2} className='md mr-20'>
           <Item>
             <Header>Assigned Employee</Header>
             <GenericDropdown
@@ -261,8 +263,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             />
           </Item>
         </Grid>
-        <Grid xs={2}>
-          <Item>
+        <Grid container xs={2} className='md'>
+          <Item className='ml-20'>
             <Header>Worked Hours</Header>
             <Input
               placeholder='0'
@@ -286,7 +288,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <ModifyButton onClick={handleSubmit} />
+            <ModifyButton onClick={handleSubmit} disabled={hasErrors()} />
           </Item>
         </Grid>
       </Grid>

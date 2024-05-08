@@ -1,5 +1,8 @@
+import { Box, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import colors from '../../colors';
+import Loader from '../../components/common/Loader';
 import UpdateTaskForm from '../../components/modules/Task/UpdateTask/UpdateTaskForm';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
@@ -18,6 +21,7 @@ const UpdateTaskPage: React.FC = () => {
 
   useEffect(() => {
     sendEmployeeRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -35,6 +39,7 @@ const UpdateTaskPage: React.FC = () => {
     if (!cachedTask) {
       sendGetTaskRequest();
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cachedTask]);
 
   const { sendRequest: sendUpdateTaskRequest } = useHttp<UpdatedTask>(
@@ -49,6 +54,26 @@ const UpdateTaskPage: React.FC = () => {
       console.error(error);
     }
   };
+
+  if (!cachedTask) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading task
+        </Typography>
+        <Loader />
+      </Box>
+    );
+  }
 
   return (
     <UpdateTaskForm
