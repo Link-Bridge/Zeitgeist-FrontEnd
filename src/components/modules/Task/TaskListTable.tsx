@@ -98,7 +98,7 @@ const TaskListTable = ({ projectId, setTotalProjectHours }: TaskListTableProps) 
                   {task.title}
                 </td>
                 <td>
-                  <ClickableChip value={formatStatus(task.status)} setValue={() => { }} />
+                  <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
                 </td>
                 <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
