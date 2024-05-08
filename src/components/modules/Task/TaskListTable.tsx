@@ -1,6 +1,7 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Snackbar, Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
+import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../colors';
@@ -84,7 +85,7 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
       };
 
       try {
-        await sendUpdateStatusTaskRequest({}, { ...payload });
+        await doFetch(payload);
         setState({ open: true, message: 'Task status updated successfully.', type: 'success' });
         setTimeout(() => {
           setState({ open: false, message: '' });
@@ -98,10 +99,26 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     }
   };
 
-  const { sendRequest: sendUpdateStatusTaskRequest } = useHttp<TaskDetail>(
-    `${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-    RequestMethods.PUT
-  );
+  const doFetch = async (payload: any) => {
+    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+    const idToken = sessionStorage.getItem('idToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    };
+    const options: AxiosRequestConfig = {
+      method: RequestMethods.PUT,
+      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
+      headers: headers,
+      data: payload,
+    };
+    await axios(options);
+  };
+
+  // const { sendRequest: sendUpdateStatusTaskRequest } = useHttp<TaskDetail>(
+  //   `${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
+  //   RequestMethods.PUT
+  // );
 
   if (loading) {
     return (
