@@ -1,15 +1,13 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
-import { Dialog, DialogActions, DialogContent, DialogTitle, Typography } from '@mui/material';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
 import { Task, TaskDetail } from '../../../types/task';
 import { RequestMethods } from '../../../utils/constants';
-import CancelButton from '../../common/CancelButton';
-import DeleteButton from '../../common/DeleteButton';
+import DeleteModal from '../../common/DeleteModal';
 import ClickableChip from '../../common/DropDown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
 
@@ -50,13 +48,6 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
   const handleDeleteButtonClick = (task: Task) => {
     setTaskToDelete(task);
     setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirmed = async () => {
-    if (taskToDelete) {
-      await onDelete(taskToDelete.id);
-      setDeleteDialogOpen(false);
-    }
   };
 
   useEffect(() => {
@@ -131,17 +122,17 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
             ))}
           </tbody>
 
-          <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-            <DialogTitle>Confirm Deletion</DialogTitle>
-            <DialogContent>
-              <Typography>Are you sure you want to delete this task?</Typography>
-            </DialogContent>
-
-            <DialogActions>
-              <CancelButton onClick={() => setDeleteDialogOpen(false)}>Cancel</CancelButton>
-              <DeleteButton onClick={handleDeleteConfirmed}>Delete</DeleteButton>
-            </DialogActions>
-          </Dialog>
+          <DeleteModal
+            open={taskToDelete !== null}
+            setOpen={() => setTaskToDelete(null)}
+            title='Confirm Deletion'
+            description='Are you sure you want to delete this task?'
+            id={taskToDelete?.id || ''}
+            handleDeleteEmployee={(id: string) => {
+              onDelete(id);
+              setTaskToDelete(null);
+            }}
+          />
         </>
       )}
     </Table>

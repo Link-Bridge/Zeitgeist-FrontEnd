@@ -2,10 +2,6 @@ import { KeyboardArrowDown } from '@mui/icons-material';
 import {
   Card,
   Chip,
-  Dialog,
-  DialogActions,
-  DialogContent,
-  DialogTitle,
   Table,
   TableBody,
   TableCell,
@@ -20,8 +16,7 @@ import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../colors';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import CancelButton from '../../../common/CancelButton';
-import DeleteButton from '../../../common/DeleteButton';
+import DeleteModal from '../../../common/DeleteModal';
 import GenericDropdown from '../../../common/GenericDropdown';
 import TaskActionsMenu from '../../../common/TaskActionsMenu';
 
@@ -57,13 +52,6 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const handleDeleteButtonClick = (task: Task) => {
     setTaskToDelete(task);
     setDeleteDialogOpen(true);
-  };
-
-  const handleDeleteConfirmed = async () => {
-    if (taskToDelete) {
-      await onDelete(taskToDelete.id);
-      setDeleteDialogOpen(false);
-    }
   };
 
   const dateToShortString = (dateString: string) => {
@@ -149,17 +137,17 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
         </TableContainer>
       </Card>
 
-      <Dialog open={deleteDialogOpen} onClose={() => setDeleteDialogOpen(false)}>
-        <DialogTitle>Confirm Deletion</DialogTitle>
-        <DialogContent>
-          <Typography>Are you sure you want to delete this task?</Typography>
-        </DialogContent>
-
-        <DialogActions>
-          <CancelButton onClick={() => setDeleteDialogOpen(false)}>Cancel</CancelButton>
-          <DeleteButton onClick={handleDeleteConfirmed}>Delete</DeleteButton>
-        </DialogActions>
-      </Dialog>
+      <DeleteModal
+        open={taskToDelete !== null}
+        setOpen={() => setTaskToDelete(null)}
+        title='Confirm Deletion'
+        description='Are you sure you want to delete this task?'
+        id={taskToDelete?.id || ''}
+        handleDeleteEmployee={(id: string) => {
+          onDelete(id);
+          setTaskToDelete(null);
+        }}
+      />
     </>
   );
 };
