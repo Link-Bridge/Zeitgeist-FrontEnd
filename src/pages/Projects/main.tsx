@@ -61,7 +61,7 @@ const ProjectMain = () => {
           onValueChange={value => handleFilter(value)}
         />
         <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => { }}></AddButton>
+          <AddButton onClick={() => {}}></AddButton>
         </Link>
       </section>
       <section className='flex-1 overflow-scroll'>
