@@ -59,11 +59,6 @@ const TaskListTable = ({ projectId, onDelete }: TaskListTableProps) => {
     }
   };
 
-  const deleteTask = async (taskId: string) => {
-    onDelete(taskId);
-    await sendRequest();
-  };
-
   useEffect(() => {
     sendRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps

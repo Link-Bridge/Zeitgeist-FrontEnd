@@ -20,8 +20,8 @@ import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../colors';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import DeleteButton from '../../../common/DeleteButton';
 import CancelButton from '../../../common/CancelButton';
+import DeleteButton from '../../../common/DeleteButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import TaskActionsMenu from '../../../common/TaskActionsMenu';
 
