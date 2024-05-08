@@ -24,6 +24,7 @@ import { RequestMethods } from '../../utils/constants';
  */
 const Tasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
+
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
 
@@ -117,7 +118,7 @@ const Tasks = (): JSX.Element => {
           overflowY: 'auto',
         }}
       >
-        {taskData && projectData ? (
+        {taskData && projectData && tasksPerProject.length ? (
           <>
             {tasksPerProject?.map(({ project, tasks }) => (
               <Box

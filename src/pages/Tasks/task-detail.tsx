@@ -50,9 +50,10 @@ const Task: React.FC = () => {
   };
 
   const deleteTask = useDeleteTask();
-  const handleDeleteTask = async (id: string) => {
+  const handleDeleteTask = async () => {
     try {
-      await deleteTask.deleteTask(id);
+      await deleteTask.deleteTask(id!!);
+      navigate('/tasks');
     } catch (error: unknown) {
       console.error(error);
     }

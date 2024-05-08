@@ -1,36 +1,27 @@
-import { Delete, Edit, MoreHoriz, MoreVert } from '@mui/icons-material';
+import { Delete, Edit, MoreVert } from '@mui/icons-material';
 import { Dropdown, ListItemDecorator, Menu, MenuButton, MenuItem } from '@mui/joy';
 import colors from '../../colors';
+import { Task } from '../../types/task';
 
 interface TaskActionsMenuProps {
-  taskId: string;
+  task: Task;
   onEdit: (taskId: string) => void;
-  onDelete: (taskId: string) => void;
+  onOpenDeleteDialog: (task: Task) => void;
 }
 
-/**
- * TaskActionsMenu component
- *
- * @param taskId: string - Task ID
- * @param onEdit: (taskId: string) => void - Function to edit a task
- * @param onDelete: (taskId: string) => void - Function to delete a task
- *
- * @component
- * @returns {JSX.Element} - React component
- */
-const TaskActionsMenu = ({ taskId, onEdit, onDelete }: TaskActionsMenuProps) => {
+const TaskActionsMenu = ({ task, onEdit, onOpenDeleteDialog }: TaskActionsMenuProps) => {
   const handleEdit = () => {
-    onEdit(taskId);
+    onEdit(task.id);
   };
 
   const handleDelete = () => {
-    onDelete(taskId);
+    onOpenDeleteDialog(task);
   };
 
   return (
     <Dropdown>
       <MenuButton
-        slots={{ root: MoreHoriz }}
+        slots={{ root: MoreVert }}
         slotProps={{ root: { variant: 'plain', color: 'neutral' } }}
       >
         <MoreVert />
