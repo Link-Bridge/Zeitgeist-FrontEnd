@@ -52,7 +52,6 @@ const EditClientFormModal = ({
 
   useEffect(() => {
     if (error) {
-      console.log(error);
       setState({ open: true, message: error.message });
     }
     if (data) {
@@ -104,8 +103,6 @@ const EditClientFormModal = ({
       taxResidence: companyTaxResidence,
     };
 
-    console.log(updatedClientData);
-
     await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
   };
   return (
@@ -114,7 +111,7 @@ const EditClientFormModal = ({
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => {} }}
+      BackdropProps={{ onClick: () => { } }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
