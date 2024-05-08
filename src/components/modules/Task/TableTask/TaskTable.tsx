@@ -38,6 +38,8 @@ interface TaskTableProps {
 const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const navigate = useNavigate();
   const [collapsed, setCollapsed] = useState(false);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 

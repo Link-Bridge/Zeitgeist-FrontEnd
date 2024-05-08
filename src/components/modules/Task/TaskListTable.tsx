@@ -21,6 +21,8 @@ type TaskListTableProps = {
 const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
+
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
