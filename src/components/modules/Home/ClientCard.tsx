@@ -15,10 +15,7 @@ interface ClientCardProps {
   chargeableHours: number;
 }
 
-const ClientCard = ({
-  name,
-  chargeableHours,
-}: ClientCardProps) => {
+const ClientCard = ({ name, chargeableHours }: ClientCardProps) => {
   return (
     <CardContainer>
       <header className='mb-3 text-xl flex'>
@@ -26,7 +23,6 @@ const ClientCard = ({
         <span style={{ color: colors.darkGold }}>{name}</span>
       </header>
       <div className='grid grid-cols-2 gap-2'>
-
         <Chip
           sx={{
             bgcolor: colors.brownChip,
@@ -35,7 +31,6 @@ const ClientCard = ({
         >
           Chargeable Hours: {chargeableHours}
         </Chip>
-
       </div>
     </CardContainer>
   );
