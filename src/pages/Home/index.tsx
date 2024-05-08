@@ -64,7 +64,7 @@ const Home = () => {
         {!(isLoading && homeData) && (
           <Box sx={{ gap: 1, display: 'flex', flexDirection: 'column' }}>
             {homeData?.companies.map(company => (
-              <Link to={`/clients/${company.id}`}>
+              <Link to={`/clients/${company.id}`} key={company.id}>
                 <ClientCard name={company.name} chargeableHours={company.chargeableHours || 0} />
               </Link>
             ))}
