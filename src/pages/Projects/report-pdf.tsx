@@ -176,6 +176,7 @@ const ProjectReportPDF = (props: reportProps) => {
                         flexDirection: 'row',
                         justifyContent: 'space-around',
                       }}
+                      key = {item}
                     >
                       <Text style={{ width: '20%' }}>{keyMap.get(item)}</Text>
 
@@ -205,7 +206,7 @@ const ProjectReportPDF = (props: reportProps) => {
         {props.data.tasks?.map(item => {
           tasks++;
           return (
-            <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }}>
+            <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }} key={item.title}>
               <View style={{ gap: '10px' }}>
                 {tasks % 4 == 0 && (
                   <Text break style={{ fontSize: 20 }}>
