@@ -9,6 +9,15 @@ interface TaskActionsMenuProps {
   onOpenDeleteDialog: (task: Task) => void;
 }
 
+/**
+ * Task actions menu component
+ *
+ * @param task: Task object
+ * @param onEdit: Function to edit task
+ * @param onOpenDeleteDialog: Function to open delete dialog
+ *
+ * @returns Task actions menu component
+ */
 const TaskActionsMenu = ({ task, onEdit, onOpenDeleteDialog }: TaskActionsMenuProps) => {
   const handleEdit = () => {
     onEdit(task.id);
