@@ -53,7 +53,7 @@ const Clients = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => { }, [handleFilter]);
+  useEffect(() => {}, [handleFilter]);
 
   const openModal = () => {
     setOpen(true);
