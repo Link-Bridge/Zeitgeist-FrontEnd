@@ -53,7 +53,7 @@ const Clients = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => {}, [handleFilter]);
+  useEffect(() => { }, [handleFilter]);
 
   const openModal = () => {
     setOpen(true);
@@ -82,7 +82,7 @@ const Clients = () => {
             {!clientsRequest.loading && !clientsRequest.error && companies && (
               <CardsGrid>
                 {filteredCompanies.map(company => (
-                  <Link to={`${RoutesPath.CLIENTS}/${company.id}`} key={company.id}>
+                  <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
                     <ClientCard
                       name={company.name}
                       accountingHours={company.accountingHours || 0}
@@ -97,7 +97,7 @@ const Clients = () => {
           </main>
         }
       />
-      <Route path={'/:clientId'} element={<ClientDetails />} />
+      <Route path={'/details/:clientId'} element={<ClientDetails />} />
     </Routes>
   );
 };
