@@ -13,7 +13,7 @@ type ProjectsClientListProps = {
 
 export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
-  const [selectedProjectId, setSelectedProjectId] = useState<string | null>(null);
+  const [, setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
     `/project/${clientId}`,
     RequestMethods.GET
@@ -48,7 +48,7 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
         <h3 className='text-[20px] text-[#424242] font-medium'>Projects</h3>
         <section className='flex gap-5'>
           <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => { }}></AddButton>
+            <AddButton onClick={() => {}}></AddButton>
           </Link>
         </section>
       </section>
