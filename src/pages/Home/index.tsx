@@ -26,7 +26,7 @@ const Home = () => {
 
   useEffect(() => {
     if (req.data) {
-      setHomeData(req.data?.data);
+      setHomeData(req.data.data);
       setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
