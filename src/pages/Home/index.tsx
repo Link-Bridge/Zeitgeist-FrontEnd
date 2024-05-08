@@ -64,7 +64,6 @@ const Home = () => {
       </section>
       <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
         <h2 className='text-[34px]'>CLIENTS</h2>
-        {isLoading && <Loader />}
         {isLoading ? (
           <Loader />
         ) : homeData?.companies.length ? (
