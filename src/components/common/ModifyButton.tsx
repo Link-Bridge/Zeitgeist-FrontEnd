@@ -3,6 +3,7 @@ import colors from '../../colors';
 
 interface ModifyButtonProps {
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 /**
@@ -13,11 +14,12 @@ interface ModifyButtonProps {
  * @param props: Object - The component props
  * @returns
  */
-const ModifyButton = ({ onClick }: ModifyButtonProps) => {
+const ModifyButton = ({ onClick, disabled }: ModifyButtonProps) => {
   return (
     <Button
       variant='contained'
       onClick={onClick}
+      disabled={disabled}
       sx={{
         bgcolor: colors.darkGold,
         color: '#fff',
