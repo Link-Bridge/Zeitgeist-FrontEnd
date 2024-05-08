@@ -157,7 +157,7 @@ const EditClientFormModal = ({
               value={companyPhone}
               onChange={e => {
                 const input = e.target.value.replace(/\D/g, '');
-                if (input.length > 10) return;
+                if (input.length > 13) return;
                 setCompanyPhone(input);
               }}
             />
