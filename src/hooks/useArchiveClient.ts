@@ -11,7 +11,7 @@ const useDeleteEmployee = () => {
         `${BASE_API_URL}/admin/archive/${id}`,
         {},
         {
-          headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
+          headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` },
         }
       );
     } catch (err: unknown) {

@@ -87,7 +87,7 @@ const ProjectMain = () => {
 };
 
 async function getClientsNames(projects: ProjectEntity[]) {
-  const idToken = sessionStorage.getItem('idToken');
+  const idToken = localStorage.getItem('idToken');
   const names = new Map<string, string>();
   projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
   const reqs: Promise<globalThis.Response>[] = [];
