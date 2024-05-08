@@ -18,12 +18,7 @@ import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import { useParams } from 'react-router-dom';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-
-const formatDate = (date: Date) => {
-  const options = { day: '2-digit', month: '2-digit', year: 'numeric' };
-  const formattedDate = new Date(date).toLocaleDateString(options);
-  return formattedDate;
-};
+import { formatDate } from '../../../utils/methods';
 
 /**
  * Client Details Page page
@@ -56,9 +51,6 @@ const ClientDetails = () => {
   //   // update ui
   //   setFilteredClientsData(prev => {
   //     const aux = [];
-
-  //     console.log('company?.id:', company?.id);
-  //     console.log('company?.name:', company?.name);
 
   //     for (let i = 0; i < prev.length; i++) {
   //       if (prev[i].id !== company?.id) {
@@ -104,17 +96,17 @@ const ClientDetails = () => {
   return (
     <main className='bg-white rounded-xl p-6'>
       <DeleteModal
-        ToggleModal={ToggleModalDelete}
+        toggleModal={ToggleModalDelete}
         open={openDelete}
         setOpen={setOpenDelete}
         title={'Delete Client'}
         description={'Are you sure you want to delete this client?'}
       ></DeleteModal>
       <ArchiveModal
-        ToggleModal={ToggleModalArchive}
+        toggleModal={ToggleModalArchive}
         open={openArchive}
         setOpen={setOpenArchive}
-        id={company?.id}
+        id={company?.id ?? ''}
         title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
         description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
         handleArchiveClient={() => {
@@ -129,7 +121,7 @@ const ClientDetails = () => {
               size='lg'
               color='primary'
               variant='outlined'
-              label={formatDate(company.constitutionDate)}
+              label={formatDate(company.constitutionDate ?? null)}
             />
             <EditOutlinedIcon
               sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
@@ -183,7 +175,7 @@ const ClientDetails = () => {
         </>
       )}
       <Divider sx={{ 'margin-top': '30px' }} />
-      <ProjectsClientList clientId={clientId} />
+      <ProjectsClientList clientId={clientId ?? ''} />
     </main>
   );
 };
