@@ -72,8 +72,6 @@ const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
     return false;
   }
 
-  formState.area = formState.area.toUpperCase();
-
   return true;
 };
 
