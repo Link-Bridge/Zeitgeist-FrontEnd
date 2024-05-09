@@ -77,7 +77,7 @@ const GenericDropdown = <T extends string | number>({
           padding: '0 12px',
           fontSize: '0.875rem',
           lineHeight: '30px',
-          height: isPlaceholder ? 30 : 'auto',
+          height: isPlaceholder ? 25 : 'auto',
           minWidth: 50,
           whiteSpace: 'nowrap',
         }}
@@ -119,7 +119,7 @@ const GenericDropdown = <T extends string | number>({
             fontSize: '0.875rem',
             textAlign: 'center',
             lineHeight: '30px',
-            height: isEmpty ? 30 : 'auto',
+            height: isEmpty ? 25 : 'auto',
             minHeight: 30,
             transition: 'height 0.2s ease',
             overflow: 'hidden',
