@@ -1,3 +1,4 @@
+import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box } from '@mui/joy';
 import { FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
 import React, { useEffect, useState } from 'react';
@@ -76,8 +77,8 @@ const GenericDropdown = <T extends string | number>({
           padding: '0 12px',
           fontSize: '0.875rem',
           lineHeight: '30px',
-          height: isPlaceholder ? 30 : 'auto',
-          minWidth: 150,
+          height: isPlaceholder ? 25 : 'auto',
+          minWidth: 50,
           whiteSpace: 'nowrap',
         }}
       >
@@ -98,6 +99,18 @@ const GenericDropdown = <T extends string | number>({
         onOpen={handleOpen}
         displayEmpty
         renderValue={renderValue || renderValueWithColor}
+        variant='standard'
+        disableUnderline={true}
+        IconComponent={() => (
+          <Box
+            sx={{
+              color: (option && colorMap?.[option]?.font) || 'inherit',
+              marginRight: '8px',
+            }}
+          >
+            <KeyboardArrowDown />
+          </Box>
+        )}
         sx={{
           borderRadius: 30,
           background: (option && colorMap?.[option]?.bg) || backgroundColor || 'transparent',
@@ -106,7 +119,7 @@ const GenericDropdown = <T extends string | number>({
             fontSize: '0.875rem',
             textAlign: 'center',
             lineHeight: '30px',
-            height: isEmpty ? 30 : 'auto',
+            height: isEmpty ? 25 : 'auto',
             minHeight: 30,
             transition: 'height 0.2s ease',
             overflow: 'hidden',
