@@ -53,7 +53,6 @@ const ClientDetails = () => {
   //   // update ui
   //   setFilteredClientsData(prev => {
   //     const aux = [];
-
   //     for (let i = 0; i < prev.length; i++) {
   //       if (prev[i].id !== company?.id) {
   //         aux.push(prev[i]);
@@ -64,21 +63,23 @@ const ClientDetails = () => {
   //         archived: !prev[i].archived,
   //       });
   //     }
-
   //     return aux;
   //   });
   // };
 
   useEffect(() => {
-    sendRequest();
+    if (!data) sendRequest();
+    if (data && data.data) setCompany(data.data);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, [data]);
 
   useEffect(() => {
-    if (data && data.data) {
-      setCompany(data.data);
-    }
-  }, [data]);
+    sendRequest();
+    if (data && data.data) setCompany(data.data);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch]);
 
   if (loading) {
     return <div>Loading...</div>;
