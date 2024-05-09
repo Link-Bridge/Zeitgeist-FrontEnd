@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
 import NotFoundPage from './components/common/NotFound';
+import OfflineModal from './components/common/OfflineModal';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
@@ -44,6 +45,7 @@ function App() {
     <EmployeeContext.Provider value={{ employee, setEmployee }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <SnackbarContext.Provider value={{ state, setState }}>
+          <OfflineModal />
           <Router>
             <Routes>
               {<Route path={RoutesPath.ROOT} element={<Auth />} />}

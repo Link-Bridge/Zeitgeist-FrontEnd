@@ -52,6 +52,8 @@ const EditClientFormModal = ({
   );
 
   useEffect(() => {
+    updatePerviewClientInfo();
+
     if (error) {
       setState({ open: true, message: error.message });
     }
@@ -59,11 +61,11 @@ const EditClientFormModal = ({
       setState({ open: true, message: 'Client updated successfully.', type: 'success' });
       if (open) {
         setOpen(false);
-        setRefetch(true);
+        setRefetch((prev: boolean) => !prev);
       }
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, error]);
+  }, [data, error, clientData]);
 
   const handleUpdate = async () => {
     if (
@@ -116,13 +118,22 @@ const EditClientFormModal = ({
 
     await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
   };
+
+  const updatePerviewClientInfo = () => {
+    setCompanyName(clientData.name);
+    setCompanyEmail(clientData.email);
+    setCompanyPhone(clientData.phoneNumber);
+    setCompanyRFC(clientData.rfc);
+    setCompanyConstitution(clientData.constitutionDate);
+    setCompanyTaxResidence(clientData.taxResidence);
+  };
+
   return (
     <Modal
       open={open}
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => { } }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
