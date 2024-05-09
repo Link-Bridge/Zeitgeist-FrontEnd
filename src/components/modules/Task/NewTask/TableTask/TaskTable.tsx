@@ -15,14 +15,14 @@ import {
 import axios, { AxiosRequestConfig } from 'axios';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
-import { Task } from '../../../../types/task';
-import { TaskStatus } from '../../../../types/task-status';
-import { APIPath, RequestMethods } from '../../../../utils/constants';
-import DeleteModal from '../../../common/DeleteModal';
-import GenericDropdown from '../../../common/GenericDropdown';
-import TaskActionsMenu from '../../../common/TaskActionsMenu';
+import { statusChipColorCombination } from '../../../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../../../hooks/snackbarContext';
+import { Task } from '../../../../../types/task';
+import { TaskStatus } from '../../../../../types/task-status';
+import { APIPath, RequestMethods } from '../../../../../utils/constants';
+import DeleteModal from '../../../../common/DeleteModal';
+import GenericDropdown from '../../../../common/GenericDropdown';
+import TaskActionsMenu from '../../../../common/TaskActionsMenu';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,

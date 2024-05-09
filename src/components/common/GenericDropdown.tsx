@@ -2,6 +2,7 @@ import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box } from '@mui/joy';
 import { FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import colors from '../../colors';
 
 interface ColorMapEntity {
   bg: string;
@@ -71,8 +72,8 @@ const GenericDropdown = <T extends string | number>({
     return (
       <Box
         sx={{
-          backgroundColor: colorCombination?.bg || (isPlaceholder ? 'transparent' : undefined),
-          color: colorCombination?.font || (isPlaceholder ? 'gray' : undefined),
+          backgroundColor: colorCombination?.bg,
+          color: colorCombination?.font,
           borderRadius: 30,
           padding: '0 12px',
           fontSize: '0.875rem',
@@ -113,7 +114,7 @@ const GenericDropdown = <T extends string | number>({
         )}
         sx={{
           borderRadius: 30,
-          background: (option && colorMap?.[option]?.bg) || backgroundColor || 'transparent',
+          background: (option && colorMap?.[option]?.bg) || backgroundColor || colors.lighterGray,
           '& .MuiSelect-select': {
             padding: '1px 6px',
             fontSize: '0.875rem',
