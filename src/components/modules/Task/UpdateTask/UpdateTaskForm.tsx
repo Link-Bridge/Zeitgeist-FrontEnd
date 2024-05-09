@@ -31,12 +31,12 @@ interface UpdateTaskFormProps {
 }
 
 /**
- * New Task form component
+ * Update Task form component
  *
  * @component
  * @param {UpdateTaskFormProps} props - Component props
  *
- * @returns {JSX.Element} New Task form component
+ * @returns {JSX.Element} Update Task form component
  */
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   onSubmit,
