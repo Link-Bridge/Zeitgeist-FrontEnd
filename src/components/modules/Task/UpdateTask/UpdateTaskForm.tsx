@@ -139,7 +139,6 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
-
     const newValue = event.target.value;
 
     if (!/^\d*\.?\d*$/.test(newValue)) {
@@ -148,14 +147,21 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       return;
     }
 
-    if( newValue.length > 8) {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours cannot be longer than 8 characters' }));
-      setState({ open: true, message: 'Worked hours cannot be longer than 8 characters.', type: 'danger' });
+    if (newValue.length > 8) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        workedHours: 'Worked hours cannot be longer than 8 characters',
+      }));
+      setState({
+        open: true,
+        message: 'Worked hours cannot be longer than 8 characters.',
+        type: 'danger',
+      });
       return;
     }
 
     setWorkedHours(event.target.value);
-    
+
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
       setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
