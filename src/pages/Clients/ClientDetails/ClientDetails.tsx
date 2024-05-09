@@ -20,7 +20,7 @@ import { Box, Typography } from '@mui/joy';
 import { useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-import { formatDate, truncateText } from '../../../utils/methods';
+import { formatDate } from '../../../utils/methods';
 
 /**
  * Client Details Page page

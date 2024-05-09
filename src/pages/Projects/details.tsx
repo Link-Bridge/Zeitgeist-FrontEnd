@@ -223,7 +223,7 @@ const ProjectDetails = () => {
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => { }} />
+          <AddButton onClick={() => {}} />
         </Link>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>

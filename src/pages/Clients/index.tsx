@@ -9,8 +9,8 @@ import NewClientFormModal from '../../components/modules/Clients/NewClientFormMo
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
-import ClientDetails from './ClientDetails/ClientDetails';
 import { truncateText } from '../../utils/methods';
+import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
@@ -54,7 +54,7 @@ const Clients = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => { }, [handleFilter]);
+  useEffect(() => {}, [handleFilter]);
 
   const openModal = () => {
     setOpen(true);
