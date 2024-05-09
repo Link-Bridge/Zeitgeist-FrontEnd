@@ -66,12 +66,7 @@ const NewTaskPage = () => {
     } catch (error: any) {
       console.log(error);
     }
-    // finally {
-    //   getTasks();
-    // }
   };
-
-  console.log(tasks);
 
   return (
     <NewTaskForm
