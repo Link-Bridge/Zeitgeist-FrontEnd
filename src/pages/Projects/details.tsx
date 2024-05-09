@@ -7,7 +7,7 @@ import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity } from '../../types/project';
-import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -117,7 +117,7 @@ const ProjectDetails = () => {
     if (data) {
       setUpdating(true);
       const res = await axios.put(
-        `${BASE_URL}/project/edit/${projectId}`,
+        `${BASE_API_URL}/project/edit/${projectId}`,
         { payed, id: projectId },
         { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
       );
