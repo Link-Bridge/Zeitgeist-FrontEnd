@@ -1,7 +1,7 @@
 import { Chip } from '@mui/joy';
-import WorkIcon from '../../../assets/icons/work_filled.svg';
-import colors from '../../../colors';
-import CardContainer from '../../common/CardContainer';
+import WorkIcon from '../../assets/icons/work_filled.svg';
+import colors from '../../colors';
+import CardContainer from './CardContainer';
 
 /**
  * @brief Displays and organizes client information.

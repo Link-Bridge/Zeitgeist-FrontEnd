@@ -1,6 +1,5 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
-import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import Loader from '../../components/common/Loader';
 import ClientCard from '../../components/modules/Home/ClientCard';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
@@ -40,9 +39,8 @@ const Home = () => {
     <main className='grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
       <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg overflow-x-hidden'>
         <h2 className='text-[34px]'>MY PROJECTS </h2>
-        {isLoading ? (
-          <Loader />
-        ) : homeData?.projects.length ? (
+        {isLoading && <Loader />}
+        {!(isLoading && homeData) && (
           <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 rounded-xl mt-6'>
             {homeData?.projects.map(project => (
               <Link to={`/projects/details/${project.id}`} key={project.id}>
@@ -57,15 +55,12 @@ const Home = () => {
               </Link>
             ))}
           </section>
-        ) : (
-          <ComponentPlaceholder text='No projects were found' />
         )}
       </section>
       <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
         <h2 className='text-[34px]'>CLIENTS</h2>
-        {isLoading ? (
-          <Loader />
-        ) : homeData?.companies.length ? (
+        {isLoading && <Loader />}
+        {!(isLoading && homeData) && (
           <section className='grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3 rounded-xl mt-6'>
             {homeData?.companies.map(company => (
               <Link to={`/clients/details/${company.id}`} key={company.id}>
@@ -73,8 +68,6 @@ const Home = () => {
               </Link>
             ))}
           </section>
-        ) : (
-          <ComponentPlaceholder text='No clients were found' />
         )}
       </section>
     </main>
