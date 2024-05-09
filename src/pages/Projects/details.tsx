@@ -113,7 +113,7 @@ const ProjectDetails = () => {
 
   async function changePayed(projectId: string, payed: boolean) {
     const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    
+
     if (data) {
       setUpdating(true);
       const res = await axios.put(
