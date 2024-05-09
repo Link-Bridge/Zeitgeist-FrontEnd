@@ -1,8 +1,9 @@
-import { Box, Chip, Grid, Input, Textarea } from '@mui/joy';
+import { Box, Chip, Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
@@ -51,21 +52,59 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | null>(null);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+
+  const navigate = useNavigate();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setTitle(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     setDescription(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    if (date && dueDate && date.isAfter(dueDate)) {
+      setState({
+        open: true,
+        message: 'Start date cannot be after due date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
     setStartDate(date);
   };
 
   const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+    const datesValid = !date || !startDate || date.isAfter(startDate);
+
+    if (!datesValid) {
+      setState({
+        open: true,
+        message: 'Due date cannot be before start date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
+
     setDueDate(date);
   };
 
@@ -79,33 +118,19 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     setWorkedHours(event.target.value);
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
+    }
   };
-
   const getEmployeeNames = () => {
     return employees.map(employee => employee.firstName + ' ' + employee.lastName);
   };
 
   const handleSubmit = async () => {
-    const requiredFields = ['title', 'description', 'startDate', 'dueDate', 'status'];
-
-    if (!requiredFields.every(field => !!field && field !== '')) {
-      setErrors({
-        ...errors,
-        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
-      });
-      return;
-    }
-
-    if (dueDate && startDate && dueDate.isBefore(startDate)) {
-      setErrors({
-        ...errors,
-        dueDate: 'Due date cannot be before start date',
-      });
-      return;
-    }
-
-    setErrors({});
-
     const payload: BareboneTask = {
       title,
       description,
@@ -122,8 +147,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     try {
       await onSubmit(payload);
+      setState({ open: true, message: 'Task created successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(`/projects/details/${projectId}`);
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: 'Failed to create task.', type: 'danger' });
     }
   };
 
@@ -135,6 +164,32 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours(null);
+  };
+
+  const hasErrors = () => {
+    return Object.values(errors).some(error => !!error);
+  };
+
+  const hasEmptyFields = () => {
+    return (
+      !title ||
+      !description ||
+      !startDate ||
+      !dueDate ||
+      !status ||
+      !assignedEmployee ||
+      !workedHours
+    );
+  };
+
+  const datesAreNotValid = () => {
+    if (
+      (dueDate && startDate && dueDate.isBefore(startDate)) ||
+      (dueDate && startDate && startDate.isAfter(dueDate))
+    ) {
+      return true;
+    }
+    return false;
   };
 
   if (projectId === '') {
@@ -272,12 +327,20 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-              <SendButton onClick={handleSubmit} />
-            </Link>
+            <SendButton
+              onClick={handleSubmit}
+              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid()}
+            />
           </Item>
         </Grid>
       </Grid>
+
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </StyledSheet>
   );
 };
