@@ -36,6 +36,7 @@ export enum ProjectStatus {
   CANCELLED = 'Cancelled',
   ACCEPTED = 'Accepted',
   DONE = 'Done',
+  NONE = '-',
 }
 
 export interface ProjectEntity {
@@ -54,6 +55,7 @@ export interface ProjectEntity {
   isArchived: boolean;
   created_at: Date;
   idCompany: string;
+  payed: boolean;
 }
 
 export enum ProjectFilters {

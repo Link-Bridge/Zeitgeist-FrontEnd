@@ -9,6 +9,7 @@ import NewClientFormModal from '../../components/modules/Clients/NewClientFormMo
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { truncateText } from '../../utils/methods';
 import ClientDetails from './ClientDetails/ClientDetails';
 
 const Clients = () => {
@@ -84,7 +85,7 @@ const Clients = () => {
                 {filteredCompanies.map(company => (
                   <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
                     <ClientCard
-                      name={company.name}
+                      name={truncateText(company.name)}
                       accountingHours={company.accountingHours || 0}
                       legalHours={company.legalHours || 0}
                       chargeableHours={company.chargeableHours || 0}

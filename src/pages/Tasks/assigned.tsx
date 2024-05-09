@@ -3,7 +3,7 @@ import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
-import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
+import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
