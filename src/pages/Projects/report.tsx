@@ -172,15 +172,6 @@ const ProjectReport: React.FC = () => {
               
               <TextField
                 sx={{
-                  width: '90px',
-                }}
-                type='number'
-                label='Month'
-                inputProps={{ min: '0', max: '12', step: '1' }}
-                onChange={e => handleMonthChange(Number(e.target.value))}
-              />
-              <TextField
-                sx={{
                   width: '100px',
                 }}
                 type='number'
