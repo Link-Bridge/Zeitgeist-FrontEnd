@@ -20,7 +20,7 @@ import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
-import { formatDate } from '../../utils/methods';
+import { formatDate, truncateText } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
   [ProjectStatus.NONE]: statusChipColorCombination.default,
@@ -127,7 +127,7 @@ const ProjectDetails = () => {
         <section className='font-montserrat'>
           <section className='flex justify-between'>
             <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
-              {data?.name}
+              {truncateText(data?.name)}
             </h3>
             <section className='flex justify-end gap-3'>
               <Link to={`/projects/report/${id}`}>
@@ -176,7 +176,7 @@ const ProjectDetails = () => {
 
               <div style={{ fontSize: '15px' }}>
                 <p style={{ marginLeft: '7px' }}>Client</p>
-                <Chip sx={chipStyle} label={companyName} />
+                <Chip sx={chipStyle} label={truncateText(companyName, 20)} />
               </div>
 
               <div style={{ fontSize: '15px' }}>
@@ -223,7 +223,7 @@ const ProjectDetails = () => {
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
+          <AddButton onClick={() => { }} />
         </Link>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>

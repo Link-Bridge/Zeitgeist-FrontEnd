@@ -50,3 +50,16 @@ export const dateGreaterThanToday = (date: string | Date | undefined): boolean =
   const today = new Date();
   return date > today;
 };
+
+/**
+ *
+ * @param text: string
+ * @returns string Truncated text
+ *
+ * @description Method to truncate a text which lenght is greater than 50 chars
+ */
+export const truncateText = (text: string | undefined | null, maxLength: number = 50): string => {
+  if (!text) return '';
+  if (text.length > maxLength) return text.substring(0, maxLength) + '...';
+  return text;
+};

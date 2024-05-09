@@ -10,6 +10,7 @@ import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 import ClientDetails from './ClientDetails/ClientDetails';
+import { truncateText } from '../../utils/methods';
 
 const Clients = () => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
@@ -53,7 +54,7 @@ const Clients = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => {}, [handleFilter]);
+  useEffect(() => { }, [handleFilter]);
 
   const openModal = () => {
     setOpen(true);
@@ -84,7 +85,7 @@ const Clients = () => {
                 {filteredCompanies.map(company => (
                   <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
                     <ClientCard
-                      name={company.name}
+                      name={truncateText(company.name)}
                       accountingHours={company.accountingHours || 0}
                       legalHours={company.legalHours || 0}
                       chargeableHours={company.chargeableHours || 0}

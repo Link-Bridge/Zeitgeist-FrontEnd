@@ -20,7 +20,7 @@ import { Box, Typography } from '@mui/joy';
 import { useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-import { formatDate } from '../../../utils/methods';
+import { formatDate, truncateText } from '../../../utils/methods';
 
 /**
  * Client Details Page page
@@ -47,25 +47,6 @@ const ClientDetails = () => {
   const handleEditClick = () => {
     setEditModalOpen(true);
   };
-
-  // Hay que arreglar esto después
-  // const handleArchiveClient = () => {
-  //   // update ui
-  //   setFilteredClientsData(prev => {
-  //     const aux = [];
-  //     for (let i = 0; i < prev.length; i++) {
-  //       if (prev[i].id !== company?.id) {
-  //         aux.push(prev[i]);
-  //         continue;
-  //       }
-  //       aux.push({
-  //         ...prev[i],
-  //         archived: !prev[i].archived,
-  //       });
-  //     }
-  //     return aux;
-  //   });
-  // };
 
   useEffect(() => {
     if (!data) sendRequest();
@@ -119,7 +100,7 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <section className='flex justify-between'>
-            <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
+            <h2 className='text-2xl text-gold font-medium text-wrap break-all'>{company.name}</h2>
             <section className='flex items-center gap-5'>
               <div className='flex items-center gap-2'>
                 <Typography level='body-sm' className='mr-1'>
@@ -188,5 +169,24 @@ const ClientDetails = () => {
     </>
   );
 };
+
+// Hay que arreglar esto después
+// const handleArchiveClient = () => {
+//   // update ui
+//   setFilteredClientsData(prev => {
+//     const aux = [];
+//     for (let i = 0; i < prev.length; i++) {
+//       if (prev[i].id !== company?.id) {
+//         aux.push(prev[i]);
+//         continue;
+//       }
+//       aux.push({
+//         ...prev[i],
+//         archived: !prev[i].archived,
+//       });
+//     }
+//     return aux;
+//   });
+// };
 
 export default ClientDetails;
