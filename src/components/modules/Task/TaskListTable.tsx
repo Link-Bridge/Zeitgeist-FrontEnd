@@ -19,7 +19,6 @@ type TaskListTableProps = {
   loadingTasks: boolean;
   errorTasks: Error | null;
   onDelete: (id: string) => void;
-  setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
 const statusColorMap: Record<TaskStatus, string> = {
@@ -37,7 +36,6 @@ const TaskListTable = ({
   loadingTasks,
   errorTasks,
   onDelete,
-  setTotalProjectHours,
 }: TaskListTableProps) => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars

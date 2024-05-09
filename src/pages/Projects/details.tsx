@@ -78,9 +78,9 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      // setTotalProjectHours(() =>
-      //   tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
-      // );
+      setTotalHours(() =>
+        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -259,7 +259,6 @@ const ProjectDetails = () => {
           initialTasks={initialTasks}
           getTasks={getTasks}
           onDelete={handleDeleteTask}
-          setTotalProjectHours={setTotalHours}
         />
       </Card>
     </>
