@@ -1,6 +1,7 @@
 import Chip from '@mui/joy/Chip';
 import colors from '../../../colors';
 import { ProjectAreas, ProjectStatus } from '../../../types/project';
+import { truncateText } from '../../../utils/methods';
 import StatusChip from '../../common/StatusChip';
 
 type CardProjectProps = {
@@ -29,7 +30,7 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
         <div className='border-2 h-8 border-[#9C844C]' />
         <h5 className='text-[#424242] font-montserrat'>{name}</h5>
       </section>
-      {company && <span className='text-sm text-gold'>{company}</span>}
+      {company && <span className='text-sm text-gold break-all'>{truncateText(company)}</span>}
       {''}
       <section className='mt-3 flex gap-3'>
         <StatusChip status={status} />
