@@ -141,11 +141,19 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
    */
 
   return (
-    <Table borderAxis="none">
+    <Table borderAxis='none'>
       {data?.data.length === 0 && (
         <tbody>
-          <tr><td className='w-full flex flex-col items-center justify-center'><WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} /></td></tr>
-          <tr><td className='w-full flex flex-col items-center justify-center'><Box className='mt-4'>No tasks associated to this company were found.</Box></td></tr>
+          <tr>
+            <td className='w-full flex flex-col items-center justify-center'>
+              <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
+            </td>
+          </tr>
+          <tr>
+            <td className='w-full flex flex-col items-center justify-center'>
+              <Box className='mt-4'>No tasks associated to this company were found.</Box>
+            </td>
+          </tr>
         </tbody>
       )}
       {data && data.data && data.data.length !== 0 && (
