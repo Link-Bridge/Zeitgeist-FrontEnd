@@ -115,6 +115,7 @@ const NewProject = () => {
               <FormLabel>Description</FormLabel>
               <Textarea
                 minRows={5}
+                maxRows={5}
                 value={form.formState.description}
                 onChange={e => {
                   form.handleChange('description', e.target.value);
