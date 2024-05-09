@@ -118,7 +118,7 @@ const ProjectDetails = () => {
       const res = await axios.put(
         `${BASE_API_URL}/project/edit/${projectId}`,
         { payed, id: projectId },
-        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
       data.payed = res.data.data.payed;
       setUpdating(false);
