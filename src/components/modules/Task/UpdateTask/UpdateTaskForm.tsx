@@ -50,14 +50,25 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
-  const [workedHours, setWorkedHours] = useState<string | null>(null);
+  const [workedHours, setWorkedHours] = useState<string | ''>('');
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = event.target.value;
+
+    if (newTitle.length > 70) {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      return setState({
+        open: true,
+        message: 'Title cannot be longer than 70 characters',
+        type: 'danger',
+      });
+    }
     setTitle(event.target.value);
+
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
       setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
@@ -68,7 +79,19 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newDescription = event.target.value;
+
+    if (newDescription.length > 256) {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({
+        open: true,
+        message: 'Description cannot be longer than 256 characters',
+        type: 'danger',
+      });
+      return;
+    }
     setDescription(event.target.value);
+
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
       setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
@@ -116,6 +139,27 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+
+    if (!/^\d*\.?\d*$/.test(newValue)) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Only numbers are allowed' }));
+      setState({ open: true, message: 'Worked hours can only be numbers.', type: 'danger' });
+      return;
+    }
+
+    if (newValue.length > 8) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        workedHours: 'Worked hours cannot be longer than 8 characters',
+      }));
+      setState({
+        open: true,
+        message: 'Worked hours cannot be longer than 8 characters.',
+        type: 'danger',
+      });
+      return;
+    }
+
     setWorkedHours(event.target.value);
 
     if (!event.target.value.trim()) {
@@ -205,6 +249,13 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       !assignedEmployee ||
       !workedHours
     );
+  };
+
+  const hasWrongLength = () => {
+    if (title.length > 70 || description.length > 256 || workedHours.toString().length > 8) {
+      console.log('wrong length');
+      return true;
+    }
   };
 
   const datesAreNotValid = () => {
@@ -333,7 +384,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Item>
             <ModifyButton
               onClick={handleSubmit}
-              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid()}
+              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
             />
           </Item>
         </Grid>

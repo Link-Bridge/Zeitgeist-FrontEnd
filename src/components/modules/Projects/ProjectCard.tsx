@@ -36,7 +36,7 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
         <Chip
           variant='solid'
           sx={{
-            'background-color': colors.lightGold,
+            backgroundColor: colors.lightGold,
             color: colors.darkerGold,
           }}
         >

@@ -16,7 +16,7 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box } from '@mui/joy';
+import { Box, Typography } from '@mui/joy';
 import { useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
@@ -53,7 +53,6 @@ const ClientDetails = () => {
   //   // update ui
   //   setFilteredClientsData(prev => {
   //     const aux = [];
-
   //     for (let i = 0; i < prev.length; i++) {
   //       if (prev[i].id !== company?.id) {
   //         aux.push(prev[i]);
@@ -64,21 +63,23 @@ const ClientDetails = () => {
   //         archived: !prev[i].archived,
   //       });
   //     }
-
   //     return aux;
   //   });
   // };
 
   useEffect(() => {
-    sendRequest();
+    if (!data) sendRequest();
+    if (data && data.data) setCompany(data.data);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, [data]);
 
   useEffect(() => {
-    if (data && data.data) {
-      setCompany(data.data);
-    }
-  }, [data]);
+    sendRequest();
+    if (data && data.data) setCompany(data.data);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -120,11 +121,16 @@ const ClientDetails = () => {
           <section className='flex justify-between'>
             <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
             <section className='flex items-center gap-5'>
-              <Chip
-                color='primary'
-                variant='outlined'
-                label={formatDate(company.constitutionDate ?? null)}
-              />
+              <div className='flex items-center gap-2'>
+                <Typography level='body-sm' className='mr-1'>
+                  Constitution date:
+                </Typography>
+                <Chip
+                  color='primary'
+                  variant='outlined'
+                  label={formatDate(company.constitutionDate ?? null)}
+                />
+              </div>
               <EditOutlinedIcon
                 sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
                 className='text-gold'

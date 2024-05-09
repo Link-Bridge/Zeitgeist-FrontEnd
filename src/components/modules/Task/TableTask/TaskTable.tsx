@@ -1,4 +1,4 @@
-import { KeyboardArrowDown } from '@mui/icons-material';
+import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
 import { Snackbar } from '@mui/joy';
 import {
   Card,
@@ -148,7 +148,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                     sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
                     onClick={handleCollapseToggle}
                   >
-                    <KeyboardArrowDown />
+                    {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
                   </Typography>
                 </TableCell>
               </TableRow>
