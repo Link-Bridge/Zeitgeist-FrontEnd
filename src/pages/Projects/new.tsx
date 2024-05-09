@@ -38,16 +38,22 @@ const NewProject = () => {
     }
 
     req.sendRequest();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
+  useEffect(() => {
     if (req.error) setState({ open: true, message: req.error.message, type: 'danger' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [req.error]);
 
+  useEffect(() => {
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
 
     if (form.success)
       setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [req.error, form.error, form.success, setState]);
+  }, [form.error, form.success]);
 
   if (form.success) {
     return <Navigate to='/projects' />;

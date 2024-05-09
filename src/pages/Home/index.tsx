@@ -1,4 +1,3 @@
-import { Box } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import Loader from '../../components/common/Loader';
@@ -62,13 +61,13 @@ const Home = () => {
         <h2 className='text-[34px]'>CLIENTS</h2>
         {isLoading && <Loader />}
         {!(isLoading && homeData) && (
-          <Box sx={{ gap: 1, display: 'flex', flexDirection: 'column' }}>
+          <section className='grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3 rounded-xl mt-6'>
             {homeData?.companies.map(company => (
-              <Link to={`/clients/${company.id}`}>
+              <Link to={`/clients/details/${company.id}`} key={company.id}>
                 <ClientCard name={company.name} chargeableHours={company.chargeableHours || 0} />
               </Link>
             ))}
-          </Box>
+          </section>
         )}
       </section>
     </main>

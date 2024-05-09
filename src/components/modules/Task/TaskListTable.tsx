@@ -113,11 +113,6 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     await axios(options);
   };
 
-  // const { sendRequest: sendUpdateStatusTaskRequest } = useHttp<TaskDetail>(
-  //   `${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-  //   RequestMethods.PUT
-  // );
-
   if (loading) {
     return (
       <div>
