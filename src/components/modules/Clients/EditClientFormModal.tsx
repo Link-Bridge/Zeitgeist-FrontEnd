@@ -7,6 +7,7 @@ import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
+import { dateGreaterThanToday, validEmail, validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
 
@@ -73,25 +74,35 @@ const EditClientFormModal = ({
       !companyConstitution ||
       !companyTaxResidence
     ) {
-      setState({ open: true, message: 'All fields are required.', type: 'danger' });
-      return;
+      return setState({ open: true, message: 'All fields are required.', type: 'danger' });
     }
 
-    if (companyPhone.length < 8) {
-      setState({
+    if (!validEmail(companyEmail))
+      return setState({ open: true, message: 'Email is invalid', type: 'danger' });
+
+    if (companyPhone.length < 8)
+      return setState({
         open: true,
         message: 'Phone number must have at least 8 characters.',
         type: 'danger',
       });
-      return;
-    } else if (companyPhone.length > 15) {
-      setState({
+
+    if (companyPhone.length > 15)
+      return setState({
         open: true,
         message: 'Phone number must have at most 15 characters.',
         type: 'danger',
       });
-      return;
-    }
+
+    if (!validRFC(companyRFC))
+      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
+
+    if (dateGreaterThanToday(companyConstitution))
+      return setState({
+        open: true,
+        message: 'Constitution date cannot be greater than today',
+        type: 'danger',
+      });
 
     const updatedClientData = {
       id: clientData.id,
@@ -111,7 +122,7 @@ const EditClientFormModal = ({
       onClose={() => setOpen(false)}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
-      BackdropProps={{ onClick: () => {} }}
+      BackdropProps={{ onClick: () => { } }}
     >
       <Box sx={style}>
         <Typography id='modal-modal-title' variant='h6' component='h2' sx={{ marginLeft: '10px' }}>
@@ -136,7 +147,15 @@ const EditClientFormModal = ({
               label='Client Name'
               variant='outlined'
               value={companyName}
-              onChange={e => setCompanyName(e.target.value)}
+              onChange={e => {
+                if (e.target.value.length > 255)
+                  return setState({
+                    open: true,
+                    message: 'Company name must have at most 255 characters',
+                    type: 'danger',
+                  });
+                setCompanyName(e.target.value);
+              }}
               sx={{ width: '100ch' }}
             />
 
@@ -157,7 +176,12 @@ const EditClientFormModal = ({
               value={companyPhone}
               onChange={e => {
                 const input = e.target.value.replace(/\D/g, '');
-                if (input.length > 13) return;
+                if (input.length > 15)
+                  return setState({
+                    open: true,
+                    message: 'Phone number must have at most 15 characters',
+                    type: 'danger',
+                  });
                 setCompanyPhone(input);
               }}
             />
@@ -180,6 +204,14 @@ const EditClientFormModal = ({
               label='Constitution Date'
               value={dayjs(companyConstitution)}
               onChange={e => {
+                if (dateGreaterThanToday(e?.toDate())) {
+                  setState({
+                    open: true,
+                    message: 'Constitution date cannot be greater than today',
+                    type: 'danger',
+                  });
+                  return setCompanyConstitution(new Date());
+                }
                 setCompanyConstitution(e?.toDate() ?? companyConstitution);
               }}
             />
@@ -188,8 +220,16 @@ const EditClientFormModal = ({
               label='Tax Residence'
               variant='outlined'
               value={companyTaxResidence}
-              onChange={e => setCompanyTaxResidence(e.target.value)}
-              inputProps={{ maxLength: 13 }}
+              onChange={e => {
+                if (e.target.value.length > 254)
+                  return setState({
+                    open: true,
+                    message: 'Tax residence must have at most 255 characters',
+                    type: 'danger',
+                  });
+                setCompanyTaxResidence(e.target.value);
+              }}
+              inputProps={{ maxLength: 255 }}
             />
           </Box>
 
