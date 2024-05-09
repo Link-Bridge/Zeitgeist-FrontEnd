@@ -150,7 +150,6 @@ const ProjectReport: React.FC = () => {
               }}
             >
               <NativeSelect
-              sx={{border: 1}}
                 inputProps={{
                   name: 'age',
                   id: 'uncontrolled-native',
