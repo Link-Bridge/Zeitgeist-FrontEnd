@@ -1,5 +1,5 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
-import { Snackbar, Table } from '@mui/joy';
+import { Box, Snackbar, Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
 import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -136,12 +136,12 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
    */
 
   return (
-    <Table>
+    <Table borderAxis="none">
       {data?.data.length === 0 && (
-        <div className='w-full flex flex-col items-center justify-center my-20'>
-          <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
-          <p className='mt-4'>No tasks associated to this company were found.</p>
-        </div>
+        <tbody>
+          <tr><td className='w-full flex flex-col items-center justify-center'><WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} /></td></tr>
+          <tr><td className='w-full flex flex-col items-center justify-center'><Box className='mt-4'>No tasks associated to this company were found.</Box></td></tr>
+        </tbody>
       )}
       {data && data.data && data.data.length !== 0 && (
         <>
