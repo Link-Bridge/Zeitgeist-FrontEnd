@@ -27,6 +27,8 @@ export default {
       },
       fontFamily: {
         montserrat: ['montserrat', 'sans-serif'],
+        gotham: ['Gotham', 'sans-serif'],
+        didot: ['Didot', 'serif'],
       },
     },
   },
