@@ -112,10 +112,12 @@ const ProjectDetails = () => {
   }
 
   async function changePayed(projectId: string, payed: boolean) {
+    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+    
     if (data) {
       setUpdating(true);
       const res = await axios.put(
-        `http://localhost:4000/api/v1/project/edit/${projectId}`,
+        `${BASE_URL}/project/edit/${projectId}`,
         { payed, id: projectId },
         { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
       );
