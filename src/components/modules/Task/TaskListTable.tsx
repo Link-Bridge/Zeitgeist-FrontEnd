@@ -18,7 +18,6 @@ type TaskListTableProps = {
   initialTasks: TaskDetail[] | null;
   loadingTasks: any;
   errorTasks: any;
-  getTasks: () => void;
   onDelete: (id: string) => void;
   setTotalProjectHours: (update: (prev: number) => number) => void;
 };

@@ -5,10 +5,11 @@ import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { BareboneTask } from '../../types/task';
+import { BareboneTask, TaskDetail } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
 
 const NewTaskPage = () => {
+  const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const { projectId } = useParams<{ projectId: string }>();
   const { data: cachedEmployees, sendRequest: sendEmployeeRequest } = useHttp<
     Response<EmployeeEntity>
@@ -39,12 +40,42 @@ const NewTaskPage = () => {
   const projectName = projectData?.name;
   const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
 
+  const {
+    data: tasks,
+    error: errorTasks,
+    loading: loadingTasks,
+    sendRequest: getTasks,
+  } = useHttp<Response<TaskDetail>>(`/tasks/project/${projectId}`, RequestMethods.GET);
+
+  useEffect(() => {
+    if (!tasks) getTasks();
+    if (tasks && tasks.data) {
+      setInitialTasks(tasks.data);
+
+      // setTotalProjectHours(() =>
+      //   tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      // );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks]);
+
   const handleOnSubmit = async (payload: BareboneTask) => {
-    await sendRequest({}, { ...payload });
+    try {
+      await sendRequest({}, { ...payload });
+    } catch (error: any) {
+      console.log(error);
+    }
+    // finally {
+    //   getTasks();
+    // }
   };
+
+  console.log(tasks);
 
   return (
     <NewTaskForm
+      getTasks={getTasks}
       onSubmit={handleOnSubmit}
       employees={employees || []}
       projectId={projectId ? projectId : ''}
