@@ -9,8 +9,6 @@ import { Response } from '../../../types/response';
 import { RequestMethods } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
-// import DeleteModal from '../../../components/common/DeleteModal';
-
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
