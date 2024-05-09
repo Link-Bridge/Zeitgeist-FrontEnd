@@ -20,6 +20,8 @@ import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
+import { Response } from '../../types/response';
+import { TaskDetail } from '../../types/task';
 import { formatDate } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, string> = {
@@ -42,6 +44,7 @@ const chipStyle = {
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
@@ -60,6 +63,26 @@ const ProjectDetails = () => {
     `${APIPath.COMPANIES}/${data?.idCompany}`,
     RequestMethods.GET
   );
+
+  const {
+    data: tasks,
+    error: errorTasks,
+    loading: loadingTasks,
+    sendRequest: getTasks,
+  } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  useEffect(() => {
+    if (!tasks) getTasks();
+    if (tasks && tasks.data) {
+      setInitialTasks(tasks.data);
+
+      // setTotalProjectHours(() =>
+      //   tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      // );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks]);
 
   const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -98,6 +121,8 @@ const ProjectDetails = () => {
       await deleteTask.deleteTask(taskId);
     } catch (error) {
       console.error(error);
+    } finally {
+      getTasks();
     }
   };
 
@@ -227,7 +252,10 @@ const ProjectDetails = () => {
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable
-          projectId={id ? id : ''}
+          errorTasks={errorTasks}
+          loadingTasks={loadingTasks}
+          initialTasks={initialTasks}
+          getTasks={getTasks}
           onDelete={handleDeleteTask}
           setTotalProjectHours={setTotalHours}
         />
