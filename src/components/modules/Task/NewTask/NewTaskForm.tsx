@@ -286,7 +286,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid xs={2}>
           <Item>
-            <Header>Due Date *</Header>
+            <Header>End Date *</Header>
             <CustomDatePicker
               value={dueDate}
               onChange={handleDueDateChange}
