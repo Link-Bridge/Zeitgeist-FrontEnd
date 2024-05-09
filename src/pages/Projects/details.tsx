@@ -1,7 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-import colors from '../../colors';
+import colors, { statusChipColorCombination } from '../../colors';
 import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
@@ -22,16 +22,16 @@ import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
 import { formatDate } from '../../utils/methods';
 
-const statusColorMap: Record<ProjectStatus, string> = {
-  [ProjectStatus.ACCEPTED]: colors.gold,
-  [ProjectStatus.NOT_STARTED]: colors.notStarted,
-  [ProjectStatus.IN_PROGRESS]: colors.darkPurple,
-  [ProjectStatus.UNDER_REVISION]: colors.purple,
-  [ProjectStatus.IN_QUOTATION]: colors.darkerBlue,
-  [ProjectStatus.DELAYED]: colors.delayed,
-  [ProjectStatus.POSTPONED]: colors.blue,
-  [ProjectStatus.DONE]: colors.success,
-  [ProjectStatus.CANCELLED]: colors.danger,
+const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
+  [ProjectStatus.ACCEPTED]: statusChipColorCombination.accepted,
+  [ProjectStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+  [ProjectStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [ProjectStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+  [ProjectStatus.IN_QUOTATION]: statusChipColorCombination.inQuotation,
+  [ProjectStatus.DELAYED]: statusChipColorCombination.delayed,
+  [ProjectStatus.POSTPONED]: statusChipColorCombination.postponed,
+  [ProjectStatus.DONE]: statusChipColorCombination.done,
+  [ProjectStatus.CANCELLED]: statusChipColorCombination.cancelled,
 };
 
 const chipStyle = {
