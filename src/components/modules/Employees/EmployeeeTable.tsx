@@ -66,7 +66,7 @@ export default function EmployeeTable() {
           userId: userId,
           roleId: newRoleId,
         },
-        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
       reqEmployees.sendRequest();
     };

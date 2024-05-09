@@ -1,11 +1,12 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { RequestMethods } from '../../utils/constants';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
 
 type ProjectsClientListProps = {
   clientId: string;
@@ -13,7 +14,7 @@ type ProjectsClientListProps = {
 
 export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
-  const [setSelectedProjectId] = useState<string | null>(null);
+  const [, setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
     `/project/${clientId}`,
     RequestMethods.GET
@@ -47,14 +48,16 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
       <section className='flex justify-between items-center'>
         <h3 className='text-[20px] text-[#424242] font-medium'>Projects</h3>
         <section className='flex gap-5'>
-          <AddButton>Test</AddButton>
+          <Link to={`${RoutesPath.PROJECTS}/new`}>
+            <AddButton onClick={() => {}}></AddButton>
+          </Link>
         </section>
       </section>
 
       {loading && <div>Loading...</div>}
       {error && <div>Error: {error.message}</div>}
 
-      {projectsGroup.length > 0 && (
+      {projectsGroup.length > 0 ? (
         <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-3 gap-3 rounded-xl mt-6'>
           {projectsGroup.map(project => (
             <Link
@@ -62,10 +65,19 @@ export const ProjectsClientList = ({ clientId }: ProjectsClientListProps) => {
               key={project.id}
               onClick={() => setSelectedProjectId(project.id)}
             >
-              <ProjectCard name={project.name} status={project.status} department={project.area} />
+              <ProjectCard
+                id={project.id}
+                name={project.name}
+                status={project.status}
+                department={project.area}
+              />
             </Link>
           ))}
         </section>
+      ) : (
+        !loading && (
+          <ComponentPlaceholder text='No projects associated to this client were found.' />
+        )
       )}
     </main>
   );

@@ -85,6 +85,7 @@ const ProjectDetails = () => {
     if (company) {
       setCompanyName(company.data.name);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company, updatedCompany, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {

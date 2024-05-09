@@ -2,9 +2,9 @@ import { useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
-import ClientCard from '../../components/common/ClientCard';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
+import ClientCard from '../../components/modules/Clients/ClientCard';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
@@ -82,7 +82,7 @@ const Clients = () => {
             {!clientsRequest.loading && !clientsRequest.error && companies && (
               <CardsGrid>
                 {filteredCompanies.map(company => (
-                  <Link to={`${RoutesPath.CLIENTS}/${company.id}`} key={company.id}>
+                  <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
                     <ClientCard
                       name={company.name}
                       accountingHours={company.accountingHours || 0}
@@ -97,7 +97,7 @@ const Clients = () => {
           </main>
         }
       />
-      <Route path={'/:clientId'} element={<ClientDetails />} />
+      <Route path={'/details/:clientId'} element={<ClientDetails />} />
     </Routes>
   );
 };

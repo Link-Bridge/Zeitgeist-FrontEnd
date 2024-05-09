@@ -7,6 +7,7 @@ import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
 import { auth, messaging, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import { RoutesPath } from '../../utils/constants';
 
 const Auth: React.FC = () => {
@@ -14,12 +15,13 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
 
   const { setEmployee } = useContext(EmployeeContext);
+  const { setState } = useContext(SnackbarContext);
 
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
       const idToken = await result.user.getIdToken();
-      sessionStorage.setItem('idToken', idToken);
+      localStorage.setItem('idToken', idToken);
 
       // TODO: Had trouble using the useHttp hook
       const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
@@ -35,14 +37,17 @@ const Auth: React.FC = () => {
       }
 
       const responseData = await response.json();
+      if (responseData.data.role === 'No role' || !responseData.data.role) {
+        throw new Error('User not authorized');
+      }
 
-      sessionStorage.setItem('employee', JSON.stringify(responseData.data));
+      localStorage.setItem('employee', JSON.stringify(responseData.data));
       setEmployee(responseData.data);
       handleGetDeviceToken(result.user.email);
 
       navigate(RoutesPath.HOME);
     } catch (error) {
-      console.error('Firebase Sign-in error:', error);
+      setState({ open: true, message: error.message, type: 'danger' });
       throw error;
     }
   };
@@ -58,7 +63,7 @@ const Auth: React.FC = () => {
           method: 'POST',
           headers: {
             'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + sessionStorage.getItem('idToken'),
+            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
           },
           body: JSON.stringify({
             email: userEmail,

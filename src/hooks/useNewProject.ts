@@ -72,8 +72,6 @@ const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
     return false;
   }
 
-  formState.area = formState.area.toUpperCase();
-
   return true;
 };
 
@@ -93,7 +91,7 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = sessionStorage.getItem('idToken');
+      const idToken = localStorage.getItem('idToken');
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`,
@@ -129,7 +127,7 @@ const useNewProject = () => {
       if (!valiateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = sessionStorage.getItem('idToken');
+      const idToken = localStorage.getItem('idToken');
       const headers = {
         'Content-Type': 'application/json',
         Authorization: `Bearer ${idToken}`,
@@ -144,7 +142,6 @@ const useNewProject = () => {
           headers,
         }
       );
-      console.log(res);
       if (res.status === 200) {
         setSuccess(true);
       }
