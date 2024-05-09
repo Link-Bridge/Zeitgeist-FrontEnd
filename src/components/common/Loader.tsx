@@ -3,7 +3,7 @@ import CircularProgress from '@mui/material/CircularProgress';
 
 export default function Loader() {
   return (
-    <Box>
+    <Box sx={{ display: 'flex' }}>
       <CircularProgress />
     </Box>
   );
