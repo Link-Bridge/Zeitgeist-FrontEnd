@@ -15,7 +15,7 @@ import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import NewTaskPage from './pages/Tasks/new';
-import { APIPath, RoutesPath } from './utils/constants';
+import { RoutesPath } from './utils/constants';
 
 function App() {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
@@ -89,7 +89,7 @@ function App() {
                   }
                 />
                 <Route
-                  path={APIPath.CREATE_TASK}
+                  path={`${RoutesPath.TASKS}/:projectId/create`}
                   element={
                     <ProtectedRoute>
                       <NewTaskPage />
