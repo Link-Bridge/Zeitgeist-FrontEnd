@@ -1,13 +1,15 @@
 import { NotificationsNone } from '@mui/icons-material';
 import { Avatar } from '@mui/joy';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import Colors from '../../colors';
+import { EmployeeContext } from '../../hooks/employeeContext';
 
 interface HeaderProps {
   pageTitle: string;
 }
 
 const Header = ({ pageTitle }: HeaderProps) => {
+  const { employee: employeeContext } = useContext(EmployeeContext);
   const [currentDate, setCurrentDate] = useState('');
   useEffect(() => {
     const date = new Date();
@@ -41,7 +43,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
         <button className='mx-8 text-[#C29A51]'>
           <NotificationsNone fontSize='large' />
         </button>
-        <Avatar variant='solid'>OP</Avatar>
+        <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
       </section>
     </header>
   );
