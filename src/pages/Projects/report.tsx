@@ -1,4 +1,4 @@
-import { Typography } from '@mui/joy';
+import {Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
@@ -19,6 +19,7 @@ import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
 import ProjectReportPDF from './report-pdf';
+import { NativeSelect } from '@mui/material';
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -148,6 +149,27 @@ const ProjectReport: React.FC = () => {
                 marginBottom: '20px',
               }}
             >
+              <NativeSelect
+                inputProps={{
+                  name: 'age',
+                  id: 'uncontrolled-native',
+                }}
+                onChange={e => handleMonthChange(Number(e.target.value))}
+              >
+                <option value={1}>January</option>
+                <option value={2}>February</option>
+                <option value={3}>March</option>
+                <option value={4}>April</option>
+                <option value={5}>May</option>
+                <option value={6}>June</option>
+                <option value={7}>July</option>
+                <option value={8}>August</option>
+                <option value={9}>September</option>
+                <option value={10}>October</option>
+                <option value={11}>November</option>
+                <option value={12}>December</option>
+              </NativeSelect>
+              
               <TextField
                 sx={{
                   width: '90px',
