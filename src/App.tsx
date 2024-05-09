@@ -22,7 +22,7 @@ function App() {
   const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 
   useEffect(() => {
-    const currentEmployee = JSON.parse(sessionStorage.getItem('employee') ?? '{}');
+    const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? '{}');
     if (currentEmployee) {
       setEmployee(currentEmployee);
     }

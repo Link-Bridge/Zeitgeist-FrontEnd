@@ -1,15 +1,19 @@
-import { Table } from '@mui/joy';
+import { Snackbar, Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
-import { useEffect, useState } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
+import { statusChipColorCombination } from '../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
 import { Task, TaskDetail } from '../../../types/task';
-import { RequestMethods } from '../../../utils/constants';
+import { TaskStatus } from '../../../types/task-status';
+import { APIPath, RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
 import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
-import ClickableChip from '../../common/DropDown';
+import GenericDropdown from '../../common/GenericDropdown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
@@ -18,9 +22,23 @@ type TaskListTableProps = {
   setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
+const statusColorMap: Record<TaskStatus, string> = {
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
+  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
+};
+
 const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
   const navigate = useNavigate();
   const [tasks, setTasks] = useState<TaskDetail[]>([]);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const idTaskPayload = useRef<string>('');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -54,12 +72,45 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     setDeleteDialogOpen(true);
   };
 
-  const formatStatus = (status: string): string => {
-    const words = status.split(' ');
-    const camelCaseWords = words.map(word => {
-      return word.charAt(0).toUpperCase() + word.slice(1).toLowerCase();
-    });
-    return camelCaseWords.join(' ');
+  const handleStatusChange = async (idTask: string, status: TaskStatus | null) => {
+    setNewStatus(status);
+
+    if (idTask.trim() !== '') {
+      idTaskPayload.current = idTask;
+
+      const payload = {
+        status: status as TaskStatus,
+      };
+
+      try {
+        await doFetch(payload);
+        setState({ open: true, message: 'Task status updated successfully.', type: 'success' });
+        setTimeout(() => {
+          setState({ open: false, message: '' });
+        }, 2000);
+      } catch (error) {
+        setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
+        console.error(error);
+      }
+    } else {
+      console.error('Empty idTask received.');
+    }
+  };
+
+  const doFetch = async (payload: { status: TaskStatus }) => {
+    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+    const idToken = localStorage.getItem('idToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    };
+    const options: AxiosRequestConfig = {
+      method: RequestMethods.PUT,
+      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
+      headers: headers,
+      data: payload,
+    };
+    await axios(options);
   };
 
   if (loading) {
@@ -108,7 +159,14 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
                   {task.title}
                 </td>
                 <td>
-                  <ClickableChip value={formatStatus(task.status)} setValue={() => {}} />
+                  <GenericDropdown
+                    options={Object.values(TaskStatus)}
+                    onValueChange={value => handleStatusChange(task.id, value)}
+                    defaultValue={task.status as TaskStatus}
+                    colorMap={statusColorMap}
+                    placeholder='Select status ...'
+                  />
+                  {/* <ClickableChip value={formatStatus(task.status)} setValue={() => {}} /> */}
                 </td>
                 <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
@@ -135,6 +193,12 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
           />
         </>
       )}
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </Table>
   );
 };

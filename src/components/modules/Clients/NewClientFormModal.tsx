@@ -222,6 +222,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               value={companyPhone}
               onChange={event => {
                 const input = event.target.value.replace(/\D/g, '');
+                if (input.length > 13) return;
                 setCompanyPhone(input);
               }}
             />

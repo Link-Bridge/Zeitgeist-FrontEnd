@@ -8,7 +8,7 @@ const useDeleteEmployee = () => {
   const deleteEmployee = async (id: string) => {
     try {
       await axios.delete(`${BASE_API_URL}/employee/delete/${id}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
+        headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` },
       });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

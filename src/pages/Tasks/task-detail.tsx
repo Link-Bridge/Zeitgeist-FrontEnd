@@ -241,7 +241,6 @@ const Task: React.FC = () => {
                     <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
                   </Box>
                 )}
-                2 2
                 <Box>
                   <p style={{ fontSize: '.9rem' }}>Project</p>
                   <ColorChip
