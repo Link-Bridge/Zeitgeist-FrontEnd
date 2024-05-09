@@ -2,6 +2,7 @@ import Button from '@mui/material/Button';
 
 interface SendButtonProps {
   onClick?: () => void;
+  disabled?: boolean;
 }
 
 /**
@@ -12,11 +13,12 @@ interface SendButtonProps {
  * @param props: Object - The component props
  * @returns
  */
-const SendButton = ({ onClick }: SendButtonProps) => {
+const SendButton = ({ onClick, disabled }: SendButtonProps) => {
   return (
     <Button
       variant='contained'
       onClick={onClick}
+      disabled={disabled}
       sx={{
         bgcolor: '#9C844C',
         color: '#fff',
