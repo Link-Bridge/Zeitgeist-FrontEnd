@@ -5,7 +5,6 @@ import { truncateText } from '../../../utils/methods';
 import StatusChip from '../../common/StatusChip';
 
 type CardProjectProps = {
-  id: string;
   name: string;
   status: ProjectStatus;
   department: ProjectAreas;

@@ -64,15 +64,14 @@ const ProjectMain = () => {
           <AddButton onClick={() => {}}></AddButton>
         </Link>
       </section>
-      <section className='flex-1 overflow-y-scroll'>
-        <div className='bg-[#FAFAFA] rounded-xl grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5 overflow-y-hidden'>
+      <section className='flex-1 overflow-scroll'>
+        <div className='bg-cardBg rounded-xl overflow-y-scroll grid md:grid-cols-2 lg:grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
           {isLoading && <Loader />}
           {!(isLoading && filteredProjects) &&
             filteredProjects.map(project => (
               <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
-                  id={project.id}
                   company={companyNames.get(project.idCompany) ?? ''}
                   department={project.area}
                   name={project.name}

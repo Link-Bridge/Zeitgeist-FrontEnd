@@ -24,6 +24,7 @@ export default {
         blue: '#A0C5E8',
         darkBlue: '#878FD2',
         darkerBlue: '#273086',
+        cardBg: '#FAFAFA',
       },
       fontFamily: {
         montserrat: ['montserrat', 'sans-serif'],

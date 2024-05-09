@@ -6,15 +6,16 @@ import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
-import { ProjectAreas, ProjectEntity } from '../../types/project';
-import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
+import { ProjectEntity } from '../../types/project';
+import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 
-import { Box, Card } from '@mui/joy';
+import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
 import { Chip } from '@mui/material';
+import axios from 'axios';
 import AddButton from '../../components/common/AddButton';
 
 import GenericDropdown from '../../components/common/GenericDropdown';
@@ -51,6 +52,7 @@ const ProjectDetails = () => {
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
+  const [updating, setUpdating] = useState(false);
 
   const {
     data: company,
@@ -108,6 +110,19 @@ const ProjectDetails = () => {
 
   if (error && errorCompany) {
     return <div>Error loading task</div>;
+  }
+
+  async function changePayed(projectId: string, payed: boolean) {
+    if (data) {
+      setUpdating(true);
+      const res = await axios.put(
+        `${BASE_API_URL}/project/edit/${projectId}`,
+        { payed, id: projectId },
+        { headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` } }
+      );
+      data.payed = res.data.data.payed;
+      setUpdating(false);
+    }
   }
 
   return (
@@ -191,7 +206,7 @@ const ProjectDetails = () => {
 
               <div style={{ fontSize: '15px' }}>
                 <p style={{ marginLeft: '7px' }}>Area</p>
-                <Chip sx={chipStyle} label={ProjectAreas[data.area]} />
+                <Chip sx={chipStyle} label={data.area} />
               </div>
 
               <div style={{ fontSize: '15px' }}>
@@ -203,6 +218,23 @@ const ProjectDetails = () => {
                 <p style={{ marginLeft: '7px' }}>Chargeable</p>
                 <Chip sx={chipStyle} label={data.isChargeable ? 'Yes' : 'No'} />
               </div>
+            </div>
+          )}
+          {data?.isChargeable && (
+            <div style={{ fontSize: '15px' }}>
+              <p style={{ marginLeft: '7px' }}>Payed</p>
+              <MuiChip
+                component={Select}
+                sx={chipStyle}
+                value={data?.payed ?? false}
+                onChange={(_, newVal) => {
+                  changePayed(id ?? '', Boolean(newVal));
+                }}
+                disabled={updating}
+              >
+                <Option value={true}>Yes</Option>
+                <Option value={false}>No</Option>
+              </MuiChip>
             </div>
           )}
 

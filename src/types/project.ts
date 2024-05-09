@@ -55,6 +55,7 @@ export interface ProjectEntity {
   isArchived: boolean;
   created_at: Date;
   idCompany: string;
+  payed: boolean;
 }
 
 export enum ProjectFilters {
