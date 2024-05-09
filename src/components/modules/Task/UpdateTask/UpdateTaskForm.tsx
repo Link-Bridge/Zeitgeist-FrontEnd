@@ -79,10 +79,31 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    if (date && dueDate && date.isAfter(dueDate)) {
+      setState({
+        open: true,
+        message: 'Start date cannot be after due date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
     setStartDate(date);
   };
 
   const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+    const datesValid = !date || !startDate || date.isAfter(startDate);
+
+    if (!datesValid) {
+      setState({
+        open: true,
+        message: 'Due date cannot be before start date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
+
     setDueDate(date);
   };
 
@@ -172,6 +193,28 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
   const hasErrors = () => {
     return Object.values(errors).some(error => !!error);
+  };
+
+  const hasEmptyFields = () => {
+    return (
+      !title ||
+      !description ||
+      !startDate ||
+      !dueDate ||
+      !status ||
+      !assignedEmployee ||
+      !workedHours
+    );
+  };
+
+  const datesAreNotValid = () => {
+    if (
+      (dueDate && startDate && dueDate.isBefore(startDate)) ||
+      (dueDate && startDate && startDate.isAfter(dueDate))
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -288,7 +331,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <ModifyButton onClick={handleSubmit} disabled={hasErrors()} />
+            <ModifyButton
+              onClick={handleSubmit}
+              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid()}
+            />
           </Item>
         </Grid>
       </Grid>
