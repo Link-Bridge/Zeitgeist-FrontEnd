@@ -16,7 +16,7 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box } from '@mui/joy';
+import { Box, Typography } from '@mui/joy';
 import { useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
@@ -120,11 +120,16 @@ const ClientDetails = () => {
           <section className='flex justify-between'>
             <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
             <section className='flex items-center gap-5'>
-              <Chip
-                color='primary'
-                variant='outlined'
-                label={formatDate(company.constitutionDate ?? null)}
-              />
+              <div className='flex items-center gap-2'>
+                <Typography level='body-sm' className='mr-1'>
+                  Constitution date:
+                </Typography>
+                <Chip
+                  color='primary'
+                  variant='outlined'
+                  label={formatDate(company.constitutionDate ?? null)}
+                />
+              </div>
               <EditOutlinedIcon
                 sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
                 className='text-gold'
