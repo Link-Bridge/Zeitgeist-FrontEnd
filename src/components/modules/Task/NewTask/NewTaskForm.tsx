@@ -171,15 +171,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const hasEmptyFields = () => {
-    return (
-      !title ||
-      !description ||
-      !startDate ||
-      !dueDate ||
-      !status ||
-      !assignedEmployee ||
-      !workedHours
-    );
+    return !title || !description || !startDate || !dueDate || !status || !assignedEmployee;
   };
 
   const datesAreNotValid = () => {
