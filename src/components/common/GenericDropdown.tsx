@@ -100,7 +100,7 @@ const GenericDropdown = <T extends string | number>({
         renderValue={renderValue || renderValueWithColor}
         sx={{
           borderRadius: 30,
-          background: option && colorMap?.[option]?.bg || backgroundColor || 'transparent',
+          background: (option && colorMap?.[option]?.bg) || backgroundColor || 'transparent',
           '& .MuiSelect-select': {
             padding: '1px 6px',
             fontSize: '0.875rem',
