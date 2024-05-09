@@ -1,4 +1,5 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
+import { Snackbar } from '@mui/joy';
 import {
   Card,
   Chip,
@@ -11,11 +12,14 @@ import {
   Typography,
   colors,
 } from '@mui/material';
-import { useState } from 'react';
+import axios, { AxiosRequestConfig } from 'axios';
+import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { Task } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import { APIPath, RequestMethods } from '../../../../utils/constants';
 import DeleteModal from '../../../common/DeleteModal';
 import GenericDropdown from '../../../common/GenericDropdown';
 import TaskActionsMenu from '../../../common/TaskActionsMenu';
@@ -37,10 +41,15 @@ interface TaskTableProps {
 
 const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const navigate = useNavigate();
+  const idTaskPayload = useRef<string>('');
+
   const [collapsed, setCollapsed] = useState(false);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
+  const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const handleClick = (id: string) => {
@@ -63,6 +72,47 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
     const year = date.getFullYear();
 
     return `${day}-${month}-${year}`;
+  };
+
+  const handleStatusChange = async (idTask: string, status: TaskStatus | null) => {
+    setNewStatus(status);
+
+    if (idTask.trim() !== '') {
+      idTaskPayload.current = idTask;
+
+      const payload = {
+        status: status as TaskStatus,
+      };
+
+      try {
+        await doFetch(payload);
+        setState({ open: true, message: 'Task status updated successfully.', type: 'success' });
+        setTimeout(() => {
+          setState({ open: false, message: '' });
+        }, 2000);
+      } catch (error) {
+        setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
+        console.error(error);
+      }
+    } else {
+      console.error('Empty idTask received.');
+    }
+  };
+
+  const doFetch = async (payload: { status: TaskStatus }) => {
+    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+    const idToken = localStorage.getItem('idToken');
+    const headers = {
+      'Content-Type': 'application/json',
+      Authorization: `Bearer ${idToken}`,
+    };
+    const options: AxiosRequestConfig = {
+      method: RequestMethods.PUT,
+      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
+      headers: headers,
+      data: payload,
+    };
+    await axios(options);
   };
 
   return (
@@ -114,7 +164,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                       <GenericDropdown
                         options={Object.values(TaskStatus)}
                         defaultValue={task.status}
-                        onValueChange={() => {}}
+                        onValueChange={value => handleStatusChange(task.id, value)}
                         colorMap={statusColorMap}
                       />
                     </TableCell>
@@ -150,6 +200,12 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
           setTaskToDelete(null);
         }}
       />
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
