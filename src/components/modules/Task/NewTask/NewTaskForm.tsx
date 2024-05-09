@@ -24,7 +24,7 @@ const statusColorMap: Record<TaskStatus, string> = {
 };
 
 interface NewTaskFormProps {
-  getTasks: any;
+  getTasks: () => void;
   onSubmit: (payload: BareboneTask) => Promise<void>;
   employees: EmployeeEntity[];
   projectId: string;

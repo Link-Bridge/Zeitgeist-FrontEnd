@@ -18,6 +18,7 @@ import { Chip } from '@mui/material';
 import AddButton from '../../components/common/AddButton';
 
 import GenericDropdown from '../../components/common/GenericDropdown';
+import { SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import { ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
@@ -44,6 +45,7 @@ const chipStyle = {
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
@@ -111,7 +113,7 @@ const ProjectDetails = () => {
         setProjectStatus(newStatus);
       }
     } catch (error) {
-      console.error('Error updating project status:', error);
+      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
     }
   };
 
@@ -120,7 +122,7 @@ const ProjectDetails = () => {
     try {
       await deleteTask.deleteTask(taskId);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
       getTasks();
     }

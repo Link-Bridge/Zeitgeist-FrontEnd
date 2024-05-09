@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
 import NewTaskForm from '../../components/modules/Task/NewTask/NewTaskForm';
+import { SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { ProjectEntity } from '../../types/project';
@@ -9,6 +10,8 @@ import { BareboneTask, TaskDetail } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
 
 const NewTaskPage = () => {
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const { projectId } = useParams<{ projectId: string }>();
   const { data: cachedEmployees, sendRequest: sendEmployeeRequest } = useHttp<
@@ -64,7 +67,7 @@ const NewTaskPage = () => {
     try {
       await sendRequest({}, { ...payload });
     } catch (error: any) {
-      console.log(error);
+      setState({ open: true, message: `Error creating task: ${error}`, type: 'danger' });
     }
   };
 

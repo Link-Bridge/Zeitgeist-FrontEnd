@@ -16,8 +16,8 @@ import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
   initialTasks: TaskDetail[] | null;
-  loadingTasks: any;
-  errorTasks: any;
+  loadingTasks: boolean;
+  errorTasks: Error | null;
   onDelete: (id: string) => void;
   setTotalProjectHours: (update: (prev: number) => number) => void;
 };
