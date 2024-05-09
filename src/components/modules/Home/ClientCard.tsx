@@ -27,7 +27,7 @@ const ClientCard = ({ name, chargeableHours }: ClientCardProps) => {
           sx={{
             bgcolor: colors.brownChip,
             fontSize: '13px',
-            width: '50%',
+            width: 'max-content',
           }}
         >
           Chargeable Hours: {chargeableHours}
