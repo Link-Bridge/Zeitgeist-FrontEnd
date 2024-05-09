@@ -36,6 +36,7 @@ export enum ProjectStatus {
   CANCELLED = 'Cancelled',
   ACCEPTED = 'Accepted',
   DONE = 'Done',
+  NONE = '-',
 }
 
 export interface ProjectEntity {
