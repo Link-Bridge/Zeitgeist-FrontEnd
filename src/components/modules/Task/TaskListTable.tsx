@@ -39,7 +39,6 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
   const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const idTaskPayload = useRef<string>('');
-  const currentEmployeeData = JSON.parse(sessionStorage.getItem('employee') ?? '{}');
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -80,7 +79,6 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
       idTaskPayload.current = idTask;
 
       const payload = {
-        idEmployee: currentEmployeeData.employee.id,
         status: status as TaskStatus,
       };
 
@@ -99,9 +97,9 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     }
   };
 
-  const doFetch = async (payload: { idEmployee: any; status: TaskStatus; }) => {
+  const doFetch = async (payload: { status: TaskStatus; }) => {
     const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    const idToken = sessionStorage.getItem('idToken');
+    const idToken = localStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${idToken}`,
