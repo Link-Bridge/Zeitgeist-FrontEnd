@@ -14,14 +14,14 @@ import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Header, Item, StyledSheet } from '../styled';
 
-const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
-  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
-  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
-  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
-  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
-  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
+const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
+  [TaskStatus.DONE]: statusChipColorCombination.done,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled,
 };
 
 interface NewTaskFormProps {
