@@ -97,7 +97,7 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     }
   };
 
-  const doFetch = async (payload: { status: TaskStatus; }) => {
+  const doFetch = async (payload: { status: TaskStatus }) => {
     const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
     const idToken = localStorage.getItem('idToken');
     const headers = {
