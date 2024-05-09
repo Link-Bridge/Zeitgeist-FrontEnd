@@ -23,6 +23,7 @@ import { ProjectStatus } from '../../types/project';
 import { formatDate } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
+  [ProjectStatus.NONE]: statusChipColorCombination.default,
   [ProjectStatus.ACCEPTED]: statusChipColorCombination.accepted,
   [ProjectStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
   [ProjectStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
