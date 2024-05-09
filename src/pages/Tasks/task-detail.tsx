@@ -175,7 +175,7 @@ const Task: React.FC = () => {
                 sx={{
                   display: 'flex',
                   gap: '60px',
-                  alignItems: 'end'
+                  alignItems: 'end',
                 }}
               >
                 <Box>
