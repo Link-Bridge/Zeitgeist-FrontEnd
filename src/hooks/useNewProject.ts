@@ -142,7 +142,6 @@ const useNewProject = () => {
           headers,
         }
       );
-      console.log(res);
       if (res.status === 200) {
         setSuccess(true);
       }

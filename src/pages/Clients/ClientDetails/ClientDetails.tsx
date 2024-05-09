@@ -1,26 +1,23 @@
-import { Chip } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { useEffect, useState } from 'react';
-import ArchiveModal from '../../../components/common/ArchiveModal';
-// import DeleteModal from '../../../components/common/DeleteModal';
-import useHttp from '../../../hooks/useHttp';
-import { CompanyEntity } from '../../../types/company';
-import { Response } from '../../../types/response';
-import { RequestMethods } from '../../../utils/constants';
-import { ProjectsClientList } from '../../Projects/ProjectsClientList';
-
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-// import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import { Box } from '@mui/joy';
+import { Chip } from '@mui/material';
+import Divider from '@mui/material/Divider';
+import { useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
+import ArchiveModal from '../../../components/common/ArchiveModal';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+import useHttp from '../../../hooks/useHttp';
+import { CompanyEntity } from '../../../types/company';
+import { Response } from '../../../types/response';
+import { RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
+import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
 /**
  * Client Details Page page
@@ -47,27 +44,6 @@ const ClientDetails = () => {
   const handleEditClick = () => {
     setEditModalOpen(true);
   };
-
-  // Hay que arreglar esto después
-  // const handleArchiveClient = () => {
-  //   // update ui
-  //   setFilteredClientsData(prev => {
-  //     const aux = [];
-
-  //     for (let i = 0; i < prev.length; i++) {
-  //       if (prev[i].id !== company?.id) {
-  //         aux.push(prev[i]);
-  //         continue;
-  //       }
-  //       aux.push({
-  //         ...prev[i],
-  //         archived: !prev[i].archived,
-  //       });
-  //     }
-
-  //     return aux;
-  //   });
-  // };
 
   useEffect(() => {
     sendRequest();

@@ -9,6 +9,23 @@ import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
+async function getClientsNames(projects: ProjectEntity[]) {
+  const idToken = sessionStorage.getItem('idToken');
+  const names = new Map<string, string>();
+  projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
+  const reqs: Promise<globalThis.Response>[] = [];
+  for (const id of names.keys()) {
+    reqs.push(
+      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
+    );
+  }
+  const data = (await Promise.all(reqs)).map(r => r.json());
+  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
+  return names;
+}
+
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
@@ -85,22 +102,5 @@ const ProjectMain = () => {
     </main>
   );
 };
-
-async function getClientsNames(projects: ProjectEntity[]) {
-  const idToken = localStorage.getItem('idToken');
-  const names = new Map<string, string>();
-  projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
-  const reqs: Promise<globalThis.Response>[] = [];
-  for (const id of names.keys()) {
-    reqs.push(
-      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      })
-    );
-  }
-  const data = (await Promise.all(reqs)).map(r => r.json());
-  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
-  return names;
-}
 
 export default ProjectMain;
