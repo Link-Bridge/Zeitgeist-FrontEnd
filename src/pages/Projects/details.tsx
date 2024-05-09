@@ -255,7 +255,7 @@ const ProjectDetails = () => {
 
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold'>Project Tasks</h1>
-        <Link to={id ? APIPath.CREATE_TASK.replace(':projectId', id) : ''}>
+        <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
           <AddButton onClick={() => {}} />
         </Link>
       </section>
