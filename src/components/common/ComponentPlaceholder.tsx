@@ -37,7 +37,9 @@ const ComponentPlaceholder = ({
       }}
     >
       <Lottie options={defaultOptions} height={height} width={width} />
-      <p className='text-xl md:text-2xl text-gray-500 font-gotham mt-4'>{text}</p>
+      <p className='text-xl md:text-2xl text-gray-500 font-gotham mt-4'>
+        <h2>{text}</h2>
+      </p>
     </div>
   );
 };
