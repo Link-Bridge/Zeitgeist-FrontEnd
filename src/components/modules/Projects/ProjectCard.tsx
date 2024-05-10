@@ -1,7 +1,6 @@
 import Chip from '@mui/joy/Chip';
 import colors from '../../../colors';
 import { ProjectAreas, ProjectStatus } from '../../../types/project';
-import { truncateText } from '../../../utils/methods';
 import StatusChip from '../../common/StatusChip';
 
 type CardProjectProps = {
@@ -25,19 +24,24 @@ type CardProjectProps = {
 const ProjectCard = ({ name, status, department, company }: CardProjectProps): JSX.Element => {
   return (
     <section className='bg-[#EFEFEF] hover:bg-[#DEDEDE] rounded-lg p-4'>
-      <section className='flex gap-3'>
+      <section className='flex flex-nowrap gap-3'>
         <div className='border-2 h-8 border-[#9C844C]' />
-        <h5 className='text-[#424242] font-montserrat'>{name}</h5>
+        <h5 className='text-[#424242] font-montserrat truncate'>{name}</h5>
       </section>
-      {company && <span className='text-sm text-gold break-all'>{truncateText(company)}</span>}
+      {company && (
+        <span className='text-sm text-gold break-all flex flex-nowrap truncate'>{company}</span>
+      )}
       {''}
-      <section className='mt-3 flex gap-3'>
+      <section className='mt-3 flex flex-nowrap gap-3'>
         <StatusChip status={status} />
         <Chip
           variant='solid'
           sx={{
             backgroundColor: colors.lightGold,
             color: colors.darkerGold,
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           {department}

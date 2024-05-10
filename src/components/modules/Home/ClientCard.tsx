@@ -1,7 +1,6 @@
 import { Chip } from '@mui/joy';
 import WorkIcon from '../../../assets/icons/work_filled.svg';
 import colors from '../../../colors';
-import { truncateText } from '../../../utils/methods';
 import CardContainer from '../../common/CardContainer';
 
 /**
@@ -19,16 +18,21 @@ interface ClientCardProps {
 const ClientCard = ({ name, chargeableHours }: ClientCardProps) => {
   return (
     <CardContainer>
-      <header className='mb-3 text-xl flex'>
+      <header className='mb-3 text-xl flex flex-nowrap'>
         <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
-        <span style={{ color: colors.darkGold, wordBreak: 'break-all' }}>{truncateText(name)}</span>
+        <span className='overflow-hidden text-ellipsis' style={{ color: colors.darkGold }}>
+          {name}
+        </span>
       </header>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='flex flex-wrap'>
         <Chip
           sx={{
             bgcolor: colors.brownChip,
             fontSize: '13px',
             width: 'max-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           Chargeable Hours: {chargeableHours}
