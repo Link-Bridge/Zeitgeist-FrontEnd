@@ -66,7 +66,6 @@ const GenericDropdown = <T extends string | number>({
 
   const renderValueWithColor = (value: T) => {
     const isPlaceholder = !value;
-
     const colorCombination = colorMap?.[value];
 
     return (
@@ -102,16 +101,7 @@ const GenericDropdown = <T extends string | number>({
         renderValue={renderValue || renderValueWithColor}
         variant='standard'
         disableUnderline={true}
-        IconComponent={() => (
-          <Box
-            sx={{
-              color: (option && colorMap?.[option]?.font) || 'inherit',
-              marginRight: '8px',
-            }}
-          >
-            <KeyboardArrowDown />
-          </Box>
-        )}
+        IconComponent={KeyboardArrowDown}
         sx={{
           borderRadius: 30,
           background: (option && colorMap?.[option]?.bg) || backgroundColor || colors.lighterGray,
@@ -129,6 +119,10 @@ const GenericDropdown = <T extends string | number>({
           '& .MuiMenu-paper': {
             borderRadius: 8,
             boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+          },
+
+          '& .MuiSvgIcon-root': {
+            color: (option && colorMap?.[option]?.font) || colors.gray,
           },
         }}
       >
