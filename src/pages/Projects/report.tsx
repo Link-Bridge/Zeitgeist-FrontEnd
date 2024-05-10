@@ -8,7 +8,7 @@ import Button from '@mui/material/Button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
-import { useParams } from 'react-router-dom';
+import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
@@ -42,10 +42,14 @@ function filterteParser(date: Date): string {
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
 }
+
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const date = useRef<string>('');
 
+  const navigate = useNavigate();
+
+  const [secondsLeft, setSecondsLeft] = useState<number>(3);
   const [report, setReport] = useState<Report>();
   const [month, setMonth] = useState<number>(1);
   const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
@@ -58,7 +62,7 @@ const ProjectReport: React.FC = () => {
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
     ['inprogress', 'In process'],
-    ['underrevision', 'Under Revision'],
+    ['underrevision', 'Under revision'],
     ['delayed', 'Delayed'],
     ['postponed', 'Postponed'],
     ['notstarted', 'Not started'],
@@ -138,7 +142,47 @@ const ProjectReport: React.FC = () => {
   const totalTasks = report?.statistics?.total || 1;
 
   if (reqReport.error) {
-    return <div>Error laoding the report</div>;
+    if (reqReport.error.message.includes('403')) {
+      setTimeout(() => {
+        navigate('/projects');
+      }, 3000);
+
+      setInterval(() => {
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
+            Unauthorized employeee <br /> Redirecting in {secondsLeft}
+          </Typography>
+        </Box>
+      );
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+          <Typography variant='plain' level='h1' mb={4}>
+            Error loading the report
+          </Typography>
+        </Box>
+      );
+    }
   }
 
   return (
@@ -575,7 +619,19 @@ const ProjectReport: React.FC = () => {
             </Box>
           </>
         ) : (
-          <p>No data available</p>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+            <Typography variant='plain' level='h1' mb={4}>
+              No data available
+            </Typography>
+          </Box>
         )}
 
         {/* Snackbar */}
