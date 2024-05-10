@@ -274,7 +274,7 @@ const ProjectReport: React.FC = () => {
                     <Box>
                       <PDFDownloadLink
                         document={<ProjectReportPDF data={report} />}
-                        fileName={`report_${report.project.name}`}
+                        fileName={`report_${report.project.name}.pdf`}
                       >
                         <img src={download} alt='Download' className='w-6' />
                       </PDFDownloadLink>
