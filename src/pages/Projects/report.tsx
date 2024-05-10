@@ -74,8 +74,17 @@ const ProjectReport: React.FC = () => {
   };
 
   const handleYearChange = (value: string) => {
-    if (!/^\d*\.?\d*$/.test(value) || value.length !== 4 || Number(value) < 0) {
-      setState({ open: true, message: 'Please enter a valid year.', type: 'danger' });
+    if (
+      !/^\d*\.?\d*$/.test(value) ||
+      value.length !== 4 ||
+      Number(value) < 2018 ||
+      Number(value) > new Date().getFullYear()
+    ) {
+      setState({
+        open: true,
+        message: `Please enter a valid year(2018 - ${new Date().getFullYear()}).`,
+        type: 'danger',
+      });
       setValidYear(true);
       return;
     }
@@ -259,8 +268,7 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                   textTransform: 'none',
                   '&:hover': {
-                    bgcolor: colors.darkerGold,
-                    opacity: '0.8',
+                    bgcolor: colors.darkGold,
                   },
                 }}
                 onClick={handleClose}
@@ -275,6 +283,9 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                   borderColor: colors.lighterGray,
                   border: 1,
+                  '&:hover': {
+                    backgroundColor: colors.darkBlue,
+                  },
                 }}
                 onClick={handleClear}
               >
