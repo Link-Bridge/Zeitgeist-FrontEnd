@@ -6,7 +6,7 @@ import ArchiveModal from '../../../components/common/ArchiveModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { Response } from '../../../types/response';
-import { RequestMethods } from '../../../utils/constants';
+import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
@@ -16,10 +16,11 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Typography } from '@mui/joy';
-import { useParams } from 'react-router-dom';
+import { Box, Snackbar, Typography } from '@mui/joy';
+import { useNavigate, useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import { formatDate } from '../../../utils/methods';
 
 /**
@@ -38,11 +39,14 @@ const ClientDetails = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
+
+  const navigate = useNavigate();
 
   const handleEditClick = () => {
     setEditModalOpen(true);
@@ -94,8 +98,23 @@ const ClientDetails = () => {
           id={company?.id ?? ''}
           title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
           description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
-          handleArchiveClient={() => {
-            return '';
+          handleArchiveClient={(status: string) => {
+            if (status == 'success') {
+              setState({
+                open: true,
+                message: `Client ${company?.archived ? 'unarchived' : 'archived'} successfully`,
+                type: 'success',
+              });
+            } else {
+              setState({
+                open: true,
+                message: `An error occured while ${company?.archived ? 'unarchiving' : 'archiving'} client`,
+                type: 'danger',
+              });
+            }
+            setTimeout(() => {
+              navigate(RoutesPath.CLIENTS + '/');
+            }, 3000);
           }}
         ></ArchiveModal>
         {company && !loading && (
@@ -166,6 +185,13 @@ const ClientDetails = () => {
         <Divider sx={{ 'margin-top': '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} />
       </main>
+
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
