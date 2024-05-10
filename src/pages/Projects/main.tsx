@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
@@ -51,6 +52,10 @@ const ProjectMain = () => {
       });
     }
   };
+
+  if (projects.length === 0 || !projects) {
+    return <ComponentPlaceholder text='No projects were found' />;
+  }
 
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
