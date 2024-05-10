@@ -1,6 +1,5 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Box, Snackbar, Table } from '@mui/joy';
-import CircularProgress from '@mui/joy/CircularProgress';
 import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -12,8 +11,10 @@ import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
 import { APIPath, RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
+import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
+import Loader from '../../common/Loader';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
@@ -39,7 +40,6 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
   const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const idTaskPayload = useRef<string>('');
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
@@ -116,13 +116,23 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
   if (loading) {
     return (
       <div>
-        <CircularProgress />
+        <Loader />
       </div>
     );
   }
 
   if (error) {
     return <div>Error: {error.message}</div>;
+  }
+
+  if (tasks.length === 0 || !tasks) {
+    return (
+      <ComponentPlaceholder
+        text='No tasks associated to this company were found.'
+        width='20vh'
+        height='15vh'
+      />
+    );
   }
 
   /**
@@ -175,7 +185,6 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />
-                  {/* <ClickableChip value={formatStatus(task.status)} setValue={() => {}} /> */}
                 </td>
                 <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
