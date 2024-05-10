@@ -47,7 +47,6 @@ const Home = () => {
               <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
-                  id={project.id}
                   company={findCompanyNameById(project.idCompany)}
                   department={project.area}
                   name={project.name}
