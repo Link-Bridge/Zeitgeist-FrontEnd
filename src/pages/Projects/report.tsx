@@ -46,7 +46,7 @@ function capitalize(data: string): string {
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
   const date = useRef<string>('');
-  
+
   const navigate = useNavigate();
 
   const [secondsLeft, setSecondsLeft] = useState<number>(3);
@@ -142,7 +142,7 @@ const ProjectReport: React.FC = () => {
   const totalTasks = report?.statistics?.total || 1;
 
   if (reqReport.error) {
-    if (reqReport.error.message.includes('403')){
+    if (reqReport.error.message.includes('403')) {
       setTimeout(() => {
         navigate('/projects');
       }, 3000);
@@ -151,40 +151,38 @@ const ProjectReport: React.FC = () => {
         setSecondsLeft(secondsLeft - 1);
       }, 1000);
 
-      return ( 
+      return (
         <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}> 
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
             Unauthorized employeee <br /> Redirecting in {secondsLeft}
           </Typography>
-      </Box>
-    );
-    
+        </Box>
+      );
     } else {
-      return ( 
+      return (
         <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
           <Typography variant='plain' level='h1' mb={4}>
-        Error loading the report
-      </Typography>
-      </Box>
-    );
+            Error loading the report
+          </Typography>
+        </Box>
+      );
     }
-    
   }
 
   return (
@@ -620,20 +618,20 @@ const ProjectReport: React.FC = () => {
               })}
             </Box>
           </>
-        ) : ( 
+        ) : (
           <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-          <Typography variant='plain' level='h1' mb={4}>
-            No data available
-          </Typography>
-        </Box>
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+            <Typography variant='plain' level='h1' mb={4}>
+              No data available
+            </Typography>
+          </Box>
         )}
 
         {/* Snackbar */}
