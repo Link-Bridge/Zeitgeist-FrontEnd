@@ -1,10 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 
-<<<<<<< HEAD
-=======
 import colors, { statusChipColorCombination } from '../../colors';
->>>>>>> develop
 import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import useHttp from '../../hooks/useHttp';
@@ -20,11 +17,7 @@ import UnarchiveIcon from '@mui/icons-material/Unarchive';
 
 import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
 import { Chip } from '@mui/material';
-<<<<<<< HEAD
-import colors from '../../colors';
-=======
 import axios from 'axios';
->>>>>>> develop
 import AddButton from '../../components/common/AddButton';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 
