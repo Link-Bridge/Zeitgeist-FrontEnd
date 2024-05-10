@@ -1,23 +1,27 @@
-import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
-import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
-import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box } from '@mui/joy';
 import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
 import { useEffect, useState } from 'react';
-import { useParams } from 'react-router-dom';
 import ArchiveModal from '../../../components/common/ArchiveModal';
-import GoBack from '../../../components/common/GoBack';
-import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+// import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { Response } from '../../../types/response';
-import { RequestMethods } from '../../../utils/constants';
-import { formatDate } from '../../../utils/methods';
+import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
+
+import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
+import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+// import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
+import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
+import { Box, Snackbar, Typography } from '@mui/joy';
+import { useNavigate, useParams } from 'react-router-dom';
+import GoBack from '../../../components/common/GoBack';
+import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { formatDate } from '../../../utils/methods';
 
 /**
  * Client Details Page page
@@ -35,26 +39,32 @@ const ClientDetails = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
 
+  const navigate = useNavigate();
+
   const handleEditClick = () => {
     setEditModalOpen(true);
   };
 
   useEffect(() => {
-    sendRequest();
+    if (!data) sendRequest();
+    if (data && data.data) setCompany(data.data);
+
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, [data]);
 
   useEffect(() => {
-    if (data && data.data) {
-      setCompany(data.data);
-    }
-  }, [data]);
+    sendRequest();
+    if (data && data.data) setCompany(data.data);
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [refetch]);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -88,19 +98,39 @@ const ClientDetails = () => {
           id={company?.id ?? ''}
           title={`${company?.archived ? 'Unarchive' : 'Archive'}`}
           description={`Are you sure you want to ${company?.archived ? 'unarchive' : 'archive'} this client?`}
-          handleArchiveClient={() => {
-            return '';
+          handleArchiveClient={(status: string) => {
+            if (status == 'success') {
+              setState({
+                open: true,
+                message: `Client ${company?.archived ? 'unarchived' : 'archived'} successfully`,
+                type: 'success',
+              });
+            } else {
+              setState({
+                open: true,
+                message: `An error occured while ${company?.archived ? 'unarchiving' : 'archiving'} client`,
+                type: 'danger',
+              });
+            }
+            setTimeout(() => {
+              navigate(RoutesPath.CLIENTS + '/');
+            }, 3000);
           }}
         ></ArchiveModal>
         {company && !loading && (
           <section className='flex justify-between'>
-            <h2 className='text-2xl text-gold font-medium'>{company.name}</h2>
+            <h2 className='text-2xl text-gold font-medium text-wrap break-all'>{company.name}</h2>
             <section className='flex items-center gap-5'>
-              <Chip
-                color='primary'
-                variant='outlined'
-                label={formatDate(company.constitutionDate ?? null)}
-              />
+              <div className='flex items-center gap-2'>
+                <Typography level='body-sm' className='mr-1'>
+                  Constitution date:
+                </Typography>
+                <Chip
+                  color='primary'
+                  variant='outlined'
+                  label={formatDate(company.constitutionDate ?? null)}
+                />
+              </div>
               <EditOutlinedIcon
                 sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
                 className='text-gold'
@@ -155,8 +185,34 @@ const ClientDetails = () => {
         <Divider sx={{ 'margin-top': '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} />
       </main>
+
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
+
+// Hay que arreglar esto después
+// const handleArchiveClient = () => {
+//   // update ui
+//   setFilteredClientsData(prev => {
+//     const aux = [];
+//     for (let i = 0; i < prev.length; i++) {
+//       if (prev[i].id !== company?.id) {
+//         aux.push(prev[i]);
+//         continue;
+//       }
+//       aux.push({
+//         ...prev[i],
+//         archived: !prev[i].archived,
+//       });
+//     }
+//     return aux;
+//   });
+// };
 
 export default ClientDetails;

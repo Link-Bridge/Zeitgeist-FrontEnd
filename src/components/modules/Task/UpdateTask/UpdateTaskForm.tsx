@@ -14,14 +14,14 @@ import GenericDropdown from '../../../common/GenericDropdown';
 import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
 
-const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
-  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
-  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
-  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
-  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
-  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
+const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
+  [TaskStatus.DONE]: statusChipColorCombination.done,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled,
 };
 
 interface UpdateTaskFormProps {
@@ -31,12 +31,12 @@ interface UpdateTaskFormProps {
 }
 
 /**
- * New Task form component
+ * Update Task form component
  *
  * @component
  * @param {UpdateTaskFormProps} props - Component props
  *
- * @returns {JSX.Element} New Task form component
+ * @returns {JSX.Element} Update Task form component
  */
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   onSubmit,
@@ -50,14 +50,25 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
-  const [workedHours, setWorkedHours] = useState<string | null>(null);
+  const [workedHours, setWorkedHours] = useState<string | ''>('');
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = event.target.value;
+
+    if (newTitle.length > 70) {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      return setState({
+        open: true,
+        message: 'Title cannot be longer than 70 characters',
+        type: 'danger',
+      });
+    }
     setTitle(event.target.value);
+
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
       setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
@@ -68,7 +79,19 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newDescription = event.target.value;
+
+    if (newDescription.length > 256) {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({
+        open: true,
+        message: 'Description cannot be longer than 256 characters',
+        type: 'danger',
+      });
+      return;
+    }
     setDescription(event.target.value);
+
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
       setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
@@ -79,10 +102,31 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    if (date && dueDate && date.isAfter(dueDate)) {
+      setState({
+        open: true,
+        message: 'Start date cannot be after due date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
     setStartDate(date);
   };
 
   const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+    const datesValid = !date || !startDate || date.isAfter(startDate);
+
+    if (!datesValid) {
+      setState({
+        open: true,
+        message: 'Due date cannot be before start date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
+
     setDueDate(date);
   };
 
@@ -95,6 +139,27 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+
+    if (!/^\d*\.?\d*$/.test(newValue)) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Only numbers are allowed' }));
+      setState({ open: true, message: 'Worked hours can only be numbers.', type: 'danger' });
+      return;
+    }
+
+    if (newValue.length > 8) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        workedHours: 'Worked hours cannot be longer than 8 characters',
+      }));
+      setState({
+        open: true,
+        message: 'Worked hours cannot be longer than 8 characters.',
+        type: 'danger',
+      });
+      return;
+    }
+
     setWorkedHours(event.target.value);
 
     if (!event.target.value.trim()) {
@@ -172,6 +237,35 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
 
   const hasErrors = () => {
     return Object.values(errors).some(error => !!error);
+  };
+
+  const hasEmptyFields = () => {
+    return (
+      !title ||
+      !description ||
+      !startDate ||
+      !dueDate ||
+      !status ||
+      !assignedEmployee ||
+      !workedHours
+    );
+  };
+
+  const hasWrongLength = () => {
+    if (title.length > 70 || description.length > 256 || workedHours.toString().length > 8) {
+      console.log('wrong length');
+      return true;
+    }
+  };
+
+  const datesAreNotValid = () => {
+    if (
+      (dueDate && startDate && dueDate.isBefore(startDate)) ||
+      (dueDate && startDate && startDate.isAfter(dueDate))
+    ) {
+      return true;
+    }
+    return false;
   };
 
   return (
@@ -288,7 +382,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <ModifyButton onClick={handleSubmit} disabled={hasErrors()} />
+            <ModifyButton
+              onClick={handleSubmit}
+              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+            />
           </Item>
         </Grid>
       </Grid>

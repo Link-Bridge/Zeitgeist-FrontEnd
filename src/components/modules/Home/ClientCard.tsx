@@ -18,16 +18,21 @@ interface ClientCardProps {
 const ClientCard = ({ name, chargeableHours }: ClientCardProps) => {
   return (
     <CardContainer>
-      <header className='mb-3 text-xl flex'>
+      <header className='mb-3 text-xl flex flex-nowrap'>
         <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
-        <span style={{ color: colors.darkGold }}>{name}</span>
+        <span className='overflow-hidden text-ellipsis' style={{ color: colors.darkGold }}>
+          {name}
+        </span>
       </header>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='flex flex-wrap'>
         <Chip
           sx={{
             bgcolor: colors.brownChip,
             fontSize: '13px',
             width: 'max-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           Chargeable Hours: {chargeableHours}

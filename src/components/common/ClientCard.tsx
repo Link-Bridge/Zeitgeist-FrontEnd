@@ -1,7 +1,7 @@
 import { Chip } from '@mui/joy';
-import WorkIcon from '../../../assets/icons/work_filled.svg';
-import colors from '../../../colors';
-import CardContainer from '../../common/CardContainer';
+import WorkIcon from '../../assets/icons/work_filled.svg';
+import colors from '../../colors';
+import CardContainer from './CardContainer';
 
 /**
  * @brief Displays and organizes client information.
@@ -29,7 +29,7 @@ const ClientCard = ({
     <CardContainer>
       <header className='mb-3 text-xl flex'>
         <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
-        <span style={{ color: colors.darkGold }}>{name}</span>
+        <span style={{ color: colors.darkGold, wordBreak: 'break-all' }}>{name}</span>
       </header>
       <div className='grid grid-cols-2 gap-2'>
         <Chip

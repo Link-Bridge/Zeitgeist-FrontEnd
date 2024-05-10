@@ -1,10 +1,9 @@
 import { Box, Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
-import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
-import TaskTable from '../../components/modules/Task/TableTask/TaskTable';
+import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
@@ -98,13 +97,13 @@ const Tasks = (): JSX.Element => {
           color: colors.grey[500],
         }}
       >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading tasks
+        </Typography>
+
         <Loader />
       </Box>
     );
-  }
-
-  if (!tasksPerProject || tasksPerProject.length === 0) {
-    return <ComponentPlaceholder />;
   }
 
   return (
@@ -119,47 +118,69 @@ const Tasks = (): JSX.Element => {
           overflowY: 'auto',
         }}
       >
-        {tasksPerProject?.map(({ project, tasks }) => (
-          <Box
-            key={project.id}
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              gap: 2,
-              padding: 2,
-              borderRadius: 12,
-              backgroundColor: colors.grey[50],
-            }}
-          >
-            <Typography
-              level='h1'
-              variant='plain'
-              sx={{
-                color: colors.grey[800],
-                fontWeight: 'bold',
-                fontSize: '1rem',
-              }}
-            >
-              {project.name}
-            </Typography>
-
-            {tasks?.length && tasks.length > 0 && (
+        {taskData && projectData && tasksPerProject.length ? (
+          <>
+            {tasksPerProject?.map(({ project, tasks }) => (
               <Box
-                key={tasks[0].id}
+                key={project.id}
                 sx={{
                   display: 'flex',
                   flexDirection: 'column',
-                  gap: 1,
-                  padding: 0.5,
+                  gap: 2,
+                  padding: 2,
                   borderRadius: 12,
-                  backgroundColor: colors.grey[100],
+                  backgroundColor: colors.grey[50],
                 }}
               >
-                <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
+                <Typography
+                  level='h1'
+                  variant='plain'
+                  sx={{
+                    color: colors.grey[800],
+                    fontWeight: 'bold',
+                    fontSize: '1rem',
+                  }}
+                >
+                  {project.name}
+                </Typography>
+
+                {tasks?.length && tasks.length > 0 && (
+                  <Box
+                    key={tasks[0].id}
+                    sx={{
+                      display: 'flex',
+                      flexDirection: 'column',
+                      gap: 1,
+                      padding: 0.5,
+                      borderRadius: 12,
+                      backgroundColor: colors.grey[100],
+                    }}
+                  >
+                    <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
+                  </Box>
+                )}
               </Box>
-            )}
+            ))}
+          </>
+        ) : (
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+              height: '100%',
+              color: colors.grey[500],
+            }}
+          >
+            <Typography variant='plain' level='h1'>
+              Your task list is empty
+            </Typography>
+            <Typography variant='plain' level='h2'>
+              Get started by adding tasks to your project
+            </Typography>
           </Box>
-        ))}
+        )}
       </Sheet>
     </>
   );

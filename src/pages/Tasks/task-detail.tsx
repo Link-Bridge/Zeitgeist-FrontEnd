@@ -1,3 +1,4 @@
+import { Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -82,6 +83,10 @@ const Task: React.FC = () => {
           color: colors.gray[500],
         }}
       >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading task
+        </Typography>
+
         <Loader />
       </Box>
     );
@@ -170,6 +175,7 @@ const Task: React.FC = () => {
                 sx={{
                   display: 'flex',
                   gap: '60px',
+                  alignItems: 'end',
                 }}
               >
                 <Box>
@@ -190,7 +196,7 @@ const Task: React.FC = () => {
 
                 {data.endDate && (
                   <Box>
-                    <p style={{ fontSize: '.5rem' }}>Due date</p>
+                    <p style={{ fontSize: '.9rem' }}>Due date</p>
                     <Box
                       sx={{
                         display: 'flex',
@@ -265,7 +271,9 @@ const Task: React.FC = () => {
               }}
             />
           </>
-        ) : undefined}
+        ) : (
+          <p>Task not found</p>
+        )}
       </main>
     </>
   );

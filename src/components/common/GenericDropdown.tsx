@@ -1,5 +1,13 @@
-import { Box, FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
+import { KeyboardArrowDown } from '@mui/icons-material';
+import { Box } from '@mui/joy';
+import { FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
 import React, { useEffect, useState } from 'react';
+import colors from '../../colors';
+
+interface ColorMapEntity {
+  bg: string;
+  font: string;
+}
 
 interface GenericDropdownProps<T extends string | number>
   extends Omit<SelectProps<T>, 'onChange' | 'value'> {
@@ -8,7 +16,7 @@ interface GenericDropdownProps<T extends string | number>
   onValueChange: (value: T) => void;
   renderValue?: (value: T) => React.ReactNode;
   placeholder?: string;
-  colorMap?: Record<T, string>;
+  colorMap?: Record<T, ColorMapEntity>;
   defaultValue?: T;
 }
 
@@ -56,6 +64,29 @@ const GenericDropdown = <T extends string | number>({
     setIsEmpty(false);
   };
 
+  const renderValueWithColor = (value: T) => {
+    const isPlaceholder = !value;
+    const colorCombination = colorMap?.[value];
+
+    return (
+      <Box
+        sx={{
+          backgroundColor: colorCombination?.bg,
+          color: colorCombination?.font,
+          borderRadius: 30,
+          padding: '0 12px',
+          fontSize: '0.875rem',
+          lineHeight: '30px',
+          height: isPlaceholder ? 25 : 'auto',
+          minWidth: 50,
+          whiteSpace: 'nowrap',
+        }}
+      >
+        {isPlaceholder ? placeholder : value}
+      </Box>
+    );
+  };
+
   useEffect(() => {
     setOptions(defaultValue ?? '');
   }, [defaultValue]);
@@ -67,35 +98,31 @@ const GenericDropdown = <T extends string | number>({
         onChange={handleChange}
         onOpen={handleOpen}
         displayEmpty
-        renderValue={
-          renderValue ||
-          (value => (
-            <Box
-              sx={{
-                padding: '1px 10px',
-                lineHeight: '30px',
-                height: 30,
-                overflow: 'hidden',
-                whiteSpace: 'nowrap',
-                minWidth: 150,
-              }}
-            >
-              {String(value)}
-            </Box>
-          ))
-        }
+        renderValue={renderValue || renderValueWithColor}
+        variant='standard'
+        disableUnderline={true}
+        IconComponent={KeyboardArrowDown}
         sx={{
           borderRadius: 30,
-          backgroundColor: colorMap?.[option as T] || backgroundColor || '#EDEDED',
+          background: (option && colorMap?.[option]?.bg) || backgroundColor || colors.lighterGray,
           '& .MuiSelect-select': {
             padding: '1px 6px',
             fontSize: '0.875rem',
             textAlign: 'center',
             lineHeight: '30px',
-            height: isEmpty ? 30 : 'auto',
+            height: isEmpty ? 25 : 'auto',
             minHeight: 30,
             transition: 'height 0.2s ease',
             overflow: 'hidden',
+          },
+
+          '& .MuiMenu-paper': {
+            borderRadius: 8,
+            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
+          },
+
+          '& .MuiSvgIcon-root': {
+            color: (option && colorMap?.[option]?.font) || colors.gray,
           },
         }}
       >

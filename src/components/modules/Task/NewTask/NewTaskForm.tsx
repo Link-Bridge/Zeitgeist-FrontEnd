@@ -1,8 +1,9 @@
-import { Box, Chip, Grid, Input, Textarea } from '@mui/joy';
+import { Box, Chip, Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
+import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
@@ -13,14 +14,14 @@ import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Header, Item, StyledSheet } from '../styled';
 
-const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
-  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
-  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
-  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
-  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
-  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
+const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
+  [TaskStatus.DONE]: statusChipColorCombination.done,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled,
 };
 
 interface NewTaskFormProps {
@@ -50,22 +51,83 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
-  const [workedHours, setWorkedHours] = useState<string | null>(null);
+  const [workedHours, setWorkedHours] = useState<string | ''>('');
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
 
+  const navigate = useNavigate();
+
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newTitle = event.target.value;
+
+    if (newTitle.length > 70) {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      return setState({
+        open: true,
+        message: 'Title cannot be longer than 70 characters',
+        type: 'danger',
+      });
+    }
     setTitle(event.target.value);
+
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, title: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
+    const newDescription = event.target.value;
+
+    if (newDescription.length > 256) {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({
+        open: true,
+        message: 'Description cannot be longer than 256 characters',
+        type: 'danger',
+      });
+      return;
+    }
     setDescription(event.target.value);
+
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, description: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    if (date && dueDate && date.isAfter(dueDate)) {
+      setState({
+        open: true,
+        message: 'Start date cannot be after due date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
     setStartDate(date);
   };
 
   const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+    const datesValid = !date || !startDate || date.isAfter(startDate);
+
+    if (!datesValid) {
+      setState({
+        open: true,
+        message: 'Due date cannot be before start date.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+    }
+
     setDueDate(date);
   };
 
@@ -78,7 +140,36 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleWorkedHoursChange = (event: React.ChangeEvent<HTMLInputElement>) => {
+    const newValue = event.target.value;
+
+    if (!/^\d*\.?\d*$/.test(newValue)) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Only numbers are allowed' }));
+      setState({ open: true, message: 'Worked hours can only be numbers.', type: 'danger' });
+      return;
+    }
+
+    if (newValue.length > 8) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        workedHours: 'Worked hours cannot be longer than 8 characters',
+      }));
+      setState({
+        open: true,
+        message: 'Worked hours cannot be longer than 8 characters.',
+        type: 'danger',
+      });
+      return;
+    }
+
     setWorkedHours(event.target.value);
+
+    if (!event.target.value.trim()) {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
+      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
+    }
   };
 
   const getEmployeeNames = () => {
@@ -86,26 +177,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleSubmit = async () => {
-    const requiredFields = ['title', 'description', 'startDate', 'dueDate', 'status'];
-
-    if (!requiredFields.every(field => !!field && field !== '')) {
-      setErrors({
-        ...errors,
-        ...requiredFields.reduce((acc, field) => ({ ...acc, [field]: `${field} is required` }), {}),
-      });
-      return;
-    }
-
-    if (dueDate && startDate && dueDate.isBefore(startDate)) {
-      setErrors({
-        ...errors,
-        dueDate: 'Due date cannot be before start date',
-      });
-      return;
-    }
-
-    setErrors({});
-
     const payload: BareboneTask = {
       title,
       description,
@@ -122,8 +193,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     try {
       await onSubmit(payload);
+      setState({ open: true, message: 'Task created successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(`/projects/details/${projectId}`);
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: 'Failed to create task.', type: 'danger' });
     }
   };
 
@@ -134,7 +209,32 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setDueDate(null);
     setStatus('');
     setAssignedEmployee('');
-    setWorkedHours(null);
+    setWorkedHours('');
+  };
+
+  const hasErrors = () => {
+    return Object.values(errors).some(error => !!error);
+  };
+
+  const hasEmptyFields = () => {
+    return !title || !description || !startDate || !dueDate || !status || !assignedEmployee;
+  };
+
+  const hasWrongLength = () => {
+    if (title.length > 70 || description.length > 256 || workedHours.toString().length > 8) {
+      console.log('wrong length');
+      return true;
+    }
+  };
+
+  const datesAreNotValid = () => {
+    if (
+      (dueDate && startDate && dueDate.isBefore(startDate)) ||
+      (dueDate && startDate && startDate.isAfter(dueDate))
+    ) {
+      return true;
+    }
+    return false;
   };
 
   if (projectId === '') {
@@ -186,7 +286,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid xs={2}>
           <Item>
-            <Header>Due Date *</Header>
+            <Header>End Date *</Header>
             <CustomDatePicker
               value={dueDate}
               onChange={handleDueDateChange}
@@ -272,12 +372,20 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </Grid>
         <Grid>
           <Item>
-            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-              <SendButton onClick={handleSubmit} />
-            </Link>
+            <SendButton
+              onClick={handleSubmit}
+              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+            />
           </Item>
         </Grid>
       </Grid>
+
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </StyledSheet>
   );
 };

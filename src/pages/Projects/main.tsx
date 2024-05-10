@@ -9,23 +9,6 @@ import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 
-async function getClientsNames(projects: ProjectEntity[]) {
-  const idToken = sessionStorage.getItem('idToken');
-  const names = new Map<string, string>();
-  projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
-  const reqs: Promise<globalThis.Response>[] = [];
-  for (const id of names.keys()) {
-    reqs.push(
-      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      })
-    );
-  }
-  const data = (await Promise.all(reqs)).map(r => r.json());
-  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
-  return names;
-}
-
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
@@ -81,15 +64,14 @@ const ProjectMain = () => {
           <AddButton onClick={() => {}}></AddButton>
         </Link>
       </section>
-      <section className='flex-1 overflow-y-scroll'>
-        <div className='bg-[#FAFAFA] rounded-xl grid grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5 overflow-y-hidden'>
+      <section className='flex-1 overflow-scroll'>
+        <div className='bg-cardBg rounded-xl overflow-y-scroll grid md:grid-cols-2 lg:grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
           {isLoading && <Loader />}
           {!(isLoading && filteredProjects) &&
             filteredProjects.map(project => (
               <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
-                  id={project.id}
                   company={companyNames.get(project.idCompany) ?? ''}
                   department={project.area}
                   name={project.name}
@@ -102,5 +84,22 @@ const ProjectMain = () => {
     </main>
   );
 };
+
+async function getClientsNames(projects: ProjectEntity[]) {
+  const idToken = localStorage.getItem('idToken');
+  const names = new Map<string, string>();
+  projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
+  const reqs: Promise<globalThis.Response>[] = [];
+  for (const id of names.keys()) {
+    reqs.push(
+      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
+        headers: { Authorization: `Bearer ${idToken}` },
+      })
+    );
+  }
+  const data = (await Promise.all(reqs)).map(r => r.json());
+  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
+  return names;
+}
 
 export default ProjectMain;

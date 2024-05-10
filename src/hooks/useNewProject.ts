@@ -50,9 +50,20 @@ const formReducer = (state: FormState, action: FormAction) => {
   }
 };
 
-const valiateForm = (formState: FormState, setError: (arg0: Error) => void) => {
+const validateForm = (formState: FormState, setError: (arg0: Error) => void) => {
   if (!formState.name) {
     setError(new Error('Project name must not be empty'));
+    return false;
+  } else if (formState.name.length > 70) {
+    setError(new Error('Project name must be less than 70 characters'));
+    return false;
+  }
+  if (formState.matter && formState.matter.length > 70) {
+    setError(new Error('Project matter must be less than 70 characters'));
+    return false;
+  }
+  if (formState.description && formState.description.length > 255) {
+    setError(new Error('Project description must be less than 255 characters'));
     return false;
   }
   if (!formState.idCompany) {
@@ -88,7 +99,7 @@ const useNewProject = () => {
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (!valiateForm(formState, setError)) return;
+      if (!validateForm(formState, setError)) return;
 
       setIsPosting(true);
       const idToken = localStorage.getItem('idToken');
@@ -124,7 +135,7 @@ const useNewProject = () => {
   const handleUpdate = async (e: FormEvent) => {
     e.preventDefault();
     try {
-      if (!valiateForm(formState, setError)) return;
+      if (!validateForm(formState, setError)) return;
 
       setIsPosting(true);
       const idToken = localStorage.getItem('idToken');
@@ -142,6 +153,7 @@ const useNewProject = () => {
           headers,
         }
       );
+      console.log(res);
       if (res.status === 200) {
         setSuccess(true);
       }

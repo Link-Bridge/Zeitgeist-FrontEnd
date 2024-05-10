@@ -1,4 +1,5 @@
-import { Snackbar, Table } from '@mui/joy';
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
+import { Box, Snackbar, Table } from '@mui/joy';
 import CircularProgress from '@mui/joy/CircularProgress';
 import axios, { AxiosRequestConfig } from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -11,7 +12,6 @@ import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
 import { APIPath, RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
-import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
@@ -22,14 +22,14 @@ type TaskListTableProps = {
   setTotalProjectHours: (update: (prev: number) => number) => void;
 };
 
-const statusColorMap: Record<TaskStatus, string> = {
-  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted.bg,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss.bg,
-  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision.bg,
-  [TaskStatus.DELAYED]: statusChipColorCombination.delayed.bg,
-  [TaskStatus.POSTPONED]: statusChipColorCombination.postpone.bg,
-  [TaskStatus.DONE]: statusChipColorCombination.done.bg,
-  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled.bg,
+const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
+  [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+  [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
+  [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
+  [TaskStatus.DONE]: statusChipColorCombination.done,
+  [TaskStatus.CANCELLED]: statusChipColorCombination.cancelled,
 };
 
 const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTableProps) => {
@@ -136,11 +136,20 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
    */
 
   return (
-    <Table>
+    <Table borderAxis='none'>
       {data?.data.length === 0 && (
-        <div className='w-full flex flex-col items-center justify-center my-20'>
-          <ComponentPlaceholder text='No tasks associated to this company were found.' />
-        </div>
+        <tbody>
+          <tr>
+            <td className='w-full flex flex-col items-center justify-center'>
+              <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
+            </td>
+          </tr>
+          <tr>
+            <td className='w-full flex flex-col items-center justify-center'>
+              <Box className='mt-4'>No tasks associated to this company were found.</Box>
+            </td>
+          </tr>
+        </tbody>
       )}
       {data && data.data && data.data.length !== 0 && (
         <>

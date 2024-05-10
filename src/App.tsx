@@ -5,6 +5,7 @@ import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
 import NotFoundPage from './components/common/NotFound';
+import OfflineModal from './components/common/OfflineModal';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
@@ -15,7 +16,7 @@ import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
 import NewTaskPage from './pages/Tasks/new';
-import { APIPath, RoutesPath } from './utils/constants';
+import { RoutesPath } from './utils/constants';
 
 function App() {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
@@ -44,6 +45,7 @@ function App() {
     <EmployeeContext.Provider value={{ employee, setEmployee }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <SnackbarContext.Provider value={{ state, setState }}>
+          <OfflineModal />
           <Router>
             <Routes>
               {<Route path={RoutesPath.ROOT} element={<Auth />} />}
@@ -89,7 +91,7 @@ function App() {
                   }
                 />
                 <Route
-                  path={APIPath.CREATE_TASK}
+                  path={`${RoutesPath.TASKS}/:projectId/create`}
                   element={
                     <ProtectedRoute>
                       <NewTaskPage />

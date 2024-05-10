@@ -7,7 +7,7 @@ import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
-import { RequestMethods } from '../../../utils/constants';
+import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
@@ -37,14 +37,18 @@ interface Role {
   updatedAt: Date | null;
 }
 
-export default function EmployeeTable() {
-  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
+interface Props {
+  searchTerm: string;
+}
 
+export default function EmployeeTable({ searchTerm }: Props) {
   const { setState } = useContext(SnackbarContext);
   const [open, setOpen] = useState(false);
   const reqEmployees = useHttp<Response<Employee>>(`/employee`, RequestMethods.GET);
   const reqRoles = useHttp<Response<Role>>(`/admin/roles`, RequestMethods.GET);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
+  const [searchResults, setSearchResults] = useState<Employee[]>([]);
+
   useEffect(() => {
     reqEmployees.sendRequest();
     reqRoles.sendRequest();
@@ -57,11 +61,21 @@ export default function EmployeeTable() {
     }
   }, [reqEmployees.error, setState]);
 
+  useEffect(() => {
+    if (reqEmployees.data) {
+      const filteredEmployees = reqEmployees.data?.data.filter(employee => {
+        const fullName = `${employee.firstName} ${employee.lastName}`;
+        return fullName.toLowerCase().includes(searchTerm.toLowerCase());
+      });
+      setSearchResults(filteredEmployees as Employee[]);
+    }
+  }, [reqEmployees.data, searchTerm]);
+
   const handleRolChange = (newRoleId: string, userId: string): void => {
     if (newRoleId === undefined || userId === undefined) return;
     const doFetch = async (): Promise<void> => {
       await axios.put(
-        `${BASE_URL}/admin/role`,
+        `${BASE_API_URL}/admin/role`,
         {
           userId: userId,
           roleId: newRoleId,
@@ -99,66 +113,62 @@ export default function EmployeeTable() {
               </tr>
             </thead>
             <tbody>
-              {!reqEmployees.loading &&
-                reqEmployees.data?.data.map(employee => (
-                  <tr key={employee.id}>
-                    <td>
-                      {employee.imageUrl ? <Avatar src={employee.imageUrl}></Avatar> : <Avatar />}
-                    </td>
-                    <td>
-                      {employee.firstName} {employee.lastName}{' '}
-                    </td>
-                    <td>
-                      <Select
-                        variant='outlined'
-                        color='neutral'
-                        indicator={<KeyboardArrowDown />}
-                        defaultValue={employee.idRole}
-                        disabled={sessionEmployee === employee.id}
-                        onChange={e => {
-                          if (e === null) return;
-                          // eslint-disable-next-line
-                          handleRolChange((e.target as any)?.ariaLabel || '', employee.id);
-                        }}
-                        sx={{
-                          width: 250,
-                          [`& .${selectClasses.indicator}`]: {
-                            transition: '0.2s',
-                            [`&.${selectClasses.expanded}`]: {
-                              transform: 'rotate(-180deg)',
-                            },
+              {searchResults.map(employee => (
+                <tr key={employee.id}>
+                  <td>
+                    {employee.imageUrl ? <Avatar src={employee.imageUrl}></Avatar> : <Avatar />}
+                  </td>
+                  <td>
+                    {employee.firstName} {employee.lastName}{' '}
+                  </td>
+                  <td>
+                    <Select
+                      variant='outlined'
+                      color='neutral'
+                      indicator={<KeyboardArrowDown />}
+                      defaultValue={employee.idRole}
+                      disabled={sessionEmployee === employee.id}
+                      onChange={e => {
+                        if (e === null) return;
+                        handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
+                      }}
+                      sx={{
+                        width: 250,
+                        [`& .${selectClasses.indicator}`]: {
+                          transition: '0.2s',
+                          [`&.${selectClasses.expanded}`]: {
+                            transform: 'rotate(-180deg)',
                           },
-                        }}
-                      >
-                        {reqRoles.data?.data.map((role: Role, idxRole: number) => {
-                          return (
-                            <Option aria-label={role.id} key={idxRole} value={role.id}>
-                              {toTitleCase(role.title)}
-                            </Option>
-                          );
-                        })}
-                      </Select>
-                    </td>
-                    <td>
-                      <Chip className='w-full overflow' variant='soft'>
-                        {employee.email}
-                      </Chip>
-                    </td>
-                    <td>
-                      {sessionEmployee != employee.id && (
-                        <IconButton>
-                          <DeleteOutline
-                            onClick={() => {
-                              setCurrentEmployeeId(employee.id);
-                              setOpen(true);
-                            }}
-                            style={{ color: colors.gold }}
-                          />
-                        </IconButton>
-                      )}
-                    </td>
-                  </tr>
-                ))}
+                        },
+                      }}
+                    >
+                      {reqRoles.data?.data.map((role: Role) => (
+                        <Option aria-label={role.id} key={role.id} value={role.id}>
+                          {toTitleCase(role.title)}
+                        </Option>
+                      ))}
+                    </Select>
+                  </td>
+                  <td>
+                    <Chip className='w-full overflow' variant='soft'>
+                      {employee.email}
+                    </Chip>
+                  </td>
+                  <td>
+                    {sessionEmployee !== employee.id && (
+                      <IconButton>
+                        <DeleteOutline
+                          onClick={() => {
+                            setOpen(true);
+                            setCurrentEmployeeId(employee.id);
+                          }}
+                          style={{ color: colors.gold }}
+                        />
+                      </IconButton>
+                    )}
+                  </td>
+                </tr>
+              ))}
             </tbody>
           </>
         </Table>
