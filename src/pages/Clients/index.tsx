@@ -3,6 +3,7 @@ import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
@@ -15,9 +16,7 @@ import ClientDetails from './ClientDetails/ClientDetails';
 const Clients = () => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
   const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
-
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
-
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
 
@@ -59,6 +58,10 @@ const Clients = () => {
   const openModal = () => {
     setOpen(true);
   };
+
+  if (!companies || companies.length === 0) {
+    return <ComponentPlaceholder text='No companies were found' />;
+  }
 
   return (
     <Routes>

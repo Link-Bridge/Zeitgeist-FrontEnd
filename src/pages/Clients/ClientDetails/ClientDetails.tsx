@@ -75,7 +75,6 @@ const ClientDetails = () => {
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
-  // const ToggleModalDelete = () => setOpenDelete(!openDelete)
 
   return (
     <>

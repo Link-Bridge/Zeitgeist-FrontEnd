@@ -1,5 +1,6 @@
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import Loader from '../../components/common/Loader';
 import ClientCard from '../../components/modules/Home/ClientCard';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
@@ -40,9 +41,9 @@ const Home = () => {
       <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg overflow-x-hidden'>
         <h2 className='text-[34px]'>MY PROJECTS </h2>
         {isLoading && <Loader />}
-        {!(isLoading && homeData) && (
+        {!isLoading && homeData && homeData.projects.length > 0 ? (
           <section className='grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 rounded-xl mt-6'>
-            {homeData?.projects.map(project => (
+            {homeData.projects.map(project => (
               <Link to={`/projects/details/${project.id}`} key={project.id}>
                 <ProjectCard
                   key={project.id}
@@ -54,19 +55,23 @@ const Home = () => {
               </Link>
             ))}
           </section>
+        ) : (
+          <ComponentPlaceholder text='No projects available' />
         )}
       </section>
-      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden   flex-1 overflow-scroll'>
+      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden flex-1 overflow-scroll'>
         <h2 className='text-[34px]'>CLIENTS</h2>
         {isLoading && <Loader />}
-        {!(isLoading && homeData) && (
+        {!isLoading && homeData && homeData.companies.length > 0 ? (
           <section className='grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3 rounded-xl mt-6'>
-            {homeData?.companies.map(company => (
+            {homeData.companies.map(company => (
               <Link to={`/clients/details/${company.id}`} key={company.id}>
                 <ClientCard name={company.name} chargeableHours={company.chargeableHours || 0} />
               </Link>
             ))}
           </section>
+        ) : (
+          <ComponentPlaceholder text='No clients available' />
         )}
       </section>
     </main>
