@@ -37,17 +37,18 @@ const Auth: React.FC = () => {
       }
 
       const responseData = await response.json();
+      setEmployee(responseData.data);
+      localStorage.setItem('employee', JSON.stringify(responseData.data));
+
       if (responseData.data.role === 'No role' || !responseData.data.role) {
         throw new Error('User not authorized');
       }
 
-      localStorage.setItem('employee', JSON.stringify(responseData.data));
-      setEmployee(responseData.data);
       handleGetDeviceToken(result.user.email);
 
       navigate(RoutesPath.HOME);
     } catch (error) {
-      setState({ open: true, message: error.message, type: 'danger' });
+      setState({ open: true, message: (error as Error).message, type: 'danger' });
       throw error;
     }
   };

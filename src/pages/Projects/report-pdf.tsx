@@ -103,6 +103,7 @@ const ProjectReportPDF = (props: reportProps) => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
+                flexWrap: 'wrap',
               }}
             >
               {infoComponent(
@@ -122,6 +123,7 @@ const ProjectReportPDF = (props: reportProps) => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
+                flexWrap: 'wrap',
               }}
             >
               {props.data.project.area &&
