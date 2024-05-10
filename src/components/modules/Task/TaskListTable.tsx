@@ -128,7 +128,7 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
   if (tasks.length === 0 || !tasks) {
     return (
       <ComponentPlaceholder
-        text='No tasks associated to this company were found.'
+        text='No tasks associated to this project were found.'
         width='20vh'
         height='15vh'
       />
