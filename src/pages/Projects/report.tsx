@@ -170,7 +170,7 @@ const ProjectReport: React.FC = () => {
                   borderBottom: 0,
                   borderRadius: '5px',
                   borderColor: colors.lightGray,
-                  width: '100px',
+                  width: '120px',
                   padding: '5px',
                 }}
                 inputProps={{
@@ -199,7 +199,7 @@ const ProjectReport: React.FC = () => {
                   '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
                     display: 'none',
                   },
-                  width: '100px',
+                  width: '120px',
                   bgcolor: 'transparent',
                   border: 1,
                   borderColor: colors.lightGray,
