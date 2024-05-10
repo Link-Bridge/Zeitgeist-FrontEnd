@@ -1,9 +1,9 @@
-import {Typography } from '@mui/joy';
+import { Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
+import { NativeSelect } from '@mui/material';
 import Button from '@mui/material/Button';
-import TextField from '@mui/material/TextField';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -12,14 +12,15 @@ import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import ErrorView from '../../components/common/Error';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
 import ProjectReportPDF from './report-pdf';
-import { NativeSelect } from '@mui/material';
 
 function dateParser(date: Date): string {
   const arr = date.toString().split('-');
@@ -45,8 +46,10 @@ const ProjectReport: React.FC = () => {
   const date = useRef<string>('');
 
   const [report, setReport] = useState<Report>();
-  const [month, setMonth] = useState<number>(0);
-  const [year, setYear] = useState<number>(0);
+  const [month, setMonth] = useState<number>(1);
+  const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const [validYear, setValidYear] = useState<boolean>(false);
 
   const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
   const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
@@ -61,15 +64,25 @@ const ProjectReport: React.FC = () => {
     ['cancelled', 'Cancelled'],
   ]);
 
-  const handleYearChange = (value: number) => {
-    setYear(value);
+  const hasErrors = () => {
+    return validYear;
+  };
+
+  const handleYearChange = (value: string) => {
+    if (!/^\d*\.?\d*$/.test(value) || value.length !== 4 || Number(value) < 0) {
+      setState({ open: true, message: 'Please enter a valid year.', type: 'danger' });
+      setValidYear(true);
+      return;
+    }
+    setValidYear(false);
+    setState({ open: false, message: '' });
+    setYear(Number(value));
   };
 
   const handleMonthChange = (value: number) => {
     setMonth(value);
   };
 
-  // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     date.current = filterteParser(new Date(year, month - 1));
 
@@ -78,13 +91,14 @@ const ProjectReport: React.FC = () => {
         `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
-
       setReport(data.data);
     };
     void doFetch();
   };
 
   const handleClear = () => {
+    setMonth(1);
+    setYear(Number(new Date().getFullYear()));
     reqReport.sendRequest();
   };
 
@@ -150,10 +164,19 @@ const ProjectReport: React.FC = () => {
               }}
             >
               <NativeSelect
+                sx={{
+                  border: 1,
+                  borderBottom: 0,
+                  borderRadius: '5px',
+                  borderColor: colors.lightGray,
+                  width: '100px',
+                  padding: '5px',
+                }}
                 inputProps={{
                   name: 'age',
                   id: 'uncontrolled-native',
                 }}
+                defaultValue={1}
                 onChange={e => handleMonthChange(Number(e.target.value))}
               >
                 <option value={1}>January</option>
@@ -169,32 +192,41 @@ const ProjectReport: React.FC = () => {
                 <option value={11}>November</option>
                 <option value={12}>December</option>
               </NativeSelect>
-              
-              <TextField
+
+              <Input
                 sx={{
+                  '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                    display: 'none',
+                  },
                   width: '100px',
+                  bgcolor: 'transparent',
+                  border: 1,
+                  borderColor: colors.lightGray,
                 }}
                 type='number'
-                label='Year'
-                inputProps={{ min: '0' }}
-                onChange={e => handleYearChange(Number(e.target.value))}
+                defaultValue={year}
+                onChange={e => handleYearChange(e.target.value)}
               />
               <Button
                 sx={{
                   bgcolor: colors.darkGold,
-                  color: colors.lighterGray,
+                  color: '#fff',
                   borderRadius: '8px',
-                  borderColor: colors.lighterGray,
-                  border: 1,
+                  textTransform: 'none',
+                  '&:hover': {
+                    bgcolor: colors.darkerGold,
+                    opacity: '0.8',
+                  },
                 }}
                 onClick={handleClose}
+                disabled={hasErrors()}
               >
-                Search
+                SEARCH
               </Button>
               <Button
                 sx={{
+                  color: '#fff',
                   bgcolor: colors.darkBlue,
-                  color: colors.lighterGray,
                   borderRadius: '8px',
                   borderColor: colors.lighterGray,
                   border: 1,
@@ -412,6 +444,7 @@ const ProjectReport: React.FC = () => {
                 gap: '10px',
               }}
             >
+              {report.tasks?.length === 0 && <ErrorView error={'No tasks'} />}
               {report.tasks?.map(item => {
                 return (
                   <Box key={item.id}>
@@ -528,6 +561,13 @@ const ProjectReport: React.FC = () => {
         ) : (
           <p>No data available</p>
         )}
+
+        {/* Snackbar */}
+        <SnackbarContext.Provider value={{ state, setState }}>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
       </main>
     </>
   );
