@@ -17,7 +17,7 @@ interface ModalInterface {
   id: string;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleModal?: () => void;
-  handleArchiveClient: (id: string) => void;
+  handleArchiveClient: (status: string) => void;
 }
 
 export default function ArchiveModal({
@@ -30,10 +30,15 @@ export default function ArchiveModal({
 }: ModalInterface) {
   const useArchive = useArchiveClient();
 
-  const handleDelete = () => {
-    useArchive.archiveClient(id);
-    setOpen(false); // This will close the modal or dialog
-    handleArchiveClient(id); // This will update the UI
+  const handleDelete = async () => {
+    try {
+      await useArchive.archiveClient(id);
+      setOpen(false); // This will close the modal or dialog
+      handleArchiveClient('success'); // This will update the UI
+    } catch (error) {
+      console.error(error);
+      handleArchiveClient('error'); // This will update the UI
+    }
   };
 
   return (
