@@ -1,6 +1,7 @@
 import { Box, Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
@@ -104,6 +105,10 @@ const Tasks = (): JSX.Element => {
         <Loader />
       </Box>
     );
+  }
+
+  if (!tasksPerProject || tasksPerProject.length === 0) {
+    return <ComponentPlaceholder text='No task were found' />;
   }
 
   return (
