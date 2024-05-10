@@ -1,3 +1,4 @@
+import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
@@ -12,7 +13,6 @@ import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
-import ErrorView from '../../components/common/Error';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
@@ -20,6 +20,7 @@ import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
 
 function dateParser(date: Date): string {
@@ -298,7 +299,7 @@ const ProjectReport: React.FC = () => {
                     color={`${colors.extra}`}
                   ></ColorChip>
                   <ColorChip
-                    label={`${report.project.companyName}`}
+                    label={`${truncateText(report.project.companyName, 30)}`}
                     color={`${colors.null}`}
                   ></ColorChip>
                 </Box>
@@ -325,7 +326,10 @@ const ProjectReport: React.FC = () => {
                   {report.project.matter && (
                     <Box>
                       <p style={{ fontSize: '.9rem' }}>Matter</p>
-                      <ColorChip label={report.project.matter} color={`${colors.null}`}></ColorChip>
+                      <ColorChip
+                        label={truncateText(report.project.matter)}
+                        color={`${colors.null}`}
+                      ></ColorChip>
                     </Box>
                   )}
                   {report.project.category && (
@@ -444,7 +448,19 @@ const ProjectReport: React.FC = () => {
                 gap: '10px',
               }}
             >
-              {report.tasks?.length === 0 && <ErrorView error={'No tasks'} />}
+              {report.tasks?.length === 0 && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
+                  <Box className='mt-4'>No tasks associated to this project were found.</Box>
+                </Box>
+              )}
               {report.tasks?.map(item => {
                 return (
                   <Box key={item.id}>
