@@ -36,7 +36,6 @@ export default function ArchiveModal({
       setOpen(false); // This will close the modal or dialog
       handleArchiveClient('success'); // This will update the UI
     } catch (error) {
-      console.error(error);
       handleArchiveClient('error'); // This will update the UI
     }
   };
