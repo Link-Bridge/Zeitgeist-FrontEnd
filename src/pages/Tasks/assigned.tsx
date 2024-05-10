@@ -108,7 +108,7 @@ const Tasks = (): JSX.Element => {
   }
 
   if (!tasksPerProject || tasksPerProject.length === 0) {
-    return <ComponentPlaceholder text='No task were found' />;
+    return <ComponentPlaceholder text='No tasks were found' />;
   }
 
   return (
