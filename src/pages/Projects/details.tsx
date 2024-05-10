@@ -156,7 +156,7 @@ const ProjectDetails = () => {
               {truncateText(data?.name)}
             </h3>
             <section className='flex justify-end gap-3'>
-              {data?.isChargeable ? (
+              {data?.isArchived ? (
                 <UnarchiveIcon
                   sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
                   onClick={toggleModal}

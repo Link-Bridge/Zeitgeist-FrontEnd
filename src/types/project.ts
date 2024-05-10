@@ -44,12 +44,8 @@ export interface ProjectEntity {
   name: string;
   matter: string;
   description: string;
-  isArchived: boolean;
   status: ProjectStatus;
   category: string;
-  constitutionDate: Date;
-  rfc: string;
-  taxResidence: string;
   startDate: Date;
   endDate: Date;
   area: ProjectAreas;

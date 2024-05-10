@@ -95,7 +95,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
         >
           {project?.isArchived ? 'Unarchive Project' : 'Archive Project'}
         </Typography>
-        <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
+        <Typography component='h2' id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
           {project?.isArchived
             ? 'Are sure you want to unarchive this project?'
             : 'Are sure you want to archive this project?'}
