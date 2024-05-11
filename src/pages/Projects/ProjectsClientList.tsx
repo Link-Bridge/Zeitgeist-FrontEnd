@@ -1,5 +1,5 @@
 import { useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useNavigate } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
@@ -14,6 +14,7 @@ type ProjectsClientListProps = {
 };
 
 export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClientListProps) => {
+  const navigate = useNavigate();
   const [projectsGroup, setProjectsGroup] = useState<ProjectEntity[]>([]);
   const [, setSelectedProjectId] = useState<string | null>(null);
   const { data, error, loading, sendRequest } = useHttp<Response<ProjectEntity[]>>(
@@ -50,9 +51,11 @@ export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClie
         <h3 className='text-[20px] text-[#424242] font-medium'>Projects</h3>
         {!isCompanyArchived && (
           <section className='flex gap-5'>
-            <Link to={`${RoutesPath.PROJECTS}/new`}>
-              <AddButton onClick={() => {}}></AddButton>
-            </Link>
+            <AddButton
+              onClick={() => {
+                navigate(`${RoutesPath.PROJECTS}/new`);
+              }}
+            ></AddButton>
           </section>
         )}
       </section>
