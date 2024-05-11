@@ -1,11 +1,12 @@
 import { Box, Sheet, Typography } from '@mui/joy';
 import { colors } from '@mui/material';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
-import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
@@ -25,9 +26,14 @@ import { RequestMethods } from '../../utils/constants';
  */
 const Tasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [state, setState] = useState<SnackbarState>({
+    open: false,
+    message: '',
+  });
 
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
+  const navigate = useNavigate();
 
   const {
     data: taskData,
@@ -49,7 +55,11 @@ const Tasks = (): JSX.Element => {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
     } catch (error) {
-      console.error(error);
+      setState({
+        open: true,
+        message: 'An error occurred while deleting the task',
+        type: 'danger',
+      });
     }
   };
 
@@ -83,7 +93,15 @@ const Tasks = (): JSX.Element => {
     .filter(({ tasks }) => tasks.length > 0);
 
   if (taskError || projectError) {
-    return <ErrorView error={taskError || projectError} />;
+    setState({
+      open: true,
+      message: 'An error occurred while fetching the tasks',
+      type: 'danger',
+    });
+
+    setTimeout(() => {
+      navigate('/');
+    }, 1000);
   }
 
   if (taskLoading || projectLoading) {
