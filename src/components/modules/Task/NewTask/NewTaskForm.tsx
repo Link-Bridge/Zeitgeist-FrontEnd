@@ -25,7 +25,6 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 };
 
 interface NewTaskFormProps {
-  getTasks: () => void;
   onSubmit: (payload: BareboneTask) => Promise<void>;
   employees: EmployeeEntity[];
   projectId: string;
@@ -41,7 +40,6 @@ interface NewTaskFormProps {
  * @returns {JSX.Element} New Task form component
  */
 const NewTaskForm: React.FC<NewTaskFormProps> = ({
-  getTasks,
   onSubmit,
   employees,
   projectId,
@@ -377,7 +375,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <SendButton
               onClick={() => {
                 handleSubmit();
-                getTasks();
               }}
               disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
             />

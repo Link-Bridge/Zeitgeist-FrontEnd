@@ -43,26 +43,6 @@ const NewTaskPage = () => {
   const projectName = projectData?.name;
   const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
 
-  const {
-    data: tasks,
-    error: errorTasks,
-    loading: loadingTasks,
-    sendRequest: getTasks,
-  } = useHttp<Response<TaskDetail>>(`/tasks/project/${projectId}`, RequestMethods.GET);
-
-  useEffect(() => {
-    if (!tasks) getTasks();
-    if (tasks && tasks.data) {
-      setInitialTasks(tasks.data);
-
-      // setTotalProjectHours(() =>
-      //   tasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
-      // );
-    }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tasks]);
-
   const handleOnSubmit = async (payload: BareboneTask) => {
     try {
       await sendRequest({}, { ...payload });
@@ -73,7 +53,6 @@ const NewTaskPage = () => {
 
   return (
     <NewTaskForm
-      getTasks={getTasks}
       onSubmit={handleOnSubmit}
       employees={employees || []}
       projectId={projectId ? projectId : ''}
