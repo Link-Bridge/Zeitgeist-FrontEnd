@@ -62,7 +62,7 @@ const ClientDetails = () => {
         </section>
       </section>
 
-      <section className='flex gap-20 mt-7'>
+      <section className='flex gap-20 mt-7 font-montserrat'>
         <article className='flex gap-4 w-full'>
           <EmailOutlinedIcon />
           <p>nameemailtest@gmail.com</p>
