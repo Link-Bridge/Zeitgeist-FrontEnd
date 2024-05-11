@@ -67,6 +67,10 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
     navigate(`/tasks/${id}`);
   };
 
+  const handleEdit = (id: string) => {
+    navigate(`/tasks/update/${id}`);
+  };
+
   const handleDeleteButtonClick = (task: Task) => {
     setTaskToDelete(task);
     setDeleteDialogOpen(true);
@@ -190,7 +194,7 @@ const TaskListTable = ({ projectId, onDelete, setTotalProjectHours }: TaskListTa
                 <td>
                   <TaskActionsMenu
                     task={task as Task}
-                    onEdit={() => handleClick(task.id)}
+                    onEdit={handleEdit}
                     onOpenDeleteDialog={handleDeleteButtonClick}
                   />
                 </td>
