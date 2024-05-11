@@ -1,6 +1,5 @@
 import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Snackbar, Table } from '@mui/joy';
-import CircularProgress from '@mui/joy/CircularProgress';
 import axios, { AxiosRequestConfig } from 'axios';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -10,8 +9,10 @@ import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
 import { APIPath, RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
+import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
+import Loader from '../../common/Loader';
 import TaskActionsMenu from '../../common/TaskActionsMenu';
 
 type TaskListTableProps = {
@@ -42,13 +43,16 @@ const TaskListTable = ({
   const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const idTaskPayload = useRef<string>('');
-
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<Task | null>(null);
 
   const handleClick = (id: string) => {
     navigate(`/tasks/${id}`);
+  };
+
+  const handleEdit = (id: string) => {
+    navigate(`/tasks/update/${id}`);
   };
 
   const handleDeleteButtonClick = (task: Task) => {
@@ -100,13 +104,23 @@ const TaskListTable = ({
   if (loadingTasks) {
     return (
       <div>
-        <CircularProgress />
+        <Loader />
       </div>
     );
   }
 
   if (errorTasks) {
     return <div>Error: {errorTasks.message}</div>;
+  }
+
+  if (initialTasks.length === 0 || !initialTasks) {
+    return (
+      <ComponentPlaceholder
+        text='No tasks associated to this project were found.'
+        width='20vh'
+        height='15vh'
+      />
+    );
   }
 
   /**
@@ -151,13 +165,12 @@ const TaskListTable = ({
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />
-                  {/* <ClickableChip value={formatStatus(task.status)} setValue={() => {}} /> */}
                 </td>
                 <td>{formatDate(task.endDate ? task.endDate : null)}</td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}
-                    onEdit={() => handleClick(task.id)}
+                    onEdit={handleEdit}
                     onOpenDeleteDialog={handleDeleteButtonClick}
                   />
                 </td>

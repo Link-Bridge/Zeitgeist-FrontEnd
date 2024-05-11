@@ -1,29 +1,24 @@
-import { useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
-
-import colors, { statusChipColorCombination } from '../../colors';
-import GoBack from '../../components/common/GoBack';
-import { TaskListTable } from '../../components/modules/Task/TaskListTable';
-import useHttp from '../../hooks/useHttp';
-import { CompanyEntity } from '../../types/company';
-import { ProjectEntity } from '../../types/project';
-import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
-
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-
 import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
+import { useEffect, useState } from 'react';
+import { Link, useParams } from 'react-router-dom';
+import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
-
 import GenericDropdown from '../../components/common/GenericDropdown';
+import GoBack from '../../components/common/GoBack';
+import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
-import { ProjectStatus } from '../../types/project';
+import useHttp from '../../hooks/useHttp';
+import { CompanyEntity } from '../../types/company';
+import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
+import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 import { formatDate, truncateText } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
@@ -52,12 +47,12 @@ const ProjectDetails = () => {
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
+  const [updating, setUpdating] = useState(false);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
-  const [updating, setUpdating] = useState(false);
 
   const {
     data: company,

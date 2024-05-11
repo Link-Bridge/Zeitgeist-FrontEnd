@@ -1,4 +1,3 @@
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
@@ -13,13 +12,14 @@ import calendar from '../../assets/icons/calendar.svg';
 import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
 import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
 
@@ -56,7 +56,6 @@ const ProjectReport: React.FC = () => {
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [validYear, setValidYear] = useState<boolean>(false);
 
-  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
   const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
 
   const keyMap = new Map<string, string>([
@@ -93,7 +92,7 @@ const ProjectReport: React.FC = () => {
 
     const doFetch = async (): Promise<void> => {
       const data = await axios.get(
-        `${BASE_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
+        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
         { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
       setReport(data.data);
@@ -160,7 +159,7 @@ const ProjectReport: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
+          <ComponentPlaceholder text='' />
           <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
             Unauthorized employeee <br /> Redirecting in {secondsLeft}
           </Typography>
@@ -176,10 +175,7 @@ const ProjectReport: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-          <Typography variant='plain' level='h1' mb={4}>
-            Error loading the report
-          </Typography>
+          <ComponentPlaceholder text='Error loading the report.' />
         </Box>
       );
     }
@@ -275,6 +271,10 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                   borderColor: colors.lighterGray,
                   border: 1,
+                  '&:hover': {
+                    bgcolor: colors.darkerBlue,
+                    opacity: '0.8',
+                  },
                 }}
                 onClick={handleClear}
               >
@@ -501,8 +501,7 @@ const ProjectReport: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
-                  <Box className='mt-4'>No tasks associated to this project were found.</Box>
+                  <ComponentPlaceholder text='No tasks associated to this project were found.' />
                 </Box>
               )}
               {report.tasks?.map(item => {
@@ -627,10 +626,7 @@ const ProjectReport: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-            <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-            <Typography variant='plain' level='h1' mb={4}>
-              No data available
-            </Typography>
+            <ComponentPlaceholder text='No data available' />
           </Box>
         )}
 
