@@ -127,9 +127,11 @@ const useNewProject = () => {
         setSuccess(true);
       }
     } catch (err: unknown) {
+      console.log(err);
       if (axios.isAxiosError(err)) {
         console.error(err);
-        setError(new Error(err.message));
+        if (err.response?.data.message) setError(new Error(err.response?.data.message));
+        else setError(new Error(err.message));
       } else {
         setError(new Error('Unknown error ocurred'));
       }
@@ -164,7 +166,8 @@ const useNewProject = () => {
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         console.error(err);
-        setError(new Error(err.message));
+        if (err.response?.data.message) setError(new Error(err.response?.data.message));
+        else setError(new Error(err.message));
       } else {
         setError(new Error('Unknown error ocurred'));
       }

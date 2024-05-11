@@ -5,6 +5,7 @@ import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
+import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { SnackbarContext } from '../../hooks/snackbarContext';
@@ -13,7 +14,6 @@ import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
-import GoBack from '../../components/common/GoBack';
 
 const NewProject = () => {
   const { setState } = useContext(SnackbarContext);
