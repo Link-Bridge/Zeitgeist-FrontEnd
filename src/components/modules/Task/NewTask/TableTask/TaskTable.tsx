@@ -127,29 +127,29 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
             <TableHead>
               <TableRow>
                 <TableCell style={{ width: '40%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
+                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
                     Task
                   </Typography>
                 </TableCell>
                 <TableCell style={{ width: '20%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
+                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
                     Status
                   </Typography>
                 </TableCell>
                 <TableCell style={{ width: '10%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
+                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
                     Hours
                   </Typography>
                 </TableCell>
                 <TableCell style={{ width: '15%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.8rem' }}>
+                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
                     Due Date
                   </Typography>
                 </TableCell>
                 <TableCell style={{ width: '10%' }}>
                   <Typography
                     variant='body1'
-                    sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.8rem' }}
+                    sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
                     onClick={handleCollapseToggle}
                   >
                     {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
@@ -161,7 +161,10 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
               {!collapsed &&
                 tasks.map(task => (
                   <TableRow key={task.id}>
-                    <TableCell onClick={() => handleClick(task.id)} sx={{ cursor: 'pointer' }}>
+                    <TableCell
+                      onClick={() => handleClick(task.id)}
+                      sx={{ cursor: 'pointer', fontSize: '0.9rem' }}
+                    >
                       {task.title}
                     </TableCell>
                     <TableCell>
@@ -178,7 +181,9 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                         sx={{ backgroundColor: '#D6CFBE', color: colors.grey[700] }}
                       />
                     </TableCell>
-                    <TableCell>{dateToShortString(String(task.endDate))}</TableCell>
+                    <TableCell sx={{ fontSize: '0.9rem' }}>
+                      {dateToShortString(String(task.endDate))}
+                    </TableCell>
                     <TableCell>
                       <TaskActionsMenu
                         task={task}
