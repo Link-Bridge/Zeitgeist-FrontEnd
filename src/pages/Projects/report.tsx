@@ -159,7 +159,6 @@ const ProjectReport: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
           <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
             Unauthorized employeee <br /> Redirecting in {secondsLeft}
           </Typography>
@@ -175,10 +174,7 @@ const ProjectReport: React.FC = () => {
             justifyContent: 'center',
           }}
         >
-          <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-          <Typography variant='plain' level='h1' mb={4}>
-            Error loading the report
-          </Typography>
+          <ComponentPlaceholder text='Error loading the report.' />
         </Box>
       );
     }
@@ -625,10 +621,7 @@ const ProjectReport: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-            <WarningAmberIcon style={{ color: '#C29A51', width: '100px', height: '100px' }} />
-            <Typography variant='plain' level='h1' mb={4}>
-              No data available
-            </Typography>
+            <ComponentPlaceholder text='No data available' />
           </Box>
         )}
 
