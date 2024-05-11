@@ -6,6 +6,7 @@ import ClientCard from '../../components/common/ClientCard';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
+import SearchBar from '../../components/common/SearchBar';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
@@ -19,6 +20,16 @@ const Clients = () => {
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
+  const [searchTerm, setSearchTerm] = useState('');
+
+  useEffect(() => {
+    const filtered = clientsRequest.data
+      ? clientsRequest.data.filter(company =>
+          company.name.toLowerCase().includes(searchTerm.toLowerCase())
+        )
+      : [];
+    setFilteredClientsData(filtered);
+  }, [searchTerm, clientsRequest.data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
@@ -69,16 +80,27 @@ const Clients = () => {
         path='/'
         element={
           <main className='py-0 flex flex-col min-h-0 flex-1'>
-            <section className='flex flex-row justify-end mb-8 gap-6'>
-              <GenericDropdown
-                defaultValue={CompanyFilters.ALL}
-                options={[CompanyFilters.ALL, CompanyFilters.NOT_ARCHIVED, CompanyFilters.ARCHIVED]}
-                onValueChange={value => handleFilter(value)}
+            <section className='flex flex-row justify-between items-center mb-2 w-full'>
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                placeholder='Search by name'
+                options={[]}
               />
-              <AddButton onClick={openModal} />
+              <div className='flex flex-row items-center gap-2'>
+                <GenericDropdown
+                  defaultValue={CompanyFilters.ALL}
+                  options={[
+                    CompanyFilters.ALL,
+                    CompanyFilters.NOT_ARCHIVED,
+                    CompanyFilters.ARCHIVED,
+                  ]}
+                  onValueChange={value => handleFilter(value)}
+                />
+                <AddButton onClick={openModal} />
+              </div>
             </section>
             <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
-
             <div className='flex justify-center w-full'>
               {clientsRequest.loading && <Loader />}
               {clientsRequest.error && <p>Error loading companies.</p>}

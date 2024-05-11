@@ -7,7 +7,7 @@ interface SearchBarProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
   placeholder: string;
-  options: string[];
+  options?: string[];
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -43,18 +43,22 @@ const SearchBar: React.FC<SearchBarProps> = ({
           alignItems: 'center',
         }}
         endDecorator={
-          <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>
-            <MoreVert />
-          </IconButton>
+          options.length > 0 && (
+            <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>
+              <MoreVert />
+            </IconButton>
+          )
         }
       />
-      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleMenuClose()}>
-        {options.map((option, index) => (
-          <MenuItem key={index} onClick={() => handleMenuClose(option)}>
-            {option}
-          </MenuItem>
-        ))}
-      </Menu>
+      {options.length > 0 && (
+        <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleMenuClose()}>
+          {options.map((option, index) => (
+            <MenuItem key={index} onClick={() => handleMenuClose(option)}>
+              {option}
+            </MenuItem>
+          ))}
+        </Menu>
+      )}
     </div>
   );
 };
