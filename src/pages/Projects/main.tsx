@@ -1,6 +1,7 @@
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
@@ -52,6 +53,10 @@ const ProjectMain = () => {
     }
   };
 
+  if (projects.length === 0 || !projects) {
+    return <ComponentPlaceholder text='No projects were found' />;
+  }
+
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
       <section className='h-10 flex justify-end gap-4'>
@@ -65,7 +70,7 @@ const ProjectMain = () => {
         </Link>
       </section>
       <section className='flex-1 overflow-scroll'>
-        <div className='bg-cardBg rounded-xl overflow-y-scroll grid md:grid-cols-2 lg:grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
+        <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
           {isLoading && <Loader />}
           {!(isLoading && filteredProjects) &&
             filteredProjects.map(project => (

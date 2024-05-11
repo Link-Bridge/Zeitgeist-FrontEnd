@@ -6,7 +6,6 @@ export enum ProjectCategory {
   SUPPLIER = 'Supplier',
   EVENT = 'Event',
   FAIRS_CONFERENCES = 'Fairs/Conferences',
-  NO_CATEGORY = '-',
 }
 
 export enum ProjectPeriodicity {
