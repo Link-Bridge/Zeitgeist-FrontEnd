@@ -272,6 +272,10 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                   borderColor: colors.lighterGray,
                   border: 1,
+                  '&:hover': {
+                    bgcolor: colors.darkerBlue,
+                    opacity: '0.8',
+                  },
                 }}
                 onClick={handleClear}
               >
