@@ -29,6 +29,7 @@ interface NewTaskFormProps {
   employees: EmployeeEntity[];
   projectId: string;
   projectName: string;
+  error: Error | null;
 }
 
 /**
@@ -44,6 +45,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   employees,
   projectId,
   projectName,
+  error,
 }: NewTaskFormProps): JSX.Element => {
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
@@ -239,6 +241,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
   if (projectId === '') {
     return <ErrorView error={'Project ID is required'} />;
+  }
+
+  if (error) {
+    setState({ open: true, message: error.message, type: 'danger' });
   }
 
   return (
