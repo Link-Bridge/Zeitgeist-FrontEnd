@@ -24,13 +24,11 @@ const NewTaskPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { employee } = useContext(EmployeeContext);
 
-  console.log('employee', employee);
-
   const {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
     loading: employeeLoading,
-  } = useHttp<Response<EmployeeEntity>>(`/employee/getAllEmployees`, RequestMethods.GET);
+  } = useHttp<Response<EmployeeEntity>>(`/employee/getEmployees`, RequestMethods.GET);
 
   const {
     sendRequest: requestProject,
@@ -41,6 +39,7 @@ const NewTaskPage = () => {
   useEffect(() => {
     sendEmployeeRequest();
     requestProject();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
