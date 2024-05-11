@@ -84,6 +84,7 @@ const Tasks = (): JSX.Element => {
     tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
 
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
       const projectTasks = filterTasksByProjectId(tasks, project.id);
       const sortedTasks = sortTasksByEndDate(projectTasks);
