@@ -107,7 +107,7 @@ const EditProject = () => {
   };
 
   if (form.success) {
-    return <Navigate to={`/projects/details/${id}`}/>;
+    return <Navigate to={`/projects/details/${id}`} />;
   }
 
   return (
