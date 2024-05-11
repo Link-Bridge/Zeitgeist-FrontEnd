@@ -1,7 +1,7 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
-import { truncateText } from '../../utils/methods';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
+import { truncateText } from '../../utils/methods';
 
 interface reportProps {
   data: Report;
