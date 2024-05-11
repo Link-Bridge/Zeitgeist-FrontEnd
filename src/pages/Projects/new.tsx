@@ -62,7 +62,7 @@ const NewProject = () => {
   return (
     <>
       <Card
-        className='bg-white flex-1 min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+        className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
         sx={{ padding: '30px' }}
       >
         {req.loading ? (
@@ -70,7 +70,7 @@ const NewProject = () => {
         ) : (
           <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
             <FormControl>
-              <FormLabel>
+              <FormLabel className='font-montserrat'>
                 Project Name <span className='text-red-600'>*</span>
               </FormLabel>
               <Input

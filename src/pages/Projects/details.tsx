@@ -134,7 +134,7 @@ const ProjectDetails = () => {
       </Box>
 
       <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
-        <section>
+        <section className='font-montserrat'>
           <section className='flex justify-between'>
             <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
               {truncateText(data?.name)}
