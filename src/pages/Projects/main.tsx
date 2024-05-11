@@ -86,7 +86,7 @@ const ProjectMain = () => {
             ))}
         </div>
       </section>
-    </main>  
+    </main>
   );
 };
 

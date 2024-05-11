@@ -122,11 +122,9 @@ const ClientDetails = () => {
               <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>
                 {company.name}
               </p>
-              <div className="flex justify-end items-center gap-5">
+              <div className='flex justify-end items-center gap-5'>
                 <div className='grid grid-cols-1'>
-                  <Typography>
-                    Constitution date:
-                  </Typography>
+                  <Typography>Constitution date:</Typography>
                   <Chip
                     color='primary'
                     variant='outlined'
