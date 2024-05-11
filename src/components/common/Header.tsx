@@ -25,6 +25,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
   return (
     <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
       <section>
+        <p className='py-2 text-[#686868]'>{currentDate}</p>
         <h1
           style={{
             color: Colors.gold,
@@ -36,7 +37,6 @@ const Header = ({ pageTitle }: HeaderProps) => {
         >
           {pageTitle}
         </h1>
-        <p className='py-2 text-[#686868]'>{currentDate}</p>
       </section>
 
       <section className='flex flex-row align-items justify-between items-center g-10 mt-3'>
