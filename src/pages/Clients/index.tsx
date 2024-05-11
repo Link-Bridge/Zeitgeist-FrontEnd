@@ -83,7 +83,8 @@ const Clients = () => {
               {clientsRequest.loading && <Loader />}
               {clientsRequest.error && <p>Error loading companies.</p>}
             </div>
-            {!clientsRequest.loading && !clientsRequest.error && companies && (
+
+            {!clientsRequest.loading && !clientsRequest.error && companies ? (
               <CardsGrid>
                 {filteredCompanies.map(company => (
                   <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
@@ -97,6 +98,8 @@ const Clients = () => {
                   </Link>
                 ))}
               </CardsGrid>
+            ) : (
+              <ComponentPlaceholder text='No companies were found' />
             )}
           </main>
         }

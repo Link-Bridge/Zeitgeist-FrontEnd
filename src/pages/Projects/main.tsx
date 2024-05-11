@@ -53,10 +53,6 @@ const ProjectMain = () => {
     }
   };
 
-  if (!projects && !isLoading) {
-    return <ComponentPlaceholder text='No projects were found' />;
-  }
-
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
       <section className='h-10 flex justify-between gap-4'>
