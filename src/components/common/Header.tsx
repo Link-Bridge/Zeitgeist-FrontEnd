@@ -28,7 +28,6 @@ const Header = ({ pageTitle }: HeaderProps) => {
         <h1
           style={{
             color: Colors.gold,
-            fontFamily: 'Didot',
             fontSize: '3.5rem',
             lineHeight: '1.1',
             letterSpacing: '1.5px',
