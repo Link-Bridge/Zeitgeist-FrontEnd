@@ -24,18 +24,18 @@ const NewTaskPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { employee } = useContext(EmployeeContext);
 
+  console.log('employee', employee);
+
   const {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
     loading: employeeLoading,
-    error: employeeFetchError,
   } = useHttp<Response<EmployeeEntity>>(`/employee/getAllEmployees`, RequestMethods.GET);
 
   const {
     sendRequest: requestProject,
     data: projectData,
     loading: projectLoading,
-    error: projectFetchError,
   } = useHttp<ProjectEntity>(`/project/details/${projectId}`, RequestMethods.GET);
 
   useEffect(() => {
@@ -75,7 +75,6 @@ const NewTaskPage = () => {
       employees={employees || []}
       projectId={projectId ? projectId : ''}
       projectName={projectName ? projectName : ''}
-      error={employeeFetchError || projectFetchError}
     />
   );
 };
@@ -99,7 +98,7 @@ const filterEmployees = (
   const isAdmin = currentUser.role === 'Admin';
   const filteredEmployees = isAdmin
     ? employees
-    : employees.filter(emp => emp.idDepartment === currentUser.department);
+    : employees.filter(emp => emp.idDepartment === currentUser.employee.idDepartment);
 
   return filteredEmployees.sort((a, b) =>
     `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)
