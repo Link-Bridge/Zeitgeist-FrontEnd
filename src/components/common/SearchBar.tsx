@@ -1,49 +1,60 @@
-import { Search } from '@mui/icons-material';
-import { IconButton, Input } from '@mui/joy';
-import { Collapse } from '@mui/material';
+import { MoreVert, Search } from '@mui/icons-material';
+import { IconButton, Input, Menu, MenuItem } from '@mui/joy';
+import { useState } from 'react';
 import colors from '../../colors';
 
 interface SearchBarProps {
   searchTerm: string;
   setSearchTerm: (term: string) => void;
-  isSearchVisible: boolean;
-  setIsSearchVisible: (visible: boolean) => void;
   placeholder: string;
+  options: string[];
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
   searchTerm,
   setSearchTerm,
-  isSearchVisible,
-  setIsSearchVisible,
   placeholder,
+  options = [],
 }) => {
-  const handleSearchIconClick = () => {
-    setIsSearchVisible(prevState => !prevState);
+  const [selectedOption, setSelectedOption] = useState<string>('');
+  const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
+
+  const handleMenuClick = (event: React.MouseEvent<HTMLElement>) => {
+    setAnchorEl(event.currentTarget);
+  };
+
+  const handleMenuClose = (option?: string) => {
+    if (option) {
+      setSelectedOption(option);
+      setSearchTerm('');
+    }
+    setAnchorEl(null);
   };
 
   return (
-    <div className='flex justify-end items-center space-x-2 px-4 py-2'>
-      <IconButton onClick={handleSearchIconClick} size='lg'>
-        <Search
-          className='text-5xl transition-transform transform-gpu hover:rotate-90 duration-500 ease-in-out'
-          style={{ color: colors.gold }}
-        />
-      </IconButton>
-      <Collapse in={isSearchVisible} orientation='horizontal' timeout={{ enter: 500, exit: 300 }}>
-        <Input
-          value={searchTerm}
-          onChange={e => setSearchTerm(e.target.value)}
-          placeholder={placeholder}
-          sx={{
-            width: isSearchVisible ? 200 : 0,
-            transition: 'width 200ms ease-in-out',
-            marginLeft: '8px',
-            marginBottom: '16px',
-            alignItems: 'center',
-          }}
-        />
-      </Collapse>
+    <div className='flex items-center space-x-2 px-4 py-2'>
+      <Input
+        value={searchTerm}
+        onChange={e => setSearchTerm(e.target.value)}
+        placeholder={selectedOption || placeholder}
+        startDecorator={<Search style={{ color: colors.gold }} />}
+        sx={{
+          width: 300,
+          alignItems: 'center',
+        }}
+        endDecorator={
+          <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>
+            <MoreVert />
+          </IconButton>
+        }
+      />
+      <Menu anchorEl={anchorEl} open={Boolean(anchorEl)} onClose={() => handleMenuClose()}>
+        {options.map((option, index) => (
+          <MenuItem key={index} onClick={() => handleMenuClose(option)}>
+            {option}
+          </MenuItem>
+        ))}
+      </Menu>
     </div>
   );
 };
