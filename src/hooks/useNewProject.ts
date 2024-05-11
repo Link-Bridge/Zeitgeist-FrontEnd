@@ -78,6 +78,10 @@ const validateForm = (formState: FormState, setError: (arg0: Error) => void) => 
     setError(new Error('Project area must not be empty'));
     return false;
   }
+  if (!formState.startDate) {
+    setError(new Error('Start date is required'));
+    return false;
+  }
   if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
     setError(new Error('End date must be after start date'));
     return false;

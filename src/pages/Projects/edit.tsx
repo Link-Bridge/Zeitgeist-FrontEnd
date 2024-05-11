@@ -1,7 +1,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useContext, useEffect } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
@@ -23,6 +23,9 @@ const EditProject = () => {
   const { id } = useParams();
   const { setState } = useContext(SnackbarContext);
   const form = useNewProject();
+
+  const [disableButton, setDisableButton] = useState<boolean>(true);
+  const [startDate, setStartDate] = useState(true);
 
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -58,6 +61,10 @@ const EditProject = () => {
         form.formState.isChargeable = project.isChargeable;
         form.formState.area = project.area;
         form.formState.periodicity = project.periodicity;
+
+        if (form.formState.startDate) setStartDate(true);
+
+        handleRequiredFields();
       }
 
       if (project && companies) {
@@ -78,6 +85,24 @@ const EditProject = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
+
+  useEffect(() => {
+    handleRequiredFields();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [form.formState, startDate]);
+
+  const handleRequiredFields = () => {
+    if (
+      !form.formState.name ||
+      !form.formState.idCompany ||
+      !projectCategories.includes(form.formState.category) ||
+      !startDate ||
+      !form.formState.area
+    )
+      return setDisableButton(true);
+
+    setDisableButton(false);
+  };
 
   if (form.success) {
     return <Navigate to='/projects' />;
@@ -100,6 +125,18 @@ const EditProject = () => {
               <Input
                 value={form.formState.name}
                 onChange={e => {
+                  if (e.target.value.length > 255)
+                    return setState({
+                      open: true,
+                      message: 'Project name must be less than 70 characters',
+                      type: 'danger',
+                    });
+                  if (!e.target.value || e.target.value.length == 0)
+                    setState({
+                      open: true,
+                      message: 'Project name is required',
+                      type: 'danger',
+                    });
                   form.handleChange('name', e.target.value);
                 }}
               />
@@ -143,6 +180,12 @@ const EditProject = () => {
                 minRows={5}
                 value={form.formState.description}
                 onChange={e => {
+                  if (e.target.value.length > 255)
+                    return setState({
+                      open: true,
+                      message: 'Project description must be less than 255 characters',
+                      type: 'danger',
+                    });
                   form.handleChange('description', e.target.value);
                 }}
               />
@@ -156,6 +199,15 @@ const EditProject = () => {
                   value={dayjs(form.formState.startDate)}
                   onChange={e => {
                     form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
+                    if (!e?.toDate()) {
+                      setState({
+                        open: true,
+                        message: 'Start date is required',
+                        type: 'danger',
+                      });
+                      return setStartDate(false);
+                    }
+                    setStartDate(true);
                   }}
                 />
               </FormControl>
@@ -226,7 +278,7 @@ const EditProject = () => {
                     backgroundColor: colors.darkerGold,
                   },
                 }}
-                disabled={form.isPosting}
+                disabled={disableButton || form.isPosting}
               >
                 Update Project
               </Button>
