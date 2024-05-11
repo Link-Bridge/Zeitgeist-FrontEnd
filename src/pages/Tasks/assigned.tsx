@@ -1,5 +1,7 @@
 import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
+import { AxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
 import colors from '../../colors';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ErrorView from '../../components/common/Error';
@@ -30,6 +32,7 @@ const Tasks = (): JSX.Element => {
 
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
+  const navigate = useNavigate();
 
   const {
     data: taskData,
@@ -90,7 +93,15 @@ const Tasks = (): JSX.Element => {
     .filter(({ tasks }) => tasks.length > 0);
 
   if (taskError || projectError) {
-    return <ErrorView error={'Error: An unexpected error occurred. Please refresh the page'} />;
+    if (taskError instanceof AxiosError && taskError.response?.status === 403) {
+      navigate('/');
+    }
+
+    if (projectError instanceof AxiosError && projectError.response?.status === 403) {
+      navigate('/');
+    }
+
+    return <ErrorView error={'An unexpected error occurred. Please try again later.'} />;
   }
 
   if (taskLoading || (projectLoading && !tasksPerProject)) {
