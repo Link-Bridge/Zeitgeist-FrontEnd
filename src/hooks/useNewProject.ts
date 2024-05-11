@@ -117,6 +117,7 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
+          status: 'Not Started',
         },
         {
           headers,
