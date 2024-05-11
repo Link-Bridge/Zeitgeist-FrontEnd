@@ -1,6 +1,5 @@
 import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import colors from '../../colors';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ErrorView from '../../components/common/Error';
@@ -31,7 +30,6 @@ const Tasks = (): JSX.Element => {
 
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
-  const navigate = useNavigate();
 
   const {
     data: taskData,
