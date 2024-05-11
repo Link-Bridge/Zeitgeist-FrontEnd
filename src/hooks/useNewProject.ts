@@ -16,6 +16,7 @@ export interface FormState {
   periodicity: string;
   isChargeable: boolean;
   area: string;
+  status?: string;
 }
 
 const initialFormState: FormState = {
@@ -30,6 +31,7 @@ const initialFormState: FormState = {
   periodicity: ProjectPeriodicity.WHEN_NEEDED,
   isChargeable: false,
   area: '',
+  status: '',
 };
 
 type FormAction =
@@ -115,7 +117,6 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
-          status: '-',
         },
         {
           headers,
@@ -151,13 +152,11 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
         {
           ...formState,
-          status: '-',
         },
         {
           headers,
         }
       );
-      console.log(res);
       if (res.status === 200) {
         setSuccess(true);
       }

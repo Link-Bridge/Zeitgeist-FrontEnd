@@ -61,6 +61,7 @@ const EditProject = () => {
         form.formState.isChargeable = project.isChargeable;
         form.formState.area = project.area;
         form.formState.periodicity = project.periodicity;
+        form.formState.status = project.status;
 
         if (form.formState.startDate) setStartDate(true);
 
