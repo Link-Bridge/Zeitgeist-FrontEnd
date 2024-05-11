@@ -77,7 +77,7 @@ const ClientDetails = () => {
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
 
   return (
-    <>
+    <main>
       <Box
         sx={{
           display: 'flex',
@@ -89,7 +89,7 @@ const ClientDetails = () => {
         <GoBack />
       </Box>
 
-      <main className='bg-white rounded-xl p-6'>
+      <section className='bg-white rounded-xl p-6'>
         <ArchiveModal
           toggleModal={ToggleModalArchive}
           open={openArchive}
@@ -117,51 +117,42 @@ const ClientDetails = () => {
           }}
         ></ArchiveModal>
         {company && !loading && (
-          <section className='flex justify-between'>
-            <h2 className='text-2xl text-gold font-medium text-wrap break-all'>{company.name}</h2>
-            <section className='flex items-center gap-5'>
-              <div className='flex items-center gap-2'>
-                <Typography level='body-sm' className='mr-1'>
-                  Constitution date:
-                </Typography>
-                <Chip
-                  color='primary'
-                  variant='outlined'
-                  label={formatDate(company.constitutionDate ?? null)}
+          <>
+            <section className='flex-wrap grid grid-cols-3'>
+              <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>
+                {company.name}
+              </p>
+              <div className="flex justify-end items-center gap-5">
+                <div className='grid grid-cols-1'>
+                  <Typography>
+                    Constitution date:
+                  </Typography>
+                  <Chip
+                    color='primary'
+                    variant='outlined'
+                    label={formatDate(company.constitutionDate ?? null)}
+                  />
+                </div>
+                <EditOutlinedIcon
+                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                  className='text-gold'
+                  onClick={handleEditClick}
                 />
-              </div>
-              <EditOutlinedIcon
-                sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                className='text-gold'
-                onClick={handleEditClick}
-              />
-              {company && (
                 <EditClientFormModal
                   open={editModalOpen}
                   setOpen={setEditModalOpen}
                   clientData={company}
                   setRefetch={setRefetch}
                 />
-              )}
-              <ArchiveOutlinedIcon
-                sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                className='text-gold'
-                onClick={ToggleModalArchive}
-              />
-              {/* <DeleteOutlineOutlinedIcon
-              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-              className='text-gold'
-              onClick={() => {
-                ToggleModalDelete();
-              }}
-            /> */}
+                <ArchiveOutlinedIcon
+                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                  className='text-gold'
+                  onClick={ToggleModalArchive}
+                />
+              </div>
             </section>
-          </section>
-        )}
 
-        {!loading && company && (
-          <>
-            <section className='flex mt-8 font-montserrat justify-start gap-28'>
+            <section className='flex mt-8 justify-start gap-28'>
               <article className='flex gap-4'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
@@ -183,7 +174,7 @@ const ClientDetails = () => {
         )}
         <Divider sx={{ 'margin-top': '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} />
-      </main>
+      </section>
 
       {/* Snackbar */}
       <SnackbarContext.Provider value={{ state, setState }}>
@@ -191,7 +182,7 @@ const ClientDetails = () => {
           {state.message}
         </Snackbar>
       </SnackbarContext.Provider>
-    </>
+    </main>
   );
 };
 
