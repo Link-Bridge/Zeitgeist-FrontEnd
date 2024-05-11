@@ -173,12 +173,19 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                         defaultValue={task.status}
                         onValueChange={value => handleStatusChange(task.id, value)}
                         colorMap={statusColorMap}
+                        sx={{
+                          fontSize: '0.9rem',
+                        }}
                       />
                     </TableCell>
                     <TableCell>
                       <Chip
                         label={task.workedHours ?? 0}
-                        sx={{ backgroundColor: '#D6CFBE', color: colors.grey[700] }}
+                        sx={{
+                          backgroundColor: '#D6CFBE',
+                          color: colors.grey[700],
+                          fontSize: '0.9rem',
+                        }}
                       />
                     </TableCell>
                     <TableCell sx={{ fontSize: '0.9rem' }}>
