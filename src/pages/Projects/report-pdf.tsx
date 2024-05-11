@@ -1,4 +1,5 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
+import { truncateText } from '../../utils/methods';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
 
@@ -113,7 +114,7 @@ const ProjectReportPDF = (props: reportProps) => {
               )}
               {props.data.project.totalHours &&
                 infoComponent('Total hours', `${props.data.project.totalHours}`)}
-              {infoComponent('Company', `${props.data.project.companyName}`)}
+              {infoComponent('Company', `${truncateText(props.data.project.companyName, 58)}`)}
             </View>
 
             <View
