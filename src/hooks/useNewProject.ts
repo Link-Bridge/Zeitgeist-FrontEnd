@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
-import { ProjectPeriodicity } from '../types/project';
+import { ProjectPeriodicity, ProjectStatus } from '../types/project';
 import { APIPath, BASE_API_URL } from '../utils/constants';
 
 export interface FormState {
@@ -117,7 +117,7 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
-          status: 'Not Started',
+          status: ProjectStatus.NOT_STARTED,
         },
         {
           headers,

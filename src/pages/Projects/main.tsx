@@ -59,15 +59,15 @@ const ProjectMain = () => {
 
   return (
     <main className='flex flex-col gap-4 flex-1 min-h-0'>
-      <section className='h-10 flex justify-end gap-4'>
+      <section className='h-10 flex justify-between gap-4'>
+        <Link to={`${RoutesPath.PROJECTS}/new`}>
+          <AddButton onClick={() => { }}></AddButton>
+        </Link>
         <GenericDropdown
           defaultValue={ProjectFilters.ALL}
           options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
           onValueChange={value => handleFilter(value)}
         />
-        <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => {}}></AddButton>
-        </Link>
       </section>
       <section className='flex-1 overflow-scroll'>
         <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
