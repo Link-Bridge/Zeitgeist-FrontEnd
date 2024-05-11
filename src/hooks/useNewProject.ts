@@ -165,7 +165,6 @@ const useNewProject = () => {
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.error(err);
         if (err.response?.data.message) setError(new Error(err.response?.data.message));
         else setError(new Error(err.message));
       } else {
