@@ -151,7 +151,6 @@ const ProjectReport: React.FC = () => {
       }, 1000);
 
       return (
-        
         <Box
           sx={{
             display: 'flex',
@@ -169,15 +168,15 @@ const ProjectReport: React.FC = () => {
     } else {
       return (
         <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-        }}
-      >
-        <ComponentPlaceholder text='Error loading the report.' />
-      </Box>
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='Error loading the report.' />
+        </Box>
       );
     }
   }
@@ -627,9 +626,7 @@ const ProjectReport: React.FC = () => {
               justifyContent: 'center',
             }}
           >
-
-          <ComponentPlaceholder text='No data available' />
-                
+            <ComponentPlaceholder text='No data available' />
           </Box>
         )}
 
