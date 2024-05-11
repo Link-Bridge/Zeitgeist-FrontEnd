@@ -161,7 +161,7 @@ const ClientDetails = () => {
 
         {!loading && company && (
           <>
-            <section className='flex mt-8 font-montserrat justify-start gap-28'>
+            <section className='flex mt-8 justify-start gap-28'>
               <article className='flex gap-4'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
