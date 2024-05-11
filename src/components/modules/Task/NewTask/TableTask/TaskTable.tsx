@@ -56,6 +56,10 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
     navigate(`/tasks/${id}`);
   };
 
+  const handleEdit = (id: string) => {
+    navigate(`/tasks/update/${id}`);
+  };
+
   const handleCollapseToggle = () => {
     setCollapsed(!collapsed);
   };
@@ -178,7 +182,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                     <TableCell>
                       <TaskActionsMenu
                         task={task}
-                        onEdit={() => handleClick(task.id)}
+                        onEdit={() => handleEdit(task.id)}
                         onOpenDeleteDialog={handleDeleteButtonClick}
                       />
                     </TableCell>
