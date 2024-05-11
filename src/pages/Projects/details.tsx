@@ -1,7 +1,7 @@
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
+import { Box, Card, Chip as MuiChip, Option, Select, Snackbar } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -11,7 +11,7 @@ import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
-import { SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -289,6 +289,11 @@ const ProjectDetails = () => {
           onDelete={handleDeleteTask}
         />
       </Card>
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
