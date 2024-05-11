@@ -59,10 +59,6 @@ const Clients = () => {
     setOpen(true);
   };
 
-  if (!companies || companies.length === 0) {
-    return <ComponentPlaceholder text='No companies were found' />;
-  }
-
   return (
     <Routes>
       <Route
