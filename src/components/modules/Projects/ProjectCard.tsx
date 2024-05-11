@@ -28,11 +28,8 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
         <div className='border-2 h-8 border-[#9C844C]' />
         <h5 className='text-[#424242] font-montserrat truncate'>{name}</h5>
       </section>
-      {company && (
-        <span className='text-sm text-gold break-all flex flex-nowrap truncate'>{company}</span>
-      )}
-      {''}
-      <section className='mt-3 flex flex-nowrap gap-3'>
+      <h5 className='text-sm text-gold truncate'>{company}</h5>
+      <section className='mt-3 flex flex-nowrap gap-3 overflow-hidden'>
         <StatusChip status={status} />
         <Chip
           variant='solid'
