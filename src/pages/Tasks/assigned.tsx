@@ -92,7 +92,7 @@ const Tasks = (): JSX.Element => {
     .filter(({ tasks }) => tasks.length > 0);
 
   if (taskError || projectError) {
-    return <ErrorView error={''} />;
+    return <ErrorView error={'Error: An unexpected error occurred. Please refresh the page'} />;
   }
 
   if (taskLoading || (projectLoading && !tasksPerProject)) {
@@ -116,7 +116,7 @@ const Tasks = (): JSX.Element => {
     );
   }
 
-  if (!tasksPerProject || tasksPerProject.length === 0) {
+  if (!tasksPerProject || tasksPerProject.length === 0 || !taskData || !projectData) {
     return <ComponentPlaceholder text='No tasks were found' />;
   }
 
