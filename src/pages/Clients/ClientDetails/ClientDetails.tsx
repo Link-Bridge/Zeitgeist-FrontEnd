@@ -12,6 +12,7 @@ import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import UnarchiveOutlinedIcon from '@mui/icons-material/UnarchiveOutlined';
 // import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
@@ -167,9 +168,17 @@ const ClientDetails = () => {
                       height: '5px',
                       color: 'text-gold',
                     }}
-                    startDecorator={<ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                    startDecorator={
+                      company.archived ? (
+                        <UnarchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />
+                      ) : (
+                        <ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />
+                      )
+                    }
                   >
-                    <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                    <Typography sx={{ color: colors.gold }}>
+                      {company.archived ? 'Unarchive' : 'Archive'}
+                    </Typography>
                   </Button>
                 )}
               </div>
