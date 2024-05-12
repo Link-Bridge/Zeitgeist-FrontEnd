@@ -1,6 +1,8 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { Box, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
@@ -81,13 +83,19 @@ const ProjectMain = () => {
           />
         </div>
         <div className='flex items-center gap-4'>
-          <div className='flex items-center gap-2'>
-            <FilterAltIcon
-              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-              className='text-gold'
-            />
-            <p>Filter Projects:</p>
-          </div>
+          <Box
+            sx={{
+              display: 'flex',
+              padding: '5px',
+              borderRadius: '10px',
+              alignItems: 'center',
+            }}
+          >
+            <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+            <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+              Filter Projects:
+            </Typography>
+          </Box>
           <GenericDropdown
             defaultValue={ProjectFilters.ALL}
             options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
