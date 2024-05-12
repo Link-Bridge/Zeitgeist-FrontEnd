@@ -67,10 +67,6 @@ const ProjectMain = () => {
     setFilteredProjects(filtered);
   }, [searchTerm, projects, companyNames, filterOption]);
 
-  if (projects.length === 0 || !projects) {
-    return <ComponentPlaceholder text='No projects were found' />;
-  }
-
   return (
     <main className='flex flex-col gap-2 flex-1 min-h-0'>
       <section className='flex justify-between items-center w-full p-2'>
@@ -111,6 +107,30 @@ const ProjectMain = () => {
             ))}
         </div>
       </section>
+
+      {projects.length === 0 ? (
+        <ComponentPlaceholder text='No projects were found' />
+      ) : (
+        <section className='flex-1 overflow-scroll'>
+          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              filteredProjects.map(project => (
+                <Link to={`/projects/details/${project.id}`} key={project.id}>
+                  <ProjectCard
+                    key={project.id}
+                    company={companyNames.get(project.idCompany) ?? ''}
+                    department={project.area}
+                    name={project.name}
+                    status={project.status}
+                  />
+                </Link>
+              ))
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 };

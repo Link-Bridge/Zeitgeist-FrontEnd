@@ -1,6 +1,7 @@
 import { Option, Select } from '@mui/joy';
 import { FormState } from '../../../hooks/useNewProject';
 import { CompanyEntity } from '../../../types/company';
+import { truncateText } from '../../../utils/methods';
 
 interface ClientDropdownProps {
   values: CompanyEntity[];
@@ -15,7 +16,7 @@ const ClientDropdown = ({ defaultValue, handleChange, values, name }: ClientDrop
       {values.map(value => {
         return (
           <Option key={value.id} value={value.id}>
-            {value.name}
+            {truncateText(value.name, 40)}
           </Option>
         );
       })}

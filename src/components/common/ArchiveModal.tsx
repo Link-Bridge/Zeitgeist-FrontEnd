@@ -1,4 +1,4 @@
-import WarningIcon from '@mui/icons-material/Warning';
+import InfoIcon from '@mui/icons-material/Info';
 import Alert from '@mui/joy/Alert';
 import Box from '@mui/joy/Box';
 import Button from '@mui/joy/Button';
@@ -71,12 +71,12 @@ export default function ArchiveModal({
           </Typography>
           <Alert
             size='lg'
-            sx={{ mt: 2, pr: 15, border: '#333333' }}
-            startDecorator={<WarningIcon />}
+            sx={{ mt: 2, pr: 8, border: '#333333' }}
+            startDecorator={<InfoIcon />}
             variant='soft'
-            color='warning'
+            color='primary'
           >
-            This action can be undone.
+            Don't worry, this action can be undone.
           </Alert>
           <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
             <Button
@@ -87,7 +87,7 @@ export default function ArchiveModal({
                 color: Colors.darkGold,
                 borderColor: Colors.darkGold,
                 '&:hover': {
-                  backgroundColor: Colors.lightGold,
+                  backgroundColor: Colors.lighterGray,
                 },
               }}
             >

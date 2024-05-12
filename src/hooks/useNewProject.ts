@@ -1,7 +1,7 @@
 import axios from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
-import { ProjectPeriodicity } from '../types/project';
+import { ProjectPeriodicity, ProjectStatus } from '../types/project';
 import { APIPath, BASE_API_URL } from '../utils/constants';
 
 export interface FormState {
@@ -16,6 +16,7 @@ export interface FormState {
   periodicity: string;
   isChargeable: boolean;
   area: string;
+  status?: string;
 }
 
 const initialFormState: FormState = {
@@ -30,6 +31,7 @@ const initialFormState: FormState = {
   periodicity: ProjectPeriodicity.WHEN_NEEDED,
   isChargeable: false,
   area: '',
+  status: '',
 };
 
 type FormAction =
@@ -78,6 +80,10 @@ const validateForm = (formState: FormState, setError: (arg0: Error) => void) => 
     setError(new Error('Project area must not be empty'));
     return false;
   }
+  if (!formState.startDate) {
+    setError(new Error('Start date is required'));
+    return false;
+  }
   if (formState.endDate && dayjs(formState.endDate).isBefore(formState.startDate)) {
     setError(new Error('End date must be after start date'));
     return false;
@@ -111,7 +117,7 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/create`,
         {
           ...formState,
-          status: '-',
+          status: ProjectStatus.NOT_STARTED,
         },
         {
           headers,
@@ -121,9 +127,11 @@ const useNewProject = () => {
         setSuccess(true);
       }
     } catch (err: unknown) {
+      console.log(err);
       if (axios.isAxiosError(err)) {
         console.error(err);
-        setError(new Error(err.message));
+        if (err.response?.data.message) setError(new Error(err.response?.data.message));
+        else setError(new Error(err.message));
       } else {
         setError(new Error('Unknown error ocurred'));
       }
@@ -147,20 +155,18 @@ const useNewProject = () => {
         `${BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
         {
           ...formState,
-          status: '-',
         },
         {
           headers,
         }
       );
-      console.log(res);
       if (res.status === 200) {
         setSuccess(true);
       }
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
-        console.error(err);
-        setError(new Error(err.message));
+        if (err.response?.data.message) setError(new Error(err.response?.data.message));
+        else setError(new Error(err.message));
       } else {
         setError(new Error('Unknown error ocurred'));
       }
