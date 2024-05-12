@@ -1,5 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
@@ -9,6 +9,7 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
@@ -22,11 +23,16 @@ const Clients = () => {
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const { employee } = useContext(EmployeeContext);
+
+  const isAdmin = employee?.role === 'Admin';
 
   useEffect(() => {
     const filtered = clientsRequest.data
-      ? clientsRequest.data.filter(company =>
-          company.name.toLowerCase().includes(searchTerm.toLowerCase())
+      ? clientsRequest.data.filter(
+          company =>
+            company.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (isAdmin || !company.archived)
         )
       : [];
     setFilteredClientsData(filtered);
@@ -36,7 +42,11 @@ const Clients = () => {
   const handleFilter = (value: string) => {
     setFilteredClientsData(companies);
 
-    if (value == CompanyFilters.ALL) return;
+    if (value == CompanyFilters.ALL) {
+      setFilteredClientsData(companies => {
+        return companies.filter(company => isAdmin || !company.archived);
+      });
+    }
 
     if (value == CompanyFilters.ARCHIVED) {
       setFilteredClientsData(companies => {
@@ -60,7 +70,9 @@ const Clients = () => {
       clientsRequest.sendRequest();
     } else {
       setClientsData(clientsRequest.data);
-      setFilteredClientsData(clientsRequest.data);
+      setFilteredClientsData(companies => {
+        return companies.filter(company => isAdmin || !company.archived);
+      });
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
@@ -86,22 +98,26 @@ const Clients = () => {
                 options={[]}
               />
               <div className='flex flex-row items-center gap-2'>
-                <div className='flex items-center gap-2'>
-                  <FilterAltIcon
-                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                  <p>Filter Clients:</p>
-                </div>
-                <GenericDropdown
-                  defaultValue={CompanyFilters.ALL}
-                  options={[
-                    CompanyFilters.ALL,
-                    CompanyFilters.NOT_ARCHIVED,
-                    CompanyFilters.ARCHIVED,
-                  ]}
-                  onValueChange={value => handleFilter(value)}
-                />
+                {isAdmin && (
+                  <div className='flex flex-row items-center gap-2'>
+                    <div className='flex items-center gap-2'>
+                      <FilterAltIcon
+                        sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                        className='text-gold'
+                      />
+                      <p>Filter Clients:</p>
+                    </div>
+                    <GenericDropdown
+                      defaultValue={CompanyFilters.ALL}
+                      options={[
+                        CompanyFilters.ALL,
+                        CompanyFilters.NOT_ARCHIVED,
+                        CompanyFilters.ARCHIVED,
+                      ]}
+                      onValueChange={value => handleFilter(value)}
+                    />
+                  </div>
+                )}
                 <AddButton onClick={openModal} />
               </div>
             </section>
