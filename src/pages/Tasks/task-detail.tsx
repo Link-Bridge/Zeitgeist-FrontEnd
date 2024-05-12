@@ -103,6 +103,7 @@ const Task: React.FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'flex-start',
+          marginBottom: '10px',
         }}
       >
         <GoBack />
@@ -163,20 +164,22 @@ const Task: React.FC = () => {
                 </Box>
               </Box>
 
-              <Box className='grid grid-cols-1'>
-                <p style={{ fontSize: '.9rem' }}>Due date</p>
-                <Box
-                  sx={{
-                    bgcolor: colors.lighterGray,
-                    padding: 0.5,
-                    borderRadius: 4,
-                  }}
-                  className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
-                >
-                  {dateParser(data.endDate)}
-                  <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+              {data.endDate && (
+                <Box className='grid grid-cols-1'>
+                  <p style={{ fontSize: '.9rem' }}>Due date</p>
+                  <Box
+                    sx={{
+                      bgcolor: colors.lighterGray,
+                      padding: 0.5,
+                      borderRadius: 4,
+                    }}
+                    className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
+                  >
+                    {dateParser(data.endDate)}
+                    <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+                  </Box>
                 </Box>
-              </Box>
+              )}
 
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Status</p>
