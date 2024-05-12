@@ -182,7 +182,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         return fullName === assignedEmployee;
       })?.id as string,
     };
-    
+
     try {
       await onSubmit(payload);
       setState({ open: true, message: 'Task created successfully.', type: 'success' });
