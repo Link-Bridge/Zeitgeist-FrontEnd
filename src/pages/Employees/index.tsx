@@ -2,22 +2,24 @@ import { Card } from '@mui/joy';
 import { useState } from 'react';
 import SearchBar from '../../components/common/SearchBar';
 import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
-import { EmployeeOptions } from './employee-options.eum';
 
 const Employees = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const selectedOptions = [EmployeeOptions.Name, EmployeeOptions.Email, EmployeeOptions.Role];
+  const [filterOption, setFilterOption] = useState('Name');
 
   return (
     <section className='flex-1 overflow-scroll'>
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        options={[EmployeeOptions.Name, EmployeeOptions.Email, EmployeeOptions.Role]}
-        placeholder='Search employees'
-      />
+      <div className='mb-4'>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          options={['Name', 'Email']}
+          placeholder='Search employees'
+          setSelectedOption={setFilterOption}
+        />
+      </div>
       <Card className='flex-1'>
-        <EmployeeTable searchTerm={searchTerm} selectedOptions={selectedOptions} />
+        <EmployeeTable searchTerm={searchTerm} filterOption={filterOption} />
       </Card>
     </section>
   );

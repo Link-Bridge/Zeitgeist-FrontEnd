@@ -4,6 +4,7 @@ import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
+import SearchBar from '../../components/common/SearchBar';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
@@ -16,6 +17,8 @@ const ProjectMain = () => {
   const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterOption, setFilterOption] = useState('Name');
 
   useEffect(() => {
     if (!req.data) req.sendRequest();
@@ -53,21 +56,43 @@ const ProjectMain = () => {
     }
   };
 
+  useEffect(() => {
+    const filtered = projects.filter(project => {
+      const companyName = companyNames.get(project.idCompany) ?? '';
+      if (filterOption === 'Company') {
+        return companyName.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return project.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setFilteredProjects(filtered);
+  }, [searchTerm, projects, companyNames, filterOption]);
+
   if (projects.length === 0 || !projects) {
     return <ComponentPlaceholder text='No projects were found' />;
   }
 
   return (
-    <main className='flex flex-col gap-4 flex-1 min-h-0'>
-      <section className='h-10 flex justify-end gap-4'>
-        <GenericDropdown
-          defaultValue={ProjectFilters.ALL}
-          options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
-          onValueChange={value => handleFilter(value)}
-        />
-        <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => {}}></AddButton>
-        </Link>
+    <main className='flex flex-col gap-2 flex-1 min-h-0'>
+      <section className='flex justify-between items-center w-full p-2'>
+        <div className='flex grow items-center'>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            placeholder='Search projects'
+            options={['Name', 'Company']}
+            setSelectedOption={setFilterOption}
+          />
+        </div>
+        <div className='flex items-center gap-4'>
+          <GenericDropdown
+            defaultValue={ProjectFilters.ALL}
+            options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
+            onValueChange={value => handleFilter(value)}
+          />
+          <Link to={`${RoutesPath.PROJECTS}/new`}>
+            <AddButton onClick={() => {}}></AddButton>
+          </Link>
+        </div>
       </section>
       <section className='flex-1 overflow-scroll'>
         <div className='bg-cardBg rounded-xl overflow-y-scroll grid md:grid-cols-2 lg:grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
