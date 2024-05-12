@@ -20,6 +20,7 @@ import { Box, Button, Snackbar, Typography } from '@mui/joy';
 import { useNavigate, useParams } from 'react-router-dom';
 import colors from '../../../colors';
 import GoBack from '../../../components/common/GoBack';
+import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
 import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import { formatDate } from '../../../utils/methods';
 
@@ -144,6 +145,12 @@ const ClientDetails = () => {
                 >
                   <Typography sx={{ color: colors.gold }}>Edit</Typography>
                 </Button>
+                <EditClientFormModal
+                  open={editModalOpen}
+                  setOpen={setEditModalOpen}
+                  clientData={company}
+                  setRefetch={setRefetch}
+                />
 
                 <Button
                   onClick={ToggleModalArchive}
