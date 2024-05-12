@@ -99,16 +99,13 @@ const filterEmployees = (
   const isAdmin = currentUser.role === 'Admin';
   const hasDepartment = currentUser.department === 'Without Department';
 
-  if (!isAdmin && !hasDepartment) {
+  if (hasDepartment) {
     return [];
   }
 
   const filteredEmployees = isAdmin
     ? employees
-    : employees.filter(
-        emp =>
-          emp.idDepartment === currentUser.employee.idDepartment && currentUser.role !== 'Admin'
-      );
+    : employees.filter(emp => emp.idDepartment === currentUser.employee.idDepartment);
 
   return filteredEmployees.sort((a, b) =>
     `${a.firstName} ${a.lastName}`.localeCompare(`${b.firstName} ${b.lastName}`)
