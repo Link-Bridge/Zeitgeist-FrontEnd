@@ -128,6 +128,10 @@ const ProjectDetails = () => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask.deleteTask(taskId);
+      setState({ open: true, message: 'Task deleted successfully.', type: 'success' });
+      setTimeout(() => {
+        setState({ open: false, message: '' });
+      }, 2000);
     } catch (error) {
       setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
