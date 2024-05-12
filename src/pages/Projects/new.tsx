@@ -58,7 +58,6 @@ const NewProject = () => {
 
   useEffect(() => {
     if (req.error) setState({ open: true, message: req.error.message, type: 'danger' });
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [req.error]);
 
   useEffect(() => {
@@ -66,8 +65,6 @@ const NewProject = () => {
 
     if (form.success)
       setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.error, form.success]);
 
   useEffect(() => {
