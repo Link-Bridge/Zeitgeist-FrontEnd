@@ -177,7 +177,7 @@ const Task: React.FC = () => {
 
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
-                <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
+                <ColorChip label={`${data.workedHours ? data.workedHours : 0}`} color={`${colors.extra}`}></ColorChip>
               </Box>
 
               <Box>
