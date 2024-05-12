@@ -1,6 +1,8 @@
+import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Card, Chip as MuiChip, Option, Select, Snackbar } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
@@ -10,6 +12,7 @@ import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
+import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
@@ -44,6 +47,7 @@ const ProjectDetails = () => {
   const { id } = useParams();
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
@@ -53,6 +57,10 @@ const ProjectDetails = () => {
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
+
+  const toggleModal = () => {
+    setOpen(!open);
+  };
 
   const {
     data: company,
@@ -149,6 +157,9 @@ const ProjectDetails = () => {
 
   return (
     <>
+      {open && (
+        <ModalEditConfirmation project={data} open={open} setOpen={setOpen} refetch={sendRequest} />
+      )}
       <Box
         sx={{
           display: 'flex',
@@ -167,6 +178,18 @@ const ProjectDetails = () => {
               {truncateText(data?.name)}
             </h3>
             <section className='flex justify-end gap-3'>
+              {data?.isArchived ? (
+                <UnarchiveIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                  onClick={toggleModal}
+                />
+              ) : (
+                <ArchiveIcon
+                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                  onClick={toggleModal}
+                />
+              )}
+
               <Link to={`/projects/report/${id}`}>
                 <AssessmentOutlinedIcon
                   sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
