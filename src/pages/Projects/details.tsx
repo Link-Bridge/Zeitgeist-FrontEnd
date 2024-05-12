@@ -3,10 +3,10 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Card, Chip as MuiChip, Option, Select, Snackbar } from '@mui/joy';
+import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
@@ -14,7 +14,7 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
@@ -45,7 +45,7 @@ const chipStyle = {
 
 const ProjectDetails = () => {
   const { id } = useParams();
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
@@ -114,6 +114,7 @@ const ProjectDetails = () => {
   const handleStatusChange = async (newStatus: ProjectStatus) => {
     try {
       await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+      setState({ open: true, message: 'Project status updated successfully!', type: 'success' });
 
       if (updatedCompany) {
         setProjectStatus(newStatus);
@@ -127,6 +128,10 @@ const ProjectDetails = () => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask.deleteTask(taskId);
+      setState({ open: true, message: 'Task deleted successfully.', type: 'success' });
+      setTimeout(() => {
+        setState({ open: false, message: '' });
+      }, 2000);
     } catch (error) {
       setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
@@ -312,11 +317,6 @@ const ProjectDetails = () => {
           onDelete={handleDeleteTask}
         />
       </Card>
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

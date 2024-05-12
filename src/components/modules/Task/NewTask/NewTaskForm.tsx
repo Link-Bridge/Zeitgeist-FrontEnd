@@ -253,6 +253,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           Description <span className='text-red-600'>*</span>
         </FormLabel>
         <Textarea
+          minRows={5}
+          maxRows={5}
           placeholder='Write your text here... '
           value={description}
           onChange={handleDescriptionChange}
