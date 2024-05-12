@@ -1,10 +1,10 @@
 import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
-import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
+import CustomDatePicker from '../../components/common/DatePicker';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { SnackbarContext } from '../../hooks/snackbarContext';
@@ -127,7 +127,7 @@ const NewProject = () => {
                 <FormLabel>
                   Start Date <span className='text-red-600'>*</span>
                 </FormLabel>
-                <DatePicker
+                <CustomDatePicker
                   value={dayjs(form.formState.startDate)}
                   onChange={e => {
                     form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
@@ -136,7 +136,7 @@ const NewProject = () => {
               </FormControl>
               <FormControl>
                 <FormLabel>End Date</FormLabel>
-                <DatePicker
+                <CustomDatePicker
                   value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
                   onChange={e => {
                     form.handleChange('endDate', e?.toDate() ?? null);

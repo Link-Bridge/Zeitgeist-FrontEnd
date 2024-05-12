@@ -27,7 +27,6 @@ export default {
         cardBg: '#FAFAFA',
       },
       fontFamily: {
-        montserrat: ['montserrat', 'sans-serif'],
         didot: ['Didot', 'serif'],
         gotham: ['Gotham Regular', 'sans-serif'],
         gothamLight: ['Gotham Light', 'sans-serif'],
