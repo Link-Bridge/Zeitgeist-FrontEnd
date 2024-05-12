@@ -82,7 +82,7 @@ const ClientDetails = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >

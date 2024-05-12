@@ -1,13 +1,29 @@
 import Link from '@mui/joy/Link';
 import { useNavigate } from 'react-router-dom';
+import { useEffect, useState } from 'react';
 import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
+import { useHistory } from 'react-router-dom';
+import { Location } from 'history';
 
 const GoBack = () => {
   const navigate = useNavigate();
+  const history = useHistory();
+
+  const [lastPath, setLastPath] = useState<string>('/'); // Ruta por defecto
 
   const handleClick = () => {
-    navigate(-1);
+    if (lastPath.includes('edit') || lastPath.includes('create') || lastPath.includes('new')){
+      navigate(-1);
+    } else {
+      navigate(-2);
+    }
+
+    useEffect(() => {
+      return history.listen((location: Location) => {
+        setLastPath(location.pathname);
+      })
+    },[history]);
   };
 
   return (
