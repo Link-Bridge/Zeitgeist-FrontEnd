@@ -103,6 +103,12 @@ const filterEmployees = (
   currentUser: EmployeeBodyType
 ): EmployeeEntity[] => {
   const isAdmin = currentUser.role === 'Admin';
+  const hasDepartment = currentUser.department === 'Without Department';
+
+  if (hasDepartment) {
+    return [];
+  }
+
   const filteredEmployees = isAdmin
     ? employees
     : employees.filter(emp => emp.idDepartment === currentUser.employee.idDepartment);
