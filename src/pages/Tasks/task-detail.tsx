@@ -1,6 +1,5 @@
-import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import { Box, Tooltip, Typography } from '@mui/joy';
+import { Button, Typography } from '@mui/joy';
+import Box from '@mui/joy/Box';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
@@ -115,28 +114,31 @@ const Task: React.FC = () => {
             <h1 className='grow-0 truncate col-span-2 text-gray text-[2rem]'>{data.title}</h1>
 
             <div className='flex justify-end items-center gap-5'>
-              <button onClick={handleEdit}>
-                <Tooltip title='Edit Task' size='sm'>
-                  <EditOutlinedIcon
-                    src={pencil}
-                    alt='Edit'
-                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                </Tooltip>
+              <Button
+                onClick={handleEdit}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                }}
+                startDecorator={<img src={pencil} alt='Edit' style={{ width: 24 }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Edit</Typography> {showUpdate && <Update />}
+              </Button>
+              <Button
+                onClick={() => setTaskToDelete(data)}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                }}
+                startDecorator={<img src={trash_can} alt='Delete' style={{ width: 24 }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Delete</Typography>{' '}
                 {showUpdate && <Update />}
-              </button>
-
-              <button onClick={() => setTaskToDelete(data)}>
-                <Tooltip title='Delete Task' size='sm'>
-                  <DeleteOutlineIcon
-                    src={trash_can}
-                    alt='Delete/Archive'
-                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                </Tooltip>
-              </button>
+              </Button>
             </div>
           </section>
 

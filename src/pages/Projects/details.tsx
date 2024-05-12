@@ -3,7 +3,7 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Card, Chip as MuiChip, Option, Select, Tooltip } from '@mui/joy';
+import { Box, Button, Card, Chip as MuiChip, Option, Select, Typography } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
@@ -38,7 +38,7 @@ const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
 };
 
 const chipStyle = {
-  bgcolor: colors.lighterGray,
+  bgcolor: colors.orangeChip,
   fontSize: '1rem',
   minWidth: '5px0px',
 };
@@ -176,46 +176,74 @@ const ProjectDetails = () => {
         <GoBack />
       </Box>
 
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}>
         <section className='font-montserrat'>
           <section className='flex justify-between'>
-            <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
+            <h3 className='text-[22px] font-medium' style={{ marginTop: '10px' }}>
               {truncateText(data?.name)}
             </h3>
             <section className='flex justify-end gap-3'>
+              <Button
+                component={Link}
+                to={`${RoutesPath.PROJECTS}/edit/${id}`}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  height: '5px',
+                }}
+                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Edit</Typography>
+              </Button>
+
+              <Button
+                component={Link}
+                to={`/projects/report/${id}`}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  height: '5px',
+                }}
+                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Report</Typography>
+              </Button>
+
               {data?.isArchived ? (
-                <Tooltip title='Unarchive Project' size='sm'>
-                  <UnarchiveIcon
-                    sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
-                    onClick={toggleModal}
-                  />
-                </Tooltip>
+                <Button
+                  onClick={toggleModal}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  {' '}
+                  <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
+                </Button>
               ) : (
-                <Tooltip title='Archive Project' size='sm'>
-                  <ArchiveIcon
-                    sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
-                    onClick={toggleModal}
-                  />
-                </Tooltip>
+                <Button
+                  onClick={toggleModal}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  {' '}
+                  <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                </Button>
               )}
-
-              <Link to={`/projects/report/${id}`}>
-                <Tooltip title='Consult Report' size='sm'>
-                  <AssessmentOutlinedIcon
-                    sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                </Tooltip>
-              </Link>
-
-              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
-                <Tooltip title='Edit Project' size='sm'>
-                  <EditOutlinedIcon
-                    sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                </Tooltip>
-              </Link>
             </section>
           </section>
 
