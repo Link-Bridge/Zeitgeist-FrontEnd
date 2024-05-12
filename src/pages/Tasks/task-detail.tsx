@@ -128,16 +128,9 @@ const Task: React.FC = () => {
                   gap: '10px',
                 }}
               >
-                <h1
-                  style={{
-                    color: 'gray',
-                    fontSize: '2rem',
-                    lineHeight: '1.1',
-                    letterSpacing: '1.5px',
-                  }}
-                >
+                <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
                   {data.title}
-                </h1>
+                </h3>
 
                 <Box
                   sx={{
