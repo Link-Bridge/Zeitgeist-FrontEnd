@@ -1,81 +1,95 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
-import { getToken } from 'firebase/messaging';
-import React, { useContext } from 'react';
+import React, { useContext, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
-import { auth, messaging, provider } from '../../config/firebase.config';
+import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import { RoutesPath } from '../../utils/constants';
+import useHttp from '../../hooks/useHttp';
+import { EmployeeReponse } from '../../types/employee';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { handleGetDeviceToken } from './device-token';
 
 const Auth: React.FC = () => {
-  const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
+  const [user, setUser] = useState<EmployeeReponse>();
+  const [idToken, setIdToken] = useState<string>('');
   const navigate = useNavigate();
-
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
+  const { sendRequest, data } = useHttp<EmployeeReponse>('/employee/signup', RequestMethods.POST);
+
+  const createUser = async () => {
+    sendRequest({}, {});
+    setEmployee(data!);
+    setUser(data!);
+    if (user?.role !== 'No role') {
+      navigate(RoutesPath.HOME);
+    } else {
+      setState({ open: true, message: 'User not authorized', type: 'danger' });
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
+      const token = await result.user.getIdToken();
+      setIdToken(token);
       localStorage.setItem('idToken', idToken);
-
-      // TODO: Had trouble using the useHttp hook
-      const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to sign up. Please try again.');
-      }
-
-      const responseData = await response.json();
-      setEmployee(responseData.data);
-      localStorage.setItem('employee', JSON.stringify(responseData.data));
-
-      if (responseData.data.role === 'No role' || !responseData.data.role) {
-        throw new Error('User not authorized');
-      }
-
-      handleGetDeviceToken(result.user.email);
-
-      navigate(RoutesPath.HOME);
+      createUser();
+      handleGetDeviceToken(user!.employee.email);
     } catch (error) {
-      setState({ open: true, message: (error as Error).message, type: 'danger' });
+      console.error('Error signing in with google:', error);
+      setState({ open: true, message: 'Failed to sign in with google', type: 'danger' });
       throw error;
     }
   };
 
-  const handleGetDeviceToken = async (userEmail: string | null) => {
-    try {
-      const token = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-      });
+  // const handleGoogleSignIn = async () => {
+  //   try {
 
-      if (token) {
-        await fetch(`${API_BASE_ROUTE}/notification/token`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-          },
-          body: JSON.stringify({
-            email: userEmail,
-            deviceToken: token,
-          }),
-        });
-      }
-    } catch (error) {
-      throw error;
-    }
-  };
+  //     if (!response.ok) {
+  //       throw new Error('Failed to sign up');
+  //     }
+
+  //     const responseData = await response.json();
+  //     setEmployee(responseData.data);
+  //     localStorage.setItem('employee', JSON.stringify(responseData.data));
+
+  //     if (responseData.data.role === 'No role' || !responseData.data.role) {
+  //       throw new Error('User not authorized');
+  //     }
+
+  //     handleGetDeviceToken(result.user.email);
+
+  //     navigate(RoutesPath.HOME);
+  //   } catch (error) {
+  //     setState({ open: true, message: (error as Error).message, type: 'danger' });
+  //     throw error;
+  //   }
+  // };
+
+  // useEffect(() => {
+  //   try {
+  //     if (data && idToken) {
+  //       setUser(data);
+  //       if (data.employee) {
+  //         setEmployee(data);
+  //       }
+  //       localStorage.setItem('employee', JSON.stringify(data));
+  //       if (data.role === 'No role' || !data.role) {
+  //         setState({ open: true, message: 'User not authorized', type: 'danger' });
+  //       }
+  //       handleGetDeviceToken(data.employee.email);
+  //       navigate(RoutesPath.HOME);
+  //     }
+  //   } catch (error) {
+  //     console.error('Error signing in with google:', error);
+  //     setState({ open: true, message: 'Failed to sign in with google', type: 'danger' });
+  //     throw error;
+  //   }
+  // }, [data, navigate, idToken, setState, setEmployee]);
 
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>

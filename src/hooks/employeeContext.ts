@@ -1,25 +1,9 @@
 import { createContext } from 'react';
-
-type EmployeeDetails = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  imageUrl: string;
-  createdAt: string;
-  idDepartment: string;
-  idRole: string;
-};
-
-export type EmployeeBodyType = {
-  employee: EmployeeDetails;
-  role: string;
-  department: string;
-};
+import { EmployeeReponse } from '../types/employee';
 
 export type EmployeeContextType = {
-  employee: EmployeeBodyType | null;
-  setEmployee: (employee: EmployeeBodyType) => void;
+  employee: EmployeeReponse | null;
+  setEmployee: (employee: EmployeeReponse) => void;
 };
 
 export const EmployeeContext = createContext<EmployeeContextType>({
