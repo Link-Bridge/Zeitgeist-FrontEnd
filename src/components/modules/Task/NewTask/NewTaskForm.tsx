@@ -1,4 +1,4 @@
-import { Box, Chip, Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { Box, Chip, FormLabel, Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -12,7 +12,7 @@ import CustomDatePicker from '../../../common/DatePicker';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
-import { Header, Item, StyledSheet } from '../styled';
+import { Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -86,7 +86,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
       setState({
         open: true,
-        message: 'Description cannot be longer than 256 characters',
+        message: 'Description cannot be longer than 256 characters.',
         type: 'danger',
       });
       return;
@@ -162,14 +162,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     }
 
     setWorkedHours(event.target.value);
-
-    if (!event.target.value.trim()) {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
-      setState({ open: true, message: 'Worked hours are required.', type: 'danger' });
-    } else {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
-      setState({ open: false, message: '' });
-    }
   };
 
   const getEmployeeNames = () => {
@@ -217,12 +209,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const hasEmptyFields = () => {
-    return !title || !description || !startDate || !dueDate || !status || !assignedEmployee;
+    return !title || !description || !startDate || !status;
   };
 
   const hasWrongLength = () => {
     if (title.length > 70 || description.length > 256 || workedHours.toString().length > 8) {
-      console.log('wrong length');
       return true;
     }
   };
@@ -243,152 +234,162 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
   return (
     <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-      <Header>Title *</Header>
-      <Input
-        type='text'
-        placeholder='Write your text here... '
-        value={title}
-        onChange={handleTitleChange}
-        sx={{
-          color: colors.gray,
-          borderColor: errors['title'] ? colors.danger : undefined,
-        }}
-      />
+      <main className='flex flex-col gap-4'>
+        <FormLabel>
+          Title <span className='text-red-600'>*</span>
+        </FormLabel>
+        <Input
+          type='text'
+          placeholder='Write your text here... '
+          value={title}
+          onChange={handleTitleChange}
+          sx={{
+            color: colors.gray,
+            borderColor: errors['title'] ? colors.danger : undefined,
+          }}
+        />
 
-      <Header>Description *</Header>
-      <Textarea
-        placeholder='Write your text here... '
-        value={description}
-        onChange={handleDescriptionChange}
-        sx={{
-          color: colors.gray,
-          width: '100%',
-          height: '200px',
-          padding: '10px',
-          borderRadius: '4px',
-          border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
-        }}
-      />
+        <FormLabel>
+          Description <span className='text-red-600'>*</span>
+        </FormLabel>
+        <Textarea
+          placeholder='Write your text here... '
+          value={description}
+          onChange={handleDescriptionChange}
+          sx={{
+            color: colors.gray,
+            width: '100%',
+            height: '200px',
+            padding: '10px',
+            borderRadius: '4px',
+            border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
+          }}
+        />
 
-      {/* Date and status columns */}
-      <Grid container spacing={2}>
-        <Grid xs={2}>
-          <Item>
-            <Header>Start Date *</Header>
-            <CustomDatePicker
-              value={startDate}
-              onChange={handleStartDateChange}
-              sx={{
-                borderColor: errors['startDate'] ? colors.danger : undefined,
-              }}
-            />
-          </Item>
-        </Grid>
-        <Grid xs={2}>
-          <Item>
-            <Header>End Date *</Header>
-            <CustomDatePicker
-              value={dueDate}
-              onChange={handleDueDateChange}
-              sx={{
-                borderColor: errors['dueDate'] ? colors.danger : undefined,
-              }}
-            />
-          </Item>
-        </Grid>
-        <Grid xs={2}>
-          <Item>
-            <Header>Status *</Header>
-            <GenericDropdown
-              options={Object.values(TaskStatus)}
-              onValueChange={handleStatusSelect}
-              placeholder='Select status'
-              colorMap={statusColorMap}
-              sx={{
-                color: colors.gray,
-                borderColor: errors['status'] ? colors.danger : undefined,
-              }}
-            />
-          </Item>
-        </Grid>
-      </Grid>
-
-      {/* Assign Employee, Worked Hours, Project Name */}
-      <Grid container spacing={2}>
-        <Grid container xs={2} className='md mr-20'>
-          <Item>
-            <Header>Assign Employee</Header>
-            <GenericDropdown
-              options={getEmployeeNames()}
-              onValueChange={handleAssignedEmployee}
-              placeholder='Select employee ...'
-            />
-          </Item>
-        </Grid>
-        <Grid container xs={2} className='md'>
-          <Item className='ml-8'>
-            <Header>Worked Hours</Header>
-            <Input
-              placeholder='0'
-              type='text'
-              value={workedHours ?? ''}
-              onChange={handleWorkedHoursChange}
-              sx={{
-                color: colors.gray,
-                borderColor: errors['workedHours'] ? colors.danger : undefined,
-              }}
-            />
-          </Item>
-        </Grid>
-        <Grid>
-          <Item className='ml-20'>
-            <Header>Project Name</Header>
-            <Box sx={{ display: 'flex', alignItems: 'center' }}>
-              <Chip
-                className='min-w-[150px] pr-6'
-                variant='soft'
+        {/* Date and status columns */}
+        <Grid container spacing={2}>
+          <Grid xs={2}>
+            <Item>
+              <FormLabel>
+                Start Date <span className='text-red-600'>*</span>
+              </FormLabel>
+              <CustomDatePicker
+                value={startDate}
+                onChange={handleStartDateChange}
                 sx={{
-                  bgcolor: colors.lighterGray,
-                  color: colors.gray,
-                  fontSize: '1rem',
-                  flexGrow: 1,
-                  padding: '0.3rem 1rem',
+                  borderColor: errors['startDate'] ? colors.danger : undefined,
                 }}
-              >
-                {projectName}
-              </Chip>
-            </Box>
-          </Item>
+              />
+            </Item>
+          </Grid>
+          <Grid xs={2}>
+            <Item>
+              <FormLabel>End Date</FormLabel>
+              <CustomDatePicker
+                value={dueDate}
+                onChange={handleDueDateChange}
+                sx={{
+                  borderColor: errors['dueDate'] ? colors.danger : undefined,
+                }}
+              />
+            </Item>
+          </Grid>
+          <Grid xs={2}>
+            <Item>
+              <FormLabel>
+                Status <span className='text-red-600'>*</span>
+              </FormLabel>
+              <GenericDropdown
+                options={Object.values(TaskStatus)}
+                onValueChange={handleStatusSelect}
+                placeholder='Select status'
+                colorMap={statusColorMap}
+                sx={{
+                  color: colors.gray,
+                  borderColor: errors['status'] ? colors.danger : undefined,
+                }}
+              />
+            </Item>
+          </Grid>
         </Grid>
-      </Grid>
 
-      {/* Cancel & send button */}
-      <Grid container justifyContent='flex-end'>
-        <Grid>
-          <Item>
-            <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-              <CancelButton onClick={handleCancel} />
-            </Link>
-          </Item>
+        {/* Assign Employee, Worked Hours, Project Name */}
+        <Grid container spacing={2}>
+          <Grid container xs={2} className='md mr-20'>
+            <Item>
+              <FormLabel>Assign Employee</FormLabel>
+              <GenericDropdown
+                options={getEmployeeNames()}
+                onValueChange={handleAssignedEmployee}
+                placeholder='Select employee ...'
+              />
+            </Item>
+          </Grid>
+          <Grid container xs={2} className='md'>
+            <Item className='ml-8'>
+              <FormLabel>Worked Hours</FormLabel>
+              <Input
+                placeholder='0'
+                type='text'
+                value={workedHours ?? ''}
+                onChange={handleWorkedHoursChange}
+                sx={{
+                  color: colors.gray,
+                  borderColor: errors['workedHours'] ? colors.danger : undefined,
+                }}
+              />
+            </Item>
+          </Grid>
+          <Grid>
+            <Item className='ml-20'>
+              <FormLabel>Project Name</FormLabel>
+              <Box sx={{ display: 'flex', alignItems: 'center' }}>
+                <Chip
+                  className='min-w-[150px] pr-6'
+                  variant='soft'
+                  sx={{
+                    bgcolor: colors.lighterGray,
+                    color: colors.gray,
+                    fontSize: '1rem',
+                    flexGrow: 1,
+                    padding: '0.3rem 1rem',
+                  }}
+                >
+                  {projectName}
+                </Chip>
+              </Box>
+            </Item>
+          </Grid>
         </Grid>
-        <Grid>
-          <Item>
-            <SendButton
-              onClick={() => {
-                handleSubmit();
-              }}
-              disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
-            />
-          </Item>
-        </Grid>
-      </Grid>
 
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
+        {/* Cancel & send button */}
+        <Grid container justifyContent='flex-end'>
+          <Grid>
+            <Item>
+              <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+                <CancelButton onClick={handleCancel} />
+              </Link>
+            </Item>
+          </Grid>
+          <Grid>
+            <Item>
+              <SendButton
+                onClick={() => {
+                  handleSubmit();
+                }}
+                disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+              />
+            </Item>
+          </Grid>
+        </Grid>
+
+        {/* Snackbar */}
+        <SnackbarContext.Provider value={{ state, setState }}>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
+      </main>
     </StyledSheet>
   );
 };
