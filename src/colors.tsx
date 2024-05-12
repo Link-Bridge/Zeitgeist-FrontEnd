@@ -22,6 +22,7 @@ const colors = {
   darkBlue: '#878FD2',
   darkerBlue: '#273086',
   lightRed: '#E6A9A9',
+  darkRed: '#F72E21',
   lightOrange: '#FFC774',
   orangeChip: '#EAD3AA',
   brownChip: '#B39C844C',
