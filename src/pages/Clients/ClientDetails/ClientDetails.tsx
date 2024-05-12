@@ -1,6 +1,6 @@
 import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ArchiveModal from '../../../components/common/ArchiveModal';
 // import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
@@ -21,6 +21,7 @@ import { useNavigate, useParams } from 'react-router-dom';
 import colors from '../../../colors';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import { formatDate } from '../../../utils/methods';
 
@@ -46,6 +47,7 @@ const ClientDetails = () => {
     `/company/${clientId}`,
     RequestMethods.GET
   );
+  const { employee } = useContext(EmployeeContext);
 
   const navigate = useNavigate();
 
@@ -76,6 +78,8 @@ const ClientDetails = () => {
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
+
+  const isAdmin = employee?.role === 'Admin';
 
   return (
     <main>
@@ -152,27 +156,30 @@ const ClientDetails = () => {
                   setRefetch={setRefetch}
                 />
 
-                <Button
-                  onClick={ToggleModalArchive}
-                  sx={{
-                    backgroundColor: colors.lightWhite,
-                    ':hover': {
-                      backgroundColor: colors.orangeChip,
-                    },
-                    height: '5px',
-                  }}
-                  startDecorator={
-                    company?.archived ? (
-                      <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
-                    ) : (
-                      <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
-                    )
-                  }
-                >
-                  <Typography sx={{ color: colors.gold }}>
-                    {company?.archived ? 'Unarchive' : 'Archive'}
-                  </Typography>
-                </Button>
+                {isAdmin && (
+                  <Button
+                    onClick={ToggleModalArchive}
+                    sx={{
+                      backgroundColor: colors.lightWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
+                      },
+                      height: '5px',
+                      color: 'text-gold',
+                    }}
+                    startDecorator={
+                      company?.archived ? (
+                        <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                      ) : (
+                        <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                      )
+                    }
+                  >
+                    <Typography sx={{ color: colors.gold }}>
+                      {company?.archived ? 'Unarchive' : 'Archive'}
+                    </Typography>
+                  </Button>
+                )}
               </div>
             </section>
 
