@@ -11,9 +11,9 @@ import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 
+import { useNavigate } from 'react-router-dom';
 import { ProjectEntity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
-import { useNavigate } from 'react-router-dom';
 
 type ModalEditProps = {
   project: ProjectEntity;
@@ -47,7 +47,11 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
       setState({ open: true, message: error.message });
     }
     if (data) {
-      setState({ open: true, message: `Project ${project.isArchived ? 'unarchived' : 'ardchived'} successfully. Redirecting...`, type: 'success' });
+      setState({
+        open: true,
+        message: `Project ${project.isArchived ? 'unarchived' : 'ardchived'} successfully. Redirecting...`,
+        type: 'success',
+      });
       if (open) {
         setOpen(false);
         refetch();
