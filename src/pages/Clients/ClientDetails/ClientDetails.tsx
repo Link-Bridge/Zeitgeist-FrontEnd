@@ -16,10 +16,10 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Snackbar, Typography } from '@mui/joy';
+import { Box, Button, Snackbar, Typography } from '@mui/joy';
 import { useNavigate, useParams } from 'react-router-dom';
+import colors from '../../../colors';
 import GoBack from '../../../components/common/GoBack';
-import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
 import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import { formatDate } from '../../../utils/methods';
 
@@ -131,22 +131,35 @@ const ClientDetails = () => {
                     label={formatDate(company.constitutionDate ?? null)}
                   />
                 </div>
-                <EditOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
+
+                <Button
                   onClick={handleEditClick}
-                />
-                <EditClientFormModal
-                  open={editModalOpen}
-                  setOpen={setEditModalOpen}
-                  clientData={company}
-                  setRefetch={setRefetch}
-                />
-                <ArchiveOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold }}>Edit</Typography>
+                </Button>
+
+                <Button
                   onClick={ToggleModalArchive}
-                />
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  {' '}
+                  <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                </Button>
               </div>
             </section>
 

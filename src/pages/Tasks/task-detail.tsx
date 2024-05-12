@@ -118,11 +118,10 @@ const Task: React.FC = () => {
             <div className='flex justify-end items-center gap-5'>
               <Button
                 onClick={handleEdit}
-                variant='soft'
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': {
-                    backgroundColor: colors.lighterGray,
+                    backgroundColor: colors.orangeChip,
                   },
                 }}
                 startDecorator={<img src={pencil} alt='Edit' style={{ width: 24 }} />}
@@ -131,11 +130,10 @@ const Task: React.FC = () => {
               </Button>
               <Button
                 onClick={() => setTaskToDelete(data)}
-                variant='soft'
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': {
-                    backgroundColor: colors.lighterGray,
+                    backgroundColor: colors.orangeChip,
                   },
                 }}
                 startDecorator={<img src={trash_can} alt='Delete' style={{ width: 24 }} />}
