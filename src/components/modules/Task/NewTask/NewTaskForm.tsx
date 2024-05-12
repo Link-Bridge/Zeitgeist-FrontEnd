@@ -374,7 +374,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         <Grid>
           <Item>
             <SendButton
-              onClick={handleSubmit}
+              onClick={() => {
+                handleSubmit();
+              }}
               disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
             />
           </Item>
