@@ -98,7 +98,6 @@ const Task: React.FC = () => {
 
   return (
     <main>
-
       <Box
         onClick={handleClick}
         sx={{
@@ -111,17 +110,10 @@ const Task: React.FC = () => {
         <GoBack />
       </Box>
 
-      
       {data ? (
         <section className='bg-white rounded-xl p-6 overflow-hidden'>
-
           <section className='flex-wrap grid grid-cols-3 mb-8'>
-
-            <h1
-              className='grow-0 truncate col-span-2 text-gray text-[2rem]'
-            >
-              {data.title}
-            </h1>
+            <h1 className='grow-0 truncate col-span-2 text-gray text-[2rem]'>{data.title}</h1>
 
             <div className='flex justify-end items-center gap-5'>
               <button onClick={handleEdit}>
@@ -192,10 +184,7 @@ const Task: React.FC = () => {
 
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Project</p>
-                <ColorChip
-                  label={`${data.projectName}`}
-                  color={`${colors.lightGold}`}
-                ></ColorChip>
+                <ColorChip label={`${data.projectName}`} color={`${colors.lightGold}`}></ColorChip>
               </Box>
             </div>
           </section>
@@ -213,9 +202,8 @@ const Task: React.FC = () => {
           />
         </section>
       ) : (
-          <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>Task not found</p>
+        <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>Task not found</p>
       )}
-      
     </main>
   );
 };
