@@ -10,9 +10,9 @@ import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 // import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
@@ -161,10 +161,17 @@ const ClientDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={
+                    company?.archived ? (
+                      <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                    ) : (
+                      <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                    )
+                  }
                 >
-                  {' '}
-                  <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                  <Typography sx={{ color: colors.gold }}>
+                    {company?.archived ? 'Unarchive' : 'Archive'}
+                  </Typography>
                 </Button>
               </div>
             </section>
