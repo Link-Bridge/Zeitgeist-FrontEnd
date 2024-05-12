@@ -13,6 +13,7 @@ import Typography from '@mui/joy/Typography';
 
 import { ProjectEntity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
+import { useNavigate } from 'react-router-dom';
 
 type ModalEditProps = {
   project: ProjectEntity;
@@ -35,7 +36,7 @@ type ModalEditProps = {
 const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditProps) => {
   const { setState } = useContext(SnackbarContext);
   const [isArchived, setIsArchived] = useState(project.isArchived);
-
+  const navigate = useNavigate();
   const { data, sendRequest, error } = useHttp<ProjectEntity>(
     `/project/edit/${project.id}`,
     RequestMethods.PUT
@@ -46,11 +47,14 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
       setState({ open: true, message: error.message });
     }
     if (data) {
-      setState({ open: true, message: 'Project updated successfully.', type: 'success' });
+      setState({ open: true, message: `Project ${project.isArchived ? 'unarchived' : 'ardchived'} successfully. Redirecting...`, type: 'success' });
       if (open) {
         setOpen(false);
         refetch();
       }
+      setTimeout(() => {
+        navigate(`/projects/`);
+      }, 2000);
     }
   }, [data, error]);
 
