@@ -29,6 +29,8 @@ const colors = {
   blueChip: '#E3EFFB',
   null: '#C4C4C4',
   extra: '#D6CFBE',
+  white: '#FFFFFF',
+  lightWhite: '#F7F7F7',
 };
 
 export default colors;

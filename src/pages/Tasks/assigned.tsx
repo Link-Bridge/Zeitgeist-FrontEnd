@@ -1,11 +1,14 @@
-import { Box, Sheet, Typography } from '@mui/joy';
-import { colors } from '@mui/material';
+import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
+import { AxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
+import { useNavigate } from 'react-router-dom';
+import colors from '../../colors';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
@@ -25,9 +28,11 @@ import { RequestMethods } from '../../utils/constants';
  */
 const Tasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
 
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
+  const navigate = useNavigate();
 
   const {
     data: taskData,
@@ -49,7 +54,11 @@ const Tasks = (): JSX.Element => {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
     } catch (error) {
-      console.error(error);
+      setState({
+        open: true,
+        message: 'An error occurred while deleting the task',
+        type: 'danger',
+      });
     }
   };
 
@@ -74,6 +83,7 @@ const Tasks = (): JSX.Element => {
     tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
 
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
+    .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
       const projectTasks = filterTasksByProjectId(tasks, project.id);
       const sortedTasks = sortTasksByEndDate(projectTasks);
@@ -83,10 +93,18 @@ const Tasks = (): JSX.Element => {
     .filter(({ tasks }) => tasks.length > 0);
 
   if (taskError || projectError) {
-    return <ErrorView error={taskError || projectError} />;
+    if (taskError instanceof AxiosError && taskError.response?.status === 403) {
+      navigate('/');
+    }
+
+    if (projectError instanceof AxiosError && projectError.response?.status === 403) {
+      navigate('/');
+    }
+
+    return <ErrorView error={'An unexpected error occurred. Please try again later.'} />;
   }
 
-  if (taskLoading || projectLoading) {
+  if (taskLoading || (projectLoading && !tasksPerProject)) {
     return (
       <Box
         sx={{
@@ -95,7 +113,7 @@ const Tasks = (): JSX.Element => {
           alignItems: 'center',
           justifyContent: 'center',
           height: '100%',
-          color: colors.grey[500],
+          color: colors.gray,
         }}
       >
         <Typography variant='plain' level='h1' mb={4}>
@@ -107,7 +125,7 @@ const Tasks = (): JSX.Element => {
     );
   }
 
-  if (!tasksPerProject || tasksPerProject.length === 0) {
+  if (!tasksPerProject || tasksPerProject.length === 0 || !taskData || !projectData) {
     return <ComponentPlaceholder text='No tasks were found' />;
   }
 
@@ -123,7 +141,7 @@ const Tasks = (): JSX.Element => {
           overflowY: 'auto',
         }}
       >
-        {taskData && projectData && tasksPerProject.length ? (
+        {taskData && projectData && tasksPerProject.length && (
           <>
             {tasksPerProject?.map(({ project, tasks }) => (
               <Box
@@ -134,14 +152,14 @@ const Tasks = (): JSX.Element => {
                   gap: 2,
                   padding: 2,
                   borderRadius: 12,
-                  backgroundColor: colors.grey[50],
+                  backgroundColor: colors.white,
                 }}
               >
                 <Typography
                   level='h1'
                   variant='plain'
                   sx={{
-                    color: colors.grey[800],
+                    color: colors.gray,
                     fontWeight: 'bold',
                     fontSize: '1rem',
                   }}
@@ -158,7 +176,7 @@ const Tasks = (): JSX.Element => {
                       gap: 1,
                       padding: 0.5,
                       borderRadius: 12,
-                      backgroundColor: colors.grey[100],
+                      backgroundColor: colors.lightWhite,
                     }}
                   >
                     <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
@@ -167,26 +185,14 @@ const Tasks = (): JSX.Element => {
               </Box>
             ))}
           </>
-        ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-              height: '100%',
-              color: colors.grey[500],
-            }}
-          >
-            <Typography variant='plain' level='h1'>
-              Your task list is empty
-            </Typography>
-            <Typography variant='plain' level='h2'>
-              Get started by adding tasks to your project
-            </Typography>
-          </Box>
         )}
       </Sheet>
+
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
