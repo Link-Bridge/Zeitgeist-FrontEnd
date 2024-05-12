@@ -7,7 +7,6 @@ import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
-import { EmployeeOptions } from '../../../pages/Employees/employee-options.eum';
 import { Response } from '../../../types/response';
 import { Role } from '../../../types/role';
 import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
@@ -26,22 +25,22 @@ function toTitleCase(str: string) {
 }
 
 type Employee = {
-  imageUrl?: string;
+  id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  id: string;
+  imageUrl?: string;
   idRole: string;
 };
 
 interface Props {
   searchTerm: string;
-  selectedOptions: string[];
+  filterOption: string;
 }
 
-export default function EmployeeTable({ searchTerm, selectedOptions }: Props) {
+export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const { setState } = useContext(SnackbarContext);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const reqEmployees = useHttp<Response<Employee>>(`/employee`, RequestMethods.GET);
   const reqRoles = useHttp<Response<Role>>(`/admin/roles`, RequestMethods.GET);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
@@ -60,32 +59,17 @@ export default function EmployeeTable({ searchTerm, selectedOptions }: Props) {
   }, [reqEmployees.error, setState]);
 
   useEffect(() => {
-    if (reqEmployees.data && reqRoles.data) {
-      const filteredEmployees = reqEmployees.data?.data.filter(employee => {
-        let matchesFilter = false;
-        switch (selectedOptions[0]) {
-          case EmployeeOptions.Name:
-            const fullName = `${employee.firstName} ${employee.lastName}`
-              .toLowerCase()
-              .includes(searchTerm.toLowerCase());
-            matchesFilter = fullName;
-            break;
-          case EmployeeOptions.Email:
-            matchesFilter = employee.email.toLowerCase().includes(searchTerm.toLowerCase());
-            break;
-          case EmployeeOptions.Role:
-            const role = reqRoles.data!.data.find(role => role.id === employee.idRole);
-            const roleTitle = role ? role.title : '';
-            matchesFilter = roleTitle.includes(searchTerm.toLowerCase());
-            break;
-          default:
-            matchesFilter = true;
+    const filteredEmployees =
+      reqEmployees.data?.data.filter(employee => {
+        const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+        if (filterOption === 'Email') {
+          return employee.email.toLowerCase().includes(searchTerm.toLowerCase());
         }
-        return matchesFilter;
-      });
-      setSearchResults(filteredEmployees);
-    }
-  }, [reqEmployees.data, searchTerm, selectedOptions, reqRoles.data]);
+        return fullName.includes(searchTerm.toLowerCase());
+      }) || [];
+
+    setSearchResults(filteredEmployees);
+  }, [searchTerm, reqEmployees.data, filterOption]);
 
   const handleRolChange = async (newRoleId: string, userId: string) => {
     if (!newRoleId || !userId) return;
@@ -109,10 +93,9 @@ export default function EmployeeTable({ searchTerm, selectedOptions }: Props) {
         setSearchResults(updatedEmployees);
         setState({ open: true, message: 'Role updated successfully', type: 'success' });
       } else {
-        console.error('Error updating role:', response.status);
+        setState({ open: true, message: 'Failed to update role', type: 'danger' });
       }
     } catch (error) {
-      console.error('Error in handleRolChange:', error);
       setState({ open: true, message: 'Failed to update role', type: 'danger' });
     }
   };
