@@ -96,7 +96,7 @@ const EditProject = () => {
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated successfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
