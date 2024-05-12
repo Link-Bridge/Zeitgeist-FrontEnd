@@ -1,4 +1,4 @@
-import { Typography } from '@mui/joy';
+import { Button, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -116,14 +116,33 @@ const Task: React.FC = () => {
             <h1 className='grow-0 truncate col-span-2 text-gray text-[2rem]'>{data.title}</h1>
 
             <div className='flex justify-end items-center gap-5'>
-              <button onClick={handleEdit}>
-                <img src={pencil} alt='Edit' className='w-6' />
+              <Button
+                onClick={handleEdit}
+                variant='soft'
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.lighterGray,
+                  },
+                }}
+                startDecorator={<img src={pencil} alt='Edit' style={{ width: 24 }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Edit</Typography> {showUpdate && <Update />}
+              </Button>
+              <Button
+                onClick={() => setTaskToDelete(data)}
+                variant='soft'
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.lighterGray,
+                  },
+                }}
+                startDecorator={<img src={trash_can} alt='Delete' style={{ width: 24 }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Delete</Typography>{' '}
                 {showUpdate && <Update />}
-              </button>
-
-              <button onClick={() => setTaskToDelete(data)}>
-                <img src={trash_can} alt='Delete/Archive' className='w-6' />
-              </button>
+              </Button>
             </div>
           </section>
 
