@@ -69,8 +69,8 @@ const NewProject = () => {
           <Loader />
         ) : (
           <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
-            <FormControl>
-              <FormLabel>
+            <FormControl className='pb-3 pt-3'>
+              <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                 Project Name <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
@@ -80,9 +80,9 @@ const NewProject = () => {
                 }}
               />
             </FormControl>
-            <section className='flex flex-row gap-4'>
-              <FormControl className='flex-1'>
-                <FormLabel>
+            <section className='flex flex-wrap gap-4'>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Client <span className='text-red-600'>*</span>
                 </FormLabel>
                 <ClientDropdown
@@ -91,8 +91,8 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
-                <FormLabel>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Category <span className='text-red-600'>*</span>
                 </FormLabel>
                 <CustomSelect
@@ -101,8 +101,8 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
-                <FormLabel>Matter</FormLabel>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Matter</FormLabel>
                 <Input
                   value={form.formState.matter}
                   onChange={e => {
@@ -111,8 +111,8 @@ const NewProject = () => {
                 />
               </FormControl>
             </section>
-            <FormControl>
-              <FormLabel>Description</FormLabel>
+            <FormControl className='pb-3 pt-3'>
+              <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Description</FormLabel>
               <Textarea
                 minRows={5}
                 maxRows={5}
@@ -122,9 +122,9 @@ const NewProject = () => {
                 }}
               />
             </FormControl>
-            <section className='lg:grid grid-cols-3 w-full gap-4'>
-              <FormControl>
-                <FormLabel>
+            <section className='lg:flex flex-wrap gap-4'>
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Start Date <span className='text-red-600'>*</span>
                 </FormLabel>
                 <CustomDatePicker
@@ -134,8 +134,8 @@ const NewProject = () => {
                   }}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>End Date</FormLabel>
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>End Date</FormLabel>
                 <CustomDatePicker
                   value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
                   onChange={e => {
@@ -143,8 +143,8 @@ const NewProject = () => {
                   }}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Chargeable</FormLabel>
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Chargeable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
                   checked={form.formState.isChargeable}
@@ -154,8 +154,10 @@ const NewProject = () => {
                   size='lg'
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>
+            </section>
+            <section className='lg:flex flex-wrap gap-2'>
+              <FormControl className='pb-3 pt-3 w-1/4'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Area <span className='text-red-600'>*</span>
                 </FormLabel>
                 <CustomSelect
@@ -164,8 +166,8 @@ const NewProject = () => {
                   values={projectAreas}
                 ></CustomSelect>
               </FormControl>
-              <FormControl>
-                <FormLabel>Periodic</FormLabel>
+              <FormControl className='pb-3 pt-3 w-1/4'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Periodic</FormLabel>
                 <CustomSelect
                   name='periodicity'
                   handleChange={form.handleChange}
@@ -174,7 +176,7 @@ const NewProject = () => {
                 ></CustomSelect>
               </FormControl>
             </section>
-            <section className='flex mt-10 gap-4 justify-end'>
+            <section className='flex gap-4 justify-end'>
               <Button
                 variant='outlined'
                 sx={{

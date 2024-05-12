@@ -363,7 +363,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               </FormControl>
             </div>
           </section>
-          <section className='flex mt-10 gap-4 justify-end'>
+          <section className='flex gap-4 justify-end'>
             <Button
               variant='outlined'
               sx={{

@@ -1,10 +1,10 @@
 import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
-import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
+import CustomDatePicker from '../../components/common/DatePicker';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { SnackbarContext } from '../../hooks/snackbarContext';
@@ -93,20 +93,18 @@ const EditProject = () => {
           sx={{ padding: '30px' }}
         >
           <form className='flex flex-col gap-4' onSubmit={form.handleUpdate}>
-            <FormControl>
-              <FormLabel>
+            <FormControl className='pb-3 pt-3'>
+              <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                 Project Name <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
                 value={form.formState.name}
-                onChange={e => {
-                  form.handleChange('name', e.target.value);
-                }}
+                onChange={e => form.handleChange('name', e.target.value)}
               />
             </FormControl>
-            <section className='flex flex-row gap-4'>
-              <FormControl className='flex-1'>
-                <FormLabel>
+            <section className='flex flex-wrap gap-4'>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Client <span className='text-red-600'>*</span>
                 </FormLabel>
                 <ClientDropdown
@@ -116,94 +114,91 @@ const EditProject = () => {
                   defaultValue={form.formState.idCompany}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
-                <FormLabel>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Category <span className='text-red-600'>*</span>
                 </FormLabel>
                 <CustomSelect
                   values={projectCategories}
-                  defaultValue={form.formState.category}
                   name='category'
+                  defaultValue={form.formState.category}
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
-                <FormLabel>Matter</FormLabel>
+              <FormControl className='pb-3 pt-3 flex-1'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Matter</FormLabel>
                 <Input
                   value={form.formState.matter}
-                  onChange={e => {
-                    form.handleChange('matter', e.target.value);
-                  }}
+                  onChange={e => form.handleChange('matter', e.target.value)}
                 />
               </FormControl>
             </section>
-            <FormControl>
-              <FormLabel>Description</FormLabel>
+            <FormControl className='pb-3 pt-3'>
+              <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Description</FormLabel>
               <Textarea
                 minRows={5}
                 value={form.formState.description}
-                onChange={e => {
-                  form.handleChange('description', e.target.value);
+                onChange={e => form.handleChange('description', e.target.value)}
+                sx={{
+                  width: '100%',
+                  height: '150px',
+                  padding: '10px',
+                  borderRadius: '4px',
                 }}
               />
             </FormControl>
-            <section className='lg:grid grid-cols-3 w-full gap-4'>
-              <FormControl>
-                <FormLabel>
+            <section className='lg:flex flex-wrap gap-4'>
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Start Date <span className='text-red-600'>*</span>
                 </FormLabel>
-                <DatePicker
+                <CustomDatePicker
                   value={dayjs(form.formState.startDate)}
-                  onChange={e => {
-                    form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
-                  }}
+                  onChange={e =>
+                    form.handleChange('startDate', e?.toDate() ?? form.formState.startDate)
+                  }
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>End Date</FormLabel>
-                <DatePicker
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>End Date</FormLabel>
+                <CustomDatePicker
                   value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
-                  onChange={e => {
-                    form.handleChange('endDate', e?.toDate() ?? null);
-                  }}
+                  onChange={e => form.handleChange('endDate', e?.toDate() ?? null)}
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>Chargeable</FormLabel>
+              <FormControl className='pb-3 pt-3'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Chargeable</FormLabel>
                 <Switch
                   sx={{ mr: 'auto' }}
                   checked={form.formState.isChargeable}
-                  onChange={e => {
-                    form.handleChange('isChargeable', e.target.checked);
-                  }}
+                  onChange={e => form.handleChange('isChargeable', e.target.checked)}
                   size='lg'
                 />
               </FormControl>
-              <FormControl>
-                <FormLabel>
+            </section>
+            <section className='lg:flex flex-wrap gap-2'>
+              <FormControl className='pb-3 pt-3 w-1/4'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>
                   Area <span className='text-red-600'>*</span>
                 </FormLabel>
                 <CustomSelect
                   name='area'
+                  defaultValue={form.formState.area}
                   handleChange={form.handleChange}
                   values={projectAreas}
-                  defaultValue={
-                    form.formState.area.charAt(0).toUpperCase() +
-                    form.formState.area.slice(1).toLowerCase()
-                  }
                 ></CustomSelect>
               </FormControl>
-              <FormControl>
-                <FormLabel>Periodic</FormLabel>
+              <FormControl className='pb-3 pt-3 w-1/4'>
+                <FormLabel sx={{ fontWeight: 'bold', fontSize: '16px' }}>Periodic</FormLabel>
                 <CustomSelect
                   name='periodicity'
+                  defaultValue={form.formState.periodicity}
                   handleChange={form.handleChange}
                   values={projectPeriodicity}
-                  defaultValue={form.formState.periodicity}
                 ></CustomSelect>
               </FormControl>
             </section>
-            <section className='flex mt-10 gap-4 justify-end'>
+            <section className='flex gap-4 justify-end'>
               <Button
                 variant='outlined'
                 sx={{
