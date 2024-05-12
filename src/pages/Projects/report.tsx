@@ -301,7 +301,7 @@ const ProjectReport: React.FC = () => {
                         },
                       }}
                     >
-                      Download PDF
+                      Download as PDF
                     </Button>
                   </PDFDownloadLink>
                 </Box>
