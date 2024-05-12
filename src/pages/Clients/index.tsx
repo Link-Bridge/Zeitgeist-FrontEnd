@@ -1,3 +1,4 @@
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useEffect, useState } from 'react';
 import { Link, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
@@ -85,6 +86,13 @@ const Clients = () => {
                 options={[]}
               />
               <div className='flex flex-row items-center gap-2'>
+                <div className='flex items-center gap-2'>
+                  <FilterAltIcon
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                  <p>Filter Clients:</p>
+                </div>
                 <GenericDropdown
                   defaultValue={CompanyFilters.ALL}
                   options={[

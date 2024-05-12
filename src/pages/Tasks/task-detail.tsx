@@ -1,5 +1,6 @@
-import { Typography } from '@mui/joy';
-import Box from '@mui/joy/Box';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { Box, Tooltip, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
@@ -115,12 +116,26 @@ const Task: React.FC = () => {
 
             <div className='flex justify-end items-center gap-5'>
               <button onClick={handleEdit}>
-                <img src={pencil} alt='Edit' className='w-6' />
+                <Tooltip title='Edit Task' size='sm'>
+                  <EditOutlinedIcon
+                    src={pencil}
+                    alt='Edit'
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
                 {showUpdate && <Update />}
               </button>
 
               <button onClick={() => setTaskToDelete(data)}>
-                <img src={trash_can} alt='Delete/Archive' className='w-6' />
+                <Tooltip title='Delete Task' size='sm'>
+                  <DeleteOutlineIcon
+                    src={trash_can}
+                    alt='Delete/Archive'
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
               </button>
             </div>
           </section>

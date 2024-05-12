@@ -3,7 +3,7 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
+import { Box, Card, Chip as MuiChip, Option, Select, Tooltip } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
@@ -184,29 +184,37 @@ const ProjectDetails = () => {
             </h3>
             <section className='flex justify-end gap-3'>
               {data?.isArchived ? (
-                <UnarchiveIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
-                  onClick={toggleModal}
-                />
+                <Tooltip title='Unarchive Project' size='sm'>
+                  <UnarchiveIcon
+                    sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                    onClick={toggleModal}
+                  />
+                </Tooltip>
               ) : (
-                <ArchiveIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
-                  onClick={toggleModal}
-                />
+                <Tooltip title='Archive Project' size='sm'>
+                  <ArchiveIcon
+                    sx={{ width: '25px', height: '25px', cursor: 'pointer', color: colors.gold }}
+                    onClick={toggleModal}
+                  />
+                </Tooltip>
               )}
 
               <Link to={`/projects/report/${id}`}>
-                <AssessmentOutlinedIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                  className='text-gold'
-                />
+                <Tooltip title='Consult Report' size='sm'>
+                  <AssessmentOutlinedIcon
+                    sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
               </Link>
 
               <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
-                <EditOutlinedIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                  className='text-gold'
-                />
+                <Tooltip title='Edit Project' size='sm'>
+                  <EditOutlinedIcon
+                    sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
               </Link>
             </section>
           </section>
@@ -270,23 +278,29 @@ const ProjectDetails = () => {
               </div>
             </div>
           )}
-          {data?.isChargeable && (
+          <div className='flex items-center mt-4 gap-8'>
+            {data?.isChargeable && (
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Payed</p>
+                <MuiChip
+                  component={Select}
+                  sx={chipStyle}
+                  value={data?.payed ?? false}
+                  onChange={(_, newVal) => {
+                    changePayed(id ?? '', Boolean(newVal));
+                  }}
+                  disabled={updating}
+                >
+                  <Option value={true}>Yes</Option>
+                  <Option value={false}>No</Option>
+                </MuiChip>
+              </div>
+            )}
             <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Payed</p>
-              <MuiChip
-                component={Select}
-                sx={chipStyle}
-                value={data?.payed ?? false}
-                onChange={(_, newVal) => {
-                  changePayed(id ?? '', Boolean(newVal));
-                }}
-                disabled={updating}
-              >
-                <Option value={true}>Yes</Option>
-                <Option value={false}>No</Option>
-              </MuiChip>
+              <p style={{ marginLeft: '7px' }}>Is Archived</p>
+              <Chip sx={chipStyle} label={data?.isArchived ? 'Yes' : 'No'} />
             </div>
-          )}
+          </div>
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>

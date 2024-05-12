@@ -1,3 +1,4 @@
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
@@ -80,6 +81,13 @@ const ProjectMain = () => {
           />
         </div>
         <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-2'>
+            <FilterAltIcon
+              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+              className='text-gold'
+            />
+            <p>Filter Projects:</p>
+          </div>
           <GenericDropdown
             defaultValue={ProjectFilters.ALL}
             options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
