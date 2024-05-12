@@ -335,6 +335,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               onChange={handleWorkedHoursChange}
               sx={{
                 color: colors.gray,
+                borderColor: errors['workedHours'] ? colors.danger : undefined,
               }}
             />
           </Item>
