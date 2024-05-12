@@ -12,11 +12,12 @@ import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
 // import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Snackbar, Typography } from '@mui/joy';
+import { Box, Snackbar, Tooltip, Typography } from '@mui/joy';
 import { useNavigate, useParams } from 'react-router-dom';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
@@ -76,6 +77,8 @@ const ClientDetails = () => {
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
 
+  console.log(company);
+
   return (
     <main>
       <Box
@@ -123,7 +126,7 @@ const ClientDetails = () => {
                 {company.name}
               </p>
               <div className='flex justify-end items-center gap-5'>
-                <div className='grid grid-cols-1'>
+                <div className='flex items-center gap-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip
                     color='primary'
@@ -131,21 +134,35 @@ const ClientDetails = () => {
                     label={formatDate(company.constitutionDate ?? null)}
                   />
                 </div>
-                <EditOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
-                  onClick={handleEditClick}
-                />
+                <Tooltip title='Edit Client' size='sm'>
+                  <EditOutlinedIcon
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                    onClick={handleEditClick}
+                  />
+                </Tooltip>
+                {company?.archived ? (
+                  <Tooltip title='Unarchive Client' size='sm'>
+                    <UnarchiveIcon
+                      sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
+                      className='text-gold'
+                      onClick={ToggleModalArchive}
+                    />
+                  </Tooltip>
+                ) : (
+                  <Tooltip title='Archive Client' size='sm'>
+                    <ArchiveOutlinedIcon
+                      sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                      className='text-gold'
+                      onClick={ToggleModalArchive}
+                    />
+                  </Tooltip>
+                )}
                 <EditClientFormModal
                   open={editModalOpen}
                   setOpen={setEditModalOpen}
                   clientData={company}
                   setRefetch={setRefetch}
-                />
-                <ArchiveOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
-                  onClick={ToggleModalArchive}
                 />
               </div>
             </section>
