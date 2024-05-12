@@ -10,7 +10,6 @@ import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import UnarchiveOutlinedIcon from '@mui/icons-material/UnarchiveOutlined';
 // import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
