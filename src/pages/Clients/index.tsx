@@ -80,11 +80,12 @@ const Clients = () => {
         path='/'
         element={
           <main className='py-0 flex flex-col min-h-0 flex-1'>
-            <section className='flex flex-row justify-between items-center mb-2 w-full'>
+            <section className='flex flex-row justify-between items-center mb-4 w-full'>
               <SearchBar
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 placeholder='Search by name'
+                setSelectedOption={() => {}}
                 options={[]}
               />
               <div className='flex flex-row items-center gap-2'>
