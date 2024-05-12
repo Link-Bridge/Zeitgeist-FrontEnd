@@ -1,9 +1,12 @@
-import { Input, Snackbar, Typography } from '@mui/joy';
+import { Search } from '@mui/icons-material';
+import { Button, Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import { NativeSelect } from '@mui/material';
-import Button from '@mui/material/Button';
+import pdf from '../../assets/icons/pdf.svg';
+import reset from '../../assets/icons/reset.svg';
+//import Button from '@mui/material/Button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
@@ -206,7 +209,9 @@ const ProjectReport: React.FC = () => {
             >
               <Box sx={{ width: '50%' }}></Box>
               <Box sx={{ width: '50%', display: 'flex', justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', gap: '10px', marginLeft: '10px' }}>
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}
+                >
                   <NativeSelect
                     sx={{
                       border: 1,
@@ -214,6 +219,7 @@ const ProjectReport: React.FC = () => {
                       borderRadius: '5px',
                       borderColor: colors.lightGray,
                       width: '120px',
+                      height: '35px',
                       padding: '5px',
                     }}
                     inputProps={{
@@ -253,34 +259,30 @@ const ProjectReport: React.FC = () => {
                   />
                   <Button
                     sx={{
-                      bgcolor: colors.darkGold,
-                      color: '#fff',
-                      borderRadius: '8px',
-                      '&:hover': {
-                        bgcolor: colors.darkerGold,
-                        opacity: '0.8',
+                      backgroundColor: colors.lightWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
                       },
+                      height: '5px',
                     }}
                     onClick={handleClose}
                     disabled={hasErrors()}
+                    startDecorator={<Search style={{ color: colors.gold }} />}
                   >
-                    SEARCH
+                    <Typography sx={{ color: colors.gold }}>Search</Typography>
                   </Button>
                   <Button
                     sx={{
-                      color: '#fff',
-                      bgcolor: colors.darkBlue,
-                      borderRadius: '8px',
-                      borderColor: colors.lighterGray,
-                      border: 1,
-                      '&:hover': {
-                        bgcolor: colors.darkerBlue,
-                        opacity: '0.8',
+                      backgroundColor: colors.lightWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
                       },
+                      height: '5px',
                     }}
                     onClick={handleClear}
+                    startDecorator={<img src={reset} alt='reset' className='w-5' />}
                   >
-                    Reset
+                    <Typography sx={{ color: colors.gold }}>Reset</Typography>
                   </Button>
                 </Box>
                 <Box>
@@ -290,18 +292,15 @@ const ProjectReport: React.FC = () => {
                   >
                     <Button
                       sx={{
-                        color: '#fff',
-                        bgcolor: colors.danger,
-                        borderRadius: '8px',
-                        borderColor: colors.lighterGray,
-                        border: 1,
-                        '&:hover': {
-                          bgcolor: colors.darkRed,
-                          opacity: '0.8',
+                        backgroundColor: colors.lightWhite,
+                        ':hover': {
+                          backgroundColor: colors.orangeChip,
                         },
+                        height: '5px',
                       }}
+                      startDecorator={<img src={pdf} alt='pdf' className='w-7' />}
                     >
-                      Download as PDF
+                      <Typography sx={{ color: colors.gold }}>Download</Typography>
                     </Button>
                   </PDFDownloadLink>
                 </Box>
