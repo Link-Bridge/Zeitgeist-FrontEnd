@@ -5,7 +5,6 @@ import colors from '../../colors';
 
 const GoBack = () => {
   const navigate = useNavigate();
-
   const handleClick = () => {
     navigate(-1);
   };

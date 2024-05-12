@@ -102,9 +102,7 @@ const Task: React.FC = () => {
         onClick={handleClick}
         sx={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginBottom: '10px',
+          justifyContent: 'flex-start',
         }}
       >
         <GoBack />
