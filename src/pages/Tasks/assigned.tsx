@@ -53,10 +53,15 @@ const Tasks = (): JSX.Element => {
     try {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
+      setState({
+        open: true,
+        message: 'Task deleted successfully.',
+        type: 'success',
+      });
     } catch (error) {
       setState({
         open: true,
-        message: 'An error occurred while deleting the task',
+        message: 'An error occurred while deleting the task.',
         type: 'danger',
       });
     }
