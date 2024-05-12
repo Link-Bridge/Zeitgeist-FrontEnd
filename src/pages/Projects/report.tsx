@@ -9,7 +9,6 @@ import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
-import download from '../../assets/icons/download.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -205,82 +204,108 @@ const ProjectReport: React.FC = () => {
                 marginBottom: '20px',
               }}
             >
-              <NativeSelect
-                sx={{
-                  border: 1,
-                  borderBottom: 0,
-                  borderRadius: '5px',
-                  borderColor: colors.lightGray,
-                  width: '120px',
-                  padding: '5px',
-                }}
-                inputProps={{
-                  name: 'age',
-                  id: 'uncontrolled-native',
-                }}
-                defaultValue={1}
-                onChange={e => handleMonthChange(Number(e.target.value))}
-              >
-                <option value={1}>January</option>
-                <option value={2}>February</option>
-                <option value={3}>March</option>
-                <option value={4}>April</option>
-                <option value={5}>May</option>
-                <option value={6}>June</option>
-                <option value={7}>July</option>
-                <option value={8}>August</option>
-                <option value={9}>September</option>
-                <option value={10}>October</option>
-                <option value={11}>November</option>
-                <option value={12}>December</option>
-              </NativeSelect>
+              <Box sx={{ width: '50%' }}></Box>
+              <Box sx={{ width: '50%', display: 'flex', justifyContent: 'space-between' }}>
+                <Box sx={{ display: 'flex', gap: '10px', marginLeft: '10px' }}>
+                  <NativeSelect
+                    sx={{
+                      border: 1,
+                      borderBottom: 0,
+                      borderRadius: '5px',
+                      borderColor: colors.lightGray,
+                      width: '120px',
+                      padding: '5px',
+                    }}
+                    inputProps={{
+                      name: 'age',
+                      id: 'uncontrolled-native',
+                    }}
+                    defaultValue={1}
+                    onChange={e => handleMonthChange(Number(e.target.value))}
+                  >
+                    <option value={1}>January</option>
+                    <option value={2}>February</option>
+                    <option value={3}>March</option>
+                    <option value={4}>April</option>
+                    <option value={5}>May</option>
+                    <option value={6}>June</option>
+                    <option value={7}>July</option>
+                    <option value={8}>August</option>
+                    <option value={9}>September</option>
+                    <option value={10}>October</option>
+                    <option value={11}>November</option>
+                    <option value={12}>December</option>
+                  </NativeSelect>
 
-              <Input
-                sx={{
-                  '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                    display: 'none',
-                  },
-                  width: '120px',
-                  bgcolor: 'transparent',
-                  border: 1,
-                  borderColor: colors.lightGray,
-                }}
-                type='number'
-                defaultValue={year}
-                onChange={e => handleYearChange(e.target.value)}
-              />
-              <Button
-                sx={{
-                  bgcolor: colors.darkGold,
-                  color: '#fff',
-                  borderRadius: '8px',
-                  textTransform: 'none',
-                  '&:hover': {
-                    bgcolor: colors.darkerGold,
-                    opacity: '0.8',
-                  },
-                }}
-                onClick={handleClose}
-                disabled={hasErrors()}
-              >
-                SEARCH
-              </Button>
-              <Button
-                sx={{
-                  color: '#fff',
-                  bgcolor: colors.darkBlue,
-                  borderRadius: '8px',
-                  borderColor: colors.lighterGray,
-                  border: 1,
-                  '&:hover': {
-                    bgcolor: colors.darkerBlue,
-                    opacity: '0.8',
-                  },
-                }}
-                onClick={handleClear}
-              >
-                Reset
-              </Button>
+                  <Input
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none',
+                      },
+                      width: '120px',
+                      bgcolor: 'transparent',
+                      border: 1,
+                      borderColor: colors.lightGray,
+                    }}
+                    type='number'
+                    defaultValue={year}
+                    onChange={e => handleYearChange(e.target.value)}
+                  />
+                  <Button
+                    sx={{
+                      bgcolor: colors.darkGold,
+                      color: '#fff',
+                      borderRadius: '8px',
+                      '&:hover': {
+                        bgcolor: colors.darkerGold,
+                        opacity: '0.8',
+                      },
+                    }}
+                    onClick={handleClose}
+                    disabled={hasErrors()}
+                  >
+                    SEARCH
+                  </Button>
+                  <Button
+                    sx={{
+                      color: '#fff',
+                      bgcolor: colors.darkBlue,
+                      borderRadius: '8px',
+                      borderColor: colors.lighterGray,
+                      border: 1,
+                      '&:hover': {
+                        bgcolor: colors.darkerBlue,
+                        opacity: '0.8',
+                      },
+                    }}
+                    onClick={handleClear}
+                  >
+                    Reset
+                  </Button>
+                </Box>
+                <Box>
+                  <PDFDownloadLink
+                    document={<ProjectReportPDF data={report} />}
+                    fileName={`report_${report.project.name}.pdf`}
+                  >
+                    <Button
+                      sx={{
+                        color: '#fff',
+                        bgcolor: colors.danger,
+                        borderRadius: '8px',
+                        borderColor: colors.lighterGray,
+                        border: 1,
+                        '&:hover': {
+                          bgcolor: colors.darkRed,
+                          opacity: '0.8',
+                        },
+                      }}
+                    >
+                      Download as PDF
+                    </Button>
+                  </PDFDownloadLink>
+                </Box>
+              </Box>
             </Box>
             <Box
               sx={{
@@ -315,15 +340,6 @@ const ProjectReport: React.FC = () => {
                     >
                       {report.project.name}
                     </h1>
-
-                    <Box>
-                      <PDFDownloadLink
-                        document={<ProjectReportPDF data={report} />}
-                        fileName={`report_${report.project.name}.pdf`}
-                      >
-                        <img src={download} alt='Download' className='w-6' />
-                      </PDFDownloadLink>
-                    </Box>
                   </Box>
                 </Box>
 

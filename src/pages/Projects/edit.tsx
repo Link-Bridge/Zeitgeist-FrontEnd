@@ -107,7 +107,7 @@ const EditProject = () => {
   };
 
   if (form.success) {
-    return <Navigate to='/projects' />;
+    return <Navigate to={`/projects/details/${id}`} />;
   }
 
   return (
@@ -282,7 +282,7 @@ const EditProject = () => {
                     },
                   }}
                 >
-                  <Link to={'..'}>Cancel</Link>
+                  <Link to={`/projects/details/${id}`}>Cancel</Link>
                 </Button>
                 <Button
                   type='submit'
