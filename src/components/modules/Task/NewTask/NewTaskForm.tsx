@@ -72,7 +72,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, title: 'Title is required' }));
-      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+      setState({ open: true, message: 'Title is required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, title: '' }));
       setState({ open: false, message: '' });
@@ -95,7 +95,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
-      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+      setState({ open: true, message: 'Description is required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
       setState({ open: false, message: '' });
@@ -165,7 +165,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
     if (!event.target.value.trim()) {
       setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
-      setState({ open: true, message: 'Please fill all fields.', type: 'danger' });
+      setState({ open: true, message: 'Worked hours are required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
       setState({ open: false, message: '' });
@@ -335,6 +335,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               onChange={handleWorkedHoursChange}
               sx={{
                 color: colors.gray,
+                borderColor: errors['workedHours'] ? colors.danger : undefined,
               }}
             />
           </Item>
