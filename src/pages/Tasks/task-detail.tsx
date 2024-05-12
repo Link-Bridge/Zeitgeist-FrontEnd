@@ -164,7 +164,7 @@ const Task: React.FC = () => {
                 </Box>
               </Box>
 
-              {data.endDate && (
+              {data.endDate ? (
                 <Box className='grid grid-cols-1'>
                   <p style={{ fontSize: '.9rem' }}>Due date</p>
                   <Box
@@ -172,10 +172,29 @@ const Task: React.FC = () => {
                       bgcolor: colors.lighterGray,
                       padding: 0.5,
                       borderRadius: 4,
+                      width: '180px',
                     }}
                     className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
                   >
                     {dateParser(data.endDate)}
+                    <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+                  </Box>
+                </Box>
+              ) : (
+                <Box className='grid grid-cols-1'>
+                  <p style={{ fontSize: '.9rem' }}>Due date</p>
+                  <Box
+                    sx={{
+                      bgcolor: colors.lighterGray,
+                      padding: 0.5,
+                      borderRadius: 4,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '180px',
+                    }}
+                    className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
+                  >
+                    <p></p>
                     <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
                   </Box>
                 </Box>
