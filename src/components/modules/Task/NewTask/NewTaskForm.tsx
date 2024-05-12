@@ -175,7 +175,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       dueDate: dueDate?.toISOString() ?? '',
-      workedHours: workedHours ?? '0.0',
+      workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
