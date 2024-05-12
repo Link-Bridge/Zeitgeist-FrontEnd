@@ -49,7 +49,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
     if (data) {
       setState({
         open: true,
-        message: `Project ${project.isArchived ? 'unarchived' : 'ardchived'} successfully. Redirecting...`,
+        message: `Project ${project.isArchived ? 'unarchived' : 'archived'} successfully. Redirecting...`,
         type: 'success',
       });
       if (open) {
