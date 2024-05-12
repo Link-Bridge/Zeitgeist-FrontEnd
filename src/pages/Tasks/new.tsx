@@ -24,8 +24,6 @@ const NewTaskPage = () => {
   const { projectId } = useParams<{ projectId: string }>();
   const { employee } = useContext(EmployeeContext);
 
-  console.log('employee', employee);
-
   const {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
