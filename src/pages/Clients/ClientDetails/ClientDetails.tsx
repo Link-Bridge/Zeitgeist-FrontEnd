@@ -77,8 +77,6 @@ const ClientDetails = () => {
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
 
-  console.log(company);
-
   return (
     <main>
       <Box
