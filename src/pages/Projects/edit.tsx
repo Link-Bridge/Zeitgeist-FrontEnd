@@ -8,6 +8,7 @@ import CustomSelect from '../../components/common/CustomSelect';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
@@ -22,6 +23,7 @@ import { APIPath, RequestMethods } from '../../utils/constants';
 
 const EditProject = () => {
   const { id } = useParams();
+  const { employee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const form = useNewProject();
 
@@ -83,7 +85,7 @@ const EditProject = () => {
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project updated sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated successfully!', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
@@ -245,7 +247,7 @@ const EditProject = () => {
                     size='lg'
                   />
                 </FormControl>
-                <FormControl>
+                <FormControl disabled={!employee?.role || employee.role !== 'Admin'}>
                   <FormLabel>
                     Area <span className='text-red-600'>*</span>
                   </FormLabel>
