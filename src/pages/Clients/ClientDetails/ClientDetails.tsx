@@ -1,6 +1,6 @@
 import { Chip } from '@mui/material';
 import Divider from '@mui/material/Divider';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import ArchiveModal from '../../../components/common/ArchiveModal';
 // import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
@@ -16,10 +16,12 @@ import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Snackbar, Typography } from '@mui/joy';
+import { Box, Button, Snackbar, Typography } from '@mui/joy';
 import { useNavigate, useParams } from 'react-router-dom';
+import colors from '../../../colors';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
+import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
 import { formatDate } from '../../../utils/methods';
 
@@ -45,6 +47,7 @@ const ClientDetails = () => {
     `/company/${clientId}`,
     RequestMethods.GET
   );
+  const { employee } = useContext(EmployeeContext);
 
   const navigate = useNavigate();
 
@@ -76,20 +79,22 @@ const ClientDetails = () => {
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
 
+  const isAdmin = employee?.role === 'Admin';
+
   return (
-    <>
+    <main>
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
         <GoBack />
       </Box>
 
-      <main className='bg-white rounded-xl p-6'>
+      <section className='bg-white rounded-xl p-6'>
         <ArchiveModal
           toggleModal={ToggleModalArchive}
           open={openArchive}
@@ -113,55 +118,64 @@ const ClientDetails = () => {
             }
             setTimeout(() => {
               navigate(RoutesPath.CLIENTS + '/');
-            }, 3000);
+            }, 2000);
           }}
         ></ArchiveModal>
         {company && !loading && (
-          <section className='flex justify-between'>
-            <h2 className='text-2xl text-gold font-medium text-wrap break-all'>{company.name}</h2>
-            <section className='flex items-center gap-5'>
-              <div className='flex items-center gap-2'>
-                <Typography level='body-sm' className='mr-1'>
-                  Constitution date:
-                </Typography>
-                <Chip
-                  color='primary'
-                  variant='outlined'
-                  label={formatDate(company.constitutionDate ?? null)}
-                />
-              </div>
-              <EditOutlinedIcon
-                sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                className='text-gold'
-                onClick={handleEditClick}
-              />
-              {company && (
+          <>
+            <section className='flex-wrap grid grid-cols-3'>
+              <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>
+                {company.name}
+              </p>
+              <div className='flex justify-end items-center gap-5'>
+                <div className='flex items-center gap-5'>
+                  <Typography>Constitution date:</Typography>
+                  <Chip
+                    color='primary'
+                    variant='outlined'
+                    label={formatDate(company.constitutionDate ?? null)}
+                  />
+                </div>
+                <Button
+                  onClick={handleEditClick}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold }}>Edit</Typography>
+                </Button>
                 <EditClientFormModal
                   open={editModalOpen}
                   setOpen={setEditModalOpen}
                   clientData={company}
                   setRefetch={setRefetch}
                 />
-              )}
-              <ArchiveOutlinedIcon
-                sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                className='text-gold'
-                onClick={ToggleModalArchive}
-              />
-              {/* <DeleteOutlineOutlinedIcon
-              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-              className='text-gold'
-              onClick={() => {
-                ToggleModalDelete();
-              }}
-            /> */}
-            </section>
-          </section>
-        )}
 
-        {!loading && company && (
-          <>
-            <section className='flex mt-8 font-montserrat justify-start gap-28'>
+                {isAdmin && (
+                  <Button
+                    onClick={ToggleModalArchive}
+                    sx={{
+                      backgroundColor: colors.lightWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
+                      },
+                      height: '5px',
+                      color: 'text-gold',
+                    }}
+                    startDecorator={<ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                  >
+                    <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                  </Button>
+                )}
+              </div>
+            </section>
+
+            <section className='flex mt-8 justify-start gap-28'>
               <article className='flex gap-4'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
@@ -182,8 +196,8 @@ const ClientDetails = () => {
           </>
         )}
         <Divider sx={{ 'margin-top': '30px' }} />
-        <ProjectsClientList clientId={clientId ?? ''} />
-      </main>
+        <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
+      </section>
 
       {/* Snackbar */}
       <SnackbarContext.Provider value={{ state, setState }}>
@@ -191,27 +205,8 @@ const ClientDetails = () => {
           {state.message}
         </Snackbar>
       </SnackbarContext.Provider>
-    </>
+    </main>
   );
 };
-
-// Hay que arreglar esto después
-// const handleArchiveClient = () => {
-//   // update ui
-//   setFilteredClientsData(prev => {
-//     const aux = [];
-//     for (let i = 0; i < prev.length; i++) {
-//       if (prev[i].id !== company?.id) {
-//         aux.push(prev[i]);
-//         continue;
-//       }
-//       aux.push({
-//         ...prev[i],
-//         archived: !prev[i].archived,
-//       });
-//     }
-//     return aux;
-//   });
-// };
 
 export default ClientDetails;

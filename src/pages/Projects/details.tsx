@@ -1,20 +1,26 @@
+import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
-import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import { Box, Button, Card, Chip as MuiChip, Option, Select, Typography } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
+import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity, ProjectStatus } from '../../types/project';
+import { Response } from '../../types/response';
+import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 import { formatDate, truncateText } from '../../utils/methods';
 
@@ -32,13 +38,16 @@ const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
 };
 
 const chipStyle = {
-  bgcolor: colors.lighterGray,
+  bgcolor: colors.orangeChip,
   fontSize: '1rem',
   minWidth: '5px0px',
 };
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const { setState } = useContext(SnackbarContext);
+  const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
+  const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
@@ -49,6 +58,10 @@ const ProjectDetails = () => {
     RequestMethods.GET
   );
 
+  const toggleModal = () => {
+    setOpen(!open);
+  };
+
   const {
     data: company,
     loading: loadingCompany,
@@ -58,6 +71,26 @@ const ProjectDetails = () => {
     `${APIPath.COMPANIES}/${data?.idCompany}`,
     RequestMethods.GET
   );
+
+  const {
+    data: tasks,
+    error: errorTasks,
+    loading: loadingTasks,
+    sendRequest: getTasks,
+  } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  useEffect(() => {
+    if (!tasks) getTasks();
+    if (tasks && tasks.data) {
+      setInitialTasks(tasks.data);
+
+      setTotalHours(() =>
+        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks]);
 
   const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -81,12 +114,13 @@ const ProjectDetails = () => {
   const handleStatusChange = async (newStatus: ProjectStatus) => {
     try {
       await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+      setState({ open: true, message: 'Project status updated successfully!', type: 'success' });
 
       if (updatedCompany) {
         setProjectStatus(newStatus);
       }
     } catch (error) {
-      console.error('Error updating project status:', error);
+      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
     }
   };
 
@@ -94,8 +128,14 @@ const ProjectDetails = () => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask.deleteTask(taskId);
+      setState({ open: true, message: 'Task deleted successfully.', type: 'success' });
+      setTimeout(() => {
+        setState({ open: false, message: '' });
+      }, 2000);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
+    } finally {
+      getTasks();
     }
   };
 
@@ -122,37 +162,88 @@ const ProjectDetails = () => {
 
   return (
     <>
+      {open && (
+        <ModalEditConfirmation project={data} open={open} setOpen={setOpen} refetch={sendRequest} />
+      )}
       <Box
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
         <GoBack />
       </Box>
 
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}>
         <section className='font-montserrat'>
           <section className='flex justify-between'>
-            <h3 className='text-[22px] font-medium' style={{ marginTop: '15px' }}>
+            <h3 className='text-[22px] font-medium' style={{ marginTop: '10px' }}>
               {truncateText(data?.name)}
             </h3>
             <section className='flex justify-end gap-3'>
-              <Link to={`/projects/report/${id}`}>
-                <AssessmentOutlinedIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                  className='text-gold'
-                />
-              </Link>
+              <Button
+                component={Link}
+                to={`${RoutesPath.PROJECTS}/edit/${id}`}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  height: '5px',
+                }}
+                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Edit</Typography>
+              </Button>
 
-              <Link to={`${RoutesPath.PROJECTS}/edit/${id}`}>
-                <EditOutlinedIcon
-                  sx={{ width: '25px', height: '25px', cursor: 'pointer' }}
-                  className='text-gold'
-                />
-              </Link>
+              <Button
+                component={Link}
+                to={`/projects/report/${id}`}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  height: '5px',
+                }}
+                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Report</Typography>
+              </Button>
+
+              {data?.isArchived ? (
+                <Button
+                  onClick={toggleModal}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  {' '}
+                  <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
+                </Button>
+              ) : (
+                <Button
+                  onClick={toggleModal}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  {' '}
+                  <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                </Button>
+              )}
             </section>
           </section>
 
@@ -215,23 +306,29 @@ const ProjectDetails = () => {
               </div>
             </div>
           )}
-          {data?.isChargeable && (
+          <div className='flex items-center mt-4 gap-8'>
+            {data?.isChargeable && (
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Payed</p>
+                <MuiChip
+                  component={Select}
+                  sx={chipStyle}
+                  value={data?.payed ?? false}
+                  onChange={(_, newVal) => {
+                    changePayed(id ?? '', Boolean(newVal));
+                  }}
+                  disabled={updating}
+                >
+                  <Option value={true}>Yes</Option>
+                  <Option value={false}>No</Option>
+                </MuiChip>
+              </div>
+            )}
             <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Payed</p>
-              <MuiChip
-                component={Select}
-                sx={chipStyle}
-                value={data?.payed ?? false}
-                onChange={(_, newVal) => {
-                  changePayed(id ?? '', Boolean(newVal));
-                }}
-                disabled={updating}
-              >
-                <Option value={true}>Yes</Option>
-                <Option value={false}>No</Option>
-              </MuiChip>
+              <p style={{ marginLeft: '7px' }}>Is Archived</p>
+              <Chip sx={chipStyle} label={data?.isArchived ? 'Yes' : 'No'} />
             </div>
-          )}
+          </div>
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
@@ -255,9 +352,11 @@ const ProjectDetails = () => {
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable
-          projectId={id ? id : ''}
+          errorTasks={errorTasks}
+          loadingTasks={loadingTasks}
+          initialTasks={initialTasks}
+          getTasks={getTasks}
           onDelete={handleDeleteTask}
-          setTotalProjectHours={setTotalHours}
         />
       </Card>
     </>

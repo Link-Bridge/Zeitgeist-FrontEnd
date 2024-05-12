@@ -5,19 +5,21 @@ import EmployeeTable from '../../components/modules/Employees/EmployeeeTable';
 
 const Employees = () => {
   const [searchTerm, setSearchTerm] = useState('');
-  const [isSearchVisible, setIsSearchVisible] = useState(false);
+  const [filterOption, setFilterOption] = useState('Name');
 
   return (
     <section className='flex-1 overflow-scroll'>
-      <SearchBar
-        searchTerm={searchTerm}
-        setSearchTerm={setSearchTerm}
-        isSearchVisible={isSearchVisible}
-        setIsSearchVisible={setIsSearchVisible}
-        placeholder='Search employees'
-      />
+      <div className='mb-4'>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          options={['Name', 'Email']}
+          placeholder='Search employees'
+          setSelectedOption={setFilterOption}
+        />
+      </div>
       <Card className='flex-1'>
-        <EmployeeTable searchTerm={searchTerm} />
+        <EmployeeTable searchTerm={searchTerm} filterOption={filterOption} />
       </Card>
     </section>
   );

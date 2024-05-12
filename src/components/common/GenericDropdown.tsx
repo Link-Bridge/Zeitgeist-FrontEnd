@@ -132,8 +132,8 @@ const GenericDropdown = <T extends string | number>({
           </MenuItem>
         )}
 
-        {options.map(option => (
-          <MenuItem key={String(option)} value={option}>
+        {options.map((option, index) => (
+          <MenuItem key={`${option}-${index}`} value={option}>
             {option}
           </MenuItem>
         ))}

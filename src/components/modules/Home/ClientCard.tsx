@@ -20,7 +20,7 @@ const ClientCard = ({ name, chargeableHours }: ClientCardProps) => {
     <CardContainer>
       <header className='mb-3 text-xl flex flex-nowrap'>
         <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
-        <span className='overflow-hidden text-ellipsis' style={{ color: colors.darkGold }}>
+        <span className='truncate' style={{ color: colors.darkGold }}>
           {name}
         </span>
       </header>

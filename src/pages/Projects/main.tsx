@@ -1,9 +1,11 @@
+import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
+import SearchBar from '../../components/common/SearchBar';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
@@ -16,6 +18,8 @@ const ProjectMain = () => {
   const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
+  const [searchTerm, setSearchTerm] = useState('');
+  const [filterOption, setFilterOption] = useState('Name');
 
   useEffect(() => {
     if (!req.data) req.sendRequest();
@@ -53,39 +57,70 @@ const ProjectMain = () => {
     }
   };
 
-  if (projects.length === 0 || !projects) {
-    return <ComponentPlaceholder text='No projects were found' />;
-  }
+  useEffect(() => {
+    const filtered = projects.filter(project => {
+      const companyName = companyNames.get(project.idCompany) ?? '';
+      if (filterOption === 'Company') {
+        return companyName.toLowerCase().includes(searchTerm.toLowerCase());
+      }
+      return project.name.toLowerCase().includes(searchTerm.toLowerCase());
+    });
+    setFilteredProjects(filtered);
+  }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
-    <main className='flex flex-col gap-4 flex-1 min-h-0'>
-      <section className='h-10 flex justify-end gap-4'>
-        <GenericDropdown
-          defaultValue={ProjectFilters.ALL}
-          options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
-          onValueChange={value => handleFilter(value)}
-        />
-        <Link to={`${RoutesPath.PROJECTS}/new`}>
-          <AddButton onClick={() => {}}></AddButton>
-        </Link>
-      </section>
-      <section className='flex-1 overflow-scroll'>
-        <div className='bg-cardBg rounded-xl overflow-y-scroll grid md:grid-cols-2 lg:grid-cols-3 flex-1 min-h-0 shadow-lg p-4 gap-5'>
-          {isLoading && <Loader />}
-          {!(isLoading && filteredProjects) &&
-            filteredProjects.map(project => (
-              <Link to={`/projects/details/${project.id}`} key={project.id}>
-                <ProjectCard
-                  key={project.id}
-                  company={companyNames.get(project.idCompany) ?? ''}
-                  department={project.area}
-                  name={project.name}
-                  status={project.status}
-                />
-              </Link>
-            ))}
+    <main className='flex flex-col gap-2 flex-1 min-h-0'>
+      <section className='flex justify-between items-center w-full p-2'>
+        <div className='flex grow items-center'>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            placeholder='Search projects'
+            options={['Name', 'Company']}
+            setSelectedOption={setFilterOption}
+          />
+        </div>
+        <div className='flex items-center gap-4'>
+          <div className='flex items-center gap-2'>
+            <FilterAltIcon
+              sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+              className='text-gold'
+            />
+            <p>Filter Projects:</p>
+          </div>
+          <GenericDropdown
+            defaultValue={ProjectFilters.ALL}
+            options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
+            onValueChange={value => handleFilter(value)}
+          />
+          <Link to={`${RoutesPath.PROJECTS}/new`}>
+            <AddButton onClick={() => {}}></AddButton>
+          </Link>
         </div>
       </section>
+      {projects.length === 0 ? (
+        <ComponentPlaceholder text='No projects were found' />
+      ) : (
+        <section className='flex-1 overflow-scroll'>
+          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              filteredProjects.map(project => (
+                <Link to={`/projects/details/${project.id}`} key={project.id}>
+                  <ProjectCard
+                    key={project.id}
+                    company={companyNames.get(project.idCompany) ?? ''}
+                    department={project.area}
+                    name={project.name}
+                    status={project.status}
+                  />
+                </Link>
+              ))
+            )}
+          </div>
+        </section>
+      )}
     </main>
   );
 };

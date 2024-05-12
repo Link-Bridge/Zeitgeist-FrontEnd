@@ -22,12 +22,15 @@ const colors = {
   darkBlue: '#878FD2',
   darkerBlue: '#273086',
   lightRed: '#E6A9A9',
+  darkRed: '#F72E21',
   lightOrange: '#FFC774',
   orangeChip: '#EAD3AA',
   brownChip: '#B39C844C',
   blueChip: '#E3EFFB',
   null: '#C4C4C4',
   extra: '#D6CFBE',
+  white: '#FFFFFF',
+  lightWhite: '#F7F7F7',
 };
 
 export default colors;
