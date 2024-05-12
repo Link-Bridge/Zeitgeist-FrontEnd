@@ -128,6 +128,10 @@ const ProjectDetails = () => {
   const handleDeleteTask = async (taskId: string) => {
     try {
       await deleteTask.deleteTask(taskId);
+      setState({ open: true, message: 'Task deleted successfully.', type: 'success' });
+      setTimeout(() => {
+        setState({ open: false, message: '' });
+      }, 2000);
     } catch (error) {
       setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
@@ -165,7 +169,7 @@ const ProjectDetails = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
@@ -302,23 +306,29 @@ const ProjectDetails = () => {
               </div>
             </div>
           )}
-          {data?.isChargeable && (
+          <div className='flex items-center mt-4 gap-8'>
+            {data?.isChargeable && (
+              <div style={{ fontSize: '15px' }}>
+                <p style={{ marginLeft: '7px' }}>Payed</p>
+                <MuiChip
+                  component={Select}
+                  sx={chipStyle}
+                  value={data?.payed ?? false}
+                  onChange={(_, newVal) => {
+                    changePayed(id ?? '', Boolean(newVal));
+                  }}
+                  disabled={updating}
+                >
+                  <Option value={true}>Yes</Option>
+                  <Option value={false}>No</Option>
+                </MuiChip>
+              </div>
+            )}
             <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Payed</p>
-              <MuiChip
-                component={Select}
-                sx={chipStyle}
-                value={data?.payed ?? false}
-                onChange={(_, newVal) => {
-                  changePayed(id ?? '', Boolean(newVal));
-                }}
-                disabled={updating}
-              >
-                <Option value={true}>Yes</Option>
-                <Option value={false}>No</Option>
-              </MuiChip>
+              <p style={{ marginLeft: '7px' }}>Is Archived</p>
+              <Chip sx={chipStyle} label={data?.isArchived ? 'Yes' : 'No'} />
             </div>
-          )}
+          </div>
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>

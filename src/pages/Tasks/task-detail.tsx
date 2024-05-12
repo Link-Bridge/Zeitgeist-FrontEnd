@@ -102,9 +102,7 @@ const Task: React.FC = () => {
         onClick={handleClick}
         sx={{
           display: 'flex',
-          alignItems: 'center',
-          justifyContent: 'flex-end',
-          marginBottom: '10px',
+          justifyContent: 'flex-start',
         }}
       >
         <GoBack />
@@ -196,7 +194,10 @@ const Task: React.FC = () => {
 
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
-                <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
+                <ColorChip
+                  label={`${data.workedHours ? data.workedHours : 0}`}
+                  color={`${colors.extra}`}
+                ></ColorChip>
               </Box>
 
               <Box>

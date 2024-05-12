@@ -107,7 +107,7 @@ const NewProject = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
@@ -128,13 +128,13 @@ const NewProject = () => {
               <Input
                 value={form.formState.name}
                 onChange={e => {
-                  if (e.target.value.length > 70)
+                  if (e.target.value.length > 70) {
                     return setState({
                       open: true,
                       message: 'Project name cannot be longer than 70 characters.',
                       type: 'danger',
                     });
-                  if (!e.target.value || e.target.value.length == 0) {
+                  } else if (!e.target.value || e.target.value.length == 0) {
                     setErrors({ ...errors, name: 'Project name is required.' });
                     setState({
                       open: true,

@@ -1,4 +1,14 @@
-import { Box, Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
+import {
+  Box,
+  Button,
+  Card,
+  FormControl,
+  FormLabel,
+  Input,
+  Snackbar,
+  Switch,
+  Textarea,
+} from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -9,7 +19,7 @@ import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext } from '../../hooks/snackbarContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
@@ -24,7 +34,8 @@ import { APIPath, RequestMethods } from '../../utils/constants';
 const EditProject = () => {
   const { id } = useParams();
   const { employee } = useContext(EmployeeContext);
-  const { setState } = useContext(SnackbarContext);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const form = useNewProject();
 
   const [disableButton, setDisableButton] = useState<boolean>(true);
@@ -108,6 +119,18 @@ const EditProject = () => {
     setDisableButton(false);
   };
 
+  const datesAreNotValid = () => {
+    if (form.formState.startDate && form.formState.endDate) {
+      if (
+        dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate)) ||
+        dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))
+      ) {
+        return true;
+      }
+    }
+    return false;
+  };
+
   if (form.success) {
     return <Navigate to={`/projects/details/${id}`} />;
   }
@@ -122,7 +145,7 @@ const EditProject = () => {
             sx={{
               display: 'flex',
               alignItems: 'center',
-              justifyContent: 'flex-end',
+              justifyContent: 'flex-start',
               marginBottom: '10px',
             }}
           >
@@ -141,19 +164,28 @@ const EditProject = () => {
                 <Input
                   value={form.formState.name}
                   onChange={e => {
-                    if (e.target.value.length > 255)
+                    if (e.target.value.length > 70) {
                       return setState({
                         open: true,
-                        message: 'Project name must be less than 70 characters',
+                        message: 'Project name cannot be longer than 70 characters.',
                         type: 'danger',
                       });
-                    if (!e.target.value || e.target.value.length == 0)
+                    } else if (!e.target.value || e.target.value.length == 0) {
+                      setErrors({ ...errors, name: 'Project name is required.' });
                       setState({
                         open: true,
-                        message: 'Project name is required',
+                        message: 'Project name is required.',
                         type: 'danger',
                       });
+                    } else {
+                      setErrors({ ...errors, name: '' });
+                      setState({ open: false, message: '' });
+                    }
                     form.handleChange('name', e.target.value);
+                  }}
+                  sx={{
+                    borderRadius: '4px',
+                    border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
                   }}
                 />
               </FormControl>
@@ -185,6 +217,16 @@ const EditProject = () => {
                   <Input
                     value={form.formState.matter}
                     onChange={e => {
+                      if (e.target.value.length > 70) {
+                        return setState({
+                          open: true,
+                          message: 'Matter cannot be longer than 70 characters.',
+                          type: 'danger',
+                        });
+                      } else {
+                        setErrors({ ...errors, name: '' });
+                        setState({ open: false, message: '' });
+                      }
                       form.handleChange('matter', e.target.value);
                     }}
                   />
@@ -196,12 +238,16 @@ const EditProject = () => {
                   minRows={5}
                   value={form.formState.description}
                   onChange={e => {
-                    if (e.target.value.length > 255)
+                    if (e.target.value.length > 255) {
                       return setState({
                         open: true,
-                        message: 'Project description must be less than 255 characters',
+                        message: 'Description cannot be longer than 255 characters.',
                         type: 'danger',
                       });
+                    } else {
+                      setErrors({ ...errors, name: '' });
+                      setState({ open: false, message: '' });
+                    }
                     form.handleChange('description', e.target.value);
                   }}
                 />
@@ -223,6 +269,18 @@ const EditProject = () => {
                         });
                         return setStartDate(false);
                       }
+
+                      if (form.formState.endDate && e && e.isAfter(dayjs(form.formState.endDate))) {
+                        setState({
+                          open: true,
+                          message: 'Start date cannot be after end date.',
+                          type: 'danger',
+                        });
+                        return setStartDate(false);
+                      } else {
+                        setErrors({ ...errors, startDate: '' });
+                        setState({ open: false, message: '' });
+                      }
                       setStartDate(true);
                     }}
                   />
@@ -233,6 +291,20 @@ const EditProject = () => {
                     value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
                     onChange={e => {
                       form.handleChange('endDate', e?.toDate() ?? null);
+                      if (
+                        form.formState.startDate &&
+                        e &&
+                        e.isBefore(dayjs(form.formState.startDate))
+                      ) {
+                        setState({
+                          open: true,
+                          message: 'End date cannot be before start date.',
+                          type: 'danger',
+                        });
+                      } else {
+                        setErrors({ ...errors, endDate: '' });
+                        setState({ open: false, message: '' });
+                      }
                     }}
                   />
                 </FormControl>
@@ -294,11 +366,17 @@ const EditProject = () => {
                       backgroundColor: colors.darkerGold,
                     },
                   }}
-                  disabled={disableButton || form.isPosting}
+                  disabled={disableButton || form.isPosting || datesAreNotValid()}
                 >
                   Update Project
                 </Button>
               </section>
+              {/* Snackbar */}
+              <SnackbarContext.Provider value={{ state, setState }}>
+                <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+                  {state.message}
+                </Snackbar>
+              </SnackbarContext.Provider>
             </form>
           </Card>
         </>

@@ -1,4 +1,5 @@
 import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -9,7 +10,6 @@ import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import { RoutesPath } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
-import CustomDatePicker from '../../../common/DatePicker';
 import GenericDropdown from '../../../common/GenericDropdown';
 import ModifyButton from '../../../common/ModifyButton';
 import { Header, Item, StyledSheet } from '../styled';
@@ -114,15 +114,17 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     setStartDate(date);
   };
 
-  const handleendDateChange = (date: dayjs.Dayjs | null) => {
-    const datesValid = !date || !startDate || date.isAfter(startDate);
+  const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
-    if (!datesValid) {
+    if (datesAreNotValid) {
       setState({
         open: true,
         message: 'Due date cannot be before start date.',
         type: 'danger',
       });
+    } else if (dayjs(date).isSame(dayjs(startDate))) {
+      setState({ open: false, message: '' });
     } else {
       setState({ open: false, message: '' });
     }
@@ -303,7 +305,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <Header>
                 Start Date <span className='text-red-600'>*</span>
               </Header>
-              <CustomDatePicker
+              <DatePicker
                 value={startDate}
                 onChange={handleStartDateChange}
                 sx={{
@@ -315,9 +317,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Grid xs={2}>
             <Item>
               <Header>Due Date</Header>
-              <CustomDatePicker
+              <DatePicker
                 value={endDate}
-                onChange={handleendDateChange}
+                onChange={handleEndDateChange}
                 sx={{
                   borderColor: errors['endDate'] ? colors.danger : undefined,
                 }}

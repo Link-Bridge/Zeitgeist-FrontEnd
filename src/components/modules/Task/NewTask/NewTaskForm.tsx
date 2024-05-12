@@ -1,4 +1,5 @@
 import { Box, Chip, FormLabel, Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
@@ -8,7 +9,6 @@ import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
-import CustomDatePicker from '../../../common/DatePicker';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
@@ -116,14 +116,16 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleDueDateChange = (date: dayjs.Dayjs | null) => {
-    const datesValid = !date || !startDate || date.isAfter(startDate);
+    const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
-    if (!datesValid) {
+    if (datesAreNotValid) {
       setState({
         open: true,
         message: 'Due date cannot be before start date.',
         type: 'danger',
       });
+    } else if (dayjs(date).isSame(dayjs(startDate))) {
+      setState({ open: false, message: '' });
     } else {
       setState({ open: false, message: '' });
     }
@@ -175,7 +177,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
       dueDate: dueDate?.toISOString() ?? '',
-      workedHours: workedHours ?? '0.0',
+      workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
@@ -275,7 +277,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormLabel>
                 Start Date <span className='text-red-600'>*</span>
               </FormLabel>
-              <CustomDatePicker
+              <DatePicker
                 value={startDate}
                 onChange={handleStartDateChange}
                 sx={{
@@ -287,7 +289,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Grid xs={2}>
             <Item>
               <FormLabel>End Date</FormLabel>
-              <CustomDatePicker
+              <DatePicker
                 value={dueDate}
                 onChange={handleDueDateChange}
                 sx={{

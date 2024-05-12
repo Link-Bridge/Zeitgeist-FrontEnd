@@ -82,7 +82,7 @@ const ClientDetails = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
@@ -123,7 +123,7 @@ const ClientDetails = () => {
                 {company.name}
               </p>
               <div className='flex justify-end items-center gap-5'>
-                <div className='grid grid-cols-1'>
+                <div className='flex items-center gap-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip
                     color='primary'
@@ -131,7 +131,6 @@ const ClientDetails = () => {
                     label={formatDate(company.constitutionDate ?? null)}
                   />
                 </div>
-
                 <Button
                   onClick={handleEditClick}
                   sx={{
