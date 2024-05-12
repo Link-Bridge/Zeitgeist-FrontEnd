@@ -171,7 +171,7 @@ const ClientDetails = () => {
           </>
         )}
         <Divider sx={{ 'margin-top': '30px' }} />
-        <ProjectsClientList clientId={clientId ?? ''} />
+        <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
 
       {/* Snackbar */}

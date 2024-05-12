@@ -3,7 +3,7 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Card, Chip as MuiChip, Option, Select } from '@mui/joy';
+import { Box, Card, Chip as MuiChip, Option, Select, Snackbar } from '@mui/joy';
 import { Chip } from '@mui/material';
 import axios from 'axios';
 import { useEffect, useState } from 'react';
@@ -14,10 +14,13 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity, ProjectStatus } from '../../types/project';
+import { Response } from '../../types/response';
+import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 import { formatDate, truncateText } from '../../utils/methods';
 
@@ -42,6 +45,8 @@ const chipStyle = {
 
 const ProjectDetails = () => {
   const { id } = useParams();
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const [open, setOpen] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
@@ -66,6 +71,26 @@ const ProjectDetails = () => {
     `${APIPath.COMPANIES}/${data?.idCompany}`,
     RequestMethods.GET
   );
+
+  const {
+    data: tasks,
+    error: errorTasks,
+    loading: loadingTasks,
+    sendRequest: getTasks,
+  } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  useEffect(() => {
+    if (!tasks) getTasks();
+    if (tasks && tasks.data) {
+      setInitialTasks(tasks.data);
+
+      setTotalHours(() =>
+        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      );
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [tasks]);
 
   const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -94,7 +119,7 @@ const ProjectDetails = () => {
         setProjectStatus(newStatus);
       }
     } catch (error) {
-      console.error('Error updating project status:', error);
+      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
     }
   };
 
@@ -103,7 +128,9 @@ const ProjectDetails = () => {
     try {
       await deleteTask.deleteTask(taskId);
     } catch (error) {
-      console.error(error);
+      setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
+    } finally {
+      getTasks();
     }
   };
 
@@ -278,11 +305,18 @@ const ProjectDetails = () => {
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable
-          projectId={id ? id : ''}
+          errorTasks={errorTasks}
+          loadingTasks={loadingTasks}
+          initialTasks={initialTasks}
+          getTasks={getTasks}
           onDelete={handleDeleteTask}
-          setTotalProjectHours={setTotalHours}
         />
       </Card>
+      <SnackbarContext.Provider value={{ state, setState }}>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </>
   );
 };
