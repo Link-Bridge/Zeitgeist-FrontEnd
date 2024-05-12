@@ -161,7 +161,7 @@ const Tasks = (): JSX.Element => {
                   sx={{
                     color: colors.gray,
                     fontWeight: 'bold',
-                    fontSize: '1rem',
+                    fontSize: '1.4rem',
                   }}
                 >
                   {project.name}
