@@ -1,5 +1,6 @@
-import { Typography } from '@mui/joy';
-import Box from '@mui/joy/Box';
+import DeleteOutlineIcon from '@mui/icons-material/DeleteOutline';
+import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
+import { Box, Tooltip, Typography } from '@mui/joy';
 import { useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
@@ -60,8 +61,6 @@ const Task: React.FC = () => {
     }
   };
 
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
   const [taskToDelete, setTaskToDelete] = useState<TaskDetail | null>(null);
 
   useEffect(() => {
@@ -73,22 +72,24 @@ const Task: React.FC = () => {
 
   if (loading) {
     return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          color: colors.gray[500],
-        }}
-      >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading task
-        </Typography>
+      <main>
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+            height: '100%',
+            color: colors.gray[500],
+          }}
+        >
+          <Typography variant='plain' level='h1' mb={4}>
+            Loading task
+          </Typography>
 
-        <Loader />
-      </Box>
+          <Loader />
+        </Box>
+      </main>
     );
   }
 
@@ -97,185 +98,129 @@ const Task: React.FC = () => {
   }
 
   return (
-    <>
+    <main>
       <Box
         onClick={handleClick}
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
         }}
       >
         <GoBack />
       </Box>
 
-      <br />
-      <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-        {data ? (
-          <>
-            <Box
-              sx={{
-                borderRadius: 8,
-                padding: 5,
-                paddingBottom: 8,
-                bgcolor: 'white',
-                boxShadow: '2px 5px 4px rgba(0, 0, 0, 0.2)',
-              }}
-            >
-              <Box
-                sx={{
-                  display: 'flex',
-                  justifyContent: 'space-between',
-                  gap: '10px',
-                }}
-              >
-                <h1
-                  style={{
-                    color: 'gray',
-                    fontSize: '2rem',
-                    lineHeight: '1.1',
-                    letterSpacing: '1.5px',
-                  }}
-                >
-                  {data.title}
-                </h1>
+      {data ? (
+        <section className='bg-white rounded-xl p-6 overflow-hidden'>
+          <section className='flex-wrap grid grid-cols-3 mb-8'>
+            <h1 className='grow-0 truncate col-span-2 text-gray text-[2rem]'>{data.title}</h1>
 
+            <div className='flex justify-end items-center gap-5'>
+              <button onClick={handleEdit}>
+                <Tooltip title='Edit Task' size='sm'>
+                  <EditOutlinedIcon
+                    src={pencil}
+                    alt='Edit'
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
+                {showUpdate && <Update />}
+              </button>
+
+              <button onClick={() => setTaskToDelete(data)}>
+                <Tooltip title='Delete Task' size='sm'>
+                  <DeleteOutlineIcon
+                    src={trash_can}
+                    alt='Delete/Archive'
+                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                    className='text-gold'
+                  />
+                </Tooltip>
+              </button>
+            </div>
+          </section>
+
+          <section className='flex-wrap grid mb-8'>
+            <p className='grow-0 truncate'>{data.description}</p>
+          </section>
+
+          <section className='grid grid-cols-2 mb-8 justify-stretch'>
+            <div className='flex-initial grid md:grid-cols-2 lg:grid-cols-3 gap-4 place-items-start'>
+              <Box className='grid grid-cols-1'>
+                <p style={{ fontSize: '.9rem' }}>Start date</p>
                 <Box
                   sx={{
-                    alignContent: 'center',
+                    bgcolor: colors.lighterGray,
+                    padding: 0.5,
+                    borderRadius: 4,
                   }}
+                  className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: '15px',
-                    }}
-                  >
-                    <button onClick={handleEdit}>
-                      <img src={pencil} alt='Edit' className='w-6' />
-                      {showUpdate && <Update />}
-                    </button>
-
-                    <button onClick={() => setTaskToDelete(data)}>
-                      <img src={trash_can} alt='Delete/Archive' className='w-6' />
-                    </button>
-                  </Box>
+                  {dateParser(data.startDate)}
+                  <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
                 </Box>
               </Box>
 
-              <br />
-
-              <Box sx={{ width: '80%' }}>
-                <p>{data.description}</p>
-              </Box>
-
-              <br />
-              <br />
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  gap: '60px',
-                  alignItems: 'end',
-                }}
-              >
-                <Box>
-                  <p style={{ fontSize: '.9rem' }}>Start date</p>
-                  <Box
-                    sx={{
-                      display: 'flex',
-                      gap: '50px',
-                      bgcolor: colors.lighterGray,
-                      padding: 0.5,
-                      borderRadius: 4,
-                    }}
-                  >
-                    {dateParser(data.startDate)}
-                    <img src={calendar} alt='Calendar' className='w-6' />
-                  </Box>
-                </Box>
-
-                {data.endDate && (
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Due date</p>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: '50px',
-                        bgcolor: colors.lighterGray,
-                        padding: 0.5,
-                        borderRadius: 4,
-                      }}
-                    >
-                      {dateParser(data.endDate)}
-                      <img src={calendar} alt='Calendar' className='w-6' />
-                    </Box>
-                  </Box>
-                )}
-
-                {data.status && (
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Status</p>
-                    <StatusChip status={capitalize(data.status)} />
-                  </Box>
-                )}
-              </Box>
-
-              <br />
-              <br />
-
-              <Box
-                sx={{
-                  display: 'flex',
-                  gap: '80px',
-                }}
-              >
-                {data.employeeFirstName && data.employeeLastName && (
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Responsible</p>
-                    <ColorChip label={data.employeeFirstName} color={`${colors.null}`}></ColorChip>
-                  </Box>
-                )}
-                {data.waitingFor && (
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Waiting for</p>
-                    <ColorChip label={data.waitingFor} color={`${colors.null}`}></ColorChip>
-                  </Box>
-                )}
-                {data.workedHours && (
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
-                    <ColorChip label={`${data.workedHours}`} color={`${colors.extra}`}></ColorChip>
-                  </Box>
-                )}
-                <Box>
-                  <p style={{ fontSize: '.9rem' }}>Project</p>
-                  <ColorChip
-                    label={`${data.projectName}`}
-                    color={`${colors.lightGold}`}
-                  ></ColorChip>
+              <Box className='grid grid-cols-1'>
+                <p style={{ fontSize: '.9rem' }}>Due date</p>
+                <Box
+                  sx={{
+                    bgcolor: colors.lighterGray,
+                    padding: 0.5,
+                    borderRadius: 4,
+                  }}
+                  className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
+                >
+                  {dateParser(data.endDate)}
+                  <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
                 </Box>
               </Box>
 
-              <br />
-            </Box>
+              <Box>
+                <p style={{ fontSize: '.9rem' }}>Status</p>
+                <StatusChip status={capitalize(data.status)} />
+              </Box>
+            </div>
+          </section>
 
-            <DeleteModal
-              open={taskToDelete !== null}
-              setOpen={() => setTaskToDelete(null)}
-              title='Confirm Deletion'
-              description='Are you sure you want to delete this task?'
-              id={taskToDelete?.id || ''}
-              handleDeleteEmployee={(id: string) => {
-                onDelete(id);
-                setTaskToDelete(null);
-              }}
-            />
-          </>
-        ) : (
-          <p>Task not found</p>
-        )}
-      </main>
-    </>
+          <section className='grid grid-cols-2 justify-stretch'>
+            <div className='flex-initial grid md:grid-cols-2 lg:grid-cols-3 gap-4 place-items-start'>
+              <Box>
+                <p style={{ fontSize: '.9rem' }}>Responsible</p>
+                <ColorChip label={`${data.employeeFirstName}`} color={`${colors.null}`}></ColorChip>
+              </Box>
+
+              <Box>
+                <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
+                <ColorChip
+                  label={`${data.workedHours ? data.workedHours : 0}`}
+                  color={`${colors.extra}`}
+                ></ColorChip>
+              </Box>
+
+              <Box>
+                <p style={{ fontSize: '.9rem' }}>Project</p>
+                <ColorChip label={`${data.projectName}`} color={`${colors.lightGold}`}></ColorChip>
+              </Box>
+            </div>
+          </section>
+
+          <DeleteModal
+            open={taskToDelete !== null}
+            setOpen={() => setTaskToDelete(null)}
+            title='Confirm Deletion'
+            description='Are you sure you want to delete this task?'
+            id={taskToDelete?.id || ''}
+            handleDeleteEmployee={(id: string) => {
+              onDelete(id);
+              setTaskToDelete(null);
+            }}
+          />
+        </section>
+      ) : (
+        <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>Task not found</p>
+      )}
+    </main>
   );
 };
 

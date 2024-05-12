@@ -1,5 +1,6 @@
 import { DeleteOutline, KeyboardArrowDown } from '@mui/icons-material';
 import { Avatar, Chip, IconButton, Option, Select, Table, selectClasses } from '@mui/joy';
+import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
 import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
@@ -7,7 +8,9 @@ import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { Response } from '../../../types/response';
+import { Role } from '../../../types/role';
 import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
+import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import Loader from '../../common/Loader';
 
@@ -22,28 +25,22 @@ function toTitleCase(str: string) {
 }
 
 type Employee = {
-  imageUrl?: string;
+  id: string;
+  email: string;
   firstName: string;
   lastName: string;
-  email: string;
-  id: string;
+  imageUrl?: string;
   idRole: string;
 };
 
-interface Role {
-  id: string;
-  title: string;
-  createdAt: Date;
-  updatedAt: Date | null;
-}
-
 interface Props {
   searchTerm: string;
+  filterOption: string;
 }
 
-export default function EmployeeTable({ searchTerm }: Props) {
+export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const { setState } = useContext(SnackbarContext);
-  const [open, setOpen] = useState(false);
+  const [open, setOpen] = useState<boolean>(false);
   const reqEmployees = useHttp<Response<Employee>>(`/employee`, RequestMethods.GET);
   const reqRoles = useHttp<Response<Role>>(`/admin/roles`, RequestMethods.GET);
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
@@ -62,19 +59,22 @@ export default function EmployeeTable({ searchTerm }: Props) {
   }, [reqEmployees.error, setState]);
 
   useEffect(() => {
-    if (reqEmployees.data) {
-      const filteredEmployees = reqEmployees.data?.data.filter(employee => {
-        const fullName = `${employee.firstName} ${employee.lastName}`;
-        return fullName.toLowerCase().includes(searchTerm.toLowerCase());
-      });
-      setSearchResults(filteredEmployees as Employee[]);
-    }
-  }, [reqEmployees.data, searchTerm]);
+    const filteredEmployees =
+      reqEmployees.data?.data.filter(employee => {
+        const fullName = `${employee.firstName} ${employee.lastName}`.toLowerCase();
+        if (filterOption === 'Email') {
+          return employee.email.toLowerCase().includes(searchTerm.toLowerCase());
+        }
+        return fullName.includes(searchTerm.toLowerCase());
+      }) || [];
 
-  const handleRolChange = (newRoleId: string, userId: string): void => {
-    if (newRoleId === undefined || userId === undefined) return;
-    const doFetch = async (): Promise<void> => {
-      await axios.put(
+    setSearchResults(filteredEmployees);
+  }, [searchTerm, reqEmployees.data, filterOption]);
+
+  const handleRolChange = async (newRoleId: string, userId: string) => {
+    if (!newRoleId || !userId) return;
+    try {
+      const response = await axios.put(
         `${BASE_API_URL}/admin/role`,
         {
           userId: userId,
@@ -82,9 +82,22 @@ export default function EmployeeTable({ searchTerm }: Props) {
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
-      reqEmployees.sendRequest();
-    };
-    void doFetch();
+
+      if (response.status === 200) {
+        const updatedEmployees = searchResults.map(employee => {
+          if (employee.id === userId) {
+            return { ...employee, idRole: newRoleId };
+          }
+          return employee;
+        });
+        setSearchResults(updatedEmployees);
+        setState({ open: true, message: 'Role updated successfully', type: 'success' });
+      } else {
+        setState({ open: true, message: 'Failed to update role', type: 'danger' });
+      }
+    } catch (error) {
+      setState({ open: true, message: 'Failed to update role', type: 'danger' });
+    }
   };
 
   const handleDeleteEmployee = (id: string) => {
@@ -96,83 +109,83 @@ export default function EmployeeTable({ searchTerm }: Props) {
   const { employee: employeeContext } = useContext(EmployeeContext);
   const sessionEmployee = employeeContext?.employee.id as string;
 
+  if (reqEmployees.loading || reqRoles.loading) return <Loader />;
+
+  if (reqEmployees.data?.data.length === 0)
+    return <ComponentPlaceholder text='No employees found' />;
+
   return (
     <>
-      {reqEmployees.loading ? (
-        <Loader />
-      ) : (
-        <Table variant={'outlined'}>
-          <>
-            <thead>
-              <tr>
-                <th style={{ width: '10%' }}> Photo </th>
-                <th>Name</th>
-                <th>Role</th>
-                <th>Email</th>
-                <th style={{ width: '10%' }}></th>
-              </tr>
-            </thead>
-            <tbody>
-              {searchResults.map(employee => (
-                <tr key={employee.id}>
-                  <td>
-                    {employee.imageUrl ? <Avatar src={employee.imageUrl}></Avatar> : <Avatar />}
-                  </td>
-                  <td>
-                    {employee.firstName} {employee.lastName}{' '}
-                  </td>
-                  <td>
-                    <Select
-                      variant='outlined'
-                      color='neutral'
-                      indicator={<KeyboardArrowDown />}
-                      defaultValue={employee.idRole}
-                      disabled={sessionEmployee === employee.id}
-                      onChange={e => {
-                        if (e === null) return;
-                        handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
+      <Table>
+        <TableHead>
+          <TableRow>
+            <TableCell sx={{ width: '10%' }}>Photo</TableCell>
+            <TableCell>Name</TableCell>
+            <TableCell>Role</TableCell>
+            <TableCell>Email</TableCell>
+            <TableCell sx={{ width: '15%', textAlign: 'right' }}></TableCell>
+          </TableRow>
+        </TableHead>
+        <TableBody>
+          {searchResults.map(employee => (
+            <TableRow key={employee.id}>
+              <TableCell>
+                {employee.imageUrl ? <Avatar src={employee.imageUrl} /> : <Avatar />}
+              </TableCell>
+              <TableCell>
+                {employee.firstName} {employee.lastName}
+              </TableCell>
+              <TableCell>
+                <Select
+                  variant='outlined'
+                  color='neutral'
+                  indicator={<KeyboardArrowDown />}
+                  defaultValue={employee.idRole}
+                  disabled={sessionEmployee === employee.id}
+                  onChange={e => {
+                    if (!e || e === null) return;
+                    handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
+                  }}
+                  sx={{
+                    width: 150,
+                    [`& .${selectClasses.indicator}`]: {
+                      transition: '0.2s',
+                      [`&.${selectClasses.expanded}`]: {
+                        transform: 'rotate(-180deg)',
+                      },
+                    },
+                  }}
+                >
+                  {reqRoles.data?.data.map((role: Role) => (
+                    <Option aria-label={role.id} key={role.id} value={role.id}>
+                      {toTitleCase(role.title)}
+                    </Option>
+                  ))}
+                </Select>
+              </TableCell>
+              <TableCell>
+                <Chip className='w-full overflow' variant='soft'>
+                  {employee.email}
+                </Chip>
+              </TableCell>
+              <TableCell sx={{ textAlign: 'right' }}>
+                {' '}
+                {sessionEmployee !== employee.id && (
+                  <IconButton>
+                    <DeleteOutline
+                      onClick={() => {
+                        setOpen(true);
+                        setCurrentEmployeeId(employee.id);
                       }}
-                      sx={{
-                        width: 250,
-                        [`& .${selectClasses.indicator}`]: {
-                          transition: '0.2s',
-                          [`&.${selectClasses.expanded}`]: {
-                            transform: 'rotate(-180deg)',
-                          },
-                        },
-                      }}
-                    >
-                      {reqRoles.data?.data.map((role: Role) => (
-                        <Option aria-label={role.id} key={role.id} value={role.id}>
-                          {toTitleCase(role.title)}
-                        </Option>
-                      ))}
-                    </Select>
-                  </td>
-                  <td>
-                    <Chip className='w-full overflow' variant='soft'>
-                      {employee.email}
-                    </Chip>
-                  </td>
-                  <td>
-                    {sessionEmployee !== employee.id && (
-                      <IconButton>
-                        <DeleteOutline
-                          onClick={() => {
-                            setOpen(true);
-                            setCurrentEmployeeId(employee.id);
-                          }}
-                          style={{ color: colors.gold }}
-                        />
-                      </IconButton>
-                    )}
-                  </td>
-                </tr>
-              ))}
-            </tbody>
-          </>
-        </Table>
-      )}
+                      style={{ color: colors.gold }}
+                    />
+                  </IconButton>
+                )}
+              </TableCell>
+            </TableRow>
+          ))}
+        </TableBody>
+      </Table>
       <DeleteModal
         open={open}
         title='Delete Employee'
