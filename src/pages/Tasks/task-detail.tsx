@@ -1,7 +1,8 @@
 import { Button, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
+import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
@@ -34,10 +35,20 @@ const Task: React.FC = () => {
   const id = location.pathname.split('/').pop();
 
   const navigate = useNavigate();
+  const [notFound, setNotFound] = useState(false);
   const { data, loading, sendRequest, error } = useHttp<TaskDetail>(
     `${APIPath.TASK_DETAIL}/${id}`,
     RequestMethods.GET
   );
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   const handleClick = () => {
     navigate('/tasks');
@@ -68,6 +79,10 @@ const Task: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  if (notFound) {
+    return <Navigate to='/404' replace />;
+  }
 
   if (loading) {
     return (
@@ -103,6 +118,7 @@ const Task: React.FC = () => {
         sx={{
           display: 'flex',
           justifyContent: 'flex-start',
+          marginBottom: '10px',
         }}
       >
         <GoBack />
@@ -163,20 +179,41 @@ const Task: React.FC = () => {
                 </Box>
               </Box>
 
-              <Box className='grid grid-cols-1'>
-                <p style={{ fontSize: '.9rem' }}>Due date</p>
-                <Box
-                  sx={{
-                    bgcolor: colors.lighterGray,
-                    padding: 0.5,
-                    borderRadius: 4,
-                  }}
-                  className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
-                >
-                  {data.endDate ? dateParser(data.endDate) : 'No due date'}
-                  <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+              {data?.endDate ? (
+                <Box className='grid grid-cols-1'>
+                  <p style={{ fontSize: '.9rem' }}>Due date</p>
+                  <Box
+                    sx={{
+                      bgcolor: colors.lighterGray,
+                      padding: 0.5,
+                      borderRadius: 4,
+                      width: '180px',
+                    }}
+                    className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
+                  >
+                    {data.endDate ? dateParser(data.endDate) : 'No due date'}
+                    <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+                  </Box>
                 </Box>
-              </Box>
+              ) : (
+                <Box className='grid grid-cols-1'>
+                  <p style={{ fontSize: '.9rem' }}>Due date</p>
+                  <Box
+                    sx={{
+                      bgcolor: colors.lighterGray,
+                      padding: 0.5,
+                      borderRadius: 4,
+                      display: 'flex',
+                      justifyContent: 'space-between',
+                      width: '180px',
+                    }}
+                    className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
+                  >
+                    <p></p>
+                    <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
+                  </Box>
+                </Box>
+              )}
 
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Status</p>

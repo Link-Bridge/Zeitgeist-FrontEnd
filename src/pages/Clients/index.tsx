@@ -1,6 +1,6 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -127,20 +127,24 @@ const Clients = () => {
               {clientsRequest.error && <p>Error loading companies.</p>}
             </div>
 
-            {!clientsRequest.loading && !clientsRequest.error && companies ? (
-              <CardsGrid>
-                {filteredCompanies.map(company => (
-                  <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
-                    <ClientCard
-                      name={truncateText(company.name)}
-                      accountingHours={company.accountingHours || 0}
-                      legalHours={company.legalHours || 0}
-                      chargeableHours={company.chargeableHours || 0}
-                      totalProjects={company.totalProjects || 0}
-                    />
-                  </Link>
-                ))}
-              </CardsGrid>
+            {!clientsRequest.loading && !clientsRequest.error ? (
+              filteredCompanies.length > 0 ? (
+                <CardsGrid>
+                  {filteredCompanies.map(company => (
+                    <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
+                      <ClientCard
+                        name={truncateText(company.name)}
+                        accountingHours={company.accountingHours || 0}
+                        legalHours={company.legalHours || 0}
+                        chargeableHours={company.chargeableHours || 0}
+                        totalProjects={company.totalProjects || 0}
+                      />
+                    </Link>
+                  ))}
+                </CardsGrid>
+              ) : (
+                <ComponentPlaceholder text='No companies were found' />
+              )
             ) : (
               <ComponentPlaceholder text='No companies were found' />
             )}
@@ -148,6 +152,7 @@ const Clients = () => {
         }
       />
       <Route path={'/details/:clientId'} element={<ClientDetails />} />
+      <Route path='*' element={<Navigate to='/404' />} />
     </Routes>
   );
 };

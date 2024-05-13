@@ -244,7 +244,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientConstituton'
-              label='Constitucion date'
+              label='Constitution date'
               type='Date'
               variant='outlined'
               InputLabelProps={{ shrink: true }}

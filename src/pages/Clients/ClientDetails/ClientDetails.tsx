@@ -10,14 +10,16 @@ import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
+
 // import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
+import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import { Box, Button, Snackbar, Typography } from '@mui/joy';
-import { useNavigate, useParams } from 'react-router-dom';
+import { isAxiosError } from 'axios';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../../colors';
 import GoBack from '../../../components/common/GoBack';
 import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
@@ -48,6 +50,16 @@ const ClientDetails = () => {
     RequestMethods.GET
   );
   const { employee } = useContext(EmployeeContext);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   const navigate = useNavigate();
 
@@ -71,6 +83,10 @@ const ClientDetails = () => {
 
   if (loading) {
     return <div>Loading...</div>;
+  }
+
+  if (notFound) {
+    return <Navigate to='/404' replace />;
   }
 
   if (error) {
@@ -123,12 +139,10 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <>
-            <section className='flex-wrap grid grid-cols-3'>
-              <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>
-                {company.name}
-              </p>
-              <div className='flex justify-end items-center gap-5'>
-                <div className='flex items-center gap-5'>
+            <section className='grid grid-cols-1 lg:grid-cols-3 overflow-x-scroll'>
+              <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
+              <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
+                <div className='flex flex-wrap items-center gap-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip
                     color='primary'
@@ -167,15 +181,23 @@ const ClientDetails = () => {
                       height: '5px',
                       color: 'text-gold',
                     }}
-                    startDecorator={<ArchiveOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                    startDecorator={
+                      company?.archived ? (
+                        <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                      ) : (
+                        <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                      )
+                    }
                   >
-                    <Typography sx={{ color: colors.gold }}>Archive</Typography>
+                    <Typography sx={{ color: colors.gold }}>
+                      {company?.archived ? 'Unarchive' : 'Archive'}
+                    </Typography>
                   </Button>
                 )}
               </div>
             </section>
 
-            <section className='flex mt-8 justify-start gap-28'>
+            <section className='flex flex-wrap mt-8 gap-x-12 gap-y-4 justify-start align-between'>
               <article className='flex gap-4'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
