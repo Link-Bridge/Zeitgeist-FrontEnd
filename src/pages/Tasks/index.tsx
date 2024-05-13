@@ -1,4 +1,4 @@
-import { Route, Routes } from 'react-router-dom';
+import { Navigate, Route, Routes } from 'react-router-dom';
 import AssignedTasks from './assigned';
 import NewTask from './new';
 import TaskDetail from './task-detail';
@@ -11,6 +11,7 @@ const Tasks = () => {
       <Route path='/:projectId/create' element={<NewTask />} />
       <Route path='/:id' element={<TaskDetail />} />
       <Route path='/update/:id' element={<UpdateTask />} />
+      <Route path='*' element={<Navigate to='/404' />} />
     </Routes>
   );
 };
