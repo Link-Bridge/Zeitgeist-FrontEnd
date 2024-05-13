@@ -17,7 +17,7 @@ export interface Task {
   description: string;
   status: TaskStatus;
   startDate: Date;
-  endDate: Date;
+  endDate?: Date;
   workedHours: number;
   createdAt: Date;
   updatedAt: Date;
