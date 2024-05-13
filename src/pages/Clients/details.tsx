@@ -108,6 +108,7 @@ const ClientDetails = () => {
 
       <section className='bg-white rounded-xl p-6'>
         <ArchiveModal
+          sendRequest={sendRequest}
           toggleModal={ToggleModalArchive}
           open={openArchive}
           setOpen={setOpenArchive}
@@ -135,7 +136,13 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <>
-            <section className='grid grid-cols-1 lg:grid-cols-3 overflow-x-scroll'>
+            <EditClientFormModal
+              open={editModalOpen}
+              setOpen={setEditModalOpen}
+              clientData={company}
+              setRefetch={setRefetch}
+            />
+            <section className='grid grid-cols-1 lg:grid-cols-3 overflow-x-scroll lg:overflow-x-hidden'>
               <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
               <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
                 <div className='flex flex-wrap items-center gap-5'>
@@ -157,12 +164,6 @@ const ClientDetails = () => {
                 >
                   <Typography sx={{ color: colors.gold }}>Edit</Typography>
                 </Button>
-                <EditClientFormModal
-                  open={editModalOpen}
-                  setOpen={setEditModalOpen}
-                  clientData={company}
-                  setRefetch={setRefetch}
-                />
 
                 {isAdmin && (
                   <Button

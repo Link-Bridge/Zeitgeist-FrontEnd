@@ -11,6 +11,7 @@ import Colors from '../../colors';
 import useArchiveClient from '../../hooks/useArchiveClient';
 
 interface ModalInterface {
+  sendRequest: any;
   open: boolean;
   title: string;
   description: string;
@@ -21,6 +22,7 @@ interface ModalInterface {
 }
 
 export default function ArchiveModal({
+  sendRequest,
   open,
   setOpen,
   title,
@@ -37,6 +39,8 @@ export default function ArchiveModal({
       handleArchiveClient('success'); // This will update the UI
     } catch (error) {
       handleArchiveClient('error'); // This will update the UI
+    } finally {
+      sendRequest();
     }
   };
 
