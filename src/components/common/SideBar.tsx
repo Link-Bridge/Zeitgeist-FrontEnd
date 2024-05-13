@@ -1,18 +1,14 @@
 import { FolderShared, Home, SwitchAccount, Toc, ViewTimeline } from '@mui/icons-material';
-import { useContext, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
 import colors from '../../colors';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { RoutesPath } from '../../utils/constants';
 
 const SideBar = () => {
-  const [activeItem, setActiveItem] = useState<RoutesPath>(RoutesPath.HOME);
   const { employee } = useContext(EmployeeContext);
-
-  const handleItemClick = (href: string) => {
-    setActiveItem(href as RoutesPath);
-  };
+  const pathname = useLocation().pathname;
 
   const isAdmin = employee?.role === 'Admin';
 
@@ -39,14 +35,13 @@ const SideBar = () => {
               <li
                 key={item.href}
                 className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
-                onClick={() => handleItemClick(item.href)}
               >
                 <Link
                   to={item.href}
                   className='flex items-center gap-3 px-9 py-5 opacity'
                   style={{
                     color: colors.lightGold,
-                    opacity: activeItem === item.href ? 1 : 0.7,
+                    opacity: pathname.includes(item.href) ? 1 : 0.7,
                   }}
                 >
                   <item.icon></item.icon>
