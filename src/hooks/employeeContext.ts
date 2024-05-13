@@ -1,9 +1,15 @@
 import { createContext } from 'react';
-import { EmployeeReponse } from '../types/employee';
+import { EmployeeEntity } from '../types/employee';
+
+export type EmployeeBodyType = {
+  employee: EmployeeEntity;
+  role: string;
+  department: string;
+};
 
 export type EmployeeContextType = {
-  employee: EmployeeReponse | null;
-  setEmployee: (employee: EmployeeReponse) => void;
+  employee: EmployeeBodyType | null;
+  setEmployee: (employee: EmployeeBodyType) => void;
 };
 
 export const EmployeeContext = createContext<EmployeeContextType>({

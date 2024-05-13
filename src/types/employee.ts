@@ -11,7 +11,9 @@ export interface EmployeeEntity {
 }
 
 export interface EmployeeReponse {
-  employee: EmployeeEntity;
-  role: string;
-  department: string;
+  data: {
+    employee: EmployeeEntity;
+    role: string;
+    department: string;
+  };
 }
