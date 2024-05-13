@@ -96,7 +96,7 @@ const EditProject = () => {
 
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
     if (form.success)
-      setState({ open: true, message: 'Project updated successfully!', type: 'success' });
+      setState({ open: true, message: 'Project updated successfully.', type: 'success' });
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [project, companies, errorProject, errorCompanies, form.error, form.success, setState]);
@@ -119,16 +119,51 @@ const EditProject = () => {
     setDisableButton(false);
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
     if (form.formState.startDate && form.formState.endDate) {
-      if (
-        dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate)) ||
-        dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))
-      ) {
+      if (dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate))) {
         return true;
       }
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const isStartDateAfterEndDate = () => {
+    if (form.formState.startDate && form.formState.endDate) {
+      if (dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))) {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = form.formState.startDate ? new Date(form.formState.startDate) : null;
+    if (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear()) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = form.formState.endDate ? new Date(form.formState.endDate) : null;
+    if (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear()) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const datesAreNotValid = () => {
+    return (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    );
   };
 
   if (form.success) {
@@ -264,7 +299,7 @@ const EditProject = () => {
                       if (!e?.toDate()) {
                         setState({
                           open: true,
-                          message: 'Start date is required',
+                          message: 'Start date is required.',
                           type: 'danger',
                         });
                         return setStartDate(false);
@@ -274,6 +309,18 @@ const EditProject = () => {
                         setState({
                           open: true,
                           message: 'Start date cannot be after end date.',
+                          type: 'danger',
+                        });
+                        return setStartDate(false);
+                      } else if (
+                        e &&
+                        (!e?.toDate()?.getDate() ||
+                          !e?.toDate()?.getMonth() ||
+                          !e?.toDate()?.getFullYear())
+                      ) {
+                        setState({
+                          open: true,
+                          message: 'Please enter a valid date.',
                           type: 'danger',
                         });
                         return setStartDate(false);
@@ -299,6 +346,17 @@ const EditProject = () => {
                         setState({
                           open: true,
                           message: 'End date cannot be before start date.',
+                          type: 'danger',
+                        });
+                      } else if (
+                        e &&
+                        (!e?.toDate()?.getDate() ||
+                          !e?.toDate()?.getMonth() ||
+                          !e?.toDate()?.getFullYear())
+                      ) {
+                        setState({
+                          open: true,
+                          message: 'Please enter a valid date.',
                           type: 'danger',
                         });
                       } else {
