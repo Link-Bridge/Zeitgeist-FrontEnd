@@ -1,4 +1,4 @@
-import { Chip } from '@mui/material';
+import { Chip } from '@mui/joy';
 
 interface ColorChipProps {
   label: string;
@@ -7,10 +7,9 @@ interface ColorChipProps {
 
 function ColorChip(props: ColorChipProps) {
   return (
-    <Chip
-      label={props.label}
-      style={{ backgroundColor: props.color, color: 'black', fontSize: '1rem' }}
-    />
+    <Chip style={{ backgroundColor: props.color, color: 'black', fontSize: '1rem' }}>
+      {props.label}
+    </Chip>
   );
 }
 

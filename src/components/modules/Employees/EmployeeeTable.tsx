@@ -101,8 +101,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   };
 
   const handleDeleteEmployee = (id: string) => {
-    if (reqEmployees.data)
-      reqEmployees.data.data = reqEmployees.data.data.filter(employee => employee.id !== id);
+    if (reqEmployees.data) {
+      const updatedEmployees = searchResults.filter(employee => employee.id !== id);
+      setSearchResults(updatedEmployees);
+    }
     setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
   };
 

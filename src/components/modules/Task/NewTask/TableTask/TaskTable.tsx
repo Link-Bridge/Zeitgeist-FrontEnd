@@ -26,7 +26,7 @@ import TaskActionsMenu from '../../../../common/TaskActionsMenu';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -171,11 +171,8 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                       <GenericDropdown
                         options={Object.values(TaskStatus)}
                         defaultValue={task.status}
-                        onValueChange={value => handleStatusChange(task.id, value)}
+                        onChange={value => handleStatusChange(task.id, value as TaskStatus)}
                         colorMap={statusColorMap}
-                        sx={{
-                          fontSize: '0.9rem',
-                        }}
                       />
                     </TableCell>
                     <TableCell>
@@ -189,7 +186,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                       />
                     </TableCell>
                     <TableCell sx={{ fontSize: '0.9rem' }}>
-                      {dateToShortString(String(task.endDate))}
+                      {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
                     </TableCell>
                     <TableCell>
                       <TaskActionsMenu

@@ -1,11 +1,11 @@
-import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
+import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Button, Snackbar, Typography } from '@mui/joy';
-import { Chip } from '@mui/material';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import { Box, Button, Chip, Snackbar, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
@@ -140,11 +140,9 @@ const ClientDetails = () => {
               <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
                 <div className='flex flex-wrap items-center gap-5'>
                   <Typography>Constitution date:</Typography>
-                  <Chip
-                    color='primary'
-                    variant='outlined'
-                    label={formatDate(company.constitutionDate ?? null)}
-                  />
+                  <Chip color='primary' variant='outlined'>
+                    {formatDate(company.constitutionDate ?? null)}
+                  </Chip>
                 </div>
                 <Button
                   onClick={handleEditClick}
@@ -179,9 +177,9 @@ const ClientDetails = () => {
                     }}
                     startDecorator={
                       company?.archived ? (
-                        <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
                       ) : (
-                        <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
                       )
                     }
                   >

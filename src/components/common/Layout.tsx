@@ -39,7 +39,7 @@ const Layout = ({ children }: LayoutProps) => {
       <SideBar />
       <div className='flex flex-col h-full w-full min-w-0 flex-1 px-14 pb-14'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-3 min-h-0'>{children}</section>
+        <section className='flex flex-col flex-1 mt-3 min-h-0 min-w-0'>{children}</section>
       </div>
     </main>
   );

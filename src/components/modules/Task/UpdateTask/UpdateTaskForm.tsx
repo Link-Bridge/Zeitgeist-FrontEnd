@@ -16,7 +16,7 @@ import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -47,12 +47,13 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [endDate, setendDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isPosting, setIsPosting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -102,12 +103,18 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    const startDateJS = date?.toDate();
     if (date && endDate && date.isAfter(endDate)) {
       setState({
         open: true,
         message: 'Start date cannot be after due date.',
         type: 'danger',
       });
+    } else if (
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
     }
@@ -115,21 +122,27 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    const endDateJS = date?.toDate();
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
       setState({
         open: true,
-        message: 'Due date cannot be before start date.',
+        message: 'End date cannot be before start date.',
         type: 'danger',
       });
+    } else if (
+      endDate &&
+      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
     } else {
       setState({ open: false, message: '' });
     }
 
-    setendDate(date);
+    setEndDate(date);
   };
 
   const handleStatusSelect = (value: TaskStatus) => {
@@ -182,7 +195,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       setTitle(data.title);
       setDescription(data.description);
       setStartDate(dayjs(data.startDate));
-      setendDate(dayjs(data.endDate));
+      setEndDate(dayjs(data.endDate));
       setStatus(data.status);
       setAssignedEmployee(data.employeeFirstName + ' ' + data.employeeLastName);
       setWorkedHours(data.workedHours?.toString() ?? '');
@@ -198,23 +211,13 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleSubmit = async () => {
-    if (endDate && startDate && endDate.isBefore(startDate)) {
-      setErrors({
-        ...errors,
-        endDate: 'Due date cannot be before start date',
-      });
-      return;
-    }
-
-    setErrors({});
-
     const payload: UpdatedTask = {
       id: idTask as string,
       title: title,
       description: description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      endDate: endDate?.toISOString() ?? '',
+      endDate: endDate !== null ? endDate?.toISOString() : null,
       workedHours: workedHours ?? '0.0',
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
@@ -251,14 +254,46 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     }
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
+    return endDate && startDate && endDate.isBefore(startDate);
+  };
+
+  const isStartDateAfterEndDate = () => {
+    return endDate && startDate && startDate.isAfter(endDate);
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = endDate?.toDate();
+    if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = startDate?.toDate();
     if (
-      (endDate && startDate && endDate.isBefore(startDate)) ||
-      (endDate && startDate && startDate.isAfter(endDate))
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
       return true;
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const datesAreNotValid = () => {
+    if (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    ) {
+      return true;
+    } else {
+      return false;
+    }
   };
 
   return (
@@ -334,13 +369,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <GenericDropdown
                 defaultValue={data.status as TaskStatus}
                 options={Object.values(TaskStatus)}
-                onValueChange={handleStatusSelect}
+                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
                 placeholder='Select status'
                 colorMap={statusColorMap}
-                sx={{
-                  color: colors.gray,
-                  borderColor: errors['status'] ? colors.danger : undefined,
-                }}
               />
             </Item>
           </Grid>
@@ -354,7 +385,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <GenericDropdown
                 defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
                 options={getEmployeeNames()}
-                onValueChange={handleAssignedEmployee}
+                onChange={handleAssignedEmployee}
                 placeholder='Select employee ...'
               />
             </Item>
@@ -385,8 +416,20 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Grid>
             <Item>
               <ModifyButton
-                onClick={handleSubmit}
-                disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+                onClick={() => {
+                  setIsPosting(true);
+                  handleSubmit();
+                  setTimeout(() => {
+                    setIsPosting(false);
+                  }, 3000);
+                }}
+                disabled={
+                  hasErrors() ||
+                  hasEmptyFields() ||
+                  datesAreNotValid() ||
+                  hasWrongLength() ||
+                  isPosting
+                }
               />
             </Item>
           </Grid>

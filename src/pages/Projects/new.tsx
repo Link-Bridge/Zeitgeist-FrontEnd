@@ -114,13 +114,13 @@ const NewProject = () => {
         <GoBack />
       </Box>
       <Card
-        className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+        className='bg-white flex-1 font-montserrat min-h-0 overflow-y-scroll min-w-0'
         sx={{ padding: '30px' }}
       >
         {req.loading ? (
           <Loader />
         ) : (
-          <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
+          <form className='flex flex-col gap-4 min-w-0 w-full' onSubmit={form.handleSubmit}>
             <FormControl>
               <FormLabel className='font-montserrat'>
                 Project Name <span className='text-red-600'>*</span>
@@ -151,10 +151,11 @@ const NewProject = () => {
                   borderRadius: '4px',
                   border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
                 }}
+                className='min-w-0'
               />
             </FormControl>
-            <section className='flex flex-row gap-4'>
-              <FormControl className='flex-1'>
+            <section className='flex lg:flex-row gap-4 flex-col'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
                 </FormLabel>
@@ -164,7 +165,7 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>
                   Category <span className='text-red-600'>*</span>
                 </FormLabel>
@@ -174,7 +175,7 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>Matter</FormLabel>
                 <Input
                   value={form.formState.matter}

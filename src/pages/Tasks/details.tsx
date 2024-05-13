@@ -179,7 +179,7 @@ const TaskDetails: React.FC = () => {
                 </Box>
               </Box>
 
-              {data.endDate ? (
+              {data?.endDate ? (
                 <Box className='grid grid-cols-1'>
                   <p style={{ fontSize: '.9rem' }}>Due date</p>
                   <Box
@@ -191,7 +191,7 @@ const TaskDetails: React.FC = () => {
                     }}
                     className='grid md:grid-cols-1 lg:grid-cols-2 justify-stretch'
                   >
-                    {dateParser(data.endDate)}
+                    {data.endDate ? dateParser(data.endDate) : 'No due date'}
                     <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
                   </Box>
                 </Box>
@@ -226,7 +226,14 @@ const TaskDetails: React.FC = () => {
             <div className='flex-initial grid md:grid-cols-2 lg:grid-cols-3 gap-4 place-items-start'>
               <Box>
                 <p style={{ fontSize: '.9rem' }}>Responsible</p>
-                <ColorChip label={`${data.employeeFirstName}`} color={`${colors.null}`}></ColorChip>
+                {data.employeeFirstName ? (
+                  <ColorChip
+                    label={`${data.employeeFirstName}`}
+                    color={`${colors.null}`}
+                  ></ColorChip>
+                ) : (
+                  <ColorChip label='No employee assigned' color={`${colors.null}`}></ColorChip>
+                )}
               </Box>
 
               <Box>
