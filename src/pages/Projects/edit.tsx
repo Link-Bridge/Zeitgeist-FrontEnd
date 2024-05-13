@@ -140,11 +140,8 @@ const EditProject = () => {
   };
 
   const isInvalidStartDate = () => {
-    const startDateJS = form.formState.startDate;
-    if (
-      form.formState.startDate &&
-      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
-    ) {
+    const startDateJS = form.formState.startDate ? new Date(form.formState.startDate) : null;
+    if (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear()) {
       return true;
     } else {
       return false;
@@ -152,11 +149,8 @@ const EditProject = () => {
   };
 
   const isInvalidEndDate = () => {
-    const endDateJS = form.formState.endDate;
-    if (
-      form.formState.endDate &&
-      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
-    ) {
+    const endDateJS = form.formState.endDate ? new Date(form.formState.endDate) : null;
+    if (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear()) {
       return true;
     } else {
       return false;
