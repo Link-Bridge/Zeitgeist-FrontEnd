@@ -5,9 +5,9 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Button, Card, Chip as MuiChip, Option, Select, Typography } from '@mui/joy';
 import { Chip } from '@mui/material';
-import axios from 'axios';
+import axios, { isAxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Link, useParams } from 'react-router-dom';
+import { Link, Navigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
@@ -53,6 +53,8 @@ const ProjectDetails = () => {
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
 
+  const [notFound, setNotFound] = useState(false);
+
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
@@ -61,6 +63,15 @@ const ProjectDetails = () => {
   const toggleModal = () => {
     setOpen(!open);
   };
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   const {
     data: company,
@@ -160,10 +171,19 @@ const ProjectDetails = () => {
     }
   }
 
+  if (notFound) {
+    return <Navigate to='/404' replace />;
+  }
+
   return (
     <>
       {open && (
-        <ModalEditConfirmation project={data} open={open} setOpen={setOpen} refetch={sendRequest} />
+        <ModalEditConfirmation
+          project={data!}
+          open={open}
+          setOpen={setOpen}
+          refetch={sendRequest}
+        />
       )}
       <Box
         sx={{

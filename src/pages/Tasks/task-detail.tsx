@@ -1,7 +1,8 @@
 import { Button, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
+import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useLocation, useNavigate } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
@@ -34,10 +35,20 @@ const Task: React.FC = () => {
   const id = location.pathname.split('/').pop();
 
   const navigate = useNavigate();
+  const [notFound, setNotFound] = useState(false);
   const { data, loading, sendRequest, error } = useHttp<TaskDetail>(
     `${APIPath.TASK_DETAIL}/${id}`,
     RequestMethods.GET
   );
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   const handleClick = () => {
     navigate('/tasks');
@@ -68,6 +79,10 @@ const Task: React.FC = () => {
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  if (notFound) {
+    return <Navigate to='/404' replace />;
+  }
 
   if (loading) {
     return (
