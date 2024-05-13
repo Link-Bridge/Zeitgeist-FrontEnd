@@ -71,11 +71,7 @@ export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClie
               key={project.id}
               onClick={() => setSelectedProjectId(project.id)}
             >
-              <ProjectCard
-                name={project.name}
-                status={project.status}
-                department={project.area}
-              />
+              <ProjectCard name={project.name} status={project.status} department={project.area} />
             </Link>
           ))}
         </section>

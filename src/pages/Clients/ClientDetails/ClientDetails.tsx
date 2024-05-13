@@ -217,7 +217,7 @@ const ClientDetails = () => {
             </section>
           </>
         )}
-        <Divider sx={{ 'marginTop': '30px' }} />
+        <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
 
