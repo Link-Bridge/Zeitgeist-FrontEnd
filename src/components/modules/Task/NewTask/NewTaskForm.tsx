@@ -10,6 +10,7 @@ import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
+import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Item, StyledSheet } from '../styled';
 
