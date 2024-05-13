@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import { Button } from '@mui/joy';
 import colors from '../../colors';
 
 interface ModifyButtonProps {
@@ -17,7 +17,6 @@ interface ModifyButtonProps {
 const ModifyButton = ({ onClick, disabled }: ModifyButtonProps) => {
   return (
     <Button
-      variant='contained'
       onClick={onClick}
       disabled={disabled}
       sx={{

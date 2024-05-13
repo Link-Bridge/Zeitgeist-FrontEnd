@@ -1,4 +1,4 @@
-import Button from '@mui/material/Button';
+import { Button } from '@mui/joy';
 
 interface SendButtonProps {
   onClick?: () => void;
@@ -16,7 +16,6 @@ interface SendButtonProps {
 const SendButton = ({ onClick, disabled }: SendButtonProps) => {
   return (
     <Button
-      variant='contained'
       onClick={onClick}
       disabled={disabled}
       sx={{
