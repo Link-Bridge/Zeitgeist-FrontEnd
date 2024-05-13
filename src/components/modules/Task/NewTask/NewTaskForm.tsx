@@ -104,12 +104,15 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
+    const startDateJS = date?.toDate();
     if (date && endDate && date.isAfter(endDate)) {
       setState({
         open: true,
         message: 'Start date cannot be after end date.',
         type: 'danger',
       });
+    } else if (startDate && (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
     }
@@ -117,6 +120,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    const endDateJS = date?.toDate();
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
@@ -125,6 +129,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         message: 'End date cannot be before start date.',
         type: 'danger',
       });
+    } else if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
     } else {
@@ -221,14 +227,42 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     }
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
+    return endDate && startDate && endDate.isBefore(startDate);
+  };
+
+  const isStartDateAfterEndDate = () => {
+    return endDate && startDate && startDate.isAfter(endDate);
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = endDate?.toDate();
+    if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = startDate?.toDate();
     if (
-      (endDate && startDate && endDate.isBefore(startDate)) ||
-      (endDate && startDate && startDate.isAfter(endDate))
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
       return true;
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const datesAreNotValid = () => {
+    return (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    );
   };
 
   if (projectId === '') {
