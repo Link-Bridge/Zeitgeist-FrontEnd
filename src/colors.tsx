@@ -37,14 +37,14 @@ const colors = {
 export default colors;
 
 export const statusChipColorCombination = {
-  cancelled: { bg: '#FF7A7A', font: '#4A0B0B' },
-  notStarted: { bg: '#E6A9A9', font: '#7D1212' },
-  delayed: { bg: '#FFC774', font: '#7A4900' },
-  inProgerss: { bg: '#FFE598', font: '#896A10' },
-  accepted: { bg: '#B7D7A8', font: '#53664B' },
-  done: { bg: '#6AA84F', font: '#BCEFA6' },
-  postponed: { bg: '#A0C5E8', font: '#485A6C' },
-  underRevision: { bg: '#D7B2F0', font: '#764D91' },
-  inQuotation: { bg: '#878FD2', font: '#273086' },
-  default: { bg: '#C4C4C4', font: '#424242' },
+  cancelled: { bg: '#FF7A7A', bgHover: '#E25454', font: '#4A0B0B' },
+  notStarted: { bg: '#E6A9A9', bgHover: '#C67878', font: '#7D1212' },
+  delayed: { bg: '#FFC774', bgHover: '#E6A34D', font: '#7A4900' },
+  inProgress: { bg: '#FFE598', bgHover: '#FFD966', font: '#896A10' },
+  accepted: { bg: '#B7D7A8', bgHover: '#8FC88F', font: '#53664B' },
+  done: { bg: '#6AA84F', bgHover: '#4E993B', font: '#BCEFA6' },
+  postponed: { bg: '#A0C5E8', bgHover: '#7DAEDB', font: '#485A6C' },
+  underRevision: { bg: '#D7B2F0', bgHover: '#B88BDC', font: '#764D91' },
+  inQuotation: { bg: '#A6AFF5', bgHover: '#8093E6', font: '#273086' },
+  default: { bg: '#C4C4C4', bgHover: '#A0A0A0', font: '#424242' },
 };

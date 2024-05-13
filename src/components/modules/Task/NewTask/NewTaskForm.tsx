@@ -1,22 +1,21 @@
-import { Box, Chip, FormLabel, Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { Box, Chip, FormLabel, Grid, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
-import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -48,12 +47,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isPosting, setIsPosting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -103,10 +103,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
-    if (date && dueDate && date.isAfter(dueDate)) {
+    if (date && endDate && date.isAfter(endDate)) {
       setState({
         open: true,
-        message: 'Start date cannot be after due date.',
+        message: 'Start date cannot be after end date.',
         type: 'danger',
       });
     } else {
@@ -115,13 +115,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setStartDate(date);
   };
 
-  const handleDueDateChange = (date: dayjs.Dayjs | null) => {
+  const handleEndDateChange = (date: dayjs.Dayjs | null) => {
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
       setState({
         open: true,
-        message: 'Due date cannot be before start date.',
+        message: 'End date cannot be before start date.',
         type: 'danger',
       });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
@@ -130,7 +130,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       setState({ open: false, message: '' });
     }
 
-    setDueDate(date);
+    setEndDate(date);
   };
 
   const handleStatusSelect = (value: TaskStatus) => {
@@ -176,7 +176,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      dueDate: dueDate?.toISOString() ?? null,
+      endDate: endDate !== null ? endDate?.toISOString() : null,
       workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
@@ -200,7 +200,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setTitle('');
     setDescription('');
     setStartDate(null);
-    setDueDate(null);
+    setEndDate(null);
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours('');
@@ -222,8 +222,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
 
   const datesAreNotValid = () => {
     if (
-      (dueDate && startDate && dueDate.isBefore(startDate)) ||
-      (dueDate && startDate && startDate.isAfter(dueDate))
+      (endDate && startDate && endDate.isBefore(startDate)) ||
+      (endDate && startDate && startDate.isAfter(endDate))
     ) {
       return true;
     }
@@ -290,10 +290,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <Item>
               <FormLabel>End Date</FormLabel>
               <DatePicker
-                value={dueDate}
-                onChange={handleDueDateChange}
+                value={endDate}
+                onChange={handleEndDateChange}
                 sx={{
-                  borderColor: errors['dueDate'] ? colors.danger : undefined,
+                  borderColor: errors['endDate'] ? colors.danger : undefined,
                 }}
               />
             </Item>
@@ -305,13 +305,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               </FormLabel>
               <GenericDropdown
                 options={Object.values(TaskStatus)}
-                onValueChange={handleStatusSelect}
+                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
                 placeholder='Select status'
                 colorMap={statusColorMap}
-                sx={{
-                  color: colors.gray,
-                  borderColor: errors['status'] ? colors.danger : undefined,
-                }}
               />
             </Item>
           </Grid>
@@ -324,7 +320,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormLabel>Assign Employee</FormLabel>
               <GenericDropdown
                 options={getEmployeeNames()}
-                onValueChange={handleAssignedEmployee}
+                onChange={handleAssignedEmployee}
                 placeholder='Select employee ...'
               />
             </Item>
@@ -379,20 +375,23 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <Item>
               <SendButton
                 onClick={() => {
+                  setIsPosting(true);
                   handleSubmit();
+                  setTimeout(() => {
+                    setIsPosting(false);
+                  }, 3000);
                 }}
-                disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+                disabled={
+                  hasErrors() ||
+                  hasEmptyFields() ||
+                  datesAreNotValid() ||
+                  hasWrongLength() ||
+                  isPosting
+                }
               />
             </Item>
           </Grid>
         </Grid>
-
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </main>
     </StyledSheet>
   );

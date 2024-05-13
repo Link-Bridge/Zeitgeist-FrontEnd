@@ -1,4 +1,4 @@
-import { Chip } from '@mui/material';
+import { Chip } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { useContext, useEffect, useState } from 'react';
 import ArchiveModal from '../../../components/common/ArchiveModal';
@@ -144,11 +144,9 @@ const ClientDetails = () => {
               <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
                 <div className='flex flex-wrap items-center gap-5'>
                   <Typography>Constitution date:</Typography>
-                  <Chip
-                    color='primary'
-                    variant='outlined'
-                    label={formatDate(company.constitutionDate ?? null)}
-                  />
+                  <Chip color='primary' variant='outlined'>
+                    {formatDate(company.constitutionDate ?? null)}
+                  </Chip>
                 </div>
                 <Button
                   onClick={handleEditClick}

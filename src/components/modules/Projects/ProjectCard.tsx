@@ -39,6 +39,7 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
+            fontSize: '1rem',
           }}
         >
           {department}

@@ -5,7 +5,7 @@ export interface BareboneTask {
   description: string;
   status: TaskStatus;
   startDate: string | null;
-  dueDate: string | null;
+  endDate: string | null;
   workedHours: string | null;
   idProject: string;
   idEmployee: string;
@@ -47,7 +47,7 @@ export interface UpdatedTask {
   description?: string;
   status?: TaskStatus;
   startDate?: string;
-  endDate?: string;
+  endDate?: string | null;
   workedHours?: string;
   idProject?: string;
   idEmployee?: string;

@@ -24,7 +24,7 @@ type TaskListTableProps = {
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -160,7 +160,7 @@ const TaskListTable = ({
                 <td>
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
-                    onValueChange={value => handleStatusChange(task.id, value)}
+                    onChange={value => handleStatusChange(task.id, value as TaskStatus)}
                     defaultValue={task.status as TaskStatus}
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
