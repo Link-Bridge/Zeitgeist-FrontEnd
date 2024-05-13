@@ -1,145 +1,74 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
-import { Box } from '@mui/joy';
-import { FormControl, MenuItem, Select, SelectChangeEvent, SelectProps } from '@mui/material';
-import React, { useEffect, useState } from 'react';
-import colors from '../../colors';
+import { Chip, Option, Select, selectClasses } from '@mui/joy';
+import { useEffect, useState } from 'react';
 
 interface ColorMapEntity {
   bg: string;
   font: string;
+  bgHover?: string;
 }
-
-interface GenericDropdownProps<T extends string | number>
-  extends Omit<SelectProps<T>, 'onChange' | 'value'> {
-  backgroundColor?: string;
-  options: T[];
-  onValueChange: (value: T) => void;
-  renderValue?: (value: T) => React.ReactNode;
+export interface GenericDropdownProps {
+  defaultValue?: string;
+  options: string[];
+  values?: string[];
+  colorMap?: Record<string, ColorMapEntity>;
+  onChange: (newValue: string) => void;
   placeholder?: string;
-  colorMap?: Record<T, ColorMapEntity>;
-  defaultValue?: T;
 }
 
-/**
- * Generic dropdown component.
- *
- * @component
- * @template T - The type of the options in the dropdown
- *
- * @param props: Object - The component props
- * @param props.backgroundColor: string - The background color of the dropdown
- * @param props.options: T[] - The options to display in the dropdown
- * @param props.onValueChange: (value: T) => void - The callback function invoked
- *                                             when an option is selected
- * @param props.renderValue: (value: T) => React.ReactNode - Optional custom
- *                                        rendering function for selected value
- * @param props.placeholder: string - Optional placeholder text when no
- *                                    option is selected
- * @param props.colorMap: Record<T, string> - Optional color map for the
- *                                            options in the dropdown
- * @param props.defaultValue: T - Optional default value for the dropdown
- *
- * @returns {TSX.element} - The dropdown component
- */
-const GenericDropdown = <T extends string | number>({
-  backgroundColor,
-  options,
-  onValueChange,
-  renderValue,
-  placeholder,
-  colorMap,
-  defaultValue,
-}: GenericDropdownProps<T>) => {
-  const [option, setOptions] = useState<T | ''>(defaultValue ?? '');
-  const [isEmpty, setIsEmpty] = useState(true);
-
-  const handleChange = (event: SelectChangeEvent<T>) => {
-    const selectedOption = event.target.value as T;
-
-    setOptions(selectedOption);
-    onValueChange(selectedOption);
-  };
-
-  const handleOpen = () => {
-    setIsEmpty(false);
-  };
-
-  const renderValueWithColor = (value: T) => {
-    const isPlaceholder = !value;
-    const colorCombination = colorMap?.[value];
-
-    return (
-      <Box
-        sx={{
-          backgroundColor: colorCombination?.bg,
-          color: colorCombination?.font,
-          borderRadius: 30,
-          padding: '0 12px',
-          fontSize: '0.875rem',
-          lineHeight: '30px',
-          height: isPlaceholder ? 25 : 'auto',
-          minWidth: 50,
-          whiteSpace: 'nowrap',
-        }}
-      >
-        {isPlaceholder ? placeholder : value}
-      </Box>
-    );
-  };
+function GenericDropdown(props: GenericDropdownProps) {
+  const [currentValue, setCurrentValue] = useState<string | null>(null);
 
   useEffect(() => {
-    setOptions(defaultValue ?? '');
-  }, [defaultValue]);
+    setCurrentValue(props.defaultValue ?? null);
+  }, [props.defaultValue]);
 
+  function handleChange(_: React.SyntheticEvent | null, newVal: unknown) {
+    const val = String(newVal);
+    setCurrentValue(val);
+    props.onChange(val);
+  }
+
+  let colorCombination: ColorMapEntity = {
+    bg: '#C4C4C4',
+    bgHover: '#A0A0A0',
+    font: '#424242',
+  };
+  if (props.colorMap) {
+    colorCombination = props.colorMap[currentValue ?? ''] ?? colorCombination;
+  }
   return (
-    <FormControl>
-      <Select
-        value={option}
-        onChange={handleChange}
-        onOpen={handleOpen}
-        displayEmpty
-        renderValue={renderValue || renderValueWithColor}
-        variant='standard'
-        disableUnderline={true}
-        IconComponent={KeyboardArrowDown}
-        sx={{
-          borderRadius: 30,
-          background: (option && colorMap?.[option]?.bg) || backgroundColor || colors.lighterGray,
-          '& .MuiSelect-select': {
-            padding: '1px 6px',
-            fontSize: '0.875rem',
-            textAlign: 'center',
-            lineHeight: '30px',
-            height: isEmpty ? 25 : 'auto',
-            minHeight: 30,
-            transition: 'height 0.2s ease',
-            overflow: 'hidden',
+    <Chip
+      component={Select}
+      indicator={<KeyboardArrowDown />}
+      onChange={handleChange}
+      value={currentValue}
+      placeholder={props.placeholder}
+      sx={{
+        bgcolor: colorCombination?.bg,
+        color: colorCombination?.font,
+        width: 240,
+        fontSize: '1rem',
+        [`&:hover`]: {
+          bgcolor: colorCombination.bgHover,
+        },
+        [`& .${selectClasses.indicator}`]: {
+          transition: '0.2s',
+          [`&.${selectClasses.expanded}`]: {
+            transform: 'rotate(-180deg)',
           },
-
-          '& .MuiMenu-paper': {
-            borderRadius: 8,
-            boxShadow: '0px 4px 8px rgba(0, 0, 0, 0.1)',
-          },
-
-          '& .MuiSvgIcon-root': {
-            color: (option && colorMap?.[option]?.font) || colors.gray,
-          },
-        }}
-      >
-        {placeholder && (
-          <MenuItem value='' disabled>
-            {placeholder}
-          </MenuItem>
-        )}
-
-        {options.map((option, index) => (
-          <MenuItem key={`${option}-${index}`} value={option}>
+        },
+      }}
+    >
+      {props.options.map((option, i) => {
+        return (
+          <Option key={i} value={option}>
             {option}
-          </MenuItem>
-        ))}
-      </Select>
-    </FormControl>
+          </Option>
+        );
+      })}
+    </Chip>
   );
-};
+}
 
 export default GenericDropdown;
