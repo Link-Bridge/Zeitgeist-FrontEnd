@@ -106,7 +106,7 @@ const ProjectMain = () => {
           </Link>
         </div>
       </section>
-      {projects.length === 0 ? (
+      {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />
       ) : (
         <section className='flex-1 overflow-scroll'>
