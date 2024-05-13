@@ -110,7 +110,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         message: 'Start date cannot be after due date.',
         type: 'danger',
       });
-    } else if (startDate && (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())) {
+    } else if (
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
+    ) {
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
@@ -128,7 +131,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         message: 'End date cannot be before start date.',
         type: 'danger',
       });
-    } else if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+    } else if (
+      endDate &&
+      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
+    ) {
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
