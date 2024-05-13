@@ -48,7 +48,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
@@ -104,12 +104,18 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
-    if (date && dueDate && date.isAfter(dueDate)) {
+    const startDateJS = date?.toDate();
+    if (date && endDate && date.isAfter(endDate)) {
       setState({
         open: true,
         message: 'Start date cannot be after end date.',
         type: 'danger',
       });
+    } else if (
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
     }
@@ -117,6 +123,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    const endDateJS = date?.toDate();
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
@@ -125,13 +132,18 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         message: 'End date cannot be before start date.',
         type: 'danger',
       });
+    } else if (
+      endDate &&
+      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
     } else {
       setState({ open: false, message: '' });
     }
 
-    setDueDate(date);
+    setEndDate(date);
   };
 
   const handleStatusSelect = (value: TaskStatus) => {
@@ -177,7 +189,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      endDate: dueDate?.toISOString() ?? null,
+      endDate: endDate?.toISOString() ?? null,
       workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
@@ -201,7 +213,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setTitle('');
     setDescription('');
     setStartDate(null);
-    setDueDate(null);
+    setEndDate(null);
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours('');
@@ -221,14 +233,42 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     }
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
+    return endDate && startDate && endDate.isBefore(startDate);
+  };
+
+  const isStartDateAfterEndDate = () => {
+    return endDate && startDate && startDate.isAfter(endDate);
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = endDate?.toDate();
+    if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = startDate?.toDate();
     if (
-      (dueDate && startDate && dueDate.isBefore(startDate)) ||
-      (dueDate && startDate && startDate.isAfter(dueDate))
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
       return true;
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const datesAreNotValid = () => {
+    return (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    );
   };
 
   if (projectId === '') {
@@ -291,7 +331,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <Item>
               <FormLabel>End Date</FormLabel>
               <DatePicker
-                value={dueDate}
+                value={endDate}
                 onChange={handleEndDateChange}
                 sx={{
                   borderColor: errors['endDate'] ? colors.danger : undefined,
