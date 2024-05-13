@@ -2,7 +2,6 @@ import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
-import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
@@ -19,6 +18,7 @@ const ClientList = (): JSX.Element => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
   const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
+  const [isLoading, setIsLoading] = useState(clientsRequest.loading);
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
@@ -66,12 +66,14 @@ const ClientList = (): JSX.Element => {
 
   useEffect(() => {
     if (!clientsRequest.data) {
+      setIsLoading(true);
       clientsRequest.sendRequest();
     } else {
       setClientsData(clientsRequest.data);
       setFilteredClientsData(companies => {
         return companies.filter(company => isAdmin || !company.archived);
       });
+      setIsLoading(false);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
@@ -83,8 +85,8 @@ const ClientList = (): JSX.Element => {
   };
 
   return (
-    <main className='py-0 flex flex-col min-h-0 flex-1'>
-      <section className='flex flex-row justify-between items-center mb-4 w-full'>
+    <main className='flex flex-col gap-2 flex-1 min-h-0'>
+      <section className='flex justify-between items-center w-full p-2'>
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -113,31 +115,28 @@ const ClientList = (): JSX.Element => {
         </div>
       </section>
       <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
-      <div className='flex justify-center w-full'>
-        {clientsRequest.loading && <Loader />}
-        {clientsRequest.error && <p>Error loading companies.</p>}
-      </div>
-
-      {!clientsRequest.loading && !clientsRequest.error ? (
-        filteredCompanies.length > 0 ? (
-          <CardsGrid>
-            {filteredCompanies.map(company => (
-              <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
-                <ClientCard
-                  name={truncateText(company.name)}
-                  accountingHours={company.accountingHours || 0}
-                  legalHours={company.legalHours || 0}
-                  chargeableHours={company.chargeableHours || 0}
-                  totalProjects={company.totalProjects || 0}
-                />
-              </Link>
-            ))}
-          </CardsGrid>
-        ) : (
-          <ComponentPlaceholder text='No companies were found' />
-        )
-      ) : (
+      {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
+      ) : (
+        <section className='flex-1 overflow-scroll'>
+          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+            {isLoading ? (
+              <Loader />
+            ) : (
+              filteredCompanies.map(company => (
+                <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
+                  <ClientCard
+                    name={truncateText(company.name)}
+                    accountingHours={company.accountingHours || 0}
+                    legalHours={company.legalHours || 0}
+                    chargeableHours={company.chargeableHours || 0}
+                    totalProjects={company.totalProjects || 0}
+                  />
+                </Link>
+              ))
+            )}
+          </div>
+        </section>
       )}
     </main>
   );
