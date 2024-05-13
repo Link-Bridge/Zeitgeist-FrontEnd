@@ -14,9 +14,9 @@ import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
-import Update from '../../pages/Tasks/update';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import Update from './edit';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -30,7 +30,7 @@ function dateParser(date: Date): string {
   return `${day}/${month}/${year}`;
 }
 
-const Task: React.FC = () => {
+const TaskDetails: React.FC = () => {
   const location = useLocation();
   const id = location.pathname.split('/').pop();
 
@@ -58,7 +58,7 @@ const Task: React.FC = () => {
 
   const handleEdit = () => {
     setShowUpdate(true);
-    navigate(`/tasks/update/${id}`);
+    navigate(`/tasks/edit/${id}`);
   };
 
   const deleteTask = useDeleteTask();
@@ -270,4 +270,4 @@ const Task: React.FC = () => {
   );
 };
 
-export default Task;
+export default TaskDetails;

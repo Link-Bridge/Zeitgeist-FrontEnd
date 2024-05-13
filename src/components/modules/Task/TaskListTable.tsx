@@ -1,4 +1,3 @@
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Snackbar, Table } from '@mui/joy';
 import axios, { AxiosRequestConfig } from 'axios';
 import { useRef, useState } from 'react';
@@ -52,7 +51,7 @@ const TaskListTable = ({
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/tasks/update/${id}`);
+    navigate(`/tasks/edit/${id}`);
   };
 
   const handleDeleteButtonClick = (task: Task) => {
@@ -113,7 +112,7 @@ const TaskListTable = ({
     return <div>Error: {errorTasks.message}</div>;
   }
 
-  if (initialTasks.length === 0 || !initialTasks) {
+  if (!initialTasks || initialTasks.length === 0) {
     return (
       <ComponentPlaceholder
         text='No tasks associated to this project were found.'
@@ -135,12 +134,6 @@ const TaskListTable = ({
 
   return (
     <Table>
-      {initialTasks && initialTasks.length === 0 && (
-        <div className='w-full flex flex-col items-center justify-center my-20'>
-          <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
-          <p className='mt-4'>No tasks associated with this company were found.</p>
-        </div>
-      )}
       {initialTasks && initialTasks.length !== 0 && (
         <>
           <thead>

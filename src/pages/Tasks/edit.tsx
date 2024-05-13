@@ -11,7 +11,7 @@ import { Response } from '../../types/response';
 import { TaskDetail, UpdatedTask } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
 
-const UpdateTaskPage: React.FC = () => {
+const EditTaskPage: React.FC = () => {
   const { employee } = useContext(EmployeeContext);
   const { id } = useParams();
 
@@ -118,4 +118,4 @@ const filterEmployees = (
   );
 };
 
-export default UpdateTaskPage;
+export default EditTaskPage;

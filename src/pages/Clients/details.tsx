@@ -1,31 +1,27 @@
-import { Chip } from '@mui/joy';
-import Divider from '@mui/material/Divider';
-import { useContext, useEffect, useState } from 'react';
-import ArchiveModal from '../../../components/common/ArchiveModal';
-// import DeleteModal from '../../../components/common/DeleteModal';
-import useHttp from '../../../hooks/useHttp';
-import { CompanyEntity } from '../../../types/company';
-import { Response } from '../../../types/response';
-import { RequestMethods, RoutesPath } from '../../../utils/constants';
-import { ProjectsClientList } from '../../Projects/ProjectsClientList';
-
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
+import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-
-// import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Button, Snackbar, Typography } from '@mui/joy';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import { Box, Button, Chip, Snackbar, Typography } from '@mui/joy';
+import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import colors from '../../../colors';
-import GoBack from '../../../components/common/GoBack';
-import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-import { EmployeeContext } from '../../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
-import { formatDate } from '../../../utils/methods';
+import colors from '../../colors';
+import ArchiveModal from '../../components/common/ArchiveModal';
+import GoBack from '../../components/common/GoBack';
+import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
+import { CompanyEntity } from '../../types/company';
+import { ResponseEntity } from '../../types/response';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { formatDate } from '../../utils/methods';
+import { ProjectsClientList } from '../Projects/ProjectsClientList';
 
 /**
  * Client Details Page page
@@ -45,7 +41,7 @@ const ClientDetails = () => {
   const [refetch, setRefetch] = useState(false);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const { clientId } = useParams();
-  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
+  const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
@@ -181,9 +177,9 @@ const ClientDetails = () => {
                     }}
                     startDecorator={
                       company?.archived ? (
-                        <UnarchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
                       ) : (
-                        <ArchiveOutlined sx={{ width: 24, color: colors.gold }} />
+                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
                       )
                     }
                   >
@@ -215,7 +211,7 @@ const ClientDetails = () => {
             </section>
           </>
         )}
-        <Divider sx={{ 'margin-top': '30px' }} />
+        <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
 

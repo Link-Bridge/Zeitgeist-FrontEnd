@@ -15,21 +15,21 @@ const Layout = ({ children }: LayoutProps) => {
 
   const pathToText = () => {
     if (location.pathname === RoutesPath.CLIENTS) return 'Clients';
-    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
     if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
+    if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Details';
+    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
     if (
       location.pathname.startsWith(`${RoutesPath.TASKS}/`) &&
       location.pathname.endsWith('create')
     )
       return 'New task';
-    if (location.pathname.startsWith(`${RoutesPath.TASKS}/update`)) return 'Modify Task';
-    if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Detail';
-    if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
     if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
-    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Edit Project';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/edit/`)) return 'Modify Task';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Modify Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
-    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
 
     return `Welcome Back, ${employee?.employee.firstName}!`;
   };

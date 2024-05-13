@@ -26,7 +26,7 @@ import { RequestMethods } from '../../utils/constants';
  * @return {JSX.Element} - React component when an error occurs
  * @return {JSX.Element} - React component when the information is loaded
  */
-const Tasks = (): JSX.Element => {
+const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
 
@@ -202,4 +202,4 @@ const Tasks = (): JSX.Element => {
   );
 };
 
-export default Tasks;
+export default AssignedTasks;
