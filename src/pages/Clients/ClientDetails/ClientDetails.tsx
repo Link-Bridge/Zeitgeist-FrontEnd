@@ -5,7 +5,7 @@ import ArchiveModal from '../../../components/common/ArchiveModal';
 // import DeleteModal from '../../../components/common/DeleteModal';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
-import { Response } from '../../../types/response';
+import { ResponseEntity } from '../../../types/response';
 import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import { ProjectsClientList } from '../../Projects/ProjectsClientList';
 
@@ -45,7 +45,7 @@ const ClientDetails = () => {
   const [refetch, setRefetch] = useState(false);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const { clientId } = useParams();
-  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
+  const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
@@ -217,7 +217,7 @@ const ClientDetails = () => {
             </section>
           </>
         )}
-        <Divider sx={{ 'margin-top': '30px' }} />
+        <Divider sx={{ 'marginTop': '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
 

@@ -10,7 +10,7 @@ import { RequestMethods, RoutesPath } from '../../utils/constants';
 
 type ProjectsClientListProps = {
   clientId: string;
-  isCompanyArchived: boolean;
+  isCompanyArchived?: boolean;
 };
 
 export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClientListProps) => {
@@ -72,7 +72,6 @@ export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClie
               onClick={() => setSelectedProjectId(project.id)}
             >
               <ProjectCard
-                id={project.id}
                 name={project.name}
                 status={project.status}
                 department={project.area}
