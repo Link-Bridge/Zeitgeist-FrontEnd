@@ -189,7 +189,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                       />
                     </TableCell>
                     <TableCell sx={{ fontSize: '0.9rem' }}>
-                      {dateToShortString(String(task.endDate))}
+                      {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
                     </TableCell>
                     <TableCell>
                       <TaskActionsMenu

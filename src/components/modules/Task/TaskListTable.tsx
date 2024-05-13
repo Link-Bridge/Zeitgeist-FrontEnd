@@ -166,7 +166,7 @@ const TaskListTable = ({
                     placeholder='Select status ...'
                   />
                 </td>
-                <td>{formatDate(task.endDate ? task.endDate : null)}</td>
+                <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}
