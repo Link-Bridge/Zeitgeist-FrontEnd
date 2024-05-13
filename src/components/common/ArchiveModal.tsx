@@ -11,7 +11,7 @@ import Colors from '../../colors';
 import useArchiveClient from '../../hooks/useArchiveClient';
 
 interface ModalInterface {
-  sendRequest: any;
+  sendRequest: () => void;
   open: boolean;
   title: string;
   description: string;
