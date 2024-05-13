@@ -56,6 +56,7 @@ const ProjectReport: React.FC = () => {
   const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [validYear, setValidYear] = useState<boolean>(false);
+  const [usingFilter, setUsingFilter] = useState<boolean>(false);
 
   const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
 
@@ -95,6 +96,7 @@ const ProjectReport: React.FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
+    setUsingFilter(true);
     date.current = filterteParser(new Date(year, month - 1));
 
     const doFetch = async (): Promise<void> => {
@@ -113,6 +115,7 @@ const ProjectReport: React.FC = () => {
     setYear(Number(new Date().getFullYear()));
     setState({ open: false, message: '' });
     reqReport.sendRequest();
+    setUsingFilter(false);
   };
 
   useEffect(() => {
@@ -541,7 +544,13 @@ const ProjectReport: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <ComponentPlaceholder text='No tasks associated to this project were found.' />
+                  <ComponentPlaceholder
+                    text={
+                      usingFilter
+                        ? 'No tasks in done were found for this date'
+                        : 'No tasks associated to this project were found.'
+                    }
+                  />
                 </Box>
               )}
               {report.tasks?.map(item => {
