@@ -544,7 +544,13 @@ const ProjectReport: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <ComponentPlaceholder text={ usingFilter? 'No tasks in done were found for this date' : 'No tasks associated to this project were found.'} />
+                  <ComponentPlaceholder
+                    text={
+                      usingFilter
+                        ? 'No tasks in done were found for this date'
+                        : 'No tasks associated to this project were found.'
+                    }
+                  />
                 </Box>
               )}
               {report.tasks?.map(item => {
