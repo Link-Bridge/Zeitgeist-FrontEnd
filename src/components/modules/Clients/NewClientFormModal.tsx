@@ -8,6 +8,7 @@ import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
+import { validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
 
@@ -128,6 +129,9 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       });
       return;
     }
+
+    if (!validRFC(companyRFC))
+      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
 
     if (!validateForm())
       return setState({ open: true, message: 'All fields are required', type: 'danger' });
