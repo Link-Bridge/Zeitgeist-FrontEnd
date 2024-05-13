@@ -1,4 +1,4 @@
-import Lottie from 'react-lottie';
+import Lottie from 'react-lottie-player';
 import animation from '../../assets/data-not-found.json';
 
 /**
