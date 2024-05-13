@@ -31,6 +31,7 @@ const colors = {
   extra: '#D6CFBE',
   white: '#FFFFFF',
   lightWhite: '#F7F7F7',
+  lighterWhite: '#F6F6F6',
 };
 
 export default colors;
