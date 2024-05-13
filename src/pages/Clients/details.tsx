@@ -1,31 +1,27 @@
-import { Chip } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { useContext, useEffect, useState } from 'react';
-import ArchiveModal from '../../../components/common/ArchiveModal';
-// import DeleteModal from '../../../components/common/DeleteModal';
-import useHttp from '../../../hooks/useHttp';
-import { CompanyEntity } from '../../../types/company';
-import { ResponseEntity } from '../../../types/response';
-import { RequestMethods, RoutesPath } from '../../../utils/constants';
-import { ProjectsClientList } from '../../Projects/ProjectsClientList';
-
+import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-
-// import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
-import { ArchiveOutlined, UnarchiveOutlined } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import { Box, Button, Snackbar, Typography } from '@mui/joy';
+import { Chip } from '@mui/material';
+import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import colors from '../../../colors';
-import GoBack from '../../../components/common/GoBack';
-import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-import { EmployeeContext } from '../../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
-import { formatDate } from '../../../utils/methods';
+import colors from '../../colors';
+import ArchiveModal from '../../components/common/ArchiveModal';
+import GoBack from '../../components/common/GoBack';
+import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
+import { CompanyEntity } from '../../types/company';
+import { ResponseEntity } from '../../types/response';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { formatDate } from '../../utils/methods';
+import { ProjectsClientList } from '../Projects/ProjectsClientList';
 
 /**
  * Client Details Page page

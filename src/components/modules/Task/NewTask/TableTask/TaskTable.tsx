@@ -57,7 +57,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/tasks/update/${id}`);
+    navigate(`/tasks/edit/${id}`);
   };
 
   const handleCollapseToggle = () => {

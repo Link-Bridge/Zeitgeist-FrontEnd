@@ -51,7 +51,7 @@ const TaskListTable = ({
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/tasks/update/${id}`);
+    navigate(`/tasks/edit/${id}`);
   };
 
   const handleDeleteButtonClick = (task: Task) => {
