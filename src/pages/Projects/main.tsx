@@ -99,7 +99,7 @@ const ProjectMain = () => {
           <GenericDropdown
             defaultValue={ProjectFilters.ALL}
             options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
-            onValueChange={value => handleFilter(value)}
+            onChange={value => handleFilter(value)}
           />
           <Link to={`${RoutesPath.PROJECTS}/new`}>
             <AddButton onClick={() => {}}></AddButton>

@@ -16,7 +16,7 @@ import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -334,13 +334,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <GenericDropdown
                 defaultValue={data.status as TaskStatus}
                 options={Object.values(TaskStatus)}
-                onValueChange={handleStatusSelect}
+                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
                 placeholder='Select status'
                 colorMap={statusColorMap}
-                sx={{
-                  color: colors.gray,
-                  borderColor: errors['status'] ? colors.danger : undefined,
-                }}
               />
             </Item>
           </Grid>
@@ -354,7 +350,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <GenericDropdown
                 defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
                 options={getEmployeeNames()}
-                onValueChange={handleAssignedEmployee}
+                onChange={handleAssignedEmployee}
                 placeholder='Select employee ...'
               />
             </Item>

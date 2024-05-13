@@ -3,8 +3,7 @@ import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Button, Card, Chip as MuiChip, Option, Select, Typography } from '@mui/joy';
-import { Chip } from '@mui/material';
+import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import axios, { isAxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useParams } from 'react-router-dom';
@@ -13,6 +12,7 @@ import AddButton from '../../components/common/AddButton';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
+import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
@@ -24,11 +24,11 @@ import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
 import { formatDate, truncateText } from '../../utils/methods';
 
-const statusColorMap: Record<ProjectStatus, { bg: string; font: string }> = {
+const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover: string }> = {
   [ProjectStatus.NONE]: statusChipColorCombination.default,
   [ProjectStatus.ACCEPTED]: statusChipColorCombination.accepted,
   [ProjectStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [ProjectStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [ProjectStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [ProjectStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [ProjectStatus.IN_QUOTATION]: statusChipColorCombination.inQuotation,
   [ProjectStatus.DELAYED]: statusChipColorCombination.delayed,
@@ -175,6 +175,17 @@ const ProjectDetails = () => {
     return <Navigate to='/404' replace />;
   }
 
+  const chipData = [
+    { label: 'Total Hours', content: totalHours },
+    { label: 'Client', content: truncateText(companyName, 20) },
+    { label: 'Matter', content: data?.matter },
+    { label: 'Category', content: data?.category },
+    { label: 'Area', content: data?.area },
+    { label: 'Periodicity', content: data?.periodicity },
+    { label: 'Chargeable', content: data?.isChargeable ? 'Yes' : 'No' },
+    { label: 'isArchived', content: data?.isArchived ? 'Yes' : 'No' },
+  ];
+
   return (
     <>
       {open && (
@@ -270,85 +281,47 @@ const ProjectDetails = () => {
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
           {data && (
-            <div className=' flex flex-wrap gap-10 pt-5 text-[10px]' style={{ color: colors.gray }}>
+            <div
+              className=' flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
+              style={{ color: colors.gray }}
+            >
               <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Status</p>
+                <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
                     options={Object.values(ProjectStatus)}
-                    onValueChange={handleStatusChange}
-                    defaultValue={projectStatus}
                     colorMap={statusColorMap}
-                    placeholder='Select status ...'
-                  />
+                    onChange={function (newValue: string): void {
+                      handleStatusChange(newValue as ProjectStatus);
+                    }}
+                    defaultValue={projectStatus}
+                  ></GenericDropdown>
                 )}
               </div>
 
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Hours</p>
-                <Chip
-                  sx={{
-                    bgcolor: colors.extra,
-                    fontSize: '1rem',
-                  }}
-                  label={totalHours}
-                />
-              </div>
+              {chipData.map((chip, i) => {
+                return <ChipWithLabel key={i} {...chip} />;
+              })}
 
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Client</p>
-                <Chip sx={chipStyle} label={truncateText(companyName, 20)} />
-              </div>
-
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Matter</p>
-                <Chip sx={chipStyle} label={data.matter} />
-              </div>
-
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Category</p>
-                <Chip sx={chipStyle} label={data?.category} />
-              </div>
-
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Area</p>
-                <Chip sx={chipStyle} label={data.area} />
-              </div>
-
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Periodicity</p>
-                <Chip sx={chipStyle} label={data.periodicity} />
-              </div>
-
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Chargeable</p>
-                <Chip sx={chipStyle} label={data.isChargeable ? 'Yes' : 'No'} />
-              </div>
+              {data?.isChargeable && (
+                <div style={{ fontSize: '15px' }}>
+                  <p style={{ marginLeft: '7px' }}>Payed</p>
+                  <Chip
+                    component={Select}
+                    sx={chipStyle}
+                    value={data?.payed ?? false}
+                    onChange={(_, newVal) => {
+                      changePayed(id ?? '', Boolean(newVal));
+                    }}
+                    disabled={updating}
+                  >
+                    <Option value={true}>Yes</Option>
+                    <Option value={false}>No</Option>
+                  </Chip>
+                </div>
+              )}
             </div>
           )}
-          <div className='flex items-center mt-4 gap-8'>
-            {data?.isChargeable && (
-              <div style={{ fontSize: '15px' }}>
-                <p style={{ marginLeft: '7px' }}>Payed</p>
-                <MuiChip
-                  component={Select}
-                  sx={chipStyle}
-                  value={data?.payed ?? false}
-                  onChange={(_, newVal) => {
-                    changePayed(id ?? '', Boolean(newVal));
-                  }}
-                  disabled={updating}
-                >
-                  <Option value={true}>Yes</Option>
-                  <Option value={false}>No</Option>
-                </MuiChip>
-              </div>
-            )}
-            <div style={{ fontSize: '15px' }}>
-              <p style={{ marginLeft: '7px' }}>Is Archived</p>
-              <Chip sx={chipStyle} label={data?.isArchived ? 'Yes' : 'No'} />
-            </div>
-          </div>
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>

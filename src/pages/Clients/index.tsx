@@ -114,7 +114,7 @@ const Clients = () => {
                         CompanyFilters.NOT_ARCHIVED,
                         CompanyFilters.ARCHIVED,
                       ]}
-                      onValueChange={value => handleFilter(value)}
+                      onChange={value => handleFilter(value)}
                     />
                   </div>
                 )}

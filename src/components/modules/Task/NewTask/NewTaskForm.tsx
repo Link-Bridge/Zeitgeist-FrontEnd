@@ -1,22 +1,21 @@
-import { Box, Chip, FormLabel, Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { Box, Chip, FormLabel, Grid, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
-import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -52,7 +51,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
 
   const navigate = useNavigate();
@@ -305,13 +304,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               </FormLabel>
               <GenericDropdown
                 options={Object.values(TaskStatus)}
-                onValueChange={handleStatusSelect}
+                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
                 placeholder='Select status'
                 colorMap={statusColorMap}
-                sx={{
-                  color: colors.gray,
-                  borderColor: errors['status'] ? colors.danger : undefined,
-                }}
               />
             </Item>
           </Grid>
@@ -324,7 +319,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormLabel>Assign Employee</FormLabel>
               <GenericDropdown
                 options={getEmployeeNames()}
-                onValueChange={handleAssignedEmployee}
+                onChange={handleAssignedEmployee}
                 placeholder='Select employee ...'
               />
             </Item>
@@ -386,13 +381,6 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             </Item>
           </Grid>
         </Grid>
-
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </main>
     </StyledSheet>
   );
