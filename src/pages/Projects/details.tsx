@@ -375,7 +375,6 @@ const ProjectDetails = () => {
           errorTasks={errorTasks}
           loadingTasks={loadingTasks}
           initialTasks={initialTasks}
-          getTasks={getTasks}
           onDelete={handleDeleteTask}
         />
       </Card>
