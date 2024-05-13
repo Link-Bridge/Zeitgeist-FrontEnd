@@ -10,6 +10,7 @@ import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
+import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
 import { Item, StyledSheet } from '../styled';
 
@@ -176,7 +177,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      endDate: endDate !== null ? endDate?.toISOString() : null,
+      endDate: endDate?.toISOString() ?? null,
       workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
