@@ -1,6 +1,6 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Route, Routes } from 'react-router-dom';
+import { Link, Navigate, Route, Routes } from 'react-router-dom';
 import AddButton from '../../components/common/AddButton';
 import CardsGrid from '../../components/common/CardsGrid';
 import ClientCard from '../../components/common/ClientCard';
@@ -148,6 +148,7 @@ const Clients = () => {
         }
       />
       <Route path={'/details/:clientId'} element={<ClientDetails />} />
+      <Route path='*' element={<Navigate to='/404' />} />
     </Routes>
   );
 };
