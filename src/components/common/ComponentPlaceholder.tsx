@@ -15,15 +15,6 @@ const ComponentPlaceholder = ({
   height = '25vh',
   width = '35vh',
 }) => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: animation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  };
-
   return (
     <div
       style={{
@@ -36,7 +27,7 @@ const ComponentPlaceholder = ({
         pointerEvents: 'none',
       }}
     >
-      <Lottie options={defaultOptions} height={height} width={width} />
+      <Lottie loop play animationData={animation} style={{ width: width, height: height }} />
       <div className='text-xl md:text-2xl text-gray-500 font-gotham mt-4'>
         <h2>{text}</h2>
       </div>
