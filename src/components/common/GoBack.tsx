@@ -7,7 +7,7 @@ const GoBack = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const handleClick = () => {
-    if (location.state && location.state.fromEdit) navigate(-2);
+    if (location.state && location.state.fromDetail) return navigate(-2);
     navigate(-1);
   };
 
