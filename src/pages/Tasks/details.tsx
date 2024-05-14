@@ -8,6 +8,7 @@ import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
@@ -17,7 +18,6 @@ import useHttp from '../../hooks/useHttp';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
 import Update from './edit';
-import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -110,7 +110,7 @@ const TaskDetails: React.FC = () => {
 
   if (error) {
     if (error.message.includes('403')) {
-      navigate('/tasks')
+      navigate('/tasks');
     } else {
       return (
         <Box

@@ -50,7 +50,6 @@ const ProjectReport: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const [secondsLeft, setSecondsLeft] = useState<number>(3);
   const [report, setReport] = useState<Report>();
   const [month, setMonth] = useState<number>(1);
   const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
@@ -154,7 +153,7 @@ const ProjectReport: React.FC = () => {
 
   if (reqReport.error) {
     if (reqReport.error.message.includes('403')) {
-      navigate('/projects')
+      navigate('/projects');
     } else {
       return (
         <Box
