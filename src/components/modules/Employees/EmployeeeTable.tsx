@@ -1,12 +1,12 @@
 import { DeleteOutline, KeyboardArrowDown } from '@mui/icons-material';
 import { Avatar, Chip, IconButton, Option, Select, Table, selectClasses } from '@mui/joy';
 import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import axios from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
+import { axiosInstance } from '../../../lib/axios/axios';
 import { Response } from '../../../types/response';
 import { Role } from '../../../types/role';
 import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
@@ -74,14 +74,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const handleRolChange = async (newRoleId: string, userId: string) => {
     if (!newRoleId || !userId) return;
     try {
-      const response = await axios.put(
-        `${BASE_API_URL}/admin/role`,
-        {
-          userId: userId,
-          roleId: newRoleId,
-        },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
-      );
+      const response = await axiosInstance.put(`${BASE_API_URL}/admin/role`, {
+        userId: userId,
+        roleId: newRoleId,
+      });
 
       if (response.status === 200) {
         const updatedEmployees = searchResults.map(employee => {

@@ -1,12 +1,13 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
-import React, { useContext, useEffect } from 'react';
+import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
 import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import { axiosInstance } from '../../lib/axios/axios';
 import { EmployeeReponse } from '../../types/employee';
 import { BASE_API_URL, RoutesPath } from '../../utils/constants';
 import { handleGetDeviceToken } from './device-token';
@@ -17,27 +18,12 @@ const Auth: React.FC = () => {
   const { setState } = useContext(SnackbarContext);
 
   const sendRequest = async () => {
-    const idToken = localStorage.getItem('idToken');
-    const response = await fetch(`${BASE_API_URL}/employee/signup`, {
-      method: 'POST',
-      headers: {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${idToken}`,
-      },
-    });
-
-    return JSON.parse(await response.text()) as EmployeeReponse;
-  };
-
-  const refreshToken = async () => {
     try {
-      const currentUser = auth.currentUser;
-      if (currentUser) {
-        const token = await currentUser.getIdToken(true);
-        localStorage.setItem('idToken', token);
-      }
+      const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
+
+      return response.data as EmployeeReponse;
     } catch (error) {
-      console.error('Error refreshing token:', error);
+      setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
     }
   };
 
@@ -50,6 +36,10 @@ const Auth: React.FC = () => {
       localStorage.setItem('refreshToken', refreshToken);
 
       const response = await sendRequest();
+      if (!response) {
+        setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+        return;
+      }
       await updateUserContext(response);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
@@ -72,11 +62,6 @@ const Auth: React.FC = () => {
       }
     }
   };
-
-  useEffect(() => {
-    const intervalId = setInterval(refreshToken, 1800);
-    return () => clearInterval(intervalId);
-  }, []);
 
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>

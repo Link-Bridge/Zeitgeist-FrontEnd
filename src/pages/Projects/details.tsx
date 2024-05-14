@@ -5,7 +5,6 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Card, Chip as MuiChip, Option, Select, Snackbar } from '@mui/joy';
 import { Chip } from '@mui/material';
-import axios from 'axios';
 import { useEffect, useState } from 'react';
 import { Link, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
@@ -17,6 +16,7 @@ import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
@@ -145,11 +145,10 @@ const ProjectDetails = () => {
   async function changePayed(projectId: string, payed: boolean) {
     if (data) {
       setUpdating(true);
-      const res = await axios.put(
-        `${BASE_API_URL}/project/edit/${projectId}`,
-        { payed, id: projectId },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
-      );
+      const res = await axiosInstance.put(`${BASE_API_URL}/project/edit/${projectId}`, {
+        payed,
+        id: projectId,
+      });
       data.payed = res.data.data.payed;
       setUpdating(false);
     }

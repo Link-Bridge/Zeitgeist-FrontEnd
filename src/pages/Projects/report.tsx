@@ -5,7 +5,6 @@ import Grid from '@mui/joy/Grid';
 import { NativeSelect } from '@mui/material';
 import Button from '@mui/material/Button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import axios from 'axios';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -17,6 +16,7 @@ import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
 import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
@@ -91,9 +91,8 @@ const ProjectReport: React.FC = () => {
     date.current = filterteParser(new Date(year, month - 1));
 
     const doFetch = async (): Promise<void> => {
-      const data = await axios.get(
-        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
+      const data = await axiosInstance.get(
+        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`
       );
       setReport(data.data);
     };
