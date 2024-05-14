@@ -3,6 +3,7 @@ import colors from '../../../colors';
 
 interface CreateClientButtonProps {
   loading: boolean;
+  disabled?: boolean;
 }
 
 /**
@@ -12,11 +13,12 @@ interface CreateClientButtonProps {
  * @return Button component acording the loading state
  */
 
-function CreateClientButton({ loading }: CreateClientButtonProps) {
+function CreateClientButton({ loading, disabled }: CreateClientButtonProps) {
   return (
     <Button
       type='submit'
       variant='solid'
+      disabled={disabled}
       size='sm'
       sx={{
         height: '36px',

@@ -33,7 +33,7 @@ const Auth: React.FC = () => {
       });
 
       if (!response.ok) {
-        throw new Error('Failed to sign up');
+        throw new Error('Failed to sign up. Please try again.');
       }
 
       const responseData = await response.json();
@@ -73,7 +73,6 @@ const Auth: React.FC = () => {
         });
       }
     } catch (error) {
-      console.error('Error getting token:', error);
       throw error;
     }
   };

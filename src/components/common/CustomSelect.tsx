@@ -1,4 +1,5 @@
 import { Option, Select } from '@mui/joy';
+import { useEffect, useState } from 'react';
 import { FormState } from '../../hooks/useNewProject';
 
 interface CustomSelectProps {
@@ -8,9 +9,20 @@ interface CustomSelectProps {
   defaultValue?: string;
 }
 
-const CustomSelect = ({ values, handleChange, name, defaultValue = '' }: CustomSelectProps) => {
+const CustomSelect = ({ values, handleChange, name, defaultValue }: CustomSelectProps) => {
+  const [currentValue, setCurrentValue] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCurrentValue(defaultValue ?? null);
+  }, [defaultValue]);
+
+  function onChange(_: React.SyntheticEvent | null, newVal: string | null) {
+    setCurrentValue(newVal);
+    handleChange(name, newVal);
+  }
+
   return (
-    <Select defaultValue={defaultValue} onChange={(_, newVal) => handleChange(name, newVal ?? '')}>
+    <Select value={currentValue} onChange={onChange}>
       {values.map(value => {
         return (
           <Option key={value} value={value}>
