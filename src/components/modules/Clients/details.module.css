@@ -1,0 +1,8 @@
+@media screen and (max-width: 1280px) {
+    .container > article {
+        width: calc(50% - 8px);
+    }
+    .container {
+        @apply gap-4;
+    }
+}
