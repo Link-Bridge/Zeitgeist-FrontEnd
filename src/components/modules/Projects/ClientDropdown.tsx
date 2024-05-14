@@ -1,4 +1,5 @@
 import { Option, Select } from '@mui/joy';
+import React, { useEffect, useState } from 'react';
 import { FormState } from '../../../hooks/useNewProject';
 import { CompanyEntity } from '../../../types/company';
 import { truncateText } from '../../../utils/methods';
@@ -11,10 +12,21 @@ interface ClientDropdownProps {
 }
 
 const ClientDropdown = ({ defaultValue, handleChange, values, name }: ClientDropdownProps) => {
+  const [currentValue, setCurrentValue] = useState<string | null>(null);
+
+  useEffect(() => {
+    setCurrentValue(defaultValue ?? null);
+  }, [defaultValue]);
+
+  function onChange(_: React.SyntheticEvent | null, newVal: string | null) {
+    setCurrentValue(newVal);
+    handleChange(name, String(newVal));
+  }
+
   return (
     <Select
-      value={defaultValue}
-      onChange={(_, newVal) => handleChange(name, String(newVal))}
+      value={currentValue}
+      onChange={onChange}
       slotProps={{
         listbox: { placement: 'bottom-start' },
       }}

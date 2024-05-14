@@ -102,6 +102,10 @@ const useNewProject = () => {
     dispatch({ type: 'CHANGE', field, value });
   };
 
+  const setState = (initialState: FormState) => {
+    dispatch({ type: 'RESET', initialState });
+  };
+
   const handleSubmit = async (e: FormEvent) => {
     e.preventDefault();
     try {
@@ -175,7 +179,16 @@ const useNewProject = () => {
     }
   };
 
-  return { formState, handleChange, handleSubmit, handleUpdate, error, isPosting, success };
+  return {
+    formState,
+    handleChange,
+    setState,
+    handleSubmit,
+    handleUpdate,
+    error,
+    isPosting,
+    success,
+  };
 };
 
 export default useNewProject;

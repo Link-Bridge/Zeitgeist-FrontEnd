@@ -1,4 +1,4 @@
-import { Button, Card, FormControl, FormLabel, Input, Snackbar, Switch, Textarea } from '@mui/joy';
+import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -8,7 +8,7 @@ import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
@@ -23,12 +23,10 @@ import { APIPath, RequestMethods } from '../../utils/constants';
 const EditProject = () => {
   const { id } = useParams();
   const { employee } = useContext(EmployeeContext);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const form = useNewProject();
-
   const [disableButton, setDisableButton] = useState<boolean>(true);
-  const [startDate, setStartDate] = useState(true);
 
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -54,20 +52,7 @@ const EditProject = () => {
       if (!companies) getCompanies();
 
       if (project) {
-        form.formState.id = id;
-        form.formState.name = project.name;
-        form.formState.category = project.category;
-        form.formState.matter = project.matter;
-        form.formState.description = project.description;
-        form.formState.startDate = project.startDate;
-        form.formState.endDate = project.endDate;
-        form.formState.isChargeable = project.isChargeable;
-        form.formState.area = project.area;
-        form.formState.periodicity = project.periodicity;
-        form.formState.status = project.status;
-
-        if (form.formState.startDate) setStartDate(true);
-
+        form.setState(project);
         handleRequiredFields();
       }
 
@@ -93,14 +78,15 @@ const EditProject = () => {
   useEffect(() => {
     handleRequiredFields();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [form.formState, startDate]);
+  }, [form.formState]);
 
   const handleRequiredFields = () => {
+    console.log(form.formState.startDate);
     if (
       !form.formState.name ||
       !form.formState.idCompany ||
       !projectCategories.includes(form.formState.category) ||
-      !startDate ||
+      !form.formState.startDate ||
       !form.formState.area
     )
       return setDisableButton(true);
@@ -110,19 +96,7 @@ const EditProject = () => {
 
   const isEndDateBeforeStartDate = () => {
     if (form.formState.startDate && form.formState.endDate) {
-      if (dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate))) {
-        return true;
-      }
-    } else {
-      return false;
-    }
-  };
-
-  const isStartDateAfterEndDate = () => {
-    if (form.formState.startDate && form.formState.endDate) {
-      if (dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))) {
-        return true;
-      }
+      return dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate));
     } else {
       return false;
     }
@@ -139,7 +113,10 @@ const EditProject = () => {
 
   const isInvalidEndDate = () => {
     const endDateJS = form.formState.endDate ? new Date(form.formState.endDate) : null;
-    if (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear()) {
+    if (endDateJS === null) {
+      return false;
+    }
+    if (!endDateJS.getDate() || !endDateJS.getMonth() || !endDateJS.getFullYear()) {
       return true;
     } else {
       return false;
@@ -147,12 +124,7 @@ const EditProject = () => {
   };
 
   const datesAreNotValid = () => {
-    return (
-      isEndDateBeforeStartDate() ||
-      isStartDateAfterEndDate() ||
-      isInvalidEndDate() ||
-      isInvalidStartDate()
-    );
+    return isEndDateBeforeStartDate() || isInvalidEndDate() || isInvalidStartDate();
   };
 
   if (form.success) {
@@ -279,7 +251,6 @@ const EditProject = () => {
                         message: 'Start date is required.',
                         type: 'danger',
                       });
-                      return setStartDate(false);
                     }
 
                     if (form.formState.endDate && e && e.isAfter(dayjs(form.formState.endDate))) {
@@ -288,7 +259,6 @@ const EditProject = () => {
                         message: 'Start date cannot be after end date.',
                         type: 'danger',
                       });
-                      return setStartDate(false);
                     } else if (
                       e &&
                       (!e?.toDate()?.getDate() ||
@@ -300,12 +270,10 @@ const EditProject = () => {
                         message: 'Please enter a valid date.',
                         type: 'danger',
                       });
-                      return setStartDate(false);
                     } else {
                       setErrors({ ...errors, startDate: '' });
                       setState({ open: false, message: '' });
                     }
-                    setStartDate(true);
                   }}
                 />
               </FormControl>
@@ -406,12 +374,6 @@ const EditProject = () => {
                 Update Project
               </Button>
             </section>
-            {/* Snackbar */}
-            <SnackbarContext.Provider value={{ state, setState }}>
-              <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-                {state.message}
-              </Snackbar>
-            </SnackbarContext.Provider>
           </form>
         </Card>
       )}
