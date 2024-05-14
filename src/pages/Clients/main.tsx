@@ -87,7 +87,7 @@ const ClientList = (): JSX.Element => {
   if (isLoading) {
     return (
       <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
-        <section className='flex flex-col justify-between md:flex-row md:items-center md-2 gap-y-2'>
+        <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
           <SearchBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -95,10 +95,10 @@ const ClientList = (): JSX.Element => {
             setSelectedOption={() => {}}
             options={[]}
           />
-          <div className='flex flex-row items-center gap-2'>
+          <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
             {isAdmin && (
               <div className='flex flex-row items-center gap-2'>
-                <div className='flex items-center gap-2'>
+                <div className='flex-row flex items-center gap-2'>
                   <FilterAltIcon
                     sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
                     className='text-gold'
