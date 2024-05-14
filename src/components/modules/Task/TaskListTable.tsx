@@ -1,4 +1,3 @@
-import WarningAmberIcon from '@mui/icons-material/WarningAmber';
 import { Snackbar, Table } from '@mui/joy';
 import { AxiosRequestConfig } from 'axios';
 import { useRef, useState } from 'react';
@@ -25,7 +24,7 @@ type TaskListTableProps = {
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -53,7 +52,7 @@ const TaskListTable = ({
   };
 
   const handleEdit = (id: string) => {
-    navigate(`/tasks/update/${id}`);
+    navigate(`/tasks/edit/${id}`);
   };
 
   const handleDeleteButtonClick = (task: Task) => {
@@ -107,7 +106,7 @@ const TaskListTable = ({
     return <div>Error: {errorTasks.message}</div>;
   }
 
-  if (initialTasks.length === 0 || !initialTasks) {
+  if (!initialTasks || initialTasks.length === 0) {
     return (
       <ComponentPlaceholder
         text='No tasks associated to this project were found.'
@@ -129,12 +128,6 @@ const TaskListTable = ({
 
   return (
     <Table>
-      {initialTasks && initialTasks.length === 0 && (
-        <div className='w-full flex flex-col items-center justify-center my-20'>
-          <WarningAmberIcon style={{ color: '#C29A51', width: '40px', height: '40px' }} />
-          <p className='mt-4'>No tasks associated with this company were found.</p>
-        </div>
-      )}
       {initialTasks && initialTasks.length !== 0 && (
         <>
           <thead>
@@ -154,13 +147,13 @@ const TaskListTable = ({
                 <td>
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
-                    onValueChange={value => handleStatusChange(task.id, value)}
+                    onChange={value => handleStatusChange(task.id, value as TaskStatus)}
                     defaultValue={task.status as TaskStatus}
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />
                 </td>
-                <td>{formatDate(task.endDate ? task.endDate : null)}</td>
+                <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}

@@ -60,7 +60,7 @@ const Home = () => {
         )}
       </section>
       <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg overflow-x-hidden flex-1 overflow-scroll'>
-        <h2 className='text-[34px]'>CLIENTS</h2>
+        <h2 className='text-[34px]'>MY CLIENTS</h2>
         {isLoading && <Loader />}
         {!isLoading && homeData && homeData.companies.length > 0 ? (
           <section className='grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3 rounded-xl mt-6'>

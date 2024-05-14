@@ -15,7 +15,6 @@ import Employees from './pages/Employees';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
-import NewTaskPage from './pages/Tasks/new';
 import { RoutesPath } from './utils/constants';
 
 function App() {
@@ -87,14 +86,6 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Employees />
-                    </ProtectedRoute>
-                  }
-                />
-                <Route
-                  path={`${RoutesPath.TASKS}/:projectId/create`}
-                  element={
-                    <ProtectedRoute>
-                      <NewTaskPage />
                     </ProtectedRoute>
                   }
                 />

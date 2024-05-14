@@ -1,14 +1,14 @@
-import { Box, Chip, FormLabel, Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { Box, Chip, FormLabel, Grid, Input, Textarea } from '@mui/joy';
+import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useState } from 'react';
+import { useContext, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
-import CustomDatePicker from '../../../common/DatePicker';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
@@ -16,7 +16,7 @@ import { Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
-  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgerss,
+  [TaskStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
   [TaskStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
   [TaskStatus.DELAYED]: statusChipColorCombination.delayed,
   [TaskStatus.POSTPONED]: statusChipColorCombination.postponed,
@@ -48,12 +48,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [title, setTitle] = useState('');
   const [description, setDescription] = useState('');
   const [startDate, setStartDate] = useState<dayjs.Dayjs | null>(null);
-  const [dueDate, setDueDate] = useState<dayjs.Dayjs | null>(null);
+  const [endDate, setEndDate] = useState<dayjs.Dayjs | null>(null);
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [isPosting, setIsPosting] = useState(false);
 
   const navigate = useNavigate();
 
@@ -103,32 +104,46 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
-    if (date && dueDate && date.isAfter(dueDate)) {
+    const startDateJS = date?.toDate();
+    if (date && endDate && date.isAfter(endDate)) {
       setState({
         open: true,
-        message: 'Start date cannot be after due date.',
+        message: 'Start date cannot be after end date.',
         type: 'danger',
       });
+    } else if (
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
     }
     setStartDate(date);
   };
 
-  const handleDueDateChange = (date: dayjs.Dayjs | null) => {
-    const datesValid = !date || !startDate || date.isAfter(startDate);
+  const handleEndDateChange = (date: dayjs.Dayjs | null) => {
+    const endDateJS = date?.toDate();
+    const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
-    if (!datesValid) {
+    if (datesAreNotValid) {
       setState({
         open: true,
-        message: 'Due date cannot be before start date.',
+        message: 'End date cannot be before start date.',
         type: 'danger',
       });
+    } else if (
+      endDate &&
+      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
+    ) {
+      setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
+    } else if (dayjs(date).isSame(dayjs(startDate))) {
+      setState({ open: false, message: '' });
     } else {
       setState({ open: false, message: '' });
     }
 
-    setDueDate(date);
+    setEndDate(date);
   };
 
   const handleStatusSelect = (value: TaskStatus) => {
@@ -174,8 +189,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       description,
       status: status as TaskStatus,
       startDate: startDate?.toISOString() ?? '',
-      dueDate: dueDate?.toISOString() ?? '',
-      workedHours: workedHours ?? '0.0',
+      endDate: endDate?.toISOString() ?? null,
+      workedHours: workedHours !== '' ? workedHours : '0',
       idProject: projectId,
       idEmployee: employees.find(employee => {
         const fullName = employee.firstName + ' ' + employee.lastName;
@@ -198,7 +213,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setTitle('');
     setDescription('');
     setStartDate(null);
-    setDueDate(null);
+    setEndDate(null);
     setStatus('');
     setAssignedEmployee('');
     setWorkedHours('');
@@ -218,14 +233,42 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     }
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
+    return endDate && startDate && endDate.isBefore(startDate);
+  };
+
+  const isStartDateAfterEndDate = () => {
+    return endDate && startDate && startDate.isAfter(endDate);
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = endDate?.toDate();
+    if (endDate && (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = startDate?.toDate();
     if (
-      (dueDate && startDate && dueDate.isBefore(startDate)) ||
-      (dueDate && startDate && startDate.isAfter(dueDate))
+      startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
       return true;
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const datesAreNotValid = () => {
+    return (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    );
   };
 
   if (projectId === '') {
@@ -253,6 +296,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           Description <span className='text-red-600'>*</span>
         </FormLabel>
         <Textarea
+          minRows={5}
+          maxRows={5}
           placeholder='Write your text here... '
           value={description}
           onChange={handleDescriptionChange}
@@ -273,7 +318,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormLabel>
                 Start Date <span className='text-red-600'>*</span>
               </FormLabel>
-              <CustomDatePicker
+              <DatePicker
                 value={startDate}
                 onChange={handleStartDateChange}
                 sx={{
@@ -285,11 +330,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Grid xs={2}>
             <Item>
               <FormLabel>End Date</FormLabel>
-              <CustomDatePicker
-                value={dueDate}
-                onChange={handleDueDateChange}
+              <DatePicker
+                value={endDate}
+                onChange={handleEndDateChange}
                 sx={{
-                  borderColor: errors['dueDate'] ? colors.danger : undefined,
+                  borderColor: errors['endDate'] ? colors.danger : undefined,
                 }}
               />
             </Item>
@@ -301,13 +346,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               </FormLabel>
               <GenericDropdown
                 options={Object.values(TaskStatus)}
-                onValueChange={handleStatusSelect}
+                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
                 placeholder='Select status'
                 colorMap={statusColorMap}
-                sx={{
-                  color: colors.gray,
-                  borderColor: errors['status'] ? colors.danger : undefined,
-                }}
               />
             </Item>
           </Grid>
@@ -320,7 +361,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormLabel>Assign Employee</FormLabel>
               <GenericDropdown
                 options={getEmployeeNames()}
-                onValueChange={handleAssignedEmployee}
+                onChange={handleAssignedEmployee}
                 placeholder='Select employee ...'
               />
             </Item>
@@ -375,20 +416,23 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <Item>
               <SendButton
                 onClick={() => {
+                  setIsPosting(true);
                   handleSubmit();
+                  setTimeout(() => {
+                    setIsPosting(false);
+                  }, 3000);
                 }}
-                disabled={hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength()}
+                disabled={
+                  hasErrors() ||
+                  hasEmptyFields() ||
+                  datesAreNotValid() ||
+                  hasWrongLength() ||
+                  isPosting
+                }
               />
             </Item>
           </Grid>
         </Grid>
-
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </main>
     </StyledSheet>
   );

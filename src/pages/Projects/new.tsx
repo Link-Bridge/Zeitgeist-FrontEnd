@@ -64,7 +64,7 @@ const NewProject = () => {
     if (form.error) setState({ open: true, message: form.error.message, type: 'danger' });
 
     if (form.success)
-      setState({ open: true, message: 'Project created sucessfully!', type: 'success' });
+      setState({ open: true, message: 'Project created sucessfully.', type: 'success' });
   }, [form.error, form.success]);
 
   useEffect(() => {
@@ -85,16 +85,57 @@ const NewProject = () => {
     setDisableButton(false);
   };
 
-  const datesAreNotValid = () => {
+  const isEndDateBeforeStartDate = () => {
     if (form.formState.startDate && form.formState.endDate) {
-      if (
-        dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate)) ||
-        dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))
-      ) {
+      if (dayjs(form.formState.startDate).isAfter(dayjs(form.formState.endDate))) {
         return true;
       }
+    } else {
+      return false;
     }
-    return false;
+  };
+
+  const isStartDateAfterEndDate = () => {
+    if (form.formState.startDate && form.formState.endDate) {
+      if (dayjs(form.formState.endDate).isBefore(dayjs(form.formState.startDate))) {
+        return true;
+      }
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidStartDate = () => {
+    const startDateJS = form.formState.startDate;
+    if (
+      form.formState.startDate &&
+      (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const isInvalidEndDate = () => {
+    const endDateJS = form.formState.endDate;
+    if (
+      form.formState.endDate &&
+      (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
+    ) {
+      return true;
+    } else {
+      return false;
+    }
+  };
+
+  const datesAreNotValid = () => {
+    return (
+      isEndDateBeforeStartDate() ||
+      isStartDateAfterEndDate() ||
+      isInvalidEndDate() ||
+      isInvalidStartDate()
+    );
   };
 
   if (form.success) {
@@ -107,20 +148,20 @@ const NewProject = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
         <GoBack />
       </Box>
       <Card
-        className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+        className='bg-white flex-1 font-montserrat min-h-0 overflow-y-scroll min-w-0'
         sx={{ padding: '30px' }}
       >
         {req.loading ? (
           <Loader />
         ) : (
-          <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
+          <form className='flex flex-col gap-4 min-w-0 w-full' onSubmit={form.handleSubmit}>
             <FormControl>
               <FormLabel className='font-montserrat'>
                 Project Name <span className='text-red-600'>*</span>
@@ -128,13 +169,13 @@ const NewProject = () => {
               <Input
                 value={form.formState.name}
                 onChange={e => {
-                  if (e.target.value.length > 70)
+                  if (e.target.value.length > 70) {
                     return setState({
                       open: true,
                       message: 'Project name cannot be longer than 70 characters.',
                       type: 'danger',
                     });
-                  if (!e.target.value || e.target.value.length == 0) {
+                  } else if (!e.target.value || e.target.value.length == 0) {
                     setErrors({ ...errors, name: 'Project name is required.' });
                     setState({
                       open: true,
@@ -151,10 +192,11 @@ const NewProject = () => {
                   borderRadius: '4px',
                   border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
                 }}
+                className='min-w-0'
               />
             </FormControl>
-            <section className='flex flex-row gap-4'>
-              <FormControl className='flex-1'>
+            <section className='flex lg:flex-row gap-4 flex-col'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
                 </FormLabel>
@@ -164,7 +206,7 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>
                   Category <span className='text-red-600'>*</span>
                 </FormLabel>
@@ -174,7 +216,7 @@ const NewProject = () => {
                   handleChange={form.handleChange}
                 />
               </FormControl>
-              <FormControl className='flex-1'>
+              <FormControl className='flex-1 min-w-0'>
                 <FormLabel>Matter</FormLabel>
                 <Input
                   value={form.formState.matter}
@@ -224,10 +266,10 @@ const NewProject = () => {
                   value={dayjs(form.formState.startDate)}
                   onChange={e => {
                     form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
-                    if (!e?.toDate() || e?.toDate().toString() == 'Invalid Date') {
+                    if (!e?.toDate()) {
                       setState({
                         open: true,
-                        message: 'Start date is required',
+                        message: 'Start date is required.',
                         type: 'danger',
                       });
                       return setStartDate(false);
@@ -237,6 +279,18 @@ const NewProject = () => {
                       setState({
                         open: true,
                         message: 'Start date cannot be after end date.',
+                        type: 'danger',
+                      });
+                      return setStartDate(false);
+                    } else if (
+                      e &&
+                      (!e?.toDate()?.getDate() ||
+                        !e?.toDate()?.getMonth() ||
+                        !e?.toDate()?.getFullYear())
+                    ) {
+                      setState({
+                        open: true,
+                        message: 'Please enter a valid date.',
                         type: 'danger',
                       });
                       return setStartDate(false);
@@ -262,6 +316,17 @@ const NewProject = () => {
                       setState({
                         open: true,
                         message: 'End date cannot be before start date.',
+                        type: 'danger',
+                      });
+                    } else if (
+                      e &&
+                      (!e?.toDate()?.getDate() ||
+                        !e?.toDate()?.getMonth() ||
+                        !e?.toDate()?.getFullYear())
+                    ) {
+                      setState({
+                        open: true,
+                        message: 'Please enter a valid date.',
                         type: 'danger',
                       });
                     } else {

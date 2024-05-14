@@ -1,13 +1,15 @@
-import { Input, Snackbar, Typography } from '@mui/joy';
+import { Search } from '@mui/icons-material';
+import { Button, Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import { NativeSelect } from '@mui/material';
-import Button from '@mui/material/Button';
 import { PDFDownloadLink } from '@react-pdf/renderer';
 import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
+import pdf from '../../assets/icons/pdf.svg';
+import reset from '../../assets/icons/reset.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -48,12 +50,12 @@ const ProjectReport: React.FC = () => {
 
   const navigate = useNavigate();
 
-  const [secondsLeft, setSecondsLeft] = useState<number>(3);
   const [report, setReport] = useState<Report>();
   const [month, setMonth] = useState<number>(1);
   const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [validYear, setValidYear] = useState<boolean>(false);
+  const [usingFilter, setUsingFilter] = useState<boolean>(false);
 
   const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
 
@@ -72,7 +74,12 @@ const ProjectReport: React.FC = () => {
   };
 
   const handleYearChange = (value: string) => {
-    if (!/^\d*\.?\d*$/.test(value) || value.length !== 4 || Number(value) < 0) {
+    if (
+      !/^\d*\.?\d*$/.test(value) ||
+      value.length !== 4 ||
+      Number(value) < 2018 ||
+      Number(value) > new Date().getFullYear()
+    ) {
       setState({ open: true, message: 'Please enter a valid year.', type: 'danger' });
       setValidYear(true);
       return;
@@ -88,6 +95,7 @@ const ProjectReport: React.FC = () => {
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
+    setUsingFilter(true);
     date.current = filterteParser(new Date(year, month - 1));
 
     const doFetch = async (): Promise<void> => {
@@ -101,8 +109,11 @@ const ProjectReport: React.FC = () => {
 
   const handleClear = () => {
     setMonth(1);
+    setValidYear(false);
     setYear(Number(new Date().getFullYear()));
+    setState({ open: false, message: '' });
     reqReport.sendRequest();
+    setUsingFilter(false);
   };
 
   useEffect(() => {
@@ -141,29 +152,7 @@ const ProjectReport: React.FC = () => {
 
   if (reqReport.error) {
     if (reqReport.error.message.includes('403')) {
-      setTimeout(() => {
-        navigate('/projects');
-      }, 3000);
-
-      setInterval(() => {
-        setSecondsLeft(secondsLeft - 1);
-      }, 1000);
-
-      return (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ComponentPlaceholder text='' />
-          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
-            Unauthorized employeee <br /> Redirecting in {secondsLeft}
-          </Typography>
-        </Box>
-      );
+      navigate('/projects');
     } else {
       return (
         <Box
@@ -185,7 +174,7 @@ const ProjectReport: React.FC = () => {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
         }}
       >
         <GoBack />
@@ -205,7 +194,9 @@ const ProjectReport: React.FC = () => {
             >
               <Box sx={{ width: '50%' }}></Box>
               <Box sx={{ width: '50%', display: 'flex', justifyContent: 'space-between' }}>
-                <Box sx={{ display: 'flex', gap: '10px', marginLeft: '10px' }}>
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}
+                >
                   <NativeSelect
                     sx={{
                       border: 1,
@@ -213,7 +204,8 @@ const ProjectReport: React.FC = () => {
                       borderRadius: '5px',
                       borderColor: colors.lightGray,
                       width: '120px',
-                      padding: '5px',
+                      height: '35px',
+                      padding: '4px',
                     }}
                     inputProps={{
                       name: 'age',
@@ -244,7 +236,8 @@ const ProjectReport: React.FC = () => {
                       width: '120px',
                       bgcolor: 'transparent',
                       border: 1,
-                      borderColor: colors.lightGray,
+                      borderColor: colors.lighterGray,
+                      paddingTop: '5px',
                     }}
                     type='number'
                     defaultValue={year}
@@ -252,34 +245,43 @@ const ProjectReport: React.FC = () => {
                   />
                   <Button
                     sx={{
-                      bgcolor: colors.darkGold,
-                      color: '#fff',
-                      borderRadius: '8px',
-                      '&:hover': {
-                        bgcolor: colors.darkerGold,
-                        opacity: '0.8',
+                      backgroundColor: colors.lighterWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
                       },
+                      ':disabled': {
+                        backgroundColor: colors.lighterGray,
+                      },
+                      border: 2.5,
+                      borderColor: colors.lighterGray,
+                      height: '5px',
                     }}
                     onClick={handleClose}
                     disabled={hasErrors()}
+                    startDecorator={
+                      <Search style={{ color: validYear ? colors.null : colors.gold }} />
+                    }
                   >
-                    SEARCH
+                    <Typography
+                      sx={{ color: validYear ? colors.null : colors.gold, paddingTop: '3px' }}
+                    >
+                      Search
+                    </Typography>
                   </Button>
                   <Button
                     sx={{
-                      color: '#fff',
-                      bgcolor: colors.darkBlue,
-                      borderRadius: '8px',
-                      borderColor: colors.lighterGray,
-                      border: 1,
-                      '&:hover': {
-                        bgcolor: colors.darkerBlue,
-                        opacity: '0.8',
+                      backgroundColor: colors.lighterWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
                       },
+                      border: 2.5,
+                      borderColor: colors.lighterGray,
+                      height: '5px',
                     }}
                     onClick={handleClear}
+                    startDecorator={<img src={reset} alt='reset' className='w-5' />}
                   >
-                    Reset
+                    <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
                   </Button>
                 </Box>
                 <Box>
@@ -289,18 +291,19 @@ const ProjectReport: React.FC = () => {
                   >
                     <Button
                       sx={{
-                        color: '#fff',
-                        bgcolor: colors.danger,
-                        borderRadius: '8px',
-                        borderColor: colors.lighterGray,
-                        border: 1,
-                        '&:hover': {
-                          bgcolor: colors.darkRed,
-                          opacity: '0.8',
+                        backgroundColor: colors.lighterWhite,
+                        ':hover': {
+                          backgroundColor: colors.orangeChip,
                         },
+                        border: 2.5,
+                        borderColor: colors.lighterGray,
+                        height: '5px',
                       }}
+                      startDecorator={<img src={pdf} alt='pdf' className='w-7' />}
                     >
-                      Download as PDF
+                      <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>
+                        Download
+                      </Typography>
                     </Button>
                   </PDFDownloadLink>
                 </Box>
@@ -517,7 +520,13 @@ const ProjectReport: React.FC = () => {
                     justifyContent: 'center',
                   }}
                 >
-                  <ComponentPlaceholder text='No tasks associated to this project were found.' />
+                  <ComponentPlaceholder
+                    text={
+                      usingFilter
+                        ? 'No tasks in done were found for this date'
+                        : 'No tasks associated to this project were found.'
+                    }
+                  />
                 </Box>
               )}
               {report.tasks?.map(item => {

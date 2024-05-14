@@ -26,7 +26,7 @@ import { RequestMethods } from '../../utils/constants';
  * @return {JSX.Element} - React component when an error occurs
  * @return {JSX.Element} - React component when the information is loaded
  */
-const Tasks = (): JSX.Element => {
+const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
 
@@ -53,10 +53,15 @@ const Tasks = (): JSX.Element => {
     try {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
+      setState({
+        open: true,
+        message: 'Task deleted successfully.',
+        type: 'success',
+      });
     } catch (error) {
       setState({
         open: true,
-        message: 'An error occurred while deleting the task',
+        message: 'An error occurred while deleting the task.',
         type: 'danger',
       });
     }
@@ -197,4 +202,4 @@ const Tasks = (): JSX.Element => {
   );
 };
 
-export default Tasks;
+export default AssignedTasks;

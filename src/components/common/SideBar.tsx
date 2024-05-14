@@ -1,18 +1,25 @@
 import { FolderShared, Home, SwitchAccount, Toc, ViewTimeline } from '@mui/icons-material';
-import { Link } from 'react-router-dom';
+import { useContext } from 'react';
+import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
 import colors from '../../colors';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import { RoutesPath } from '../../utils/constants';
 
-const Items = [
-  { icon: Home, href: RoutesPath.HOME, title: 'Home Page' },
-  { icon: ViewTimeline, href: RoutesPath.PROJECTS, title: 'Projects' },
-  { icon: Toc, href: RoutesPath.TASKS, title: 'Tasks' },
-  { icon: FolderShared, href: RoutesPath.CLIENTS, title: 'Clients' },
-  { icon: SwitchAccount, href: RoutesPath.EMPLOYEES, title: 'Employees' },
-];
-
 const SideBar = () => {
+  const { employee } = useContext(EmployeeContext);
+  const pathname = useLocation().pathname;
+
+  const isAdmin = employee?.role === 'Admin';
+
+  const Items = [
+    { icon: Home, href: RoutesPath.HOME, title: 'Home Page' },
+    { icon: ViewTimeline, href: RoutesPath.PROJECTS, title: 'Projects' },
+    { icon: Toc, href: RoutesPath.TASKS, title: 'Tasks' },
+    { icon: FolderShared, href: RoutesPath.CLIENTS, title: 'Clients' },
+    ...(isAdmin ? [{ icon: SwitchAccount, href: RoutesPath.EMPLOYEES, title: 'Employees' }] : []),
+  ];
+
   return (
     <aside className="relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-screen top-0 left-0 flex flex-col items-center pt-16 gap-10 w-[200px]">
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
@@ -31,8 +38,11 @@ const SideBar = () => {
               >
                 <Link
                   to={item.href}
-                  className='flex items-center gap-3 px-9 py-5'
-                  style={{ color: colors.lightGold }}
+                  className='flex items-center gap-3 px-9 py-5 opacity'
+                  style={{
+                    color: colors.lightGold,
+                    opacity: pathname.includes(item.href) ? 1 : 0.7,
+                  }}
                 >
                   <item.icon></item.icon>
                   <p>{item.title}</p>

@@ -1,27 +1,27 @@
-import { Chip } from '@mui/material';
-import Divider from '@mui/material/Divider';
-import { useEffect, useState } from 'react';
-import ArchiveModal from '../../../components/common/ArchiveModal';
-// import DeleteModal from '../../../components/common/DeleteModal';
-import useHttp from '../../../hooks/useHttp';
-import { CompanyEntity } from '../../../types/company';
-import { Response } from '../../../types/response';
-import { RequestMethods, RoutesPath } from '../../../utils/constants';
-import { ProjectsClientList } from '../../Projects/ProjectsClientList';
-
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
-import ArchiveOutlinedIcon from '@mui/icons-material/ArchiveOutlined';
+import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
-// import DeleteOutlineOutlinedIcon from '@mui/icons-material/DeleteOutlineOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
-import { Box, Snackbar, Typography } from '@mui/joy';
-import { useNavigate, useParams } from 'react-router-dom';
-import GoBack from '../../../components/common/GoBack';
-import EditClientFormModal from '../../../components/modules/Clients/EditClientFormModal';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
-import { formatDate } from '../../../utils/methods';
+import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import { Box, Button, Chip, Snackbar, Typography } from '@mui/joy';
+import Divider from '@mui/material/Divider';
+import { isAxiosError } from 'axios';
+import { useContext, useEffect, useState } from 'react';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
+import colors from '../../colors';
+import ArchiveModal from '../../components/common/ArchiveModal';
+import GoBack from '../../components/common/GoBack';
+import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
+import { CompanyEntity } from '../../types/company';
+import { ResponseEntity } from '../../types/response';
+import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { formatDate } from '../../utils/methods';
+import { ProjectsClientList } from '../Projects/ProjectsClientList';
 
 /**
  * Client Details Page page
@@ -41,10 +41,21 @@ const ClientDetails = () => {
   const [refetch, setRefetch] = useState(false);
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const { clientId } = useParams();
-  const { data, error, loading, sendRequest } = useHttp<Response<CompanyEntity>>(
+  const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
     `/company/${clientId}`,
     RequestMethods.GET
   );
+  const { employee } = useContext(EmployeeContext);
+  const [notFound, setNotFound] = useState(false);
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   const navigate = useNavigate();
 
@@ -70,11 +81,17 @@ const ClientDetails = () => {
     return <div>Loading...</div>;
   }
 
+  if (notFound) {
+    return <Navigate to='/404' replace />;
+  }
+
   if (error) {
     return <div>Error: {error.message}</div>;
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
+
+  const isAdmin = employee?.role === 'Admin';
 
   return (
     <main>
@@ -82,7 +99,7 @@ const ClientDetails = () => {
         sx={{
           display: 'flex',
           alignItems: 'center',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
@@ -91,6 +108,7 @@ const ClientDetails = () => {
 
       <section className='bg-white rounded-xl p-6'>
         <ArchiveModal
+          sendRequest={sendRequest}
           toggleModal={ToggleModalArchive}
           open={openArchive}
           setOpen={setOpenArchive}
@@ -118,39 +136,63 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <>
-            <section className='flex-wrap grid grid-cols-3'>
-              <p className='grow-0 text-2xl text-gold font-medium truncate col-span-2'>
-                {company.name}
-              </p>
-              <div className='flex justify-end items-center gap-5'>
-                <div className='grid grid-cols-1'>
+            <EditClientFormModal
+              open={editModalOpen}
+              setOpen={setEditModalOpen}
+              clientData={company}
+              setRefetch={setRefetch}
+            />
+            <section className='grid grid-cols-1 lg:grid-cols-3 overflow-x-scroll lg:overflow-x-hidden'>
+              <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
+              <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
+                <div className='flex flex-wrap items-center gap-5'>
                   <Typography>Constitution date:</Typography>
-                  <Chip
-                    color='primary'
-                    variant='outlined'
-                    label={formatDate(company.constitutionDate ?? null)}
-                  />
+                  <Chip color='primary' variant='outlined'>
+                    {formatDate(company.constitutionDate ?? null)}
+                  </Chip>
                 </div>
-                <EditOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
+                <Button
                   onClick={handleEditClick}
-                />
-                <EditClientFormModal
-                  open={editModalOpen}
-                  setOpen={setEditModalOpen}
-                  clientData={company}
-                  setRefetch={setRefetch}
-                />
-                <ArchiveOutlinedIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
-                  onClick={ToggleModalArchive}
-                />
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold }}>Edit</Typography>
+                </Button>
+
+                {isAdmin && (
+                  <Button
+                    onClick={ToggleModalArchive}
+                    sx={{
+                      backgroundColor: colors.lightWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
+                      },
+                      height: '5px',
+                      color: 'text-gold',
+                    }}
+                    startDecorator={
+                      company?.archived ? (
+                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
+                      ) : (
+                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
+                      )
+                    }
+                  >
+                    <Typography sx={{ color: colors.gold }}>
+                      {company?.archived ? 'Unarchive' : 'Archive'}
+                    </Typography>
+                  </Button>
+                )}
               </div>
             </section>
 
-            <section className='flex mt-8 justify-start gap-28'>
+            <section className='flex flex-wrap mt-8 gap-x-12 gap-y-4 justify-start align-between'>
               <article className='flex gap-4'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
@@ -170,7 +212,7 @@ const ClientDetails = () => {
             </section>
           </>
         )}
-        <Divider sx={{ 'margin-top': '30px' }} />
+        <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
 
@@ -183,24 +225,5 @@ const ClientDetails = () => {
     </main>
   );
 };
-
-// Hay que arreglar esto después
-// const handleArchiveClient = () => {
-//   // update ui
-//   setFilteredClientsData(prev => {
-//     const aux = [];
-//     for (let i = 0; i < prev.length; i++) {
-//       if (prev[i].id !== company?.id) {
-//         aux.push(prev[i]);
-//         continue;
-//       }
-//       aux.push({
-//         ...prev[i],
-//         archived: !prev[i].archived,
-//       });
-//     }
-//     return aux;
-//   });
-// };
 
 export default ClientDetails;
