@@ -1,13 +1,14 @@
-import { Button, Card, FormControl, FormLabel, Input, Snackbar, Switch, Textarea } from '@mui/joy';
+/* eslint-disable react-hooks/exhaustive-deps */
+import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
@@ -15,7 +16,7 @@ import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/p
 import { RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const form = useNewProject();
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -42,7 +43,6 @@ const NewProject = () => {
     }
 
     req.sendRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -58,7 +58,6 @@ const NewProject = () => {
 
   useEffect(() => {
     handleRequiredFields();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [form.formState, startDate]);
 
   const handleRequiredFields = () => {
@@ -128,7 +127,7 @@ const NewProject = () => {
   };
 
   if (form.success) {
-    return <Navigate to='/projects' />;
+    return <Navigate to={`/projects/details/${form.res!.data.id}`} replace />;
   }
 
   return (
@@ -374,11 +373,6 @@ const NewProject = () => {
             </Button>
           </section>
           {/* Snackbar */}
-          <SnackbarContext.Provider value={{ state, setState }}>
-            <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-              {state.message}
-            </Snackbar>
-          </SnackbarContext.Provider>
         </form>
       )}
     </Card>

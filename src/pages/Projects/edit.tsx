@@ -2,7 +2,7 @@ import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
@@ -21,7 +21,9 @@ import {
 import { APIPath, RequestMethods } from '../../utils/constants';
 
 const EditProject = () => {
+  const location = useLocation();
   const { id } = useParams();
+
   const { employee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
@@ -128,7 +130,7 @@ const EditProject = () => {
   };
 
   if (form.success) {
-    return <Navigate to={`/projects/details/${id}`} />;
+    return <Navigate to={`/projects/details/${id}`} state={location.state} replace />;
   }
 
   return (

@@ -1,4 +1,4 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
 import { ProjectPeriodicity, ProjectStatus } from '../types/project';
@@ -97,6 +97,7 @@ const useNewProject = () => {
   const [error, setError] = useState<Error | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [res, setRes] = useState<AxiosResponse | null>(null);
 
   const handleChange = (field: keyof FormState, value: string | Date | boolean | null) => {
     dispatch({ type: 'CHANGE', field, value });
@@ -129,6 +130,7 @@ const useNewProject = () => {
       );
       if (res.status === 201) {
         setSuccess(true);
+        setRes(res);
       }
     } catch (err: unknown) {
       console.log(err);
@@ -188,6 +190,7 @@ const useNewProject = () => {
     error,
     isPosting,
     success,
+    res,
   };
 };
 
