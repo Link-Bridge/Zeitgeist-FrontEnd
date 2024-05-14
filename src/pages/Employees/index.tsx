@@ -8,7 +8,7 @@ const Employees = () => {
   const [filterOption, setFilterOption] = useState('Name');
 
   return (
-    <section className='flex-1 overflow-scroll'>
+    <section className='flex-1 w-full p-2'>
       <div className='mb-4'>
         <SearchBar
           searchTerm={searchTerm}
@@ -18,7 +18,7 @@ const Employees = () => {
           setSelectedOption={setFilterOption}
         />
       </div>
-      <Card className='flex-1'>
+      <Card className='min-w-0 min-h-0' variant='plain'>
         <EmployeeTable searchTerm={searchTerm} filterOption={filterOption} />
       </Card>
     </section>
