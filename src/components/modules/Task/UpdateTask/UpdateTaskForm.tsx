@@ -229,7 +229,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       await onSubmit(payload);
       setState({ open: true, message: 'Task updated successfully.', type: 'success' });
       setTimeout(() => {
-        navigate(RoutesPath.TASKS + '/' + idTask);
+        navigate(RoutesPath.TASKS + '/' + idTask, { state: { fromEdit: true } });
       }, 2000);
     } catch (error) {
       setState({ open: true, message: 'Failed to update task.', type: 'danger' });
