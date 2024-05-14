@@ -7,19 +7,27 @@ import loginImage from '../../assets/images/login-image.png';
 import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import useHttp from '../../hooks/useHttp';
 import { EmployeeReponse } from '../../types/employee';
-import { RequestMethods, RoutesPath } from '../../utils/constants';
+import { BASE_API_URL, RoutesPath } from '../../utils/constants';
 import { handleGetDeviceToken } from './device-token';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
-  const { sendRequest, data, loading } = useHttp<EmployeeReponse>(
-    '/employee/signup',
-    RequestMethods.POST
-  );
+
+  const sendRequest = async () => {
+    const idToken = localStorage.getItem('idToken');
+    const response = await fetch(`${BASE_API_URL}/employee/signup`, {
+      method: 'POST',
+      headers: {
+        'Content-Type': 'application/json',
+        Authorization: `Bearer ${idToken}`,
+      },
+    });
+
+    return JSON.parse(await response.text()) as EmployeeReponse;
+  };
 
   const refreshToken = async () => {
     try {
@@ -27,7 +35,6 @@ const Auth: React.FC = () => {
       if (currentUser) {
         const token = await currentUser.getIdToken(true);
         localStorage.setItem('idToken', token);
-        console.log('Token refreshed!');
       }
     } catch (error) {
       console.error('Error refreshing token:', error);
@@ -42,22 +49,18 @@ const Auth: React.FC = () => {
       localStorage.setItem('idToken', token);
       localStorage.setItem('refreshToken', refreshToken);
 
-      await sendRequest({}, {});
-      console.log('data ', data);
-      if (!loading) {
-        updateUserContext();
-      }
+      const response = await sendRequest();
+      await updateUserContext(response);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
     }
   };
 
-  const updateUserContext = async () => {
+  const updateUserContext = async (data: EmployeeReponse) => {
     if (data) {
       if (data.data.role !== 'No role') {
-        console.log('data ', data);
         setEmployee(data.data);
-        localStorage.setItem('employee', JSON.stringify(data));
+        localStorage.setItem('employee', JSON.stringify(data.data));
         navigate(RoutesPath.HOME);
         handleGetDeviceToken(data.data.employee.email);
       } else {
@@ -71,7 +74,7 @@ const Auth: React.FC = () => {
   };
 
   useEffect(() => {
-    const intervalId = setInterval(refreshToken, 18000);
+    const intervalId = setInterval(refreshToken, 1800);
     return () => clearInterval(intervalId);
   }, []);
 
