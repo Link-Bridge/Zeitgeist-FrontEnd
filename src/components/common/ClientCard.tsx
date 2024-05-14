@@ -33,7 +33,7 @@ const ClientCard = ({
           {name}
         </span>
       </header>
-      <div className='grid grid-cols-2 gap-2 flex-wrap'>
+      <div className='grid grid-cols-2 gap-2'>
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
@@ -46,7 +46,6 @@ const ClientCard = ({
           sx={{
             bgcolor: colors.orangeChip,
             fontSize: '13px',
-            width: 'max-content',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -58,7 +57,6 @@ const ClientCard = ({
           sx={{
             bgcolor: colors.brownChip,
             fontSize: '13px',
-            width: 'max-content',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
@@ -72,7 +70,6 @@ const ClientCard = ({
             color: '#0B6BCB',
             border: '1px solid #97C3F0',
             fontSize: '13px',
-            width: 'max-content',
             overflow: 'hidden',
             textOverflow: 'ellipsis',
             whiteSpace: 'nowrap',
