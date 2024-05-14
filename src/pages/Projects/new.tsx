@@ -372,7 +372,6 @@ const NewProject = () => {
               Add Project
             </Button>
           </section>
-          {/* Snackbar */}
         </form>
       )}
     </Card>

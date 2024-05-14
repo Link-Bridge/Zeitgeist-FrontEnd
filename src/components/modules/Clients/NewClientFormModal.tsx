@@ -1,12 +1,11 @@
-import { Snackbar } from '@mui/joy';
 import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
@@ -37,7 +36,7 @@ interface NewClientFormModalProps {
 }
 
 const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalProps) => {
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
@@ -427,12 +426,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
             <CreateClientButton loading={loading} disabled={hasEmptyFields() || hasErrors()} />
           </Box>
         </Box>
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </Box>
     </Modal>
   );

@@ -1,8 +1,7 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Snackbar } from '@mui/joy';
+import { Chip } from '@mui/joy';
 import {
   Card,
-  Chip,
   Table,
   TableBody,
   TableCell,
@@ -13,10 +12,10 @@ import {
   colors,
 } from '@mui/material';
 import axios, { AxiosRequestConfig } from 'axios';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../../hooks/snackbarContext';
 import { Task } from '../../../../../types/task';
 import { TaskStatus } from '../../../../../types/task-status';
 import { APIPath, RequestMethods } from '../../../../../utils/constants';
@@ -44,7 +43,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const idTaskPayload = useRef<string>('');
 
   const [collapsed, setCollapsed] = useState(false);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -177,13 +176,14 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
                     </TableCell>
                     <TableCell>
                       <Chip
-                        label={task.workedHours ?? 0}
                         sx={{
-                          backgroundColor: '#D6CFBE',
+                          bgcolor: '#D6CFBE',
                           color: colors.grey[700],
                           fontSize: '0.9rem',
                         }}
-                      />
+                      >
+                        {task.workedHours ?? 0}
+                      </Chip>
                     </TableCell>
                     <TableCell sx={{ fontSize: '0.9rem' }}>
                       {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
@@ -213,12 +213,6 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
           setTaskToDelete(null);
         }}
       />
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

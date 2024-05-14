@@ -1,10 +1,9 @@
-import { Snackbar } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
@@ -39,7 +38,7 @@ const EditClientFormModal = ({
   setRefetch,
   clientData,
 }: EditClientFormModalProps) => {
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState(clientData.name);
   const [companyEmail, setCompanyEmail] = useState(clientData.email);
@@ -381,12 +380,6 @@ const EditClientFormModal = ({
             />
           </Box>
         </Box>
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </Box>
     </Modal>
   );
