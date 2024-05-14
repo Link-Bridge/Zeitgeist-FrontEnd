@@ -218,7 +218,7 @@ const ProjectDetails = () => {
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
-                state={{ fromDetails: true }}
+                state={{ fromDetail: true }}
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': {
