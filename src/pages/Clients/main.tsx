@@ -164,7 +164,7 @@ const ClientList = (): JSX.Element => {
       {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
       ) : (
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto overflow-hidden bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
           {filteredCompanies.map(company => (
             <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
               <ClientCard
