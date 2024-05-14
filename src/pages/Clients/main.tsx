@@ -1,6 +1,8 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ClientCard from '../../components/common/ClientCard';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -99,11 +101,10 @@ const ClientList = (): JSX.Element => {
             {isAdmin && (
               <div className='flex flex-row items-center gap-2'>
                 <div className='flex-row flex items-center gap-2'>
-                  <FilterAltIcon
-                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                  <p>Filter Clients:</p>
+                  <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+                  <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                    Filter Clients:
+                  </Typography>
                 </div>
                 <GenericDropdown
                   defaultValue={CompanyFilters.ALL}
@@ -142,10 +143,12 @@ const ClientList = (): JSX.Element => {
             <div className='flex flex-row items-center gap-2'>
               <div className='flex-row flex items-center gap-2'>
                 <FilterAltIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
+                  sx={{ width: '30px', height: '30px' }}
                   className='text-gold flex-none'
                 />
-                <p>Filter Clients:</p>
+                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                  Filter Clients:
+                </Typography>
               </div>
               <GenericDropdown
                 defaultValue={CompanyFilters.ALL}
