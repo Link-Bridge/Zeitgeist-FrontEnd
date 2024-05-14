@@ -45,6 +45,7 @@ function GenericDropdown(props: GenericDropdownProps) {
       value={currentValue}
       placeholder={props.placeholder}
       sx={{
+        flex: 'none',
         bgcolor: colorCombination?.bg,
         color: colorCombination?.font,
         width: 240,
