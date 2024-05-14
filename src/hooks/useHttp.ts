@@ -61,7 +61,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   ): Promise<void> => {
     setLoading(true);
     setError(null);
-    const idToken = sessionStorage.getItem('idToken');
+    const idToken = localStorage.getItem('idToken');
     const headers = {
       'Content-Type': 'application/json',
       Authorization: `Bearer ${idToken}`,
@@ -84,7 +84,6 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
       const response = await axios(options);
       setData(response.data as T);
     } catch (error) {
-      console.error(error);
       setError(error as Error | AxiosError);
     } finally {
       setLoading(false);

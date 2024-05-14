@@ -1,16 +1,21 @@
-import React, { ReactNode } from 'react';
-import { Navigate } from 'react-router-dom';
+import React, { ReactNode, useContext } from 'react';
+import { Navigate, useLocation } from 'react-router-dom';
+import { EmployeeContext } from '../../hooks/employeeContext';
 
 interface ProtectedRouteProps {
   children: ReactNode;
 }
 
 const ProtectedRoute: React.FC<ProtectedRouteProps> = ({ children }) => {
-  const isAuthenticated = sessionStorage.getItem('idToken'); // ¿cambiar a localStorage ?
+  const location = useLocation();
+  const isAuthenticated = localStorage.getItem('idToken');
+  const { employee } = useContext(EmployeeContext);
 
-  if (!isAuthenticated) {
+  if (!isAuthenticated || employee?.role === 'No role') {
     return <Navigate to='/' replace />;
   }
+
+  if (isAuthenticated && location.pathname === '/') return <Navigate to='/home' replace />;
 
   return <>{children}</>;
 };

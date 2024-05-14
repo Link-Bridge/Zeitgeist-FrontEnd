@@ -1,6 +1,7 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
+import { truncateText } from '../../utils/methods';
 
 interface reportProps {
   data: Report;
@@ -24,6 +25,8 @@ function statusColor(status: string) {
       return colors.lightRed;
     case 'IN PROGRESS':
       return colors.warning;
+    case 'IN PROCESS':
+      return colors.warning;
     case 'UNDER REVISION':
       return colors.purple;
     case 'DELAYED':
@@ -36,6 +39,8 @@ function statusColor(status: string) {
       return colors.warning;
     case 'IN QUOTATION':
       return colors.darkBlue;
+    case 'AREA':
+      return colors.extra;
     default:
       return colors.null;
   }
@@ -99,6 +104,7 @@ const ProjectReportPDF = (props: reportProps) => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
+                flexWrap: 'wrap',
               }}
             >
               {infoComponent(
@@ -108,7 +114,7 @@ const ProjectReportPDF = (props: reportProps) => {
               )}
               {props.data.project.totalHours &&
                 infoComponent('Total hours', `${props.data.project.totalHours}`)}
-              {infoComponent('Company', `${props.data.project.companyName}`)}
+              {infoComponent('Company', `${truncateText(props.data.project.companyName, 58)}`)}
             </View>
 
             <View
@@ -118,9 +124,11 @@ const ProjectReportPDF = (props: reportProps) => {
                 display: 'flex',
                 flexDirection: 'row',
                 justifyContent: 'flex-start',
+                flexWrap: 'wrap',
               }}
             >
-              {props.data.project.area && infoComponent('Area', `${props.data.project.area}`)}
+              {props.data.project.area &&
+                infoComponent('Area', `${props.data.project.area}`, 'AREA')}
               {props.data.project.matter && infoComponent('Matter', `${props.data.project.matter}`)}
               {infoComponent('Category', `${props.data.project.category}`)}
               {props.data.project.isChargeable &&
@@ -171,6 +179,7 @@ const ProjectReportPDF = (props: reportProps) => {
                         flexDirection: 'row',
                         justifyContent: 'space-around',
                       }}
+                      key={item}
                     >
                       <Text style={{ width: '20%' }}>{keyMap.get(item)}</Text>
 
@@ -200,7 +209,10 @@ const ProjectReportPDF = (props: reportProps) => {
         {props.data.tasks?.map(item => {
           tasks++;
           return (
-            <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }}>
+            <View
+              style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '30px' }}
+              key={item.title}
+            >
               <View style={{ gap: '10px' }}>
                 {tasks % 4 == 0 && (
                   <Text break style={{ fontSize: 20 }}>

@@ -5,10 +5,23 @@ export interface BareboneTask {
   description: string;
   status: TaskStatus;
   startDate: string | null;
-  dueDate: string | null;
+  endDate: string | null;
   workedHours: string | null;
   idProject: string;
   idEmployee: string;
+}
+
+export interface Task {
+  id: string;
+  title: string;
+  description: string;
+  status: TaskStatus;
+  startDate: Date;
+  endDate?: Date;
+  workedHours: number;
+  createdAt: Date;
+  updatedAt: Date;
+  idProject: string;
 }
 
 export interface TaskDetail {
@@ -26,4 +39,16 @@ export interface TaskDetail {
   projectName: string;
   employeeFirstName?: string;
   employeeLastName?: string;
+}
+
+export interface UpdatedTask {
+  id: string;
+  title?: string;
+  description?: string;
+  status?: TaskStatus;
+  startDate?: string;
+  endDate?: string | null;
+  workedHours?: string;
+  idProject?: string;
+  idEmployee?: string;
 }

@@ -1,14 +1,14 @@
 import axios from 'axios';
 import { useState } from 'react';
-import { EnvKeysValues } from '../utils/constants';
+import { BASE_API_URL } from '../utils/constants';
 
 const useDeleteEmployee = () => {
   const [error, setError] = useState<Error | null>(null);
 
   const deleteEmployee = async (id: string) => {
     try {
-      await axios.delete(`${EnvKeysValues.BASE_API_URL}/employee/delete/${id}`, {
-        headers: { Authorization: `Bearer ${sessionStorage.getItem('idToken')}` },
+      await axios.delete(`${BASE_API_URL}/employee/delete/${id}`, {
+        headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` },
       });
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {

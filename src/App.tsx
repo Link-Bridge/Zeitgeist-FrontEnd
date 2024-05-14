@@ -1,13 +1,14 @@
+import { Snackbar } from '@mui/joy';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
 import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
-import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
-
-import { Snackbar } from '@mui/joy';
+import NotFoundPage from './components/common/NotFound';
+import OfflineModal from './components/common/OfflineModal';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
@@ -21,7 +22,7 @@ function App() {
   const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 
   useEffect(() => {
-    const currentEmployee = JSON.parse(sessionStorage.getItem('employee') ?? '{}');
+    const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? '{}');
     if (currentEmployee) {
       setEmployee(currentEmployee);
     }
@@ -43,6 +44,7 @@ function App() {
     <EmployeeContext.Provider value={{ employee, setEmployee }}>
       <LocalizationProvider dateAdapter={AdapterDayjs}>
         <SnackbarContext.Provider value={{ state, setState }}>
+          <OfflineModal />
           <Router>
             <Routes>
               {<Route path={RoutesPath.ROOT} element={<Auth />} />}
@@ -88,6 +90,7 @@ function App() {
                   }
                 />
               </Route>
+              <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </Router>
           <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>

@@ -27,10 +27,13 @@ const ClientCard = ({
 }: ClientCardProps) => {
   return (
     <CardContainer>
-      <header className='mb-3 text-xl flex'>
-        <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' /> {name}
+      <header className='mb-3 text-xl flex flex-nowrap'>
+        <img src={WorkIcon} alt='Yellow Briefcase' className='mr-2' />
+        <span className='truncate' style={{ color: colors.darkGold }}>
+          {name}
+        </span>
       </header>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='grid grid-cols-2 gap-2 flex-wrap'>
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
@@ -42,6 +45,11 @@ const ClientCard = ({
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
+            fontSize: '13px',
+            width: 'max-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           Legal Hours: {legalHours}
@@ -50,6 +58,10 @@ const ClientCard = ({
           sx={{
             bgcolor: colors.brownChip,
             fontSize: '13px',
+            width: 'max-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           Chargeable Hours: {chargeableHours}
@@ -60,6 +72,10 @@ const ClientCard = ({
             color: '#0B6BCB',
             border: '1px solid #97C3F0',
             fontSize: '13px',
+            width: 'max-content',
+            overflow: 'hidden',
+            textOverflow: 'ellipsis',
+            whiteSpace: 'nowrap',
           }}
         >
           Total Projects: {totalProjects}

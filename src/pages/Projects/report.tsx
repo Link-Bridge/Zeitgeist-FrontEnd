@@ -1,19 +1,27 @@
+import { Search } from '@mui/icons-material';
+import { Button, Input, Snackbar, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
-import Link from '@mui/joy/Link';
+import { NativeSelect } from '@mui/material';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useEffect } from 'react';
+import axios from 'axios';
+import { useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
-import download from '../../assets/icons/download.svg';
-import left_arrow from '../../assets/icons/left_arrow.svg';
+import pdf from '../../assets/icons/pdf.svg';
+import reset from '../../assets/icons/reset.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
+import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { Report } from '../../types/project-report';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
+import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
 
 function dateParser(date: Date): string {
@@ -24,77 +32,311 @@ function dateParser(date: Date): string {
   return `${day}-${month}-${year}`;
 }
 
+function filterteParser(date: Date): string {
+  const arr = date.toISOString().split('-');
+  const day = arr[2].substring(0, 2);
+  const month = arr[1];
+  const year = arr[0];
+  return `${year}-${month}-${day}`;
+}
+
+function capitalize(data: string): string {
+  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
+}
+
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
+  const date = useRef<string>('');
+
   const navigate = useNavigate();
-  const { data, loading, sendRequest, error } = useHttp<Report>(
-    `${APIPath.PROJECT_REPORT}/${id}`,
-    RequestMethods.GET
-  );
+
+  const [secondsLeft, setSecondsLeft] = useState<number>(3);
+  const [report, setReport] = useState<Report>();
+  const [month, setMonth] = useState<number>(1);
+  const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const [validYear, setValidYear] = useState<boolean>(false);
+  const [usingFilter, setUsingFilter] = useState<boolean>(false);
+
+  const reqReport = useHttp<Report>(`${APIPath.PROJECT_REPORT}/${id}`, RequestMethods.GET);
+
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
     ['inprogress', 'In process'],
-    ['underrevision', 'Under Revision'],
+    ['underrevision', 'Under revision'],
     ['delayed', 'Delayed'],
     ['postponed', 'Postponed'],
     ['notstarted', 'Not started'],
     ['cancelled', 'Cancelled'],
   ]);
 
-  const handleClick = () => {
-    navigate('/projects');
+  const hasErrors = () => {
+    return validYear;
+  };
+
+  const handleYearChange = (value: string) => {
+    if (
+      !/^\d*\.?\d*$/.test(value) ||
+      value.length !== 4 ||
+      Number(value) < 2018 ||
+      Number(value) > new Date().getFullYear()
+    ) {
+      setState({ open: true, message: 'Please enter a valid year.', type: 'danger' });
+      setValidYear(true);
+      return;
+    }
+    setValidYear(false);
+    setState({ open: false, message: '' });
+    setYear(Number(value));
+  };
+
+  const handleMonthChange = (value: number) => {
+    setMonth(value);
+  };
+
+  // eslint-disable-next-line react-hooks/exhaustive-deps
+  const handleClose = () => {
+    setUsingFilter(true);
+    date.current = filterteParser(new Date(year, month - 1));
+
+    const doFetch = async (): Promise<void> => {
+      const data = await axios.get(
+        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
+        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
+      );
+      setReport(data.data);
+    };
+    void doFetch();
+  };
+
+  const handleClear = () => {
+    setMonth(1);
+    setValidYear(false);
+    setYear(Number(new Date().getFullYear()));
+    setState({ open: false, message: '' });
+    reqReport.sendRequest();
+    setUsingFilter(false);
   };
 
   useEffect(() => {
-    if (!data) {
-      sendRequest();
+    if (!reqReport.data) {
+      reqReport.sendRequest();
+    } else {
+      setReport(reqReport.data);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data]);
+  }, [reqReport.data]);
 
-  if (loading) {
-    return <div>Loading...</div>;
+  useEffect(() => {}, [handleClose]);
+
+  if (reqReport.loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading report
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
   }
 
-  const totalTasks = data?.statistics?.total || 1;
+  const totalTasks = report?.statistics?.total || 1;
 
-  if (error) {
-    return <div>Error laoding the report</div>;
+  if (reqReport.error) {
+    if (reqReport.error.message.includes('403')) {
+      setTimeout(() => {
+        navigate('/projects');
+      }, 3000);
+
+      setInterval(() => {
+        setSecondsLeft(secondsLeft - 1);
+      }, 1000);
+
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='' />
+          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
+            Unauthorized employeee <br /> Redirecting in {secondsLeft}
+          </Typography>
+        </Box>
+      );
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='Error loading the report.' />
+        </Box>
+      );
+    }
   }
 
   return (
     <>
       <Box
-        onClick={handleClick}
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
         }}
       >
-        <img src={left_arrow} alt='Left arrow' className='w-3.5' />
-        <Link
-          underline='none'
-          className='ml-auto'
-          sx={{
-            color: colors.darkGold, // Llamar el color correspondiente
-            '&:hover': {
-              color: colors.darkerGold,
-            },
-          }}
-        >
-          {' '}
-          &nbsp;{'Go Back'}{' '}
-        </Link>
+        <GoBack />
       </Box>
 
       <br />
       <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-        {data ? (
+        {report ? (
           <>
             <Box
               sx={{
                 display: 'flex',
-                gap: '15px',
+                justifyContent: 'flex-end',
+                gap: '10px',
+                marginBottom: '20px',
+              }}
+            >
+              <Box sx={{ width: '50%' }}></Box>
+              <Box sx={{ width: '50%', display: 'flex', justifyContent: 'space-between' }}>
+                <Box
+                  sx={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}
+                >
+                  <NativeSelect
+                    sx={{
+                      border: 1,
+                      borderBottom: 0,
+                      borderRadius: '5px',
+                      borderColor: colors.lightGray,
+                      width: '120px',
+                      height: '35px',
+                      padding: '4px',
+                    }}
+                    inputProps={{
+                      name: 'age',
+                      id: 'uncontrolled-native',
+                    }}
+                    defaultValue={1}
+                    onChange={e => handleMonthChange(Number(e.target.value))}
+                  >
+                    <option value={1}>January</option>
+                    <option value={2}>February</option>
+                    <option value={3}>March</option>
+                    <option value={4}>April</option>
+                    <option value={5}>May</option>
+                    <option value={6}>June</option>
+                    <option value={7}>July</option>
+                    <option value={8}>August</option>
+                    <option value={9}>September</option>
+                    <option value={10}>October</option>
+                    <option value={11}>November</option>
+                    <option value={12}>December</option>
+                  </NativeSelect>
+
+                  <Input
+                    sx={{
+                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
+                        display: 'none',
+                      },
+                      width: '120px',
+                      bgcolor: 'transparent',
+                      border: 1,
+                      borderColor: colors.lighterGray,
+                      paddingTop: '5px',
+                    }}
+                    type='number'
+                    defaultValue={year}
+                    onChange={e => handleYearChange(e.target.value)}
+                  />
+                  <Button
+                    sx={{
+                      backgroundColor: colors.lighterWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
+                      },
+                      ':disabled': {
+                        backgroundColor: colors.lighterGray,
+                      },
+                      border: 2.5,
+                      borderColor: colors.lighterGray,
+                      height: '5px',
+                    }}
+                    onClick={handleClose}
+                    disabled={hasErrors()}
+                    startDecorator={
+                      <Search style={{ color: validYear ? colors.null : colors.gold }} />
+                    }
+                  >
+                    <Typography
+                      sx={{ color: validYear ? colors.null : colors.gold, paddingTop: '3px' }}
+                    >
+                      Search
+                    </Typography>
+                  </Button>
+                  <Button
+                    sx={{
+                      backgroundColor: colors.lighterWhite,
+                      ':hover': {
+                        backgroundColor: colors.orangeChip,
+                      },
+                      border: 2.5,
+                      borderColor: colors.lighterGray,
+                      height: '5px',
+                    }}
+                    onClick={handleClear}
+                    startDecorator={<img src={reset} alt='reset' className='w-5' />}
+                  >
+                    <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
+                  </Button>
+                </Box>
+                <Box>
+                  <PDFDownloadLink
+                    document={<ProjectReportPDF data={report} />}
+                    fileName={`report_${report.project.name}.pdf`}
+                  >
+                    <Button
+                      sx={{
+                        backgroundColor: colors.lighterWhite,
+                        ':hover': {
+                          backgroundColor: colors.orangeChip,
+                        },
+                        border: 2.5,
+                        borderColor: colors.lighterGray,
+                        height: '5px',
+                      }}
+                      startDecorator={<img src={pdf} alt='pdf' className='w-7' />}
+                    >
+                      <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>
+                        Download
+                      </Typography>
+                    </Button>
+                  </PDFDownloadLink>
+                </Box>
+              </Box>
+            </Box>
+            <Box
+              sx={{
+                display: 'flex',
+                gap: '30px',
               }}
             >
               <Box
@@ -105,35 +347,30 @@ const ProjectReport: React.FC = () => {
                 <Box
                   sx={{
                     display: 'flex',
-                    gap: '10px',
+                    justifyContent: 'space-between',
+                    alignItems: 'center',
                   }}
                 >
-                  <h1
-                    style={{
-                      color: 'black',
-                      fontSize: '2rem',
-                      lineHeight: '1.1',
-                      letterSpacing: '1.5px',
-                    }}
-                  >
-                    {data.project.name}
-                  </h1>
-
                   <Box
                     sx={{
-                      alignContent: 'center',
+                      display: 'flex',
                     }}
                   >
-                    <PDFDownloadLink
-                      document={<ProjectReportPDF data={data} />}
-                      fileName={`report_${data.project.name}`}
+                    <h1
+                      style={{
+                        color: 'black',
+                        fontSize: '1.7rem',
+                        lineHeight: '1.1',
+                        letterSpacing: '1.5px',
+                      }}
                     >
-                      <img src={download} alt='Download' className='w-6' />
-                    </PDFDownloadLink>
+                      {report.project.name}
+                    </h1>
                   </Box>
                 </Box>
 
-                <p>{data.project.description}</p>
+                <br />
+                <p>{report.project.description}</p>
 
                 <br />
 
@@ -143,13 +380,13 @@ const ProjectReport: React.FC = () => {
                     gap: '40px',
                   }}
                 >
-                  <StatusChip status={`${data.project.status || '-'}`} />
+                  <StatusChip status={capitalize(report.project.status)} />
                   <ColorChip
-                    label={`Total Hours: ${data.project.totalHours}`}
+                    label={`Total Hours: ${report.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
                   <ColorChip
-                    label={`${data.project.companyName}`}
+                    label={`${truncateText(report.project.companyName, 30)}`}
                     color={`${colors.null}`}
                   ></ColorChip>
                 </Box>
@@ -159,27 +396,43 @@ const ProjectReport: React.FC = () => {
                 <Box
                   sx={{
                     display: 'flex',
-                    gap: '40px',
+                    gap: '15px',
+                    flexWrap: 'wrap',
                   }}
                 >
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Matter</p>
-                    <ColorChip
-                      label={data.project.matter || ''}
-                      color={`${colors.null}`}
-                    ></ColorChip>
-                  </Box>
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Category</p>
-                    <ColorChip
-                      label={data.project.category || ''}
-                      color={`${colors.null}`}
-                    ></ColorChip>
-                  </Box>
+                  {report.project.area && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Area</p>
+                      <ColorChip
+                        label={capitalize(report.project.area)}
+                        color={`${colors.extra}`}
+                      ></ColorChip>
+                    </Box>
+                  )}
+
+                  {report.project.matter && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Matter</p>
+                      <ColorChip
+                        label={truncateText(report.project.matter)}
+                        color={`${colors.null}`}
+                      ></ColorChip>
+                    </Box>
+                  )}
+                  {report.project.category && (
+                    <Box>
+                      <p style={{ fontSize: '.9rem' }}>Category</p>
+                      <ColorChip
+                        label={report.project.category}
+                        color={`${colors.null}`}
+                      ></ColorChip>
+                    </Box>
+                  )}
+
                   <Box>
                     <p style={{ fontSize: '.9rem' }}>Chargeable</p>
                     <ColorChip
-                      label={`${data.project.isChargeable}` ? 'Yes' : 'No'}
+                      label={report.project.isChargeable ? 'Yes' : 'No'}
                       color={`${colors.null}`}
                     ></ColorChip>
                   </Box>
@@ -202,10 +455,10 @@ const ProjectReport: React.FC = () => {
                       <img src={calendar} alt='calendar' className='w-5' />
                       <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                     </Box>
-                    <p>{dateParser(data.project.startDate)}</p>
+                    <p>{dateParser(report.project.startDate)}</p>
                   </Box>
 
-                  {data.project.endDate && (
+                  {report.project.endDate && (
                     <Box>
                       <Box
                         sx={{
@@ -215,7 +468,7 @@ const ProjectReport: React.FC = () => {
                         <img src={calendar} alt='calendar' className='w-5' />
                         <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                       </Box>
-                      <p>{dateParser(data.project.endDate)}</p>
+                      <p>{dateParser(report.project.endDate)}</p>
                     </Box>
                   )}
                 </Box>
@@ -228,12 +481,12 @@ const ProjectReport: React.FC = () => {
                   borderRadius: '8px',
                 }}
               >
-                {data.statistics &&
-                  Object.entries(data.statistics)
+                {report.statistics &&
+                  Object.entries(report.statistics)
                     .filter(([key]) => key !== 'total')
                     .map(([item, value]) => {
                       return (
-                        <>
+                        <Box key={item}>
                           <Grid container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
                             <Grid xs={3}>
                               <p>{keyMap.get(item)}</p>
@@ -265,7 +518,7 @@ const ProjectReport: React.FC = () => {
                               <p>{Math.round((value * 100) / totalTasks)}%</p>
                             </Grid>
                           </Grid>
-                        </>
+                        </Box>
                       );
                     })}
               </Box>
@@ -282,9 +535,27 @@ const ProjectReport: React.FC = () => {
                 gap: '10px',
               }}
             >
-              {data.tasks?.map(item => {
+              {report.tasks?.length === 0 && (
+                <Box
+                  sx={{
+                    display: 'flex',
+                    flexDirection: 'column',
+                    alignItems: 'center',
+                    justifyContent: 'center',
+                  }}
+                >
+                  <ComponentPlaceholder
+                    text={
+                      usingFilter
+                        ? 'No tasks in done were found for this date'
+                        : 'No tasks associated to this project were found.'
+                    }
+                  />
+                </Box>
+              )}
+              {report.tasks?.map(item => {
                 return (
-                  <>
+                  <Box key={item.id}>
                     <Box key={item.title}>
                       <h3
                         style={{
@@ -308,7 +579,7 @@ const ProjectReport: React.FC = () => {
                       >
                         <Box>
                           <p style={{ fontSize: '.9rem' }}>Status</p>
-                          <StatusChip status={`${item.status || '-'}`} />
+                          <StatusChip status={capitalize(item.status)} />
                         </Box>
 
                         {item.workedHours && (
@@ -390,14 +661,30 @@ const ProjectReport: React.FC = () => {
                     </Box>
                     <Divider />
                     <br />
-                  </>
+                  </Box>
                 );
               })}
             </Box>
           </>
         ) : (
-          <p>Report not found</p>
+          <Box
+            sx={{
+              display: 'flex',
+              flexDirection: 'column',
+              alignItems: 'center',
+              justifyContent: 'center',
+            }}
+          >
+            <ComponentPlaceholder text='No data available' />
+          </Box>
         )}
+
+        {/* Snackbar */}
+        <SnackbarContext.Provider value={{ state, setState }}>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
       </main>
     </>
   );

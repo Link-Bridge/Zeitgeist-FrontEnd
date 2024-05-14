@@ -1,43 +1,33 @@
-import { Chip } from '@mui/material';
-import colors from '../../colors'; // Importar los colores del archivo colors.tsx
+import { Chip } from '@mui/joy';
+import { statusChipColorCombination } from '../../colors';
+import { ProjectStatus } from '../../types/project';
 
 interface StatusChipProps {
   status: string;
 }
 
-function statusColor(status: string) {
-  status = status.toUpperCase();
+const getStatusColor = (status: ProjectStatus) => {
+  const statusColors: Record<ProjectStatus, typeof statusChipColorCombination.accepted> = {
+    [ProjectStatus.DONE]: statusChipColorCombination.done,
+    [ProjectStatus.IN_QUOTATION]: statusChipColorCombination.inQuotation,
+    [ProjectStatus.ACCEPTED]: statusChipColorCombination.accepted,
+    [ProjectStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
+    [ProjectStatus.IN_PROGRESS]: statusChipColorCombination.inProgress,
+    [ProjectStatus.UNDER_REVISION]: statusChipColorCombination.underRevision,
+    [ProjectStatus.DELAYED]: statusChipColorCombination.delayed,
+    [ProjectStatus.POSTPONED]: statusChipColorCombination.postponed,
+    [ProjectStatus.CANCELLED]: statusChipColorCombination.cancelled,
+    [ProjectStatus.NONE]: statusChipColorCombination.default,
+  };
 
-  switch (status) {
-    case 'ACCEPTED':
-      return colors.lightSuccess;
-    case 'NOT STARTED':
-      return colors.lightRed;
-    case 'IN PROGRESS':
-      return colors.warning;
-    case 'UNDER REVISION':
-      return colors.purple;
-    case 'DELAYED':
-      return colors.lightOrange;
-    case 'POSTPONED':
-      return colors.blue;
-    case 'DONE':
-      return colors.success;
-    case 'CANCELLED':
-      return colors.warning;
-    case 'IN QUOTATION':
-      return colors.darkBlue;
-    default:
-      return colors.null;
-  }
-}
+  return statusColors[status] || { font: 'black', bg: 'grey' };
+};
 
 function StatusChip(props: StatusChipProps) {
+  const { bg, font } = getStatusColor(props.status as ProjectStatus);
+
   return (
-    <Chip
-      label={props.status}
-      style={{ backgroundColor: statusColor(props.status), color: 'black', fontSize: '1rem' }}
-    />
+    <Chip style={{ backgroundColor: bg, color: font, fontSize: '1rem' }}> {props.status}</Chip>
   );
 }
 

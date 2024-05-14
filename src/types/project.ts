@@ -6,7 +6,6 @@ export enum ProjectCategory {
   SUPPLIER = 'Supplier',
   EVENT = 'Event',
   FAIRS_CONFERENCES = 'Fairs/Conferences',
-  NO_CATEGORY = '-',
 }
 
 export enum ProjectPeriodicity {
@@ -24,19 +23,19 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
-  CLIENT = 'Client',
 }
 
 export enum ProjectStatus {
-  NOT_STARTED = 'Not Started',
-  IN_PROCESS = 'In Process',
-  UNDER_REVISION = 'Under Revision',
+  NOT_STARTED = 'Not started',
+  IN_PROGRESS = 'In progress',
+  IN_QUOTATION = 'In quotation',
+  UNDER_REVISION = 'Under revision',
   DELAYED = 'Delayed',
   POSTPONED = 'Postponed',
-  DONE = 'Done',
   CANCELLED = 'Cancelled',
-  IN_QUOTATION = 'In quotation',
   ACCEPTED = 'Accepted',
+  DONE = 'Done',
+  NONE = '-',
 }
 
 export interface ProjectEntity {
@@ -52,6 +51,14 @@ export interface ProjectEntity {
   totalHours: number;
   periodicity: ProjectPeriodicity;
   isChargeable: boolean;
+  isArchived: boolean;
   created_at: Date;
   idCompany: string;
+  payed: boolean;
+}
+
+export enum ProjectFilters {
+  ARCHIVED = 'Archived',
+  NOT_ARCHIVED = 'Not Archived',
+  ALL = 'All',
 }

@@ -8,6 +8,7 @@ import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
+import { validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
 
@@ -113,6 +114,25 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
+    if (companyPhone.length < 8) {
+      setState({
+        open: true,
+        message: 'Phone number must have at least 8 characters',
+        type: 'danger',
+      });
+      return;
+    } else if (companyPhone.length > 15) {
+      setState({
+        open: true,
+        message: 'Phone number must have at most 15 characters',
+        type: 'danger',
+      });
+      return;
+    }
+
+    if (!validRFC(companyRFC))
+      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
+
     if (!validateForm())
       return setState({ open: true, message: 'All fields are required', type: 'danger' });
 
@@ -206,6 +226,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               value={companyPhone}
               onChange={event => {
                 const input = event.target.value.replace(/\D/g, '');
+                if (input.length > 13) return;
                 setCompanyPhone(input);
               }}
             />
@@ -227,7 +248,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientConstituton'
-              label='Constitucion date'
+              label='Constitution date'
               type='Date'
               variant='outlined'
               InputLabelProps={{ shrink: true }}

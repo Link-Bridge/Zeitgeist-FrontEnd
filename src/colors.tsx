@@ -6,7 +6,7 @@ const colors = {
   darkerGray: '#424242',
   darkestGray: '#313131',
   lightGold: '#E8C273',
-  inProcess: '#FFE598', //'#a98307'
+  inProcess: '#FFE598',
   gold: '#C29A51',
   darkGold: '#9C844C',
   darkerGold: '#876F39',
@@ -22,12 +22,29 @@ const colors = {
   darkBlue: '#878FD2',
   darkerBlue: '#273086',
   lightRed: '#E6A9A9',
+  darkRed: '#F72E21',
   lightOrange: '#FFC774',
   orangeChip: '#EAD3AA',
   brownChip: '#B39C844C',
   blueChip: '#E3EFFB',
   null: '#C4C4C4',
   extra: '#D6CFBE',
+  white: '#FFFFFF',
+  lightWhite: '#F7F7F7',
+  lighterWhite: '#F6F6F6',
 };
 
 export default colors;
+
+export const statusChipColorCombination = {
+  cancelled: { bg: '#FF7A7A', bgHover: '#E25454', font: '#4A0B0B' },
+  notStarted: { bg: '#E6A9A9', bgHover: '#C67878', font: '#7D1212' },
+  delayed: { bg: '#FFC774', bgHover: '#E6A34D', font: '#7A4900' },
+  inProgress: { bg: '#FFE598', bgHover: '#FFD966', font: '#896A10' },
+  accepted: { bg: '#B7D7A8', bgHover: '#8FC88F', font: '#53664B' },
+  done: { bg: '#6AA84F', bgHover: '#4E993B', font: '#BCEFA6' },
+  postponed: { bg: '#A0C5E8', bgHover: '#7DAEDB', font: '#485A6C' },
+  underRevision: { bg: '#D7B2F0', bgHover: '#B88BDC', font: '#764D91' },
+  inQuotation: { bg: '#A6AFF5', bgHover: '#8093E6', font: '#273086' },
+  default: { bg: '#C4C4C4', bgHover: '#A0A0A0', font: '#424242' },
+};
