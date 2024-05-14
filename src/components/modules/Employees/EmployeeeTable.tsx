@@ -1,6 +1,5 @@
 import { DeleteOutline, KeyboardArrowDown } from '@mui/icons-material';
-import { Avatar, Chip, IconButton, Option, Select, Sheet, selectClasses } from '@mui/joy';
-import Table from '@mui/joy/Table';
+import { Avatar, Chip, IconButton, Option, Select, Sheet, Table, selectClasses } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';

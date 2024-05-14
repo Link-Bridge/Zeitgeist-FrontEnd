@@ -34,6 +34,8 @@ const EditProject = () => {
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
   const projectAreas = Object.values(ProjectAreas) as string[];
 
+  const [admin, setAdmin] = useState(false);
+
   const {
     data: project,
     loading: loadingProject,
@@ -47,6 +49,10 @@ const EditProject = () => {
     sendRequest: getCompanies,
     error: errorCompanies,
   } = useHttp<CompanyEntity[]>(APIPath.COMPANIES, RequestMethods.GET);
+
+  useEffect(() => {
+    setAdmin(employee?.role === 'Admin');
+  }, [employee]);
 
   useEffect(() => {
     if (!errorCompanies && !errorProject) {
@@ -336,6 +342,7 @@ const EditProject = () => {
                     form.formState.area.charAt(0).toUpperCase() +
                     form.formState.area.slice(1).toLowerCase()
                   }
+                  disabled={!admin}
                 ></CustomSelect>
               </FormControl>
               <FormControl>
@@ -361,7 +368,9 @@ const EditProject = () => {
                   },
                 }}
               >
-                <Link to={`/projects/details/${id}`}>Cancel</Link>
+                <Link to={`/projects/details/${id}`} state={location.state} replace>
+                  Cancel
+                </Link>
               </Button>
               <Button
                 type='submit'
