@@ -21,7 +21,7 @@ const SideBar = () => {
   ];
 
   return (
-    <aside className="relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-screen top-0 left-0 flex flex-col items-center pt-16 gap-10 w-[200px]">
+    <aside className="hidden  relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-screen top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-[200px]">
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
       <div className='relative z-10 w-full'>
         <div className='flex justify-center'>

@@ -130,7 +130,7 @@ const ClientDetails = () => {
               });
             }
             setTimeout(() => {
-              navigate(RoutesPath.CLIENTS + '/');
+              navigate(RoutesPath.CLIENTS);
             }, 2000);
           }}
         ></ArchiveModal>

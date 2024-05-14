@@ -117,8 +117,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     return <ComponentPlaceholder text='No employees found' />;
 
   return (
-    <Sheet sx={{ overflowX: 'auto', width: '100%', maxWidth: '100%' }}>
-      <Table borderAxis='xBetween' sx={{ minWidth: '800px' }}>
+    <Sheet sx={{ overflow: 'visible', width: '100%', maxWidth: '100%' }}>
+      <Table borderAxis='xBetween' sx={{ minWidth: '800px' }} hoverRow>
         <thead>
           <tr style={{ fontWeight: 600, fontSize: '0.9rem' }}>
             <th style={{ width: '10%' }}>Photo</th>
@@ -147,8 +147,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
                   }}
                   sx={{
-                    fontSize: '0.9rem',
-                    width: 150,
+                    width: 'auto',
+                    minWidth: '102px',
                     [`& .${selectClasses.indicator}`]: {
                       transition: '0.2s',
                       [`&.${selectClasses.expanded}`]: {
