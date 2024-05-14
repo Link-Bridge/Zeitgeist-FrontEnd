@@ -54,6 +54,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
 
   useEffect(() => {
     getDepartments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -108,7 +109,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         {
           userId: userId,
           roleId: newRoleId,
-          departmentId: departmentId!!,
+          departmentId: departmentId ? departmentId : null,
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
@@ -126,9 +127,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
       } else {
         setState({ open: true, message: 'Failed to update role', type: 'danger' });
       }
-    } catch (error: any) {
-      console.error(error.message);
-
+    } catch (error) {
       setState({ open: true, message: 'Failed to update role', type: 'danger' });
     }
   };
