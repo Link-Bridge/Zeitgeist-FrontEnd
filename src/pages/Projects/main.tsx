@@ -1,5 +1,6 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { Typography } from '@mui/joy';
+import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
@@ -10,9 +11,10 @@ import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
-import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
@@ -123,19 +125,22 @@ const ProjectMain = () => {
 };
 
 async function getClientsNames(projects: ProjectEntity[]) {
-  const idToken = localStorage.getItem('idToken');
   const names = new Map<string, string>();
   projects.map(project => !names.has(project.idCompany) && names.set(project.idCompany, ''));
-  const reqs: Promise<globalThis.Response>[] = [];
+
+  const reqs: Promise<AxiosResponse<unknown>>[] = [];
+
   for (const id of names.keys()) {
-    reqs.push(
-      fetch(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`, {
-        headers: { Authorization: `Bearer ${idToken}` },
-      })
-    );
+    reqs.push(axiosInstance.get(`${import.meta.env.VITE_BASE_API_URL}${APIPath.COMPANIES}/${id}`));
   }
-  const data = (await Promise.all(reqs)).map(r => r.json());
-  (await Promise.all(data)).map(d => names.set(d.data.id, d.data.name));
+
+  const responses = await Promise.all(reqs);
+  responses.forEach(response => {
+    if (response.data && response.data.data) {
+      names.set(response.data.data.id, response.data.data.name);
+    }
+  });
+
   return names;
 }
 

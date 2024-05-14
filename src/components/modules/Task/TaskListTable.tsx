@@ -1,12 +1,13 @@
 import { Snackbar, Table } from '@mui/joy';
-import axios, { AxiosRequestConfig } from 'axios';
+import { AxiosRequestConfig } from 'axios';
 import { useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../colors';
 import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
-import { APIPath, RequestMethods } from '../../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../../utils/constants';
 import { formatDate } from '../../../utils/methods';
 import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
@@ -85,19 +86,12 @@ const TaskListTable = ({
   };
 
   const doFetch = async (payload: { status: TaskStatus }) => {
-    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    const idToken = localStorage.getItem('idToken');
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-    };
     const options: AxiosRequestConfig = {
       method: RequestMethods.PUT,
-      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-      headers: headers,
+      url: `${BASE_API_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
       data: payload,
     };
-    await axios(options);
+    await axiosInstance(options);
   };
 
   if (loadingTasks) {

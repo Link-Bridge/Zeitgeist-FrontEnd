@@ -1,79 +1,65 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
-import { getToken } from 'firebase/messaging';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
-import { auth, messaging, provider } from '../../config/firebase.config';
+import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import { RoutesPath } from '../../utils/constants';
+import { axiosInstance } from '../../lib/axios/axios';
+import { EmployeeReponse } from '../../types/employee';
+import { BASE_API_URL, RoutesPath } from '../../utils/constants';
+import { handleGetDeviceToken } from './device-token';
 
 const Auth: React.FC = () => {
-  const API_BASE_ROUTE = import.meta.env.VITE_BASE_API_URL;
   const navigate = useNavigate();
-
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
+
+  const sendRequest = async () => {
+    try {
+      const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
+
+      return response.data as EmployeeReponse;
+    } catch (error) {
+      setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+    }
+  };
 
   const handleGoogleSignIn = async () => {
     try {
       const result = await signInWithPopup(auth, provider);
-      const idToken = await result.user.getIdToken();
-      localStorage.setItem('idToken', idToken);
+      const token = await result.user.getIdToken(true);
+      const refreshToken = result.user.refreshToken;
+      localStorage.setItem('idToken', token);
+      localStorage.setItem('refreshToken', refreshToken);
 
-      // TODO: Had trouble using the useHttp hook
-      const response = await fetch(`${API_BASE_ROUTE}/employee/signup`, {
-        method: 'POST',
-        headers: {
-          'Content-Type': 'application/json',
-          Authorization: `Bearer ${idToken}`,
-        },
-      });
-
-      if (!response.ok) {
-        throw new Error('Failed to sign up. Please try again.');
+      const response = await sendRequest();
+      if (!response) {
+        setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+        return;
       }
-
-      const responseData = await response.json();
-      setEmployee(responseData.data);
-      localStorage.setItem('employee', JSON.stringify(responseData.data));
-
-      if (responseData.data.role === 'No role' || !responseData.data.role) {
-        throw new Error('User not authorized');
-      }
-
-      handleGetDeviceToken(result.user.email);
-
-      navigate(RoutesPath.HOME);
+      await updateUserContext(response);
     } catch (error) {
-      setState({ open: true, message: (error as Error).message, type: 'danger' });
-      throw error;
+      setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
     }
   };
 
-  const handleGetDeviceToken = async (userEmail: string | null) => {
-    try {
-      const token = await getToken(messaging, {
-        vapidKey: import.meta.env.VITE_FIREBASE_VAPID_KEY,
-      });
-
-      if (token) {
-        await fetch(`${API_BASE_ROUTE}/notification/token`, {
-          method: 'POST',
-          headers: {
-            'Content-Type': 'application/json',
-            Authorization: 'Bearer ' + localStorage.getItem('idToken'),
-          },
-          body: JSON.stringify({
-            email: userEmail,
-            deviceToken: token,
-          }),
+  const updateUserContext = async (data: EmployeeReponse) => {
+    if (data) {
+      if (data.data.role !== 'No role') {
+        setEmployee(data.data);
+        localStorage.setItem('employee', JSON.stringify(data.data));
+        navigate(RoutesPath.HOME);
+        handleGetDeviceToken(data.data.employee.email);
+      } else {
+        setState({
+          open: true,
+          message: 'User not authorized',
+          type: 'danger',
         });
       }
-    } catch (error) {
-      throw error;
     }
   };
 
