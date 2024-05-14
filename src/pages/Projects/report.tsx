@@ -154,29 +154,7 @@ const ProjectReport: React.FC = () => {
 
   if (reqReport.error) {
     if (reqReport.error.message.includes('403')) {
-      setTimeout(() => {
-        navigate('/projects');
-      }, 3000);
-
-      setInterval(() => {
-        setSecondsLeft(secondsLeft - 1);
-      }, 1000);
-
-      return (
-        <Box
-          sx={{
-            display: 'flex',
-            flexDirection: 'column',
-            alignItems: 'center',
-            justifyContent: 'center',
-          }}
-        >
-          <ComponentPlaceholder text='' />
-          <Typography variant='plain' level='h1' mb={4} textAlign={'center'}>
-            Unauthorized employeee <br /> Redirecting in {secondsLeft}
-          </Typography>
-        </Box>
-      );
+      navigate('/projects')
     } else {
       return (
         <Box
