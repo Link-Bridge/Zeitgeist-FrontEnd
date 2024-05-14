@@ -7,9 +7,16 @@ interface CustomSelectProps {
   handleChange: (field: keyof FormState, value: string | Date | boolean | null) => void;
   name: keyof FormState;
   defaultValue?: string;
+  disabled?: boolean;
 }
 
-const CustomSelect = ({ values, handleChange, name, defaultValue }: CustomSelectProps) => {
+const CustomSelect = ({
+  values,
+  handleChange,
+  name,
+  defaultValue,
+  disabled = false,
+}: CustomSelectProps) => {
   const [currentValue, setCurrentValue] = useState<string | null>(null);
 
   useEffect(() => {
@@ -22,7 +29,7 @@ const CustomSelect = ({ values, handleChange, name, defaultValue }: CustomSelect
   }
 
   return (
-    <Select value={currentValue} onChange={onChange}>
+    <Select value={currentValue} onChange={onChange} disabled={disabled}>
       {values.map(value => {
         return (
           <Option key={value} value={value}>
