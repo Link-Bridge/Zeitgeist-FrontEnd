@@ -1,9 +1,9 @@
-import { Snackbar, Table } from '@mui/joy';
+import { Table } from '@mui/joy';
 import { AxiosRequestConfig } from 'axios';
-import { useRef, useState } from 'react';
+import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
@@ -41,7 +41,7 @@ const TaskListTable = ({
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const idTaskPayload = useRef<string>('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -178,12 +178,6 @@ const TaskListTable = ({
           />
         </>
       )}
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </Table>
   );
 };
