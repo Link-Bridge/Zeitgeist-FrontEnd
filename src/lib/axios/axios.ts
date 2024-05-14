@@ -28,23 +28,24 @@ axiosInstance.interceptors.response.use(
   },
   async error => {
     const originalRequest = error.config;
-    if (error.response.status === 401 && !originalRequest._retry) {
-      originalRequest._retry = true;
-      const newToken = await refreshToken();
-      axios.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
-      return axiosInstance(originalRequest);
+    if (error.response?.status === 401 && !originalRequest._retry) {
+      const currentUser = auth.currentUser;
+      if (currentUser) {
+        originalRequest._retry = true;
+        try {
+          const newToken = await currentUser.getIdToken(true);
+          localStorage.setItem('idToken', newToken);
+          axiosInstance.defaults.headers.common['Authorization'] = `Bearer ${newToken}`;
+          return axiosInstance(originalRequest);
+        } catch (refreshError) {
+          console.error('Failed to refresh token:', refreshError);
+          return Promise.reject(refreshError);
+        }
+      } else {
+        console.error('User not logged in');
+        return Promise.reject(new Error('User not logged in'));
+      }
     }
     return Promise.reject(error);
   }
 );
-
-async function refreshToken() {
-  const currentUser = auth.currentUser;
-  if (currentUser) {
-    const token = await currentUser.getIdToken(true);
-    localStorage.setItem('idToken', token);
-    return token;
-  } else {
-    console.error('Failed to refresh token. User is not logged in.');
-  }
-}
