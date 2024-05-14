@@ -117,14 +117,14 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     return <ComponentPlaceholder text='No employees found' />;
 
   return (
-    <Sheet sx={{ overflowX: 'auto', width: '100%' }}>
-      <Table borderAxis='xBetween'>
+    <Sheet sx={{ overflowX: 'auto', width: '100%', maxWidth: '100%' }}>
+      <Table borderAxis='xBetween' sx={{ minWidth: '800px' }}>
         <thead>
           <tr style={{ fontWeight: 600, fontSize: '0.9rem' }}>
             <th style={{ width: '10%' }}>Photo</th>
-            <th style={{ width: '30%' }}>Name</th>
-            <th style={{ width: '20%' }}>Role</th>
-            <th style={{ width: '25%' }}>Email</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Email</th>
             <th style={{ width: '15%', textAlign: 'right' }}></th>
           </tr>
         </thead>

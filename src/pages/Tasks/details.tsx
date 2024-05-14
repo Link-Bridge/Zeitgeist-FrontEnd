@@ -2,7 +2,7 @@ import { Button, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
@@ -32,8 +32,7 @@ function dateParser(date: Date): string {
 }
 
 const TaskDetails: React.FC = () => {
-  const location = useLocation();
-  const id = location.pathname.split('/').pop();
+  const { id } = useParams();
 
   const navigate = useNavigate();
   const [notFound, setNotFound] = useState(false);
@@ -59,7 +58,7 @@ const TaskDetails: React.FC = () => {
 
   const handleEdit = () => {
     setShowUpdate(true);
-    navigate(`/tasks/edit/${id}`);
+    navigate(`/tasks/edit/${id}`, { state: { fromDetails: true } });
   };
 
   const deleteTask = useDeleteTask();

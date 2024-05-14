@@ -8,7 +8,7 @@ const Employees = () => {
   const [filterOption, setFilterOption] = useState('Name');
 
   return (
-    <section className='flex-1 w-full p-2'>
+    <section className='flex flex-col w-full p-2 min-h-0'>
       <div className='mb-4'>
         <SearchBar
           searchTerm={searchTerm}
