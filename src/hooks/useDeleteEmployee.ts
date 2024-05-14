@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { axiosInstance } from '../lib/axios/axios';
 import { BASE_API_URL } from '../utils/constants';
 
 const useDeleteEmployee = () => {
@@ -7,9 +8,7 @@ const useDeleteEmployee = () => {
 
   const deleteEmployee = async (id: string) => {
     try {
-      await axios.delete(`${BASE_API_URL}/employee/delete/${id}`, {
-        headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` },
-      });
+      await axiosInstance.delete(`${BASE_API_URL}/employee/delete/${id}`);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(new Error(err.response?.data?.message || err.message));
