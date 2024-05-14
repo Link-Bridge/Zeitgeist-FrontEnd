@@ -39,8 +39,8 @@ const Header = ({ pageTitle }: HeaderProps) => {
         </h1>
       </section>
 
-      <section className='flex flex-row align-items justify-between items-center g-10 mt-3'>
-        <button className='mx-8 text-[#C29A51]'>
+      <section className='hidden md:flex justify-between items-center mt-3'>
+        <button className='mr-8 text-[#C29A51]'>
           <NotificationsNone fontSize='large' />
         </button>
         <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>

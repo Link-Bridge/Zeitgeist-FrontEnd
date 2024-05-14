@@ -4,6 +4,7 @@ import colors from '../../../colors';
 interface EditClientButtonProps {
   loading: boolean;
   onClick: () => void;
+  disabled?: boolean;
 }
 
 /**
@@ -12,11 +13,12 @@ interface EditClientButtonProps {
  * @param {EditClientButtonProps} props - Props containing loading state and click handler
  * @returns {JSX.Element} - The button component
  */
-function EditClientButton({ loading, onClick }: EditClientButtonProps) {
+function EditClientButton({ loading, onClick, disabled }: EditClientButtonProps) {
   return (
     <Button
       type='button'
       variant='solid'
+      disabled={disabled}
       size='sm'
       onClick={onClick}
       sx={{

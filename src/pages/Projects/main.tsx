@@ -1,5 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { Box, Typography } from '@mui/joy';
+import { Typography } from '@mui/joy';
 import { AxiosResponse } from 'axios';
 import { useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
@@ -73,31 +73,22 @@ const ProjectMain = () => {
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
-    <main className='flex flex-col gap-2 flex-1 min-h-0'>
-      <section className='flex justify-between items-center w-full p-2'>
-        <div className='flex grow items-center'>
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            placeholder='Search projects'
-            options={['Name', 'Company']}
-            setSelectedOption={setFilterOption}
-          />
-        </div>
-        <div className='flex items-center gap-4'>
-          <Box
-            sx={{
-              display: 'flex',
-              padding: '5px',
-              borderRadius: '10px',
-              alignItems: 'center',
-            }}
-          >
+    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+      <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          placeholder='Search projects'
+          options={['Name', 'Company']}
+          setSelectedOption={setFilterOption}
+        />
+        <div className='flex flex-wrap flex-row items-center gap-2'>
+          <div className='flex-row flex items-center gap-2'>
             <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
             <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
               Filter Projects:
             </Typography>
-          </Box>
+          </div>
           <GenericDropdown
             defaultValue={ProjectFilters.ALL}
             options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
@@ -111,24 +102,22 @@ const ProjectMain = () => {
       {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />
       ) : (
-        <section className='flex-1 overflow-scroll'>
-          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
-            {isLoading ? (
-              <Loader />
-            ) : (
-              filteredProjects.map(project => (
-                <Link to={`/projects/details/${project.id}`} key={project.id}>
-                  <ProjectCard
-                    key={project.id}
-                    company={companyNames.get(project.idCompany) ?? ''}
-                    department={project.area}
-                    name={project.name}
-                    status={project.status}
-                  />
-                </Link>
-              ))
-            )}
-          </div>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+          {isLoading ? (
+            <Loader />
+          ) : (
+            filteredProjects.map(project => (
+              <Link to={`/projects/details/${project.id}`} key={project.id}>
+                <ProjectCard
+                  key={project.id}
+                  company={companyNames.get(project.idCompany) ?? ''}
+                  department={project.area}
+                  name={project.name}
+                  status={project.status}
+                />
+              </Link>
+            ))
+          )}
         </section>
       )}
     </main>

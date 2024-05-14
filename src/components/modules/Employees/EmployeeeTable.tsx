@@ -1,6 +1,5 @@
 import { DeleteOutline, KeyboardArrowDown } from '@mui/icons-material';
-import { Avatar, Chip, IconButton, Option, Select, Table, selectClasses } from '@mui/joy';
-import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
+import { Avatar, Chip, IconButton, Option, Select, Sheet, Table, selectClasses } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
@@ -113,27 +112,25 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     return <ComponentPlaceholder text='No employees found' />;
 
   return (
-    <>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ width: '10%' }}>Photo</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell sx={{ width: '15%', textAlign: 'right' }}></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <Sheet sx={{ overflow: 'visible', width: '100%', maxWidth: '100%' }}>
+      <Table borderAxis='xBetween' sx={{ minWidth: '800px' }} hoverRow>
+        <thead>
+          <tr style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+            <th style={{ width: '10%' }}>Photo</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Email</th>
+            <th style={{ width: '15%', textAlign: 'right' }}></th>
+          </tr>
+        </thead>
+        <tbody>
           {searchResults.map(employee => (
-            <TableRow key={employee.id}>
-              <TableCell>
-                {employee.imageUrl ? <Avatar src={employee.imageUrl} /> : <Avatar />}
-              </TableCell>
-              <TableCell>
+            <tr key={employee.id}>
+              <td>{employee.imageUrl ? <Avatar src={employee.imageUrl} /> : <Avatar />}</td>
+              <td style={{ fontSize: '0.9rem' }}>
                 {employee.firstName} {employee.lastName}
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Select
                   variant='outlined'
                   color='neutral'
@@ -145,7 +142,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
                   }}
                   sx={{
-                    width: 150,
+                    width: 'auto',
+                    minWidth: '102px',
                     [`& .${selectClasses.indicator}`]: {
                       transition: '0.2s',
                       [`&.${selectClasses.expanded}`]: {
@@ -160,13 +158,13 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     </Option>
                   ))}
                 </Select>
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Chip className='w-full overflow' variant='soft'>
                   {employee.email}
                 </Chip>
-              </TableCell>
-              <TableCell sx={{ textAlign: 'right' }}>
+              </td>
+              <td style={{ textAlign: 'right' }}>
                 {' '}
                 {sessionEmployee !== employee.id && (
                   <IconButton>
@@ -179,10 +177,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     />
                   </IconButton>
                 )}
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ))}
-        </TableBody>
+        </tbody>
       </Table>
       <DeleteModal
         open={open}
@@ -192,6 +190,6 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         setOpen={setOpen}
         handleDeleteEmployee={handleDeleteEmployee}
       />
-    </>
+    </Sheet>
   );
 }

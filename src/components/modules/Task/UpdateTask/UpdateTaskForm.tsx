@@ -2,7 +2,7 @@ import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
 import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
 import { EmployeeEntity } from '../../../../types/employee';
@@ -56,6 +56,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [isPosting, setIsPosting] = useState(false);
 
   const navigate = useNavigate();
+  const location = useLocation();
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = event.target.value;
@@ -229,7 +230,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       await onSubmit(payload);
       setState({ open: true, message: 'Task updated successfully.', type: 'success' });
       setTimeout(() => {
-        navigate(RoutesPath.TASKS + '/' + idTask, { state: { fromEdit: true } });
+        navigate(RoutesPath.TASKS + '/' + idTask, { state: location.state, replace: true });
       }, 2000);
     } catch (error) {
       setState({ open: true, message: 'Failed to update task.', type: 'danger' });

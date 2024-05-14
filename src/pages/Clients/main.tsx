@@ -1,6 +1,8 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
+import { Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ClientCard from '../../components/common/ClientCard';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -86,8 +88,8 @@ const ClientList = (): JSX.Element => {
 
   if (isLoading) {
     return (
-      <main className='flex flex-col gap-2 flex-1 min-h-0'>
-        <section className='flex justify-between items-center w-full p-2'>
+      <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+        <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
           <SearchBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
@@ -95,15 +97,14 @@ const ClientList = (): JSX.Element => {
             setSelectedOption={() => {}}
             options={[]}
           />
-          <div className='flex flex-row items-center gap-2'>
+          <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
             {isAdmin && (
               <div className='flex flex-row items-center gap-2'>
-                <div className='flex items-center gap-2'>
-                  <FilterAltIcon
-                    sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                    className='text-gold'
-                  />
-                  <p>Filter Clients:</p>
+                <div className='flex-row flex items-center gap-2'>
+                  <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+                  <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                    Filter Clients:
+                  </Typography>
                 </div>
                 <GenericDropdown
                   defaultValue={CompanyFilters.ALL}
@@ -120,18 +121,16 @@ const ClientList = (): JSX.Element => {
           </div>
         </section>
         <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
-        <section className='flex-1 overflow-scroll'>
-          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
-            <Loader />
-          </div>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+          <Loader />
         </section>
       </main>
     );
   }
 
   return (
-    <main className='flex flex-col gap-2 flex-1 min-h-0'>
-      <section className='flex justify-between items-center w-full p-2'>
+    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+      <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -139,15 +138,17 @@ const ClientList = (): JSX.Element => {
           setSelectedOption={() => {}}
           options={[]}
         />
-        <div className='flex flex-row items-center gap-2'>
+        <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
           {isAdmin && (
             <div className='flex flex-row items-center gap-2'>
-              <div className='flex items-center gap-2'>
+              <div className='flex-row flex items-center gap-2'>
                 <FilterAltIcon
-                  sx={{ width: '30px', height: '30px', cursor: 'pointer' }}
-                  className='text-gold'
+                  sx={{ width: '30px', height: '30px' }}
+                  className='text-gold flex-none'
                 />
-                <p>Filter Clients:</p>
+                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                  Filter Clients:
+                </Typography>
               </div>
               <GenericDropdown
                 defaultValue={CompanyFilters.ALL}
@@ -163,20 +164,18 @@ const ClientList = (): JSX.Element => {
       {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
       ) : (
-        <section className='flex-1 overflow-scroll'>
-          <div className='bg-cardBg rounded-xl flex-1 grid md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
-            {filteredCompanies.map(company => (
-              <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
-                <ClientCard
-                  name={truncateText(company.name)}
-                  accountingHours={company.accountingHours || 0}
-                  legalHours={company.legalHours || 0}
-                  chargeableHours={company.chargeableHours || 0}
-                  totalProjects={company.totalProjects || 0}
-                />
-              </Link>
-            ))}
-          </div>
+        <section className='overflow-y-auto overflow-hidden bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+          {filteredCompanies.map(company => (
+            <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
+              <ClientCard
+                name={truncateText(company.name)}
+                accountingHours={company.accountingHours || 0}
+                legalHours={company.legalHours || 0}
+                chargeableHours={company.chargeableHours || 0}
+                totalProjects={company.totalProjects || 0}
+              />
+            </Link>
+          ))}
         </section>
       )}
     </main>
