@@ -118,7 +118,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
 
   return (
     <>
-      <Table>
+      <Table hoverRow>
         <TableHead>
           <TableRow>
             <TableCell sx={{ width: '10%' }}>Photo</TableCell>
@@ -149,7 +149,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
                   }}
                   sx={{
-                    width: 150,
+                    width: 'auto',
+                    minWidth: '102px',
                     [`& .${selectClasses.indicator}`]: {
                       transition: '0.2s',
                       [`&.${selectClasses.expanded}`]: {
