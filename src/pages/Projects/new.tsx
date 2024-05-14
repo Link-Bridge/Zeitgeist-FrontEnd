@@ -371,7 +371,9 @@ const NewProject = () => {
                 },
               }}
             >
-              <Link to={'..'}>Cancel</Link>
+              <Link to={'..'} replace>
+                Cancel
+              </Link>
             </Button>
             <Button
               type='submit'

@@ -368,7 +368,9 @@ const EditProject = () => {
                   },
                 }}
               >
-                <Link to={`/projects/details/${id}`}>Cancel</Link>
+                <Link to={`/projects/details/${id}`} state={location.state} replace>
+                  Cancel
+                </Link>
               </Button>
               <Button
                 type='submit'
