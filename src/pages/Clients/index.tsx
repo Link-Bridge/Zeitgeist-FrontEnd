@@ -1,12 +1,14 @@
-import CardContainer from '../../components/common/CardContainer';
+import { Navigate, Route, Routes } from 'react-router-dom';
+import ClientDetails from './details';
+import ClientList from './main';
 
 const Clients = () => {
   return (
-    <main className='p-10 py-4 flex gap-4'>
-      <h1>Clients Page</h1>
-      <p>Welcome to the Clients page!</p>
-      <CardContainer>Hello</CardContainer>
-    </main>
+    <Routes>
+      <Route path='/' element={<ClientList />} />
+      <Route path={'/details/:clientId'} element={<ClientDetails />} />
+      <Route path='*' element={<Navigate to='/404' />} />
+    </Routes>
   );
 };
 
