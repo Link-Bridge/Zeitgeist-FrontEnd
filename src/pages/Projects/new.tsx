@@ -131,14 +131,11 @@ const NewProject = () => {
   }
 
   return (
-    <Card
-      className='bg-white flex-1 font-montserrat min-h-0 overflow-y-scroll min-w-0'
-      sx={{ padding: '30px' }}
-    >
+    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
       {req.loading ? (
         <Loader />
       ) : (
-        <form className='flex flex-col gap-4 min-w-0 w-full' onSubmit={form.handleSubmit}>
+        <form className='flex flex-col gap-4' onSubmit={form.handleSubmit}>
           <FormControl>
             <FormLabel className='font-montserrat'>
               Project Name <span className='text-red-600'>*</span>
@@ -173,7 +170,7 @@ const NewProject = () => {
             />
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
-            <FormControl className='flex-1 min-w-0'>
+            <FormControl className='flex-1'>
               <FormLabel>
                 Client <span className='text-red-600'>*</span>
               </FormLabel>
@@ -183,7 +180,7 @@ const NewProject = () => {
                 handleChange={form.handleChange}
               />
             </FormControl>
-            <FormControl className='flex-1 min-w-0'>
+            <FormControl className='flex-1'>
               <FormLabel>
                 Category <span className='text-red-600'>*</span>
               </FormLabel>
@@ -193,7 +190,7 @@ const NewProject = () => {
                 handleChange={form.handleChange}
               />
             </FormControl>
-            <FormControl className='flex-1 min-w-0'>
+            <FormControl className='flex-1'>
               <FormLabel>Matter</FormLabel>
               <Input
                 value={form.formState.matter}
@@ -234,7 +231,7 @@ const NewProject = () => {
               }}
             />
           </FormControl>
-          <section className='lg:grid grid-cols-3 w-full gap-4'>
+          <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
             <FormControl>
               <FormLabel>
                 Start Date <span className='text-red-600'>*</span>
@@ -324,6 +321,8 @@ const NewProject = () => {
                 size='lg'
               />
             </FormControl>
+          </section>
+          <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
             <FormControl>
               <FormLabel>
                 Area <span className='text-red-600'>*</span>
