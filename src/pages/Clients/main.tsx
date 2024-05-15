@@ -15,9 +15,12 @@ import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
+import { Snackbar } from '@mui/joy';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 
 const ClientList = (): JSX.Element => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
+  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
   const [isLoading, setIsLoading] = useState(clientsRequest.loading);
@@ -30,7 +33,16 @@ const ClientList = (): JSX.Element => {
   const isAdmin = employee?.role === 'Admin';
 
   useEffect(() => {
-    handleFilter(filter);
+    if (searchTerm.length > 70) {
+      setState({
+        open: true,
+        message: 'Name cannot be longer than 70 characters.',
+        type: 'danger',
+      });
+    } else {
+      setState({ open: false, message: '' });
+      handleFilter(filter);
+    }
   }, [searchTerm, clientsRequest.data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -173,6 +185,12 @@ const ClientList = (): JSX.Element => {
           ))}
         </section>
       )}
+      {/* Snackbar */}
+      <SnackbarContext.Provider value={{ state, setState }}>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
     </main>
   );
 };
