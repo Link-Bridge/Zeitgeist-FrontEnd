@@ -9,6 +9,7 @@ interface SearchBarProps {
   placeholder: string;
   options?: string[];
   setSelectedOption: (option: string) => void;
+  maxLength?: number;
 }
 
 const SearchBar: React.FC<SearchBarProps> = ({
@@ -17,6 +18,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   placeholder,
   options = [],
   setSelectedOption,
+  maxLength,
 }) => {
   const [selectedOption, setSelectedOptionState] = useState(
     options.length > 0 ? options[0] : 'Search'
@@ -37,7 +39,11 @@ const SearchBar: React.FC<SearchBarProps> = ({
     <div className='flex items-center space-x-2'>
       <Input
         value={searchTerm}
-        onChange={e => setSearchTerm(e.target.value)}
+        onChange={e => {
+          if (!maxLength || e.target.value.length <= maxLength) {
+            setSearchTerm(e.target.value);
+          }
+        }}
         placeholder={selectedOption || placeholder}
         startDecorator={<Search style={{ color: colors.gold }} />}
         sx={{

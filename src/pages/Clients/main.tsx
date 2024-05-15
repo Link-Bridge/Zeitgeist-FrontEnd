@@ -1,5 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { Snackbar, Typography } from '@mui/joy';
+import { Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
@@ -11,7 +11,6 @@ import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
@@ -19,7 +18,6 @@ import { truncateText } from '../../utils/methods';
 
 const ClientList = (): JSX.Element => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [filteredCompanies, setFilteredClientsData] = useState<CompanyEntity[]>([]);
   const clientsRequest = useHttp<CompanyEntity[]>('/company/', RequestMethods.GET);
   const [isLoading, setIsLoading] = useState(clientsRequest.loading);
@@ -32,16 +30,7 @@ const ClientList = (): JSX.Element => {
   const isAdmin = employee?.role === 'Admin';
 
   useEffect(() => {
-    if (searchTerm.length > 70) {
-      setState({
-        open: true,
-        message: 'Name cannot be longer than 70 characters.',
-        type: 'danger',
-      });
-    } else {
-      setState({ open: false, message: '' });
-      handleFilter(filter);
-    }
+    handleFilter(filter);
   }, [searchTerm, clientsRequest.data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -112,6 +101,7 @@ const ClientList = (): JSX.Element => {
             placeholder='Search by name'
             setSelectedOption={() => {}}
             options={[]}
+            maxLength={70}
           />
           <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
             {isAdmin && (
@@ -153,6 +143,7 @@ const ClientList = (): JSX.Element => {
           placeholder='Search by name'
           setSelectedOption={() => {}}
           options={[]}
+          maxLength={70}
         />
         <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
           {isAdmin && (
@@ -194,12 +185,6 @@ const ClientList = (): JSX.Element => {
           ))}
         </section>
       )}
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </main>
   );
 };
