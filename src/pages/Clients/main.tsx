@@ -1,5 +1,5 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
-import { Typography } from '@mui/joy';
+import { Snackbar, Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
@@ -11,12 +11,11 @@ import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
 import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
 import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
-import { Snackbar } from '@mui/joy';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 
 const ClientList = (): JSX.Element => {
   const [companies, setClientsData] = useState<CompanyEntity[]>([]);
@@ -52,18 +51,28 @@ const ClientList = (): JSX.Element => {
 
     if (value == CompanyFilters.ALL) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && (isAdmin || !company.archived));
+        return companies.filter(
+          company =>
+            company.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
+            (isAdmin || !company.archived)
+        );
       });
     }
 
     if (value == CompanyFilters.ARCHIVED) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && company.archived);
+        return companies.filter(
+          company =>
+            company.name.toLowerCase().includes(searchTerm.toLowerCase()) && company.archived
+        );
       });
     }
     if (value == CompanyFilters.NOT_ARCHIVED) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && !company.archived);
+        return companies.filter(
+          company =>
+            company.name.toLowerCase().includes(searchTerm.toLowerCase()) && !company.archived
+        );
       });
     }
   };
@@ -187,10 +196,10 @@ const ClientList = (): JSX.Element => {
       )}
       {/* Snackbar */}
       <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
+        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          {state.message}
+        </Snackbar>
+      </SnackbarContext.Provider>
     </main>
   );
 };
