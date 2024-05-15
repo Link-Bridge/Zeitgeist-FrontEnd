@@ -19,6 +19,7 @@ import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
+  const [filter, setFilter] = useState<string>(ProjectFilters.ALL);
   const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
@@ -45,31 +46,55 @@ const ProjectMain = () => {
   }, [req.data]);
 
   const handleFilter = (value: string) => {
-    setFilteredProjects(projects);
+    setFilter(value);
 
-    if (value == ProjectFilters.ALL) return;
+    if (value == ProjectFilters.ALL) {
+      setFilteredProjects(
+        projects.filter(project => {
+          const companyName = companyNames.get(project.idCompany) ?? '';
+          if (filterOption === 'Company') {
+            return companyName.toLowerCase().includes(searchTerm.toLowerCase());
+          }
+          return project.name.toLowerCase().includes(searchTerm.toLowerCase());
+        })
+      );
+    }
 
     if (value == ProjectFilters.ARCHIVED) {
-      setFilteredProjects(projects => {
-        return projects.filter(project => project.isArchived);
-      });
+      setFilteredProjects(
+        projects.filter(project => {
+          const companyName = companyNames.get(project.idCompany) ?? '';
+          if (filterOption === 'Company') {
+            return (
+              companyName.toLowerCase().includes(searchTerm.toLowerCase()) && project.isArchived
+            );
+          }
+          return (
+            project.name.toLowerCase().includes(searchTerm.toLowerCase()) && project.isArchived
+          );
+        })
+      );
     }
+
     if (value == ProjectFilters.NOT_ARCHIVED) {
-      setFilteredProjects(projects => {
-        return projects.filter(project => !project.isArchived);
-      });
+      setFilteredProjects(
+        projects.filter(project => {
+          const companyName = companyNames.get(project.idCompany) ?? '';
+          if (filterOption === 'Company') {
+            return (
+              companyName.toLowerCase().includes(searchTerm.toLowerCase()) && !project.isArchived
+            );
+          }
+          return (
+            project.name.toLowerCase().includes(searchTerm.toLowerCase()) && !project.isArchived
+          );
+        })
+      );
     }
   };
 
   useEffect(() => {
-    const filtered = projects.filter(project => {
-      const companyName = companyNames.get(project.idCompany) ?? '';
-      if (filterOption === 'Company') {
-        return companyName.toLowerCase().includes(searchTerm.toLowerCase());
-      }
-      return project.name.toLowerCase().includes(searchTerm.toLowerCase());
-    });
-    setFilteredProjects(filtered);
+    handleFilter(filter);
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
@@ -81,6 +106,7 @@ const ProjectMain = () => {
           placeholder='Search projects'
           options={['Name', 'Company']}
           setSelectedOption={setFilterOption}
+          maxLength={70}
         />
         <div className='flex flex-wrap flex-row items-center gap-2'>
           <div className='flex-row flex items-center gap-2'>
