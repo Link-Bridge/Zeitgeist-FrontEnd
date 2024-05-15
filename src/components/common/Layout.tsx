@@ -35,11 +35,11 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <main className='w-screen h-screen flex min-w-[590px]'>
+    <main className='w-screen h-screen flex min-w-[590px] min-h-screen'>
       <SideBar />
-      <div className='flex flex-col h-full w-full flex-1 px-14 pb-10 min-w-[590px]'>
+      <div className='flex flex-col h-full w-full flex-1 px-14 pb-5 md:pb-10 min-w-[590px] min-h-screen'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-3 min-h-0 min-w-0'>{children}</section>
+        <section className='flex flex-col flex-1 mt-3 overflow-y-hidden'>{children}</section>
       </div>
     </main>
   );

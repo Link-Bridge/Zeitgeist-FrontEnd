@@ -145,7 +145,7 @@ const EditProject = () => {
       {(errorCompanies || errorProject) && <h1>An unexpected error occurred. Please try again.</h1>}
       {!(errorCompanies || errorProject) && !loadingCompanies && !loadingProject && (
         <Card
-          className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+          className='bg-white flex-1 font-montserrat overflow-y-scroll'
           sx={{ padding: '30px' }}
         >
           <form className='flex flex-col gap-4' onSubmit={form.handleUpdate}>
@@ -181,7 +181,7 @@ const EditProject = () => {
                 }}
               />
             </FormControl>
-            <section className='flex flex-row gap-4'>
+            <section className='flex lg:flex-row gap-4 flex-col'>
               <FormControl className='flex-1'>
                 <FormLabel>
                   Client <span className='text-red-600'>*</span>
@@ -244,7 +244,7 @@ const EditProject = () => {
                 }}
               />
             </FormControl>
-            <section className='lg:grid grid-cols-3 w-full gap-4'>
+            <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
               <FormControl>
                 <FormLabel>
                   Start Date <span className='text-red-600'>*</span>
@@ -330,6 +330,8 @@ const EditProject = () => {
                   size='lg'
                 />
               </FormControl>
+            </section>
+            <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
               <FormControl disabled={!employee?.role || employee.role !== 'Admin'}>
                 <FormLabel>
                   Area <span className='text-red-600'>*</span>

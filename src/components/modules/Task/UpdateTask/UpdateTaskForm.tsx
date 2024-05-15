@@ -1,4 +1,4 @@
-import { Grid, Input, Textarea } from '@mui/joy';
+import { Card, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -13,7 +13,6 @@ import { APIPath, RequestMethods, RoutesPath } from '../../../../utils/constants
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import ModifyButton from '../../../common/ModifyButton';
-import { Header, Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -304,145 +303,126 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   return (
-    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-      <main className='flex flex-col gap-4'>
-        <Header>
-          Title <span className='text-red-600'>*</span>
-        </Header>
-        <Input
-          type='text'
-          placeholder='Write your text here... '
-          value={title}
-          onChange={handleTitleChange}
-          sx={{
-            color: colors.gray,
-            borderColor: errors['title'] ? colors.danger : undefined,
-          }}
-        />
-
-        <Header>
-          Description <span className='text-red-600'>*</span>
-        </Header>
-        <Textarea
-          placeholder='Write your text here... '
-          value={description}
-          onChange={handleDescriptionChange}
-          sx={{
-            color: colors.gray,
-            width: '100%',
-            height: '200px',
-            padding: '10px',
-            borderRadius: '4px',
-            border: `1px solid ${errors['description'] ? colors.danger : colors.lighterGray}`,
-            '&:focus': {
-              border: '1px solid' + colors.darkGold,
-            },
-          }}
-        />
-
-        {/* Date and status columns */}
-        <Grid container spacing={2}>
-          <Grid xs={2}>
-            <Item>
-              <Header>
-                Start Date <span className='text-red-600'>*</span>
-              </Header>
-              <DatePicker
-                value={startDate}
-                onChange={handleStartDateChange}
-                sx={{
-                  borderColor: errors['startDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <Header>Due Date</Header>
-              <DatePicker
-                value={endDate}
-                onChange={handleEndDateChange}
-                sx={{
-                  borderColor: errors['endDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <Header>
-                Status <span className='text-red-600'>*</span>
-              </Header>
-              <GenericDropdown
-                defaultValue={data.status as TaskStatus}
-                options={Object.values(TaskStatus)}
-                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
-                placeholder='Select status'
-                colorMap={statusColorMap}
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Assigned Employee, Worked Hours */}
-        <Grid container spacing={2}>
-          <Grid container xs={2} className='md mr-20'>
-            <Item>
-              <Header>Assigned Employee</Header>
-              <GenericDropdown
-                defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
-                options={getEmployeeNames()}
-                onChange={handleAssignedEmployee}
-                placeholder='Select employee ...'
-              />
-            </Item>
-          </Grid>
-          <Grid container xs={2} className='md'>
-            <Item className='ml-20'>
-              <Header>Worked Hours</Header>
-              <Input
-                placeholder='0'
-                type='text'
-                value={workedHours ?? ''}
-                onChange={handleWorkedHoursChange}
-                sx={{
-                  color: colors.gray,
-                }}
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Cancel & send button */}
-        <Grid container justifyContent='flex-end'>
-          <Grid>
-            <Item>
-              <CancelButton onClick={handleCancel} />
-            </Item>
-          </Grid>
-          <Grid>
-            <Item>
-              <ModifyButton
-                onClick={() => {
-                  setIsPosting(true);
-                  handleSubmit();
-                  setTimeout(() => {
-                    setIsPosting(false);
-                  }, 3000);
-                }}
-                disabled={
-                  hasErrors() ||
-                  hasEmptyFields() ||
-                  datesAreNotValid() ||
-                  hasWrongLength() ||
-                  isPosting
-                }
-              />
-            </Item>
-          </Grid>
-        </Grid>
-      </main>
-    </StyledSheet>
+    <Card className='overflow-y-scroll'>
+      <form className='flex flex-col gap-4'>
+        <FormControl>
+          <FormLabel>
+            Title <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Input
+            type='text'
+            placeholder='Write your text here... '
+            value={title}
+            onChange={handleTitleChange}
+            sx={{
+              color: colors.gray,
+              borderColor: errors['title'] ? colors.danger : undefined,
+            }}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>
+            Description <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Textarea
+            placeholder='Write your text here... '
+            value={description}
+            onChange={handleDescriptionChange}
+            sx={{
+              color: colors.gray,
+              width: '100%',
+              height: '200px',
+              padding: '10px',
+              borderRadius: '4px',
+              border: `1px solid ${errors['description'] ? colors.danger : colors.lighterGray}`,
+              '&:focus': {
+                border: '1px solid' + colors.darkGold,
+              },
+            }}
+          />
+        </FormControl>
+        <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          <FormControl>
+            <FormLabel>
+              Start Date <span className='text-red-600'>*</span>
+            </FormLabel>
+            <DatePicker
+              value={startDate}
+              onChange={handleStartDateChange}
+              sx={{
+                borderColor: errors['startDate'] ? colors.danger : undefined,
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Due Date</FormLabel>
+            <DatePicker
+              value={endDate}
+              onChange={handleEndDateChange}
+              sx={{
+                borderColor: errors['endDate'] ? colors.danger : undefined,
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>
+              Status <span className='text-red-600'>*</span>
+            </FormLabel>
+            <GenericDropdown
+              defaultValue={data.status as TaskStatus}
+              options={Object.values(TaskStatus)}
+              onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
+              placeholder='Select status'
+              colorMap={statusColorMap}
+            />
+          </FormControl>
+        </section>
+        <section className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+          <FormControl>
+            <FormLabel>Assigned Employee</FormLabel>
+            <GenericDropdown
+              defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
+              options={getEmployeeNames()}
+              onChange={handleAssignedEmployee}
+              placeholder='Select employee ...'
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Worked Hours</FormLabel>
+            <Input
+              placeholder='0'
+              type='text'
+              value={workedHours ?? ''}
+              onChange={handleWorkedHoursChange}
+              sx={{
+                color: colors.gray,
+              }}
+            />
+          </FormControl>
+        </section>
+        <section className='flex lg:mt-10 gap-4 justify-end'>
+          <CancelButton onClick={handleCancel} />
+          <ModifyButton
+            onClick={() => {
+              setIsPosting(true);
+              handleSubmit();
+              setTimeout(() => {
+                setIsPosting(false);
+              }, 3000);
+            }}
+            disabled={
+              hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength() || isPosting
+            }
+          />
+        </section>
+        {/* Snackbar */}
+        <SnackbarContext.Provider value={{ state, setState }}>
+          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+            {state.message}
+          </Snackbar>
+        </SnackbarContext.Provider>
+      </form>
+    </Card>
   );
 };
 

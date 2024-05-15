@@ -1,5 +1,4 @@
-/* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Chip, FormLabel, Grid, Input, Textarea } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -15,7 +14,6 @@ import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
-import { Item, StyledSheet } from '../styled';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -284,165 +282,138 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   }
 
   return (
-    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-      <main className='flex flex-col gap-4'>
-        <FormLabel>
-          Title <span className='text-red-600'>*</span>
-        </FormLabel>
-        <Input
-          type='text'
-          placeholder='Write your text here... '
-          value={title}
-          onChange={handleTitleChange}
-          sx={{
-            color: colors.gray,
-            borderColor: errors['title'] ? colors.danger : undefined,
-          }}
-        />
-
-        <FormLabel>
-          Description <span className='text-red-600'>*</span>
-        </FormLabel>
-        <Textarea
-          minRows={5}
-          maxRows={5}
-          placeholder='Write your text here... '
-          value={description}
-          onChange={handleDescriptionChange}
-          sx={{
-            color: colors.gray,
-            width: '100%',
-            height: '200px',
-            padding: '10px',
-            borderRadius: '4px',
-            border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
-          }}
-        />
-
-        {/* Date and status columns */}
-        <Grid container spacing={2}>
-          <Grid xs={2}>
-            <Item>
-              <FormLabel>
-                Start Date <span className='text-red-600'>*</span>
-              </FormLabel>
-              <DatePicker
-                value={startDate}
-                onChange={handleStartDateChange}
+    <Card className='overflow-y-scroll'>
+      <form className='flex flex-col gap-4'>
+        <FormControl>
+          <FormLabel>
+            Title <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Input
+            type='text'
+            placeholder='Write your text here... '
+            value={title}
+            onChange={handleTitleChange}
+            sx={{
+              color: colors.gray,
+              borderColor: errors['title'] ? colors.danger : undefined,
+            }}
+          />
+        </FormControl>
+        <FormControl>
+          <FormLabel>
+            Description <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Textarea
+            minRows={5}
+            maxRows={5}
+            placeholder='Write your text here... '
+            value={description}
+            onChange={handleDescriptionChange}
+            sx={{
+              color: colors.gray,
+              width: '100%',
+              height: '200px',
+              padding: '10px',
+              borderRadius: '4px',
+              border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
+            }}
+          />
+        </FormControl>
+        <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          <FormControl>
+            <FormLabel>
+              Start Date <span className='text-red-600'>*</span>
+            </FormLabel>
+            <DatePicker
+              value={startDate}
+              onChange={handleStartDateChange}
+              sx={{
+                borderColor: errors['startDate'] ? colors.danger : undefined,
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>End Date</FormLabel>
+            <DatePicker
+              value={endDate}
+              onChange={handleEndDateChange}
+              sx={{
+                borderColor: errors['endDate'] ? colors.danger : undefined,
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>
+              Status <span className='text-red-600'>*</span>
+            </FormLabel>
+            <GenericDropdown
+              options={Object.values(TaskStatus)}
+              onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
+              placeholder='Select status'
+              colorMap={statusColorMap}
+            />
+          </FormControl>
+        </section>
+        <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          <FormControl>
+            <FormLabel>Assign Employee</FormLabel>
+            <GenericDropdown
+              options={getEmployeeNames()}
+              onChange={handleAssignedEmployee}
+              placeholder='Select employee ...'
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Worked Hours</FormLabel>
+            <Input
+              placeholder='0'
+              type='text'
+              value={workedHours ?? ''}
+              onChange={handleWorkedHoursChange}
+              sx={{
+                color: colors.gray,
+                borderColor: errors['workedHours'] ? colors.danger : undefined,
+              }}
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Project Name</FormLabel>
+            <Box sx={{ display: 'flex', alignItems: 'center' }}>
+              <Chip
+                className='min-w-[150px] pr-6'
+                variant='soft'
                 sx={{
-                  borderColor: errors['startDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <FormLabel>End Date</FormLabel>
-              <DatePicker
-                value={endDate}
-                onChange={handleEndDateChange}
-                sx={{
-                  borderColor: errors['endDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <FormLabel>
-                Status <span className='text-red-600'>*</span>
-              </FormLabel>
-              <GenericDropdown
-                options={Object.values(TaskStatus)}
-                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
-                placeholder='Select status'
-                colorMap={statusColorMap}
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Assign Employee, Worked Hours, Project Name */}
-        <Grid container spacing={2}>
-          <Grid container xs={2} className='md mr-20'>
-            <Item>
-              <FormLabel>Assign Employee</FormLabel>
-              <GenericDropdown
-                options={getEmployeeNames()}
-                onChange={handleAssignedEmployee}
-                placeholder='Select employee ...'
-              />
-            </Item>
-          </Grid>
-          <Grid container xs={2} className='md'>
-            <Item className='ml-8'>
-              <FormLabel>Worked Hours</FormLabel>
-              <Input
-                placeholder='0'
-                type='text'
-                value={workedHours ?? ''}
-                onChange={handleWorkedHoursChange}
-                sx={{
+                  bgcolor: colors.lighterGray,
                   color: colors.gray,
-                  borderColor: errors['workedHours'] ? colors.danger : undefined,
+                  fontSize: '1rem',
+                  flexGrow: 1,
+                  padding: '0.3rem 1rem',
                 }}
-              />
-            </Item>
-          </Grid>
-          <Grid>
-            <Item className='ml-20'>
-              <FormLabel>Project Name</FormLabel>
-              <Box sx={{ display: 'flex', alignItems: 'center' }}>
-                <Chip
-                  className='min-w-[150px] pr-6'
-                  variant='soft'
-                  sx={{
-                    bgcolor: colors.lighterGray,
-                    color: colors.gray,
-                    fontSize: '1rem',
-                    flexGrow: 1,
-                    padding: '0.3rem 1rem',
-                  }}
-                >
-                  {projectName}
-                </Chip>
-              </Box>
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Cancel & send button */}
-        <Grid container justifyContent='flex-end'>
-          <Grid>
-            <Item>
-              <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
-                <CancelButton onClick={handleCancel} />
-              </Link>
-            </Item>
-          </Grid>
-          <Grid>
-            <Item>
-              <SendButton
-                onClick={() => {
-                  setIsPosting(true);
-                  handleSubmit();
-                  setTimeout(() => {
-                    setIsPosting(false);
-                  }, 3000);
-                }}
-                disabled={
-                  hasErrors() ||
-                  hasEmptyFields() ||
-                  datesAreNotValid() ||
-                  hasWrongLength() ||
-                  isPosting
-                }
-              />
-            </Item>
-          </Grid>
-        </Grid>
-      </main>
-    </StyledSheet>
+              >
+                {projectName}
+              </Chip>
+            </Box>
+          </FormControl>
+        </section>
+        <section className='flex lg:mt-10 gap-4 justify-end'>
+          <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+            <CancelButton onClick={handleCancel} />
+          </Link>
+          <SendButton
+            onClick={() => {
+              setIsPosting(true);
+              handleSubmit();
+              setTimeout(() => {
+                setIsPosting(false);
+              }, 3000);
+            }}
+            disabled={
+              hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength() || isPosting
+            }
+          />
+        </section>
+      </form>
+    </Card>
   );
 };
 

@@ -1,7 +1,6 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Chip } from '@mui/joy';
 import {
-  Card,
+  Chip,
   Table,
   TableBody,
   TableCell,
@@ -114,87 +113,84 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
 
   return (
     <>
-      <Card sx={{ borderRadius: '12px', margin: '5px' }}>
-        <TableContainer sx={{ padding: '0.5rem' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ width: '40%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Task
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '20%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Status
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '10%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Hours
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '15%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Due Date
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '10%' }}>
-                  <Typography
-                    variant='body1'
-                    sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
-                    onClick={handleCollapseToggle}
+      <TableContainer sx={{ padding: '0.5rem' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ width: '40%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Task
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '20%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Status
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '10%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Hours
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '15%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Due Date
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '10%' }}>
+                <Typography
+                  variant='body1'
+                  sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
+                  onClick={handleCollapseToggle}
+                >
+                  {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {!collapsed &&
+              tasks.map(task => (
+                <TableRow key={task.id}>
+                  <TableCell
+                    onClick={() => handleClick(task.id)}
+                    sx={{ cursor: 'pointer', fontSize: '0.9rem' }}
                   >
-                    {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!collapsed &&
-                tasks.map(task => (
-                  <TableRow key={task.id}>
-                    <TableCell
-                      onClick={() => handleClick(task.id)}
-                      sx={{ cursor: 'pointer', fontSize: '0.9rem' }}
-                    >
-                      {task.title}
-                    </TableCell>
-                    <TableCell>
-                      <GenericDropdown
-                        options={Object.values(TaskStatus)}
-                        defaultValue={task.status}
-                        onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                        colorMap={statusColorMap}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        sx={{
-                          bgcolor: '#D6CFBE',
-                          color: colors.grey[700],
-                          fontSize: '0.9rem',
-                        }}
-                      >
-                        {task.workedHours ?? 0}
-                      </Chip>
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '0.9rem' }}>
-                      {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
-                    </TableCell>
-                    <TableCell>
-                      <TaskActionsMenu
-                        task={task}
-                        onEdit={() => handleEdit(task.id)}
-                        onOpenDeleteDialog={handleDeleteButtonClick}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+                    {task.title}
+                  </TableCell>
+                  <TableCell>
+                    <GenericDropdown
+                      options={Object.values(TaskStatus)}
+                      defaultValue={task.status}
+                      onChange={value => handleStatusChange(task.id, value as TaskStatus)}
+                      colorMap={statusColorMap}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={task.workedHours ?? 0}
+                      sx={{
+                        backgroundColor: '#D6CFBE',
+                        color: colors.grey[700],
+                        fontSize: '0.9rem',
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '0.9rem' }}>
+                    {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
+                  </TableCell>
+                  <TableCell>
+                    <TaskActionsMenu
+                      task={task}
+                      onEdit={() => handleEdit(task.id)}
+                      onOpenDeleteDialog={handleDeleteButtonClick}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <DeleteModal
         open={taskToDelete !== null}

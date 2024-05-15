@@ -13,6 +13,7 @@ import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
 import GoBack from '../../components/common/GoBack';
 import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
@@ -93,7 +94,7 @@ const ClientDetails = () => {
   const isAdmin = employee?.role === 'Admin';
 
   return (
-    <main>
+    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
       <Box
         sx={{
           display: 'flex',
@@ -105,7 +106,7 @@ const ClientDetails = () => {
         <GoBack />
       </Box>
 
-      <section className='bg-white rounded-xl p-6'>
+      <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
         <ArchiveModal
           sendRequest={sendRequest}
           toggleModal={ToggleModalArchive}
@@ -141,15 +142,17 @@ const ClientDetails = () => {
               clientData={company}
               setRefetch={setRefetch}
             />
-            <section className='grid grid-cols-1 lg:grid-cols-3 overflow-x-scroll lg:overflow-x-hidden'>
-              <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
-              <div className='col-span-1 lg:col-span-2 flex flex-wrap justify-start lg:justify-end items-center gap-5'>
-                <div className='flex flex-wrap items-center gap-5'>
+            <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
+              <div className='flex flex-auto flex-col lg:flex-row justify-between'>
+                <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
+                <div className='flex flex-wrap items-center gap-x-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
                     {company.constitutionDate ? formatDate(company.constitutionDate) : 'No date'}
                   </Chip>
                 </div>
+              </div>
+              <div className='flex gap-5'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -191,20 +194,20 @@ const ClientDetails = () => {
               </div>
             </section>
 
-            <section className='flex flex-wrap mt-8 gap-x-12 gap-y-4 justify-start align-between'>
-              <article className='flex gap-4'>
+            <section className={`flex justify-between mt-8 flex-wrap ${styles.container}`}>
+              <article className='flex gap-1 truncate'>
                 <EmailOutlinedIcon />
                 <p>{company.email}</p>
               </article>
-              <article className='flex gap-4'>
+              <article className='flex gap-1'>
                 <AbcOutlinedIcon />
                 <p>{company.rfc}</p>
               </article>
-              <article className='flex gap-4'>
+              <article className='flex gap-1 truncate'>
                 <BusinessOutlinedIcon />
                 <p>{company.taxResidence}</p>
               </article>
-              <article className='flex gap-4'>
+              <article className='flex gap-1'>
                 <StayPrimaryPortraitOutlinedIcon />
                 <p>{company.phoneNumber}</p>
               </article>

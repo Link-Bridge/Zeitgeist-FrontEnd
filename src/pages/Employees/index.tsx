@@ -7,7 +7,7 @@ const Employees = () => {
   const [filterOption, setFilterOption] = useState('Name');
 
   return (
-    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+    <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
         <div className='mb-4'>
           <SearchBar
