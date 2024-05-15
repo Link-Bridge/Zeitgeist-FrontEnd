@@ -1,16 +1,7 @@
-import Lottie from 'react-lottie';
+import Lottie from 'react-lottie-player';
 import NotFoundAnimation from '../../assets/not-found.json';
 
 const NotFoundPage = () => {
-  const defaultOptions = {
-    loop: true,
-    autoplay: true,
-    animationData: NotFoundAnimation,
-    rendererSettings: {
-      preserveAspectRatio: 'xMidYMid slice',
-    },
-  };
-
   return (
     <div
       style={{
@@ -24,7 +15,7 @@ const NotFoundPage = () => {
         left: 0,
       }}
     >
-      <Lottie options={defaultOptions} height={800} width={800} />
+      <Lottie animationData={NotFoundAnimation} play loop style={{ width: 800, height: 800 }} />
     </div>
   );
 };
