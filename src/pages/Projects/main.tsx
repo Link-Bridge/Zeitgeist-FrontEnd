@@ -79,6 +79,7 @@ const ProjectMain = () => {
           placeholder='Search projects'
           options={['Name', 'Company']}
           setSelectedOption={setFilterOption}
+          maxLength={70}
         />
         <div className='flex flex-wrap flex-row items-center gap-2'>
           <div className='flex-row flex items-center gap-2'>
