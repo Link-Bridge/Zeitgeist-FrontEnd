@@ -24,39 +24,34 @@ const ClientList = (): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
+  const [filter, setFilter] = useState<string>(CompanyFilters.ALL);
   const { employee } = useContext(EmployeeContext);
 
   const isAdmin = employee?.role === 'Admin';
 
   useEffect(() => {
-    const filtered = clientsRequest.data
-      ? clientsRequest.data.filter(
-          company =>
-            company.name.toLowerCase().includes(searchTerm.toLowerCase()) &&
-            (isAdmin || !company.archived)
-        )
-      : [];
-    setFilteredClientsData(filtered);
+    handleFilter(filter);
   }, [searchTerm, clientsRequest.data]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
     setFilteredClientsData(companies);
+    setFilter(value);
 
     if (value == CompanyFilters.ALL) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => isAdmin || !company.archived);
+        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && (isAdmin || !company.archived));
       });
     }
 
     if (value == CompanyFilters.ARCHIVED) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => company.archived);
+        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && company.archived);
       });
     }
     if (value == CompanyFilters.NOT_ARCHIVED) {
       setFilteredClientsData(companies => {
-        return companies.filter(company => !company.archived);
+        return companies.filter(company => company.name.toLowerCase().includes(searchTerm.toLowerCase()) && !company.archived);
       });
     }
   };
