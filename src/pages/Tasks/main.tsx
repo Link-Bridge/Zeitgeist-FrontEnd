@@ -85,8 +85,13 @@ const AssignedTasks = (): JSX.Element => {
     tasks.filter(task => task.idProject === projectId);
 
   const sortTasksByEndDate = (tasks: Task[]): Task[] =>
-    tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
-
+    tasks.sort((a, b) => {
+      if (!a.endDate || !b.endDate) return 0;
+      const dateA = new Date(a.endDate);
+      const dateB = new Date(b.endDate);
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+      return dateA.getTime() - dateB.getTime();
+    });
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
@@ -117,7 +122,6 @@ const AssignedTasks = (): JSX.Element => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '100%',
           color: colors.gray,
         }}
       >
@@ -143,7 +147,7 @@ const AssignedTasks = (): JSX.Element => {
           gap: 2,
           borderRadius: 12,
           padding: 0.5,
-          overflowY: 'auto',
+          overflow: 'auto',
         }}
       >
         {taskData && projectData && tasksPerProject.length && (
@@ -173,19 +177,9 @@ const AssignedTasks = (): JSX.Element => {
                 </Typography>
 
                 {tasks?.length && tasks.length > 0 && (
-                  <Box
-                    key={tasks[0].id}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                      padding: 0.5,
-                      borderRadius: 12,
-                      backgroundColor: colors.lightWhite,
-                    }}
-                  >
+                  <div className='rounded-lg border-2' style={{ borderColor: colors.lighterGray }}>
                     <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
-                  </Box>
+                  </div>
                 )}
               </Box>
             ))}
