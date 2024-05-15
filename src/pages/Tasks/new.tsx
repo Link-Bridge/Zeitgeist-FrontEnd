@@ -8,7 +8,6 @@ import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { BareboneTask } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
 
 /**
@@ -55,12 +54,6 @@ const NewTaskPage = () => {
   }, [employeeLoading, projectLoading]);
 
   const projectName = projectData?.name;
-  const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
-
-  const handleOnSubmit = async (payload: BareboneTask) => {
-    await sendRequest({}, { ...payload });
-  };
-
   if (!isLoaded) {
     <>
       <Typography component='h1'>Loading</Typography>
@@ -70,7 +63,6 @@ const NewTaskPage = () => {
 
   return (
     <NewTaskForm
-      onSubmit={handleOnSubmit}
       employees={employees || []}
       projectId={projectId ? projectId : ''}
       projectName={projectName ? projectName : ''}

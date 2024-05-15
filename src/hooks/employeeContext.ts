@@ -1,18 +1,8 @@
 import { createContext } from 'react';
-
-type EmployeeDetails = {
-  id: string;
-  firstName: string;
-  lastName: string;
-  email: string;
-  imageUrl: string;
-  createdAt: string;
-  idDepartment: string;
-  idRole: string;
-};
+import { EmployeeEntity } from '../types/employee';
 
 export type EmployeeBodyType = {
-  employee: EmployeeDetails;
+  employee: EmployeeEntity;
   role: string;
   department: string;
 };

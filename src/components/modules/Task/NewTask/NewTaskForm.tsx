@@ -1,13 +1,15 @@
 import { Box, Card, Chip, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useContext, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
 import { SnackbarContext } from '../../../../hooks/snackbarContext';
+import useHttp from '../../../../hooks/useHttp';
 import { EmployeeEntity } from '../../../../types/employee';
 import { BareboneTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import { RequestMethods } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
@@ -24,7 +26,6 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 };
 
 interface NewTaskFormProps {
-  onSubmit: (payload: BareboneTask) => Promise<void>;
   employees: EmployeeEntity[];
   projectId: string;
   projectName: string;
@@ -39,7 +40,6 @@ interface NewTaskFormProps {
  * @returns {JSX.Element} New Task form component
  */
 const NewTaskForm: React.FC<NewTaskFormProps> = ({
-  onSubmit,
   employees,
   projectId,
   projectName,
@@ -56,6 +56,21 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const [isPosting, setIsPosting] = useState(false);
 
   const navigate = useNavigate();
+
+  const req = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
+
+  useEffect(() => {
+    if (req.error) setState({ open: true, message: 'Failed to create task.', type: 'danger' });
+  }, [req.error]);
+
+  useEffect(() => {
+    if (req.data) {
+      setState({ open: true, message: 'Task created successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(`/projects/details/${projectId}`);
+      }, 2000);
+    }
+  }, [req.data]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = event.target.value;
@@ -197,15 +212,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       })?.id as string,
     };
 
-    try {
-      await onSubmit(payload);
-      setState({ open: true, message: 'Task created successfully.', type: 'success' });
-      setTimeout(() => {
-        navigate(`/projects/details/${projectId}`);
-      }, 2000);
-    } catch (error) {
-      setState({ open: true, message: 'Failed to create task.', type: 'danger' });
-    }
+    req.sendRequest({}, { ...payload });
   };
 
   const handleCancel = () => {

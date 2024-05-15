@@ -1,5 +1,5 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
-import { Chip, Option, Select, selectClasses } from '@mui/joy';
+import { Box, Chip, Option, Select, selectClasses } from '@mui/joy';
 import { useEffect, useState } from 'react';
 
 interface ColorMapEntity {
@@ -7,6 +7,7 @@ interface ColorMapEntity {
   font: string;
   bgHover?: string;
 }
+
 export interface GenericDropdownProps {
   defaultValue?: string;
   options: string[];
@@ -16,6 +17,13 @@ export interface GenericDropdownProps {
   placeholder?: string;
 }
 
+/**
+ * Generic dropdown component
+ *
+ * @component
+ * @param props: GenericDropdownProps - Allows customization of the dropdown
+ * @returns TSX Component
+ */
 function GenericDropdown(props: GenericDropdownProps) {
   const [currentValue, setCurrentValue] = useState<string | null>(null);
 
@@ -34,9 +42,11 @@ function GenericDropdown(props: GenericDropdownProps) {
     bgHover: '#A0A0A0',
     font: '#424242',
   };
+
   if (props.colorMap) {
     colorCombination = props.colorMap[currentValue ?? ''] ?? colorCombination;
   }
+
   return (
     <Chip
       component={Select}
@@ -50,6 +60,7 @@ function GenericDropdown(props: GenericDropdownProps) {
         color: colorCombination?.font,
         width: 240,
         fontSize: '1rem',
+
         [`&:hover`]: {
           bgcolor: colorCombination.bgHover,
         },
@@ -61,13 +72,15 @@ function GenericDropdown(props: GenericDropdownProps) {
         },
       }}
     >
-      {props.options.map((option, i) => {
-        return (
-          <Option key={i} value={option}>
-            {option}
-          </Option>
-        );
-      })}
+      <Box sx={{ overflowY: 'auto', maxHeight: 300 }}>
+        {props.options.map((option, i) => {
+          return (
+            <Option key={i} value={option}>
+              {option}
+            </Option>
+          );
+        })}
+      </Box>
     </Chip>
   );
 }

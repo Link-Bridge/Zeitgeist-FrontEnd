@@ -1,5 +1,4 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Snackbar } from '@mui/joy';
 import {
   Chip,
   Table,
@@ -11,14 +10,15 @@ import {
   Typography,
   colors,
 } from '@mui/material';
-import axios, { AxiosRequestConfig } from 'axios';
-import { useRef, useState } from 'react';
+import { AxiosRequestConfig } from 'axios';
+import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../../hooks/snackbarContext';
+import { axiosInstance } from '../../../../../lib/axios/axios';
 import { Task } from '../../../../../types/task';
 import { TaskStatus } from '../../../../../types/task-status';
-import { APIPath, RequestMethods } from '../../../../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../../../../utils/constants';
 import DeleteModal from '../../../../common/DeleteModal';
 import GenericDropdown from '../../../../common/GenericDropdown';
 import TaskActionsMenu from '../../../../common/TaskActionsMenu';
@@ -43,7 +43,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const idTaskPayload = useRef<string>('');
 
   const [collapsed, setCollapsed] = useState(false);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -103,19 +103,12 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   };
 
   const doFetch = async (payload: { status: TaskStatus }) => {
-    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    const idToken = localStorage.getItem('idToken');
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-    };
     const options: AxiosRequestConfig = {
       method: RequestMethods.PUT,
-      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-      headers: headers,
+      url: `${BASE_API_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
       data: payload,
     };
-    await axios(options);
+    await axiosInstance(options);
   };
 
   return (
@@ -210,12 +203,6 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
           setTaskToDelete(null);
         }}
       />
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

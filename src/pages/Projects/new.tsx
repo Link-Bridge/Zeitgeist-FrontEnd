@@ -8,6 +8,7 @@ import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import Loader from '../../components/common/Loader';
 import ClientDropdown from '../../components/modules/Projects/ClientDropdown';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import useNewProject from '../../hooks/useNewProject';
@@ -16,7 +17,9 @@ import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/p
 import { RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
+  const { employee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
+
   const form = useNewProject();
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
@@ -27,6 +30,11 @@ const NewProject = () => {
   const [disableButton, setDisableButton] = useState<boolean>(true);
   const [startDate, setStartDate] = useState(true);
   const [errors, setErrors] = useState<Record<string, string>>({});
+  const [admin, setAdmin] = useState(false);
+
+  useEffect(() => {
+    setAdmin(employee?.role === 'Admin');
+  }, [employee]);
 
   useEffect(() => {
     if (!initForm) {
@@ -38,12 +46,16 @@ const NewProject = () => {
       form.formState.endDate = null;
       form.formState.periodicity = ProjectPeriodicity.WHEN_NEEDED;
       form.formState.isChargeable = false;
-      form.formState.area = '';
+      if (admin) {
+        form.formState.area = '';
+      } else {
+        form.formState.area = employee?.role ?? '';
+      }
       setInitForm(true);
     }
 
     req.sendRequest();
-  }, []);
+  }, [admin, employee]);
 
   useEffect(() => {
     if (req.error) setState({ open: true, message: req.error.message, type: 'danger' });
@@ -331,6 +343,8 @@ const NewProject = () => {
                 name='area'
                 handleChange={form.handleChange}
                 values={projectAreas}
+                defaultValue={employee?.role}
+                disabled={!admin}
               ></CustomSelect>
             </FormControl>
             <FormControl>
@@ -356,7 +370,9 @@ const NewProject = () => {
                 },
               }}
             >
-              <Link to={'..'}>Cancel</Link>
+              <Link to={'..'} replace>
+                Cancel
+              </Link>
             </Button>
             <Button
               type='submit'
@@ -371,7 +387,6 @@ const NewProject = () => {
               Add Project
             </Button>
           </section>
-          {/* Snackbar */}
         </form>
       )}
     </Card>

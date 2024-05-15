@@ -1,12 +1,11 @@
 import { Search } from '@mui/icons-material';
-import { Button, Input, Snackbar, Typography } from '@mui/joy';
+import { Button, Input, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import Divider from '@mui/joy/Divider';
 import Grid from '@mui/joy/Grid';
 import { NativeSelect } from '@mui/material';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import axios from 'axios';
-import { useEffect, useRef, useState } from 'react';
+import { useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
 import pdf from '../../assets/icons/pdf.svg';
@@ -17,8 +16,9 @@ import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import StatusChip from '../../components/common/StatusChip';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
@@ -53,7 +53,7 @@ const ProjectReport: React.FC = () => {
   const [report, setReport] = useState<Report>();
   const [month, setMonth] = useState<number>(1);
   const [year, setYear] = useState<number>(Number(new Date().getFullYear()));
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [validYear, setValidYear] = useState<boolean>(false);
   const [usingFilter, setUsingFilter] = useState<boolean>(false);
 
@@ -99,9 +99,8 @@ const ProjectReport: React.FC = () => {
     date.current = filterteParser(new Date(year, month - 1));
 
     const doFetch = async (): Promise<void> => {
-      const data = await axios.get(
-        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`,
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
+      const data = await axiosInstance.get(
+        `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`
       );
       setReport(data.data);
     };
@@ -655,13 +654,6 @@ const ProjectReport: React.FC = () => {
             <ComponentPlaceholder text='No data available' />
           </Box>
         )}
-
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </main>
     </>
   );

@@ -1,14 +1,15 @@
-import { Card, FormControl, FormLabel, Input, Snackbar, Textarea } from '@mui/joy';
+import { Card, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../hooks/snackbarContext';
+import useHttp from '../../../../hooks/useHttp';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import { RoutesPath } from '../../../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import ModifyButton from '../../../common/ModifyButton';
@@ -24,7 +25,6 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 };
 
 interface UpdateTaskFormProps {
-  onSubmit: (payload: UpdatedTask) => Promise<void>;
   employees: EmployeeEntity[];
   data: TaskDetail;
 }
@@ -38,7 +38,6 @@ interface UpdateTaskFormProps {
  * @returns {JSX.Element} Update Task form component
  */
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
-  onSubmit,
   employees,
   data,
 }: UpdateTaskFormProps): JSX.Element => {
@@ -50,12 +49,27 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPosting, setIsPosting] = useState(false);
 
+  const req = useHttp<UpdatedTask>(`${APIPath.UPDATE_TASK}/${data.id}`, RequestMethods.PUT);
+
   const navigate = useNavigate();
   const location = useLocation();
+
+  useEffect(() => {
+    if (req.data) {
+      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(RoutesPath.TASKS + '/' + idTask, { state: location.state, replace: true });
+      }, 2000);
+    }
+  }, [req.data]);
+
+  useEffect(() => {
+    if (req.error) setState({ open: true, message: 'Failed to update task.', type: 'danger' });
+  }, [req.error]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = event.target.value;
@@ -225,15 +239,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       })?.id as string,
     };
 
-    try {
-      await onSubmit(payload);
-      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
-      setTimeout(() => {
-        navigate(RoutesPath.TASKS + '/' + idTask, { state: location.state, replace: true });
-      }, 2000);
-    } catch (error) {
-      setState({ open: true, message: 'Failed to update task.', type: 'danger' });
-    }
+    req.sendRequest({}, { ...payload });
   };
 
   const handleCancel = () => {

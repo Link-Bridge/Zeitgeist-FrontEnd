@@ -59,7 +59,7 @@ const TaskDetails: React.FC = () => {
 
   const handleEdit = () => {
     setShowUpdate(true);
-    navigate(`/tasks/edit/${id}`, { state: { fromDetails: true } });
+    navigate(`/tasks/edit/${id}`, { state: { fromDetail: true } });
   };
 
   const deleteTask = useDeleteTask();

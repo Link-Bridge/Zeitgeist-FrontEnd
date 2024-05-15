@@ -1,4 +1,4 @@
-import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
+import { Box, Sheet, Typography } from '@mui/joy';
 import { AxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
@@ -28,7 +28,7 @@ import { RequestMethods } from '../../utils/constants';
  */
 const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
 
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
@@ -189,12 +189,6 @@ const AssignedTasks = (): JSX.Element => {
           </>
         )}
       </Sheet>
-
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

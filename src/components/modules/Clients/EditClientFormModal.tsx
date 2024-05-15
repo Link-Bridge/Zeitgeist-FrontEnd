@@ -1,10 +1,9 @@
-import { Snackbar } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
@@ -39,13 +38,15 @@ const EditClientFormModal = ({
   setRefetch,
   clientData,
 }: EditClientFormModalProps) => {
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState(clientData.name);
   const [companyEmail, setCompanyEmail] = useState(clientData.email);
   const [companyPhone, setCompanyPhone] = useState(clientData.phoneNumber);
   const [companyRFC, setCompanyRFC] = useState(clientData.rfc);
-  const [companyConstitution, setCompanyConstitution] = useState(clientData.constitutionDate);
+  const [companyConstitution, setCompanyConstitution] = useState(
+    clientData.constitutionDate || null
+  );
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
 
   const { sendRequest, data, error, loading } = useHttp<UpdateCompanyData>(
@@ -111,7 +112,7 @@ const EditClientFormModal = ({
     setCompanyEmail(clientData.email);
     setCompanyPhone(clientData.phoneNumber);
     setCompanyRFC(clientData.rfc);
-    setCompanyConstitution(clientData.constitutionDate);
+    setCompanyConstitution(clientData.constitutionDate || null);
     setCompanyTaxResidence(clientData.taxResidence);
   };
 
@@ -320,35 +321,42 @@ const EditClientFormModal = ({
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <DatePicker
               label='Constitution Date'
-              value={dayjs(companyConstitution)}
-              onChange={e => {
-                const date = e?.toDate();
-                const isValidDate = date instanceof Date && !isNaN(date.getTime());
-                if (!isValidDate && date) {
-                  setState({
-                    open: true,
-                    message: 'Please enter a valid date.',
-                    type: 'danger',
-                  });
-                  setErrors(prevErrors => ({
-                    ...prevErrors,
-                    constitutionDate: 'Please enter a valid date.',
-                  }));
-                } else if (dateGreaterThanToday(date)) {
-                  setState({
-                    open: true,
-                    message: 'Constitution date cannot be greater than today.',
-                    type: 'danger',
-                  });
-                  setErrors(prevErrors => ({
-                    ...prevErrors,
-                    constitutionDate: 'Constitution date cannot be greater than today.',
-                  }));
-                } else {
+              value={companyConstitution ? dayjs(companyConstitution) : null}
+              onChange={newValue => {
+                if (!newValue) {
+                  setCompanyConstitution(null);
                   setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
                   setState({ open: false, message: '' });
+                } else {
+                  const date = newValue.toDate();
+                  const isValidDate = date instanceof Date && !isNaN(date.getTime());
+
+                  if (!isValidDate) {
+                    setState({
+                      open: true,
+                      message: 'Please enter a valid date.',
+                      type: 'danger',
+                    });
+                    setErrors(prevErrors => ({
+                      ...prevErrors,
+                      constitutionDate: 'Please enter a valid date.',
+                    }));
+                  } else if (dateGreaterThanToday(date)) {
+                    setState({
+                      open: true,
+                      message: 'Constitution date cannot be greater than today.',
+                      type: 'danger',
+                    });
+                    setErrors(prevErrors => ({
+                      ...prevErrors,
+                      constitutionDate: 'Constitution date cannot be greater than today.',
+                    }));
+                  } else {
+                    setCompanyConstitution(date);
+                    setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                    setState({ open: false, message: '' });
+                  }
                 }
-                setCompanyConstitution(isValidDate ? date : null);
               }}
             />
 
@@ -381,12 +389,6 @@ const EditClientFormModal = ({
             />
           </Box>
         </Box>
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </Box>
     </Modal>
   );
