@@ -147,7 +147,7 @@ const ClientDetails = () => {
                 <div className='flex flex-wrap items-center gap-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
-                    {formatDate(company.constitutionDate ?? null)}
+                    {company.constitutionDate ? formatDate(company.constitutionDate) : 'No date'}
                   </Chip>
                 </div>
                 <Button

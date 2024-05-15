@@ -44,7 +44,9 @@ const EditClientFormModal = ({
   const [companyEmail, setCompanyEmail] = useState(clientData.email);
   const [companyPhone, setCompanyPhone] = useState(clientData.phoneNumber);
   const [companyRFC, setCompanyRFC] = useState(clientData.rfc);
-  const [companyConstitution, setCompanyConstitution] = useState(clientData.constitutionDate);
+  const [companyConstitution, setCompanyConstitution] = useState(
+    clientData.constitutionDate || null
+  );
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
 
   const { sendRequest, data, error, loading } = useHttp<UpdateCompanyData>(
@@ -110,7 +112,7 @@ const EditClientFormModal = ({
     setCompanyEmail(clientData.email);
     setCompanyPhone(clientData.phoneNumber);
     setCompanyRFC(clientData.rfc);
-    setCompanyConstitution(clientData.constitutionDate);
+    setCompanyConstitution(clientData.constitutionDate || null);
     setCompanyTaxResidence(clientData.taxResidence);
   };
 
@@ -319,35 +321,42 @@ const EditClientFormModal = ({
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <DatePicker
               label='Constitution Date'
-              value={dayjs(companyConstitution)}
-              onChange={e => {
-                const date = e?.toDate();
-                const isValidDate = date instanceof Date && !isNaN(date.getTime());
-                if (!isValidDate && date) {
-                  setState({
-                    open: true,
-                    message: 'Please enter a valid date.',
-                    type: 'danger',
-                  });
-                  setErrors(prevErrors => ({
-                    ...prevErrors,
-                    constitutionDate: 'Please enter a valid date.',
-                  }));
-                } else if (dateGreaterThanToday(date)) {
-                  setState({
-                    open: true,
-                    message: 'Constitution date cannot be greater than today.',
-                    type: 'danger',
-                  });
-                  setErrors(prevErrors => ({
-                    ...prevErrors,
-                    constitutionDate: 'Constitution date cannot be greater than today.',
-                  }));
-                } else {
+              value={companyConstitution ? dayjs(companyConstitution) : null}
+              onChange={newValue => {
+                if (!newValue) {
+                  setCompanyConstitution(null);
                   setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
                   setState({ open: false, message: '' });
+                } else {
+                  const date = newValue.toDate();
+                  const isValidDate = date instanceof Date && !isNaN(date.getTime());
+
+                  if (!isValidDate) {
+                    setState({
+                      open: true,
+                      message: 'Please enter a valid date.',
+                      type: 'danger',
+                    });
+                    setErrors(prevErrors => ({
+                      ...prevErrors,
+                      constitutionDate: 'Please enter a valid date.',
+                    }));
+                  } else if (dateGreaterThanToday(date)) {
+                    setState({
+                      open: true,
+                      message: 'Constitution date cannot be greater than today.',
+                      type: 'danger',
+                    });
+                    setErrors(prevErrors => ({
+                      ...prevErrors,
+                      constitutionDate: 'Constitution date cannot be greater than today.',
+                    }));
+                  } else {
+                    setCompanyConstitution(date);
+                    setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                    setState({ open: false, message: '' });
+                  }
                 }
-                setCompanyConstitution(isValidDate ? date : null);
               }}
             />
 
