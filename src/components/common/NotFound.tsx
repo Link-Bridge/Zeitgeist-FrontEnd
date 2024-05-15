@@ -1,4 +1,4 @@
-import Lottie from 'react-lottie-player';
+import Lottie from 'react-lottie';
 import NotFoundAnimation from '../../assets/not-found.json';
 
 const NotFoundPage = () => {
