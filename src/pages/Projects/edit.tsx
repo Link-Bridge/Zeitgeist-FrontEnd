@@ -139,7 +139,7 @@ const EditProject = () => {
       {(errorCompanies || errorProject) && <h1>An unexpected error occurred. Please try again.</h1>}
       {!(errorCompanies || errorProject) && !loadingCompanies && !loadingProject && (
         <Card
-          className='bg-white flex-1 font-montserrat min-h-0 lg:overflow-y-hidden overflow-y-scroll'
+          className='bg-white flex-1 font-montserrat min-h-0 overflow-y-auto'
           sx={{ padding: '30px' }}
         >
           <form className='flex flex-col gap-4' onSubmit={form.handleUpdate}>

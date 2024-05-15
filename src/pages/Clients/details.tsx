@@ -5,7 +5,6 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import styles from '../../components/modules/Clients/details.module.css';
 import { Box, Button, Chip, Snackbar, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
@@ -15,6 +14,7 @@ import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
 import GoBack from '../../components/common/GoBack';
 import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
@@ -151,7 +151,7 @@ const ClientDetails = () => {
                   <Chip color='primary' variant='outlined'>
                     {formatDate(company.constitutionDate ?? null)}
                   </Chip>
-                </div>  
+                </div>
               </div>
               <div className='flex gap-5'>
                 <Button

@@ -178,7 +178,7 @@ const ProjectDetails = () => {
   const chipData = [
     { label: 'Total Hours', content: totalHours },
     { label: 'Client', content: truncateText(companyName, 20) },
-    { label: 'Matter', content: data?.matter },
+    { label: 'Matter', content: data?.matter || '-' },
     { label: 'Category', content: data?.category },
     { label: 'Area', content: data?.area },
     { label: 'Periodicity', content: data?.periodicity },
@@ -207,13 +207,16 @@ const ProjectDetails = () => {
         <GoBack />
       </Box>
 
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}>
+      <Card
+        className='bg-white overflow-y-auto overflow-hidden'
+        sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
+      >
         <section className='font-montserrat'>
-          <section className='flex justify-between'>
-            <h3 className='text-[22px] font-medium' style={{ marginTop: '10px' }}>
-              {truncateText(data?.name)}
+          <section className='flex flex-wrap justify-between gap-y-2'>
+            <h3 className='text-[22px] font-medium truncate' style={{ marginTop: '10px' }}>
+              {data?.name}
             </h3>
-            <section className='flex justify-end gap-3'>
+            <div className='flex gap-3'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -276,14 +279,14 @@ const ProjectDetails = () => {
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
                 </Button>
               )}
-            </section>
+            </div>
           </section>
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
           {data && (
             <div
-              className=' flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
+              className='flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
               style={{ color: colors.gray }}
             >
               <div style={{ fontSize: '15px' }}>
