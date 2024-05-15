@@ -171,6 +171,9 @@ const AssignedTasks = (): JSX.Element => {
                     color: colors.gray,
                     fontWeight: 'bold',
                     fontSize: '1.4rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {project.name}
