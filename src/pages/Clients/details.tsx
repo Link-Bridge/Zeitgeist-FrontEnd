@@ -5,8 +5,7 @@ import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import EmailOutlinedIcon from '@mui/icons-material/EmailOutlined';
 import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPortraitOutlined';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
-import { Box, Button, Chip, Snackbar, Typography } from '@mui/joy';
-import Divider from '@mui/material/Divider';
+import { Box, Button, Chip, Divider, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
@@ -15,7 +14,7 @@ import ArchiveModal from '../../components/common/ArchiveModal';
 import GoBack from '../../components/common/GoBack';
 import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
@@ -39,7 +38,7 @@ const ClientDetails = () => {
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
   const [refetch, setRefetch] = useState(false);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
     `/company/${clientId}`,
@@ -130,7 +129,7 @@ const ClientDetails = () => {
               });
             }
             setTimeout(() => {
-              navigate(RoutesPath.CLIENTS + '/');
+              navigate(RoutesPath.CLIENTS);
             }, 2000);
           }}
         ></ArchiveModal>
@@ -215,13 +214,6 @@ const ClientDetails = () => {
         <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
-
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </main>
   );
 };

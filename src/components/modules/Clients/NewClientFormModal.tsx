@@ -2,13 +2,14 @@ import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
-import { validRFC } from '../../../utils/methods';
+import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
 
@@ -35,6 +36,8 @@ interface NewClientFormModalProps {
 }
 
 const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalProps) => {
+  const { setState } = useContext(SnackbarContext);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
@@ -42,7 +45,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const [companyConstitution, setCompanyConstitution] = useState('');
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
-  const { setState } = useContext(SnackbarContext);
   /**
    * @brief using http hook being able to send new client information
    */
@@ -63,19 +65,25 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       });
 
     if (error && 'response' in error && error.response?.data)
-      return setState({ open: true, message: error.response.data?.error, type: 'danger' });
+      return setState({
+        open: true,
+        message: (error.response.data as { error: string })?.error,
+        type: 'danger',
+      });
     if (error) return setState({ open: true, message: 'Error', type: 'danger' });
   };
 
   /**
-   * @brief Supervise the're no error, if it's clean, send a succuess message, close the modal
+   * @brief Supervise the're no error, if it's clean, send a success message, close the modal
    * and refetch
    */
   const handleSuccess = () => {
     if (!error && data && data.id) {
-      setState({ open: true, message: 'Company created', type: 'success' });
-      setOpen(false);
-
+      setState({ open: true, message: 'Company created succesfully,', type: 'success' });
+      setTimeout(() => {
+        setOpen(false);
+        setState({ open: false, message: '' });
+      }, 2000);
       setCompanyName('');
       setCompanyEmail('');
       setCompanyPhone('');
@@ -96,15 +104,12 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   /**
    * @brief The required information
    */
-  const validateForm = () => {
-    return (
-      companyName != '' &&
-      companyEmail != '' &&
-      companyPhone != '' &&
-      companyRFC != '' &&
-      companyConstitution != '' &&
-      companyTaxResidence != ''
-    );
+  const hasEmptyFields = () => {
+    return !companyName;
+  };
+
+  const hasErrors = () => {
+    return Object.values(errors).some(error => error !== '');
   };
 
   /**
@@ -113,28 +118,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
    */
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
-
-    if (companyPhone.length < 8) {
-      setState({
-        open: true,
-        message: 'Phone number must have at least 8 characters',
-        type: 'danger',
-      });
-      return;
-    } else if (companyPhone.length > 15) {
-      setState({
-        open: true,
-        message: 'Phone number must have at most 15 characters',
-        type: 'danger',
-      });
-      return;
-    }
-
-    if (!validRFC(companyRFC))
-      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
-
-    if (!validateForm())
-      return setState({ open: true, message: 'All fields are required', type: 'danger' });
 
     // Parse date
     const dateString = companyConstitution;
@@ -196,13 +179,39 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientName'
-              label='Clients name'
+              label={
+                <>
+                  Name
+                  <span style={{ color: 'red' }}> *</span>
+                </>
+              }
               variant='outlined'
               value={companyName}
               onChange={event => {
+                if (event.target.value.length > 70) {
+                  return setState({
+                    open: true,
+                    message: 'Name cannot be longer than 70 characters.',
+                    type: 'danger',
+                  });
+                } else if (!event.target.value || event.target.value.length == 0) {
+                  setErrors({ ...errors, name: 'Name is required.' });
+                  setState({
+                    open: true,
+                    message: 'Name is required.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors({ ...errors, name: '' });
+                  setState({ open: false, message: '' });
+                }
                 setCompanyName(event.target.value);
               }}
-              sx={{ width: '100ch' }}
+              sx={{
+                width: '100ch',
+                borderRadius: '4px',
+                border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
+              }}
             />
 
             <TextField
@@ -212,7 +221,38 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               variant='outlined'
               value={companyEmail}
               onChange={event => {
+                if (event.target.value.length > 70) {
+                  return setState({
+                    open: true,
+                    message: 'Email cannot be longer than 70 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
+                }
                 setCompanyEmail(event.target.value);
+              }}
+              onBlur={event => {
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+                const email = event.target.value;
+                if (email && !emailRegex.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    email: 'Please enter a valid email address.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid email address.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, email: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
+                border: `1px solid ${errors['email'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
@@ -225,9 +265,53 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               variant='outlined'
               value={companyPhone}
               onChange={event => {
-                const input = event.target.value.replace(/\D/g, '');
-                if (input.length > 13) return;
-                setCompanyPhone(input);
+                if (!/^\d*\.?\d*$/.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Only numbers are allowed.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Phone number can only be numbers.',
+                    type: 'danger',
+                  });
+                  return;
+                }
+                if (event.target.value.length > 13) {
+                  return setState({
+                    open: true,
+                    message: 'Phone number cannot be longer than 13 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+                setCompanyPhone(event.target.value);
+              }}
+              onBlur={event => {
+                if (
+                  event.target.value &&
+                  event.target.value.length < 8 &&
+                  event.target.value.length > 0
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Phone number must be at least 10 characters.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Phone number must be at least 10 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
+                border: `1px solid ${errors['phoneNumber'] ? colors.danger : colors.lighterGray}`,
               }}
             />
 
@@ -238,9 +322,36 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               value={companyRFC}
               onChange={event => {
                 const inputValue = event.target.value;
-                if (inputValue.length <= 13) {
-                  setCompanyRFC(event.target.value);
+                if (inputValue.length > 13) {
+                  return setState({
+                    open: true,
+                    message: 'RFC cannot be longer than 13 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
                 }
+                setCompanyRFC(inputValue.toUpperCase());
+              }}
+              onBlur={event => {
+                if (event.target.value && !validRFC(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    rfc: 'Please enter a valid RFC.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid RFC.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, rfc: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
+                border: `1px solid ${errors['rfc'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
@@ -254,6 +365,38 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               InputLabelProps={{ shrink: true }}
               value={companyConstitution}
               onChange={event => {
+                const value = event.target.value;
+
+                const date = new Date(value);
+                const isValidDate = date instanceof Date && !isNaN(date.getTime());
+                if (!isValidDate && date) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Please enter a valid date.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid date.',
+                    type: 'danger',
+                  });
+                } else if (
+                  dateGreaterThanToday(date) ||
+                  dateGreaterThanToday(dayjs(date).add(1, 'day').toDate())
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Constitution date cannot be greater than today.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Constitution date cannot be greater than today.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                  setState({ open: false, message: '' });
+                }
+
                 setCompanyConstitution(event.target.value);
               }}
             />
@@ -264,6 +407,15 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               variant='outlined'
               value={companyTaxResidence}
               onChange={event => {
+                if (event.target.value.length > 150) {
+                  return setState({
+                    open: true,
+                    message: 'Tax residence cannot be longer than 150 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
+                }
                 setCompanyTaxResidence(event.target.value);
               }}
             />
@@ -271,7 +423,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
             <CancelButton onClick={() => setOpen(false)} />
-            <CreateClientButton loading={loading} />
+            <CreateClientButton loading={loading} disabled={hasEmptyFields() || hasErrors()} />
           </Box>
         </Box>
       </Box>

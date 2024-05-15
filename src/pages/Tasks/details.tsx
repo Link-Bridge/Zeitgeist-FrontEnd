@@ -2,12 +2,13 @@ import { Button, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
-import { Navigate, useLocation, useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/black_calendar.svg';
 import pencil from '../../assets/icons/pencil.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
@@ -31,8 +32,7 @@ function dateParser(date: Date): string {
 }
 
 const TaskDetails: React.FC = () => {
-  const location = useLocation();
-  const id = location.pathname.split('/').pop();
+  const { id } = useParams();
 
   const navigate = useNavigate();
   const [notFound, setNotFound] = useState(false);
@@ -58,7 +58,7 @@ const TaskDetails: React.FC = () => {
 
   const handleEdit = () => {
     setShowUpdate(true);
-    navigate(`/tasks/edit/${id}`);
+    navigate(`/tasks/edit/${id}`, { state: { fromDetail: true } });
   };
 
   const deleteTask = useDeleteTask();
@@ -108,7 +108,22 @@ const TaskDetails: React.FC = () => {
   }
 
   if (error) {
-    return <div>Error loading task</div>;
+    if (error.message.includes('403')) {
+      navigate('/tasks');
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='Error loading the report.' />
+        </Box>
+      );
+    }
   }
 
   return (

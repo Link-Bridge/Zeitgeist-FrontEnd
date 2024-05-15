@@ -1,5 +1,4 @@
-import { Typography } from '@mui/joy';
-import { colors } from '@mui/material';
+import { Typography, colors } from '@mui/joy';
 
 interface ErrorViewProps<T> {
   error: T;

@@ -1,6 +1,7 @@
-import axios, { AxiosError, AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import { useState } from 'react';
-import { RequestMethods } from '../utils/constants';
+import { axiosInstance } from '../lib/axios/axios';
+import { BASE_API_URL, RequestMethods } from '../utils/constants';
 
 /**
  * Hook for performing HTTP requests with generic type configuration.
@@ -52,8 +53,6 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   const [error, setError] = useState<Error | AxiosError | null>(null);
   const [loading, setLoading] = useState<boolean>(false);
 
-  const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-
   const sendRequest = async (
     params: Record<string, unknown> = {},
     body: Record<string, unknown> | null = null,
@@ -61,16 +60,13 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
   ): Promise<void> => {
     setLoading(true);
     setError(null);
-    const idToken = localStorage.getItem('idToken');
     const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
       ...customHeaders,
     };
 
     const options: AxiosRequestConfig = {
       method: method,
-      url: `${BASE_URL}${endpoint}`,
+      url: `${BASE_API_URL}${endpoint}`,
       headers: headers,
       params: method === RequestMethods.GET ? params : {},
       data: method === RequestMethods.POST || method === RequestMethods.PUT ? body : null,
@@ -81,7 +77,7 @@ const useHttp = <T>(endpoint: string, method: RequestMethods): HttpHook<T> => {
     }
 
     try {
-      const response = await axios(options);
+      const response = await axiosInstance(options);
       setData(response.data as T);
     } catch (error) {
       setError(error as Error | AxiosError);

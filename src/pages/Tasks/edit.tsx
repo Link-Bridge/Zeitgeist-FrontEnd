@@ -8,7 +8,7 @@ import { EmployeeBodyType, EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { Response } from '../../types/response';
-import { TaskDetail, UpdatedTask } from '../../types/task';
+import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
 
 const EditTaskPage: React.FC = () => {
@@ -44,19 +44,6 @@ const EditTaskPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cachedTask]);
 
-  const { sendRequest: sendUpdateTaskRequest } = useHttp<UpdatedTask>(
-    `${APIPath.UPDATE_TASK}/${id}`,
-    RequestMethods.PUT
-  );
-
-  const handleOnSubmit = async (payload: UpdatedTask) => {
-    try {
-      await sendUpdateTaskRequest({}, { ...payload });
-    } catch (error) {
-      console.error(error);
-    }
-  };
-
   if (!cachedTask) {
     return (
       <Box
@@ -77,13 +64,7 @@ const EditTaskPage: React.FC = () => {
     );
   }
 
-  return (
-    <UpdateTaskForm
-      data={cachedTask || ({} as TaskDetail)}
-      onSubmit={handleOnSubmit}
-      employees={employees || []}
-    />
-  );
+  return <UpdateTaskForm data={cachedTask || ({} as TaskDetail)} employees={employees || []} />;
 };
 
 /**
