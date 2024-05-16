@@ -373,7 +373,7 @@ const ProjectReport: React.FC = () => {
                   .filter(([key]) => key !== 'total')
                   .map(([item, value]) => {
                     return (
-                      <div className='flex flex-col xl:grid xl:grid-cols-6 xl:items-center mx-2'>
+                      <div className='flex flex-col xl:grid xl:grid-cols-6 xl:items-center mx-6'>
                         <div className='xl:cols-span-1'>
                           <p>{keyMap.get(item)}</p>
                         </div>
@@ -446,19 +446,19 @@ const ProjectReport: React.FC = () => {
                     </div>
 
                     <div className='flex gap-4 mb-4'>
-                      <Box>
+                      <div>
                         <p style={{ fontSize: '.9rem' }}>Status</p>
                         <StatusChip status={item.status} />
-                      </Box>
+                      </div>
 
                       {item.workedHours && (
-                        <Box>
+                        <div className='min-w-[92px]'>
                           <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
                           <ColorChip
-                            label={`Total Hours: ${item.workedHours}`}
+                            label={`${item.workedHours} ${item.workedHours === 1 ? 'hr.' : 'hrs.'}`}
                             color={`${colors.extra}`}
                           ></ColorChip>
-                        </Box>
+                        </div>
                       )}
 
                       {item.employeeFirstName && item.employeeLastName && (
@@ -479,50 +479,28 @@ const ProjectReport: React.FC = () => {
                       )}
                     </div>
 
-                    <Box
-                      sx={{
-                        display: 'flex',
-                        gap: '60px',
-                      }}
-                    >
-                      <Box
-                        sx={{
-                          display: 'flex',
-                        }}
-                      >
-                        <img src={calendar} alt='calendar' className='w-5' />
-                        <p
-                          style={{
-                            color: 'gray',
-                            fontSize: '1rem',
-                            letterSpacing: '1.5px',
-                          }}
-                        >
-                          &nbsp;Start Date:
-                        </p>
-                        <p>&nbsp;{dateParser(item.startDate)}</p>
-                      </Box>
+                    <div className='flex md:grid md:grid-cols-2 mb-4'>
+                      <div className='flex gap-10'>
+                        <div className='min-w-[100px]'>
+                          <div className='flex gap-1'>
+                            <img src={calendar} alt='calendar' className='w-5' />
+                            <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
+                          </div>
+                          <p>{dateParser(item.startDate)}</p>
+                        </div>
 
-                      {item.endDate && (
-                        <Box
-                          sx={{
-                            display: 'flex',
-                          }}
-                        >
-                          <img src={calendar} alt='calendar' className='w-5' />
-                          <p
-                            style={{
-                              color: 'gray',
-                              fontSize: '1rem',
-                              letterSpacing: '1.5px',
-                            }}
-                          >
-                            &nbsp;Due Date:
-                          </p>
-                          <p>&nbsp;{dateParser(item.endDate)}</p>
-                        </Box>
-                      )}
-                    </Box>
+                        {item.endDate && (
+                          <div className='min-w-[100px]'>
+                            <div className='flex gap-1'>
+                              <img src={calendar} alt='calendar' className='w-5' />
+                              <p style={{ fontSize: '1em' }}>&nbsp;Due Date</p>
+                            </div>
+                            <p>{dateParser(item.endDate)}</p>
+                          </div>
+                        )}
+                      </div>
+                      <div></div>
+                    </div>
                   </Box>
                   <Divider />
                 </section>
