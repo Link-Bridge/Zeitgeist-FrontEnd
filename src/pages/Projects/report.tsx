@@ -1,15 +1,16 @@
 import { Search } from '@mui/icons-material';
+import CachedIcon from '@mui/icons-material/Cached';
+import KeyboardArrowDown from '@mui/icons-material/KeyboardArrowDown';
+import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Button, Input, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
-import Divider from '@mui/joy/Divider';
-import Grid from '@mui/joy/Grid';
-import { NativeSelect } from '@mui/material';
+import Option from '@mui/joy/Option';
+import Select, { selectClasses } from '@mui/joy/Select';
+import Divider from '@mui/material/Divider';
 import { PDFDownloadLink } from '@react-pdf/renderer';
-import { useContext, useEffect, useRef, useState } from 'react';
+import { SyntheticEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
-import pdf from '../../assets/icons/pdf.svg';
-import reset from '../../assets/icons/reset.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -89,15 +90,14 @@ const ProjectReport: React.FC = () => {
     setYear(Number(value));
   };
 
-  const handleMonthChange = (value: number) => {
-    setMonth(value);
+  const handleMonthChange = (event: SyntheticEvent | null, value: string | null) => {
+    setMonth(Number(value));
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     setUsingFilter(true);
     date.current = filterteParser(new Date(year, month - 1));
-
     const doFetch = async (): Promise<void> => {
       const data = await axiosInstance.get(
         `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`
@@ -170,369 +170,265 @@ const ProjectReport: React.FC = () => {
   }
 
   return (
-    <>
+    <main className='flex flex-col gap-2 overflow-hidden'>
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-start',
+          justifyContent: 'flex-end',
+          marginBottom: '10px',
         }}
       >
         <GoBack />
       </Box>
 
-      <br />
-      <main className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-        {report ? (
-          <>
-            <Box
+      {report ? (
+        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+          <section className='flex flex-wrap justify-end gap-3 mb-5'>
+            <Select
+              placeholder='Month'
+              indicator={<KeyboardArrowDown />}
               sx={{
-                display: 'flex',
-                justifyContent: 'flex-end',
-                gap: '10px',
-                marginBottom: '20px',
+                bgcolor: 'transparent',
+                [`& .${selectClasses.indicator}`]: {
+                  transition: '0.2s',
+                  [`&.${selectClasses.expanded}`]: {
+                    transform: 'rotate(-180deg)',
+                  },
+                },
+                width: '132px',
+                height: '35px',
               }}
+              onChange={handleMonthChange}
             >
-              <Box sx={{ width: '50%' }}></Box>
-              <Box sx={{ width: '50%', display: 'flex', justifyContent: 'space-between' }}>
-                <Box
-                  sx={{ display: 'flex', alignItems: 'center', gap: '10px', marginLeft: '10px' }}
-                >
-                  <NativeSelect
-                    sx={{
-                      border: 1,
-                      borderBottom: 0,
-                      borderRadius: '5px',
-                      borderColor: colors.lightGray,
-                      width: '120px',
-                      height: '35px',
-                      padding: '4px',
-                    }}
-                    inputProps={{
-                      name: 'age',
-                      id: 'uncontrolled-native',
-                    }}
-                    defaultValue={1}
-                    onChange={e => handleMonthChange(Number(e.target.value))}
-                  >
-                    <option value={1}>January</option>
-                    <option value={2}>February</option>
-                    <option value={3}>March</option>
-                    <option value={4}>April</option>
-                    <option value={5}>May</option>
-                    <option value={6}>June</option>
-                    <option value={7}>July</option>
-                    <option value={8}>August</option>
-                    <option value={9}>September</option>
-                    <option value={10}>October</option>
-                    <option value={11}>November</option>
-                    <option value={12}>December</option>
-                  </NativeSelect>
-
-                  <Input
-                    sx={{
-                      '& input::-webkit-outer-spin-button, & input::-webkit-inner-spin-button': {
-                        display: 'none',
-                      },
-                      width: '120px',
-                      bgcolor: 'transparent',
-                      border: 1,
-                      borderColor: colors.lighterGray,
-                      paddingTop: '5px',
-                    }}
-                    type='number'
-                    defaultValue={year}
-                    onChange={e => handleYearChange(e.target.value)}
-                  />
-                  <Button
-                    sx={{
-                      backgroundColor: colors.lighterWhite,
-                      ':hover': {
-                        backgroundColor: colors.orangeChip,
-                      },
-                      ':disabled': {
-                        backgroundColor: colors.lighterGray,
-                      },
-                      border: 2.5,
-                      borderColor: colors.lighterGray,
-                      height: '5px',
-                    }}
-                    onClick={handleClose}
-                    disabled={hasErrors()}
-                    startDecorator={
-                      <Search style={{ color: validYear ? colors.null : colors.gold }} />
-                    }
-                  >
-                    <Typography
-                      sx={{ color: validYear ? colors.null : colors.gold, paddingTop: '3px' }}
-                    >
-                      Search
-                    </Typography>
-                  </Button>
-                  <Button
-                    sx={{
-                      backgroundColor: colors.lighterWhite,
-                      ':hover': {
-                        backgroundColor: colors.orangeChip,
-                      },
-                      border: 2.5,
-                      borderColor: colors.lighterGray,
-                      height: '5px',
-                    }}
-                    onClick={handleClear}
-                    startDecorator={<img src={reset} alt='reset' className='w-5' />}
-                  >
-                    <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
-                  </Button>
-                </Box>
-                <Box>
-                  <PDFDownloadLink
-                    document={<ProjectReportPDF data={report} />}
-                    fileName={`report_${report.project.name}.pdf`}
-                  >
-                    <Button
-                      sx={{
-                        backgroundColor: colors.lighterWhite,
-                        ':hover': {
-                          backgroundColor: colors.orangeChip,
-                        },
-                        border: 2.5,
-                        borderColor: colors.lighterGray,
-                        height: '5px',
-                      }}
-                      startDecorator={<img src={pdf} alt='pdf' className='w-7' />}
-                    >
-                      <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>
-                        Download
-                      </Typography>
-                    </Button>
-                  </PDFDownloadLink>
-                </Box>
-              </Box>
-            </Box>
-            <Box
+              <Option value={1}>January</Option>
+              <Option value={2}>February</Option>
+              <Option value={3}>March</Option>
+              <Option value={4}>April</Option>
+              <Option value={5}>May</Option>
+              <Option value={6}>June</Option>
+              <Option value={7}>July</Option>
+              <Option value={8}>August</Option>
+              <Option value={9}>September</Option>
+              <Option value={10}>October</Option>
+              <Option value={11}>November</Option>
+              <Option value={12}>December</Option>
+            </Select>
+            <Input
+              type='number'
+              placeholder='Year'
+              defaultValue={year}
               sx={{
-                display: 'flex',
-                gap: '30px',
+                width: '132px',
+                height: '35px',
               }}
+              onChange={e => handleYearChange(e.target.value)}
+            />
+            <Button
+              sx={{
+                backgroundColor: colors.lightWhite,
+                ':hover': {
+                  backgroundColor: colors.orangeChip,
+                },
+                ':disabled': {
+                  backgroundColor: colors.lighterGray,
+                },
+                width: '132px',
+                height: '35px',
+              }}
+              onClick={handleClose}
+              disabled={hasErrors()}
+              startDecorator={
+                <Search style={{ width: 24, color: validYear ? colors.null : colors.gold }} />
+              }
             >
-              <Box
+              <Typography sx={{ color: validYear ? colors.null : colors.gold }}>Search</Typography>
+            </Button>
+            <Button
+              sx={{
+                backgroundColor: colors.lighterWhite,
+                ':hover': {
+                  backgroundColor: colors.orangeChip,
+                },
+                width: '132px',
+                height: '35px',
+              }}
+              onClick={handleClear}
+              startDecorator={<CachedIcon style={{ width: 24, color: colors.gold }} />}
+            >
+              <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
+            </Button>
+            <PDFDownloadLink
+              document={<ProjectReportPDF data={report} />}
+              fileName={`report_${report.project.name}.pdf`}
+            >
+              <Button
                 sx={{
-                  width: '50%',
+                  backgroundColor: colors.lighterWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  width: '132px',
+                  height: '35px',
                 }}
+                startDecorator={<PictureAsPdfIcon style={{ width: 24, color: colors.gold }} />}
               >
-                <Box
-                  sx={{
-                    display: 'flex',
-                    justifyContent: 'space-between',
-                    alignItems: 'center',
+                <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Download</Typography>
+              </Button>
+            </PDFDownloadLink>
+          </section>
+          <section className='grid grid-cols-2 mb-8 gap-y-4'>
+            <div className='mr-5 xl:mr-10'>
+              <section className='break-words mb-4 leading-tight'>
+                <p
+                  style={{
+                    color: 'black',
+                    fontSize: '1.7rem',
                   }}
                 >
-                  <Box
-                    sx={{
-                      display: 'flex',
-                    }}
-                  >
-                    <h1
-                      style={{
-                        color: 'black',
-                        fontSize: '1.7rem',
-                        lineHeight: '1.1',
-                        letterSpacing: '1.5px',
-                      }}
-                    >
-                      {report.project.name}
-                    </h1>
-                  </Box>
-                </Box>
-
-                <br />
-                <p>{report.project.description}</p>
-
-                <br />
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: '40px',
-                  }}
-                >
-                  <StatusChip status={capitalize(report.project.status)} />
+                  {report.project.name}
+                </p>
+              </section>
+              <section className='mb-4 xl:mb-8'>
+                {' '}
+                <p>{report.project.description}</p>{' '}
+              </section>
+              <section className='flex flex-wrap gap-2 flex-col md:flex-row xl:grid xl:grid-cols-3 mb-2 lg:mb-4'>
+                <div>
+                  <p style={{ fontSize: '.9rem' }}>Status</p>
+                  <StatusChip status={report.project.status} />
+                </div>
+                <div>
+                  <p style={{ fontSize: '.9rem' }}>Total Hours</p>
                   <ColorChip
-                    label={`Total Hours: ${report.project.totalHours}`}
+                    label={`${report.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
+                </div>
+                <div>
+                  <p style={{ fontSize: '.9rem' }}>Company</p>
                   <ColorChip
                     label={`${truncateText(report.project.companyName, 30)}`}
                     color={`${colors.null}`}
                   ></ColorChip>
-                </Box>
-
-                <br />
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: '15px',
-                    flexWrap: 'wrap',
-                  }}
-                >
-                  {report.project.area && (
-                    <Box>
-                      <p style={{ fontSize: '.9rem' }}>Area</p>
-                      <ColorChip
-                        label={capitalize(report.project.area)}
-                        color={`${colors.extra}`}
-                      ></ColorChip>
-                    </Box>
-                  )}
-
-                  {report.project.matter && (
-                    <Box>
-                      <p style={{ fontSize: '.9rem' }}>Matter</p>
-                      <ColorChip
-                        label={truncateText(report.project.matter)}
-                        color={`${colors.null}`}
-                      ></ColorChip>
-                    </Box>
-                  )}
-                  {report.project.category && (
-                    <Box>
-                      <p style={{ fontSize: '.9rem' }}>Category</p>
-                      <ColorChip
-                        label={report.project.category}
-                        color={`${colors.null}`}
-                      ></ColorChip>
-                    </Box>
-                  )}
-
-                  <Box>
-                    <p style={{ fontSize: '.9rem' }}>Chargeable</p>
+                </div>
+              </section>
+              <section className='flex flex-wrap gap-2 flex-col md:flex-row xl:grid xl:grid-cols-3 overflow-hidden mb-2 lg:mb-4'>
+                {report.project.area && (
+                  <div>
+                    <p style={{ fontSize: '.9rem' }}>Area</p>
                     <ColorChip
-                      label={report.project.isChargeable ? 'Yes' : 'No'}
-                      color={`${colors.null}`}
+                      label={capitalize(report.project.area)}
+                      color={`${colors.extra}`}
                     ></ColorChip>
-                  </Box>
-                </Box>
+                  </div>
+                )}
+                <div>
+                  <p style={{ fontSize: '.9rem' }}>Chargeable</p>
+                  <ColorChip
+                    label={report.project.isChargeable ? 'Yes' : 'No'}
+                    color={`${colors.null}`}
+                  ></ColorChip>
+                </div>
+                {report.project.category && (
+                  <div>
+                    <p style={{ fontSize: '.9rem' }}>Category</p>
+                    <ColorChip label={report.project.category} color={`${colors.null}`}></ColorChip>
+                  </div>
+                )}
+              </section>
+              <section className='flex flex-wrap gap-2 xl:justify-between mb-4'>
+                {report.project.matter && (
+                  <div className='max-w-full'>
+                    <p style={{ fontSize: '.9rem' }}>Matter</p>
+                    <ColorChip label={report.project.matter} color={`${colors.null}`}></ColorChip>
+                  </div>
+                )}
+              </section>
+              <section className='flex md:grid md:grid-cols-2 lg:grid-cols-3 gap-4'>
+                <div className='min-w-[100px]'>
+                  <div className='flex gap-1'>
+                    <img src={calendar} alt='calendar' className='w-5' />
+                    <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
+                  </div>
+                  <p>{dateParser(report.project.startDate)}</p>
+                </div>
 
-                <br />
-
-                <Box
-                  sx={{
-                    display: 'flex',
-                    gap: '100px',
-                  }}
-                >
-                  <Box>
-                    <Box
-                      sx={{
-                        display: 'flex',
-                      }}
-                    >
+                {report.project.endDate && (
+                  <div className='min-w-[100px]'>
+                    <div className='flex gap-1'>
                       <img src={calendar} alt='calendar' className='w-5' />
-                      <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
-                    </Box>
-                    <p>{dateParser(report.project.startDate)}</p>
-                  </Box>
-
-                  {report.project.endDate && (
-                    <Box>
-                      <Box
-                        sx={{
-                          display: 'flex',
-                        }}
-                      >
-                        <img src={calendar} alt='calendar' className='w-5' />
-                        <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
-                      </Box>
-                      <p>{dateParser(report.project.endDate)}</p>
-                    </Box>
-                  )}
-                </Box>
-              </Box>
-
+                      <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
+                    </div>
+                    <p>{dateParser(report.project.endDate)}</p>
+                  </div>
+                )}
+              </section>
+            </div>
+            <div
+              className='flex flex-col xl:justify-between gap-4 rounded-xl py-6'
+              style={{ backgroundColor: colors.lightWhite }}
+            >
+              {report.statistics &&
+                Object.entries(report.statistics)
+                  .filter(([key]) => key !== 'total')
+                  .map(([item, value]) => {
+                    return (
+                      <div className='flex flex-col xl:grid xl:grid-cols-6 xl:items-center mx-6'>
+                        <div className='xl:cols-span-1'>
+                          <p>{keyMap.get(item)}</p>
+                        </div>
+                        <div className='xl:col-span-4'>
+                          <Box
+                            bgcolor={'#D5C7AD'}
+                            sx={{
+                              borderRadius: '10px',
+                              width: '100%',
+                              height: '15px',
+                            }}
+                          >
+                            <Box
+                              width={`${((value * 100) / totalTasks).toString()}%`}
+                              bgcolor={colors.gold}
+                              sx={{
+                                borderRadius: '10px',
+                                height: '15px',
+                              }}
+                            />
+                          </Box>
+                        </div>
+                        <p className='xl:colspan-1 justify-self-end'>
+                          {Math.round((value * 100) / totalTasks)}%
+                        </p>
+                      </div>
+                    );
+                  })}
+            </div>
+          </section>
+          <Divider sx={{ marginBottom: '30px' }} />
+          <section className='flex flex-col gap-3'>
+            {report.tasks?.length === 0 && (
               <Box
-                bgcolor={colors.lighterGray}
                 sx={{
-                  width: '50%',
-                  borderRadius: '8px',
+                  display: 'flex',
+                  flexDirection: 'column',
+                  alignItems: 'center',
+                  justifyContent: 'center',
                 }}
               >
-                {report.statistics &&
-                  Object.entries(report.statistics)
-                    .filter(([key]) => key !== 'total')
-                    .map(([item, value]) => {
-                      return (
-                        <Box key={item}>
-                          <Grid container spacing={2} sx={{ flexGrow: 1 }} margin={1}>
-                            <Grid xs={3}>
-                              <p>{keyMap.get(item)}</p>
-                            </Grid>
-
-                            <Grid xs={8}>
-                              <Box
-                                bgcolor={'#D5C7AD'}
-                                sx={{
-                                  borderRadius: '10px',
-                                  width: '100%',
-                                  gridColumn: '1/3',
-                                  height: '15px',
-                                }}
-                              >
-                                <Box
-                                  width={`${((value * 100) / totalTasks).toString()}%`}
-                                  bgcolor={colors.gold}
-                                  sx={{
-                                    borderRadius: '10px',
-                                    gridColumn: '1/3',
-                                    height: '15px',
-                                  }}
-                                />
-                              </Box>
-                            </Grid>
-
-                            <Grid xs={1}>
-                              <p>{Math.round((value * 100) / totalTasks)}%</p>
-                            </Grid>
-                          </Grid>
-                        </Box>
-                      );
-                    })}
+                <ComponentPlaceholder
+                  text={
+                    usingFilter
+                      ? "No tasks with status 'Done' were found for this date"
+                      : 'No tasks associated to this project were found.'
+                  }
+                />
               </Box>
-            </Box>
-
-            <br />
-            <br />
-            <br />
-
-            <Box
-              sx={{
-                display: 'flex',
-                flexDirection: 'column',
-                gap: '10px',
-              }}
-            >
-              {report.tasks?.length === 0 && (
-                <Box
-                  sx={{
-                    display: 'flex',
-                    flexDirection: 'column',
-                    alignItems: 'center',
-                    justifyContent: 'center',
-                  }}
-                >
-                  <ComponentPlaceholder
-                    text={
-                      usingFilter
-                        ? 'No tasks in done were found for this date'
-                        : 'No tasks associated to this project were found.'
-                    }
-                  />
-                </Box>
-              )}
-              {report.tasks?.map(item => {
-                return (
+            )}
+            {report.tasks?.map(item => {
+              return (
+                <section>
                   <Box key={item.id}>
-                    <Box key={item.title}>
+                    <div className='mb-4'>
                       <h3
                         style={{
                           color: 'black',
@@ -543,119 +439,79 @@ const ProjectReport: React.FC = () => {
                       >
                         {item.title}
                       </h3>
+                    </div>
+
+                    <div className='mb-4'>
                       <p>{item.description}</p>
+                    </div>
 
-                      <br />
+                    <div className='flex gap-4 mb-4'>
+                      <div>
+                        <p style={{ fontSize: '.9rem' }}>Status</p>
+                        <StatusChip status={item.status} />
+                      </div>
 
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          gap: '20px',
-                        }}
-                      >
+                      {item.workedHours && (
+                        <div className='min-w-[92px]'>
+                          <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
+                          <ColorChip
+                            label={`${item.workedHours} ${item.workedHours === 1 ? 'hr.' : 'hrs.'}`}
+                            color={`${colors.extra}`}
+                          ></ColorChip>
+                        </div>
+                      )}
+
+                      {item.employeeFirstName && item.employeeLastName && (
                         <Box>
-                          <p style={{ fontSize: '.9rem' }}>Status</p>
-                          <StatusChip status={capitalize(item.status)} />
+                          <p style={{ fontSize: '.9rem' }}>Responsible</p>
+                          <ColorChip
+                            label={`${item.employeeFirstName} ${item.employeeLastName}`}
+                            color={`${colors.null}`}
+                          ></ColorChip>
                         </Box>
+                      )}
 
-                        {item.workedHours && (
-                          <Box>
-                            <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
-                            <ColorChip
-                              label={`Total Hours: ${item.workedHours}`}
-                              color={`${colors.extra}`}
-                            ></ColorChip>
-                          </Box>
-                        )}
-
-                        {item.employeeFirstName && item.employeeLastName && (
-                          <Box>
-                            <p style={{ fontSize: '.9rem' }}>Responsible</p>
-                            <ColorChip
-                              label={`${item.employeeFirstName} ${item.employeeLastName}`}
-                              color={`${colors.null}`}
-                            ></ColorChip>
-                          </Box>
-                        )}
-
-                        {item.waitingFor && (
-                          <Box>
-                            <p style={{ fontSize: '.9rem' }}>Waiting For</p>
-                            <ColorChip label={item.waitingFor} color={`${colors.null}`}></ColorChip>
-                          </Box>
-                        )}
-                      </Box>
-
-                      <br />
-
-                      <Box
-                        sx={{
-                          display: 'flex',
-                          gap: '60px',
-                        }}
-                      >
-                        <Box
-                          sx={{
-                            display: 'flex',
-                          }}
-                        >
-                          <img src={calendar} alt='calendar' className='w-5' />
-                          <p
-                            style={{
-                              color: 'gray',
-                              fontSize: '1rem',
-                              letterSpacing: '1.5px',
-                            }}
-                          >
-                            &nbsp;Start Date:
-                          </p>
-                          <p>&nbsp;{dateParser(item.startDate)}</p>
+                      {item.waitingFor && (
+                        <Box>
+                          <p style={{ fontSize: '.9rem' }}>Waiting For</p>
+                          <ColorChip label={item.waitingFor} color={`${colors.null}`}></ColorChip>
                         </Box>
+                      )}
+                    </div>
+
+                    <div className='flex md:grid md:grid-cols-2 mb-4'>
+                      <div className='flex gap-10'>
+                        <div className='min-w-[100px]'>
+                          <div className='flex gap-1'>
+                            <img src={calendar} alt='calendar' className='w-5' />
+                            <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
+                          </div>
+                          <p>{dateParser(item.startDate)}</p>
+                        </div>
 
                         {item.endDate && (
-                          <Box
-                            sx={{
-                              display: 'flex',
-                            }}
-                          >
-                            <img src={calendar} alt='calendar' className='w-5' />
-                            <p
-                              style={{
-                                color: 'gray',
-                                fontSize: '1rem',
-                                letterSpacing: '1.5px',
-                              }}
-                            >
-                              &nbsp;Due Date:
-                            </p>
-                            <p>&nbsp;{dateParser(item.endDate)}</p>
-                          </Box>
+                          <div className='min-w-[100px]'>
+                            <div className='flex gap-1'>
+                              <img src={calendar} alt='calendar' className='w-5' />
+                              <p style={{ fontSize: '1em' }}>&nbsp;Due Date</p>
+                            </div>
+                            <p>{dateParser(item.endDate)}</p>
+                          </div>
                         )}
-                      </Box>
-
-                      <br />
-                    </Box>
-                    <Divider />
-                    <br />
+                      </div>
+                      <div></div>
+                    </div>
                   </Box>
-                );
-              })}
-            </Box>
-          </>
-        ) : (
-          <Box
-            sx={{
-              display: 'flex',
-              flexDirection: 'column',
-              alignItems: 'center',
-              justifyContent: 'center',
-            }}
-          >
-            <ComponentPlaceholder text='No data available' />
-          </Box>
-        )}
-      </main>
-    </>
+                  <Divider />
+                </section>
+              );
+            })}
+          </section>
+        </section>
+      ) : (
+        <ComponentPlaceholder text='No data available' />
+      )}
+    </main>
   );
 };
 
