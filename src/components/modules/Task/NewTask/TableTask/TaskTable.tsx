@@ -41,7 +41,6 @@ interface TaskTableProps {
 const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   const navigate = useNavigate();
   const idTaskPayload = useRef<string>('');
-
   const [collapsed, setCollapsed] = useState(false);
   const { setState } = useContext(SnackbarContext);
 

@@ -29,7 +29,6 @@ import { RequestMethods } from '../../utils/constants';
 const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
   const { setState } = useContext(SnackbarContext);
-
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
   const navigate = useNavigate();
@@ -53,6 +52,7 @@ const AssignedTasks = (): JSX.Element => {
     try {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
+
       setState({
         open: true,
         message: 'Task deleted successfully.',
@@ -84,19 +84,26 @@ const AssignedTasks = (): JSX.Element => {
   const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
     tasks.filter(task => task.idProject === projectId);
 
-  const sortTasksByEndDate = (tasks: Task[]): Task[] =>
+  const sortTasks = (tasks: Task[]): Task[] =>
     tasks.sort((a, b) => {
+      if (a.status === 'Done' && b.status !== 'Done') return 1;
+      if (a.status !== 'Done' && b.status === 'Done') return -1;
+
+      if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
       if (!a.endDate || !b.endDate) return 0;
+
       const dateA = new Date(a.endDate);
       const dateB = new Date(b.endDate);
+
       if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
       return dateA.getTime() - dateB.getTime();
     });
+
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
       const projectTasks = filterTasksByProjectId(tasks, project.id);
-      const sortedTasks = sortTasksByEndDate(projectTasks);
+      const sortedTasks = sortTasks(projectTasks);
 
       return { project, tasks: sortedTasks };
     })
