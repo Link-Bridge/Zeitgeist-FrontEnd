@@ -88,7 +88,6 @@ const AssignedTasks = (): JSX.Element => {
     tasks.sort((a, b) => {
       if (a.status === 'Done' && b.status !== 'Done') return 1;
       if (a.status !== 'Done' && b.status === 'Done') return -1;
-
       if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
       if (!a.endDate || !b.endDate) return 0;
 
