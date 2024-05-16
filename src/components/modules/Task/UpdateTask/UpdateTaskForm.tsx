@@ -415,12 +415,6 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             }
           />
         </section>
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
       </form>
     </Card>
   );
