@@ -1,3 +1,4 @@
+import { FormControl, FormHelperText } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -340,47 +341,55 @@ const EditClientFormModal = ({
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <DatePicker
-              disableFuture
-              label='Constitution Date'
-              value={companyConstitution ? dayjs(companyConstitution) : null}
-              onChange={newValue => {
-                if (!newValue) {
-                  setCompanyConstitution(null);
-                  setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
-                  setState({ open: false, message: '' });
-                } else {
-                  const date = newValue.toDate();
-                  const isValidDate = date instanceof Date && !isNaN(date.getTime());
-
-                  if (!isValidDate) {
-                    setState({
-                      open: true,
-                      message: 'Please enter a valid date.',
-                      type: 'danger',
-                    });
-                    setErrors(prevErrors => ({
-                      ...prevErrors,
-                      constitutionDate: 'Please enter a valid date.',
-                    }));
-                  } else if (dateGreaterThanToday(date)) {
-                    setState({
-                      open: true,
-                      message: 'Constitution date cannot be greater than today.',
-                      type: 'danger',
-                    });
-                    setErrors(prevErrors => ({
-                      ...prevErrors,
-                      constitutionDate: 'Constitution date cannot be greater than today.',
-                    }));
-                  } else {
-                    setCompanyConstitution(date);
+            <FormControl>
+              <DatePicker
+                disableFuture
+                label='Constitution Date'
+                value={companyConstitution ? dayjs(companyConstitution) : null}
+                onChange={newValue => {
+                  if (!newValue) {
+                    setCompanyConstitution(null);
                     setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
                     setState({ open: false, message: '' });
+                  } else {
+                    const date = newValue.toDate();
+                    const isValidDate = date instanceof Date && !isNaN(date.getTime());
+
+                    if (!isValidDate) {
+                      setState({
+                        open: true,
+                        message: 'Please enter a valid date.',
+                        type: 'danger',
+                      });
+                      setErrors(prevErrors => ({
+                        ...prevErrors,
+                        constitutionDate: 'Please enter a valid date.',
+                      }));
+                    } else if (dateGreaterThanToday(date)) {
+                      setState({
+                        open: true,
+                        message: 'Constitution date cannot be greater than today.',
+                        type: 'danger',
+                      });
+                      setErrors(prevErrors => ({
+                        ...prevErrors,
+                        constitutionDate: 'Constitution date cannot be greater than today.',
+                      }));
+                    } else {
+                      setCompanyConstitution(date);
+                      setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                      setState({ open: false, message: '' });
+                    }
                   }
-                }
-              }}
-            />
+                }}
+                sx={{ borderColor: errors['constitutionDate'] ? colors.danger : undefined }}
+              />
+              {errors['constitutionDate'] !== '' && (
+                <FormHelperText sx={{ color: colors.danger }}>
+                  {errors['constitutionDate']}
+                </FormHelperText>
+              )}
+            </FormControl>
 
             <TextField
               label='Tax Residence'
