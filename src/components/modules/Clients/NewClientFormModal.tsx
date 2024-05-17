@@ -128,11 +128,11 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     const body = {
       company: {
         name: companyName,
-        email: companyEmail,
-        phoneNumber: companyPhone,
-        rfc: companyRFC,
-        constitutionDate: date.toUTCString(),
-        taxResidence: companyTaxResidence,
+        email: companyEmail ? companyEmail : null,
+        phoneNumber: companyPhone ? companyPhone : null,
+        rfc: companyRFC ? companyRFC : null,
+        constitutionDate: date ? date : null,
+        taxResidence: companyTaxResidence ? companyTaxResidence : null,
       },
     };
 
@@ -261,7 +261,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientPhone'
-              label='Phone number'
+              label='Phone Number'
               type='tel'
               variant='outlined'
               value={companyPhone}
@@ -278,10 +278,10 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
                   });
                   return;
                 }
-                if (event.target.value.length > 13) {
+                if (event.target.value.length > 15) {
                   return setState({
                     open: true,
-                    message: 'Phone number cannot be longer than 13 characters.',
+                    message: 'Phone number cannot be longer than 15 characters.',
                     type: 'danger',
                   });
                 } else {
@@ -293,7 +293,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               onBlur={event => {
                 if (
                   event.target.value &&
-                  event.target.value.length < 8 &&
+                  event.target.value.length < 10 &&
                   event.target.value.length > 0
                 ) {
                   setErrors(prevErrors => ({
