@@ -80,7 +80,7 @@ const TaskListTable = ({
         }, 2000);
 
         if (payload.status === TaskStatus.DONE) {
-          setRefetch && setRefetch(true);
+          window.location.reload();
         }
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
