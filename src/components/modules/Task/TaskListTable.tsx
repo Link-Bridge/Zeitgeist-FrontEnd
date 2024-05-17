@@ -159,10 +159,25 @@ const TaskListTable = ({
                   />
                 </td>
 
-                <td>
-                  <Chip sx={{ backgroundColor: colors.lighterGray, color: 'black' }}>
-                    {task.employeeFirstName || task.employeeLastName
-                      ? `${task.employeeFirstName} ${task.employeeLastName}`
+                <td className='p-2'>
+                  <Chip
+                    sx={{
+                      backgroundColor: colors.lighterGray,
+                      color: 'black',
+                      width: 'auto',
+                      maxWidth: '100%',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+
+                      '@media (max-width: 640px)': {
+                        fontSize: '0.875rem',
+                      },
+                    }}
+                    className='truncate'
+                  >
+                    {task.employeeFirstName && task.employeeLastName
+                      ? `${task.employeeFirstName.split(' ')[0]} ${task.employeeLastName.split(' ')[0]}`
                       : 'No employee'}
                   </Chip>
                 </td>
