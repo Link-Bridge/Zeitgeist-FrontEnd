@@ -1,4 +1,4 @@
-import { Box, Card, Chip, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import utc from 'dayjs/plugin/utc';
@@ -111,7 +111,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     setDescription(event.target.value);
 
     if (!event.target.value.trim()) {
-      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required.' }));
       setState({ open: true, message: 'Description is required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
@@ -122,6 +122,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
     const startDateJS = date?.toDate();
     if (date && endDate && date.isAfter(endDate)) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        startDate: 'Start date cannot be after end date.',
+      }));
       setState({
         open: true,
         message: 'Start date cannot be after end date.',
@@ -131,8 +135,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       startDate &&
       (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
+      setErrors(prevErrors => ({ ...prevErrors, startDate: 'Please enter a valid date.' }));
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
+      setErrors(prevErrors => ({ ...prevErrors, startDate: '' }));
       setState({ open: false, message: '' });
     }
     setStartDate(date);
@@ -143,6 +149,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        endDate: 'End date cannot be before start date.',
+      }));
       setState({
         open: true,
         message: 'End date cannot be before start date.',
@@ -152,10 +162,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       endDate &&
       (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
     ) {
+      setErrors(prevErrors => ({ ...prevErrors, endDate: 'Please enter a valid date.' }));
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
     } else {
+      setErrors(prevErrors => ({ ...prevErrors, endDate: '' }));
       setState({ open: false, message: '' });
     }
 
@@ -190,6 +202,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         type: 'danger',
       });
       return;
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
     }
 
     setWorkedHours(event.target.value);
@@ -291,6 +306,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             Title <span className='text-red-600'>*</span>
           </FormLabel>
           <Input
+            error={errors['title'] ? true : false}
             type='text'
             placeholder='Write your text here... '
             value={title}
@@ -300,12 +316,16 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               borderColor: errors['title'] ? colors.danger : undefined,
             }}
           />
+          {errors['title'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['title']}</FormHelperText>
+          )}
         </FormControl>
         <FormControl>
           <FormLabel>
             Description <span className='text-red-600'>*</span>
           </FormLabel>
           <Textarea
+            error={errors['description'] ? true : false}
             minRows={5}
             maxRows={5}
             placeholder='Write your text here... '
@@ -317,9 +337,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               height: '200px',
               padding: '10px',
               borderRadius: '4px',
-              border: `1px solid ${errors['description'] ? colors.danger : '#E0E0E0'}`,
             }}
           />
+          {errors['description'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['description']}</FormHelperText>
+          )}
         </FormControl>
         <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
           <FormControl>
@@ -333,6 +355,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['startDate'] ? colors.danger : undefined,
               }}
             />
+            {errors['startDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>End Date</FormLabel>
@@ -343,6 +368,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['endDate'] ? colors.danger : undefined,
               }}
             />
+            {errors['endDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>
@@ -377,6 +405,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['workedHours'] ? colors.danger : undefined,
               }}
             />
+            {errors['workedHours'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['workedHours']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>Project Name</FormLabel>
