@@ -1,7 +1,5 @@
 import { KeyboardArrowDown, KeyboardArrowUp } from '@mui/icons-material';
-import { Snackbar } from '@mui/joy';
 import {
-  Card,
   Chip,
   Table,
   TableBody,
@@ -12,14 +10,15 @@ import {
   Typography,
   colors,
 } from '@mui/material';
-import axios, { AxiosRequestConfig } from 'axios';
-import { useRef, useState } from 'react';
+import { AxiosRequestConfig } from 'axios';
+import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { statusChipColorCombination } from '../../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../../hooks/snackbarContext';
+import { axiosInstance } from '../../../../../lib/axios/axios';
 import { Task } from '../../../../../types/task';
 import { TaskStatus } from '../../../../../types/task-status';
-import { APIPath, RequestMethods } from '../../../../../utils/constants';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../../../../utils/constants';
 import DeleteModal from '../../../../common/DeleteModal';
 import GenericDropdown from '../../../../common/GenericDropdown';
 import TaskActionsMenu from '../../../../common/TaskActionsMenu';
@@ -37,14 +36,14 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 interface TaskTableProps {
   tasks: Task[];
   onDelete: (taskId: string) => void;
+  setRefetch?: (value: boolean) => void;
 }
 
-const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
+const TaskTable = ({ tasks, onDelete, setRefetch }: TaskTableProps) => {
   const navigate = useNavigate();
   const idTaskPayload = useRef<string>('');
-
   const [collapsed, setCollapsed] = useState(false);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -94,6 +93,10 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
         setTimeout(() => {
           setState({ open: false, message: '' });
         }, 2000);
+
+        if (payload.status === TaskStatus.DONE) {
+          setRefetch && setRefetch(true);
+        }
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
         console.error(error);
@@ -104,103 +107,94 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
   };
 
   const doFetch = async (payload: { status: TaskStatus }) => {
-    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    const idToken = localStorage.getItem('idToken');
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-    };
     const options: AxiosRequestConfig = {
       method: RequestMethods.PUT,
-      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-      headers: headers,
+      url: `${BASE_API_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
       data: payload,
     };
-    await axios(options);
+    await axiosInstance(options);
   };
 
   return (
     <>
-      <Card sx={{ borderRadius: '12px', margin: '5px' }}>
-        <TableContainer sx={{ padding: '0.5rem' }}>
-          <Table>
-            <TableHead>
-              <TableRow>
-                <TableCell style={{ width: '40%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Task
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '20%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Status
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '10%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Hours
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '15%' }}>
-                  <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
-                    Due Date
-                  </Typography>
-                </TableCell>
-                <TableCell style={{ width: '10%' }}>
-                  <Typography
-                    variant='body1'
-                    sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
-                    onClick={handleCollapseToggle}
+      <TableContainer sx={{ padding: '0.5rem' }}>
+        <Table>
+          <TableHead>
+            <TableRow>
+              <TableCell style={{ width: '40%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Task
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '20%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Status
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '10%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Hours
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '15%' }}>
+                <Typography variant='body1' sx={{ fontWeight: 600, fontSize: '0.9rem' }}>
+                  Due Date
+                </Typography>
+              </TableCell>
+              <TableCell style={{ width: '10%' }}>
+                <Typography
+                  variant='body1'
+                  sx={{ fontWeight: 600, cursor: 'pointer', fontSize: '0.9rem' }}
+                  onClick={handleCollapseToggle}
+                >
+                  {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
+                </Typography>
+              </TableCell>
+            </TableRow>
+          </TableHead>
+          <TableBody>
+            {!collapsed &&
+              tasks.map(task => (
+                <TableRow key={task.id}>
+                  <TableCell
+                    onClick={() => handleClick(task.id)}
+                    sx={{ cursor: 'pointer', fontSize: '0.9rem' }}
                   >
-                    {collapsed ? <KeyboardArrowUp /> : <KeyboardArrowDown />}
-                  </Typography>
-                </TableCell>
-              </TableRow>
-            </TableHead>
-            <TableBody>
-              {!collapsed &&
-                tasks.map(task => (
-                  <TableRow key={task.id}>
-                    <TableCell
-                      onClick={() => handleClick(task.id)}
-                      sx={{ cursor: 'pointer', fontSize: '0.9rem' }}
-                    >
-                      {task.title}
-                    </TableCell>
-                    <TableCell>
-                      <GenericDropdown
-                        options={Object.values(TaskStatus)}
-                        defaultValue={task.status}
-                        onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                        colorMap={statusColorMap}
-                      />
-                    </TableCell>
-                    <TableCell>
-                      <Chip
-                        label={task.workedHours ?? 0}
-                        sx={{
-                          backgroundColor: '#D6CFBE',
-                          color: colors.grey[700],
-                          fontSize: '0.9rem',
-                        }}
-                      />
-                    </TableCell>
-                    <TableCell sx={{ fontSize: '0.9rem' }}>
-                      {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
-                    </TableCell>
-                    <TableCell>
-                      <TaskActionsMenu
-                        task={task}
-                        onEdit={() => handleEdit(task.id)}
-                        onOpenDeleteDialog={handleDeleteButtonClick}
-                      />
-                    </TableCell>
-                  </TableRow>
-                ))}
-            </TableBody>
-          </Table>
-        </TableContainer>
-      </Card>
+                    {task.title}
+                  </TableCell>
+                  <TableCell>
+                    <GenericDropdown
+                      options={Object.values(TaskStatus)}
+                      defaultValue={task.status}
+                      onChange={value => handleStatusChange(task.id, value as TaskStatus)}
+                      colorMap={statusColorMap}
+                    />
+                  </TableCell>
+                  <TableCell>
+                    <Chip
+                      label={task.workedHours ?? 0}
+                      sx={{
+                        backgroundColor: '#D6CFBE',
+                        color: colors.grey[700],
+                        fontSize: '0.9rem',
+                      }}
+                    />
+                  </TableCell>
+                  <TableCell sx={{ fontSize: '0.9rem' }}>
+                    {task.endDate ? dateToShortString(task.endDate.toString()) : 'No due date'}
+                  </TableCell>
+                  <TableCell>
+                    <TaskActionsMenu
+                      task={task}
+                      onEdit={() => handleEdit(task.id)}
+                      onOpenDeleteDialog={handleDeleteButtonClick}
+                    />
+                  </TableCell>
+                </TableRow>
+              ))}
+          </TableBody>
+        </Table>
+      </TableContainer>
 
       <DeleteModal
         open={taskToDelete !== null}
@@ -208,17 +202,11 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
         title='Confirm Deletion'
         description='Are you sure you want to delete this task?'
         id={taskToDelete?.id || ''}
-        handleDeleteEmployee={(id: string) => {
+        handleDelete={(id: string) => {
           onDelete(id);
           setTaskToDelete(null);
         }}
       />
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

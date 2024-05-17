@@ -1,18 +1,20 @@
-import { Grid, Input, Snackbar, Textarea } from '@mui/joy';
+import { Card, FormControl, FormHelperText, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
+import utc from 'dayjs/plugin/utc';
+import { useContext, useEffect, useState } from 'react';
+import { useLocation, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../../hooks/snackbarContext';
+import { SnackbarContext } from '../../../../hooks/snackbarContext';
+import useHttp from '../../../../hooks/useHttp';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import { RoutesPath } from '../../../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import ModifyButton from '../../../common/ModifyButton';
-import { Header, Item, StyledSheet } from '../styled';
+dayjs.extend(utc);
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -25,7 +27,6 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 };
 
 interface UpdateTaskFormProps {
-  onSubmit: (payload: UpdatedTask) => Promise<void>;
   employees: EmployeeEntity[];
   data: TaskDetail;
 }
@@ -39,7 +40,6 @@ interface UpdateTaskFormProps {
  * @returns {JSX.Element} Update Task form component
  */
 const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
-  onSubmit,
   employees,
   data,
 }: UpdateTaskFormProps): JSX.Element => {
@@ -51,11 +51,27 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const [status, setStatus] = useState<TaskStatus | ''>('');
   const [assignedEmployee, setAssignedEmployee] = useState<string | ''>('');
   const [workedHours, setWorkedHours] = useState<string | ''>('');
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const [errors, setErrors] = useState<Record<string, string>>({});
   const [isPosting, setIsPosting] = useState(false);
 
+  const req = useHttp<UpdatedTask>(`${APIPath.UPDATE_TASK}/${data.id}`, RequestMethods.PUT);
+
   const navigate = useNavigate();
+  const location = useLocation();
+
+  useEffect(() => {
+    if (req.data) {
+      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
+      setTimeout(() => {
+        navigate(RoutesPath.TASKS + '/' + idTask, { state: location.state, replace: true });
+      }, 2000);
+    }
+  }, [req.data]);
+
+  useEffect(() => {
+    if (req.error) setState({ open: true, message: 'Failed to update task.', type: 'danger' });
+  }, [req.error]);
 
   const handleTitleChange = (event: React.ChangeEvent<HTMLInputElement>) => {
     const newTitle = event.target.value;
@@ -64,7 +80,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       setErrors(prevErrors => ({ ...prevErrors, title: '' }));
       return setState({
         open: true,
-        message: 'Title cannot be longer than 70 characters',
+        message: 'Title cannot be longer than 70 characters.',
         type: 'danger',
       });
     }
@@ -86,7 +102,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
       setState({
         open: true,
-        message: 'Description cannot be longer than 256 characters',
+        message: 'Description cannot be longer than 256 characters.',
         type: 'danger',
       });
       return;
@@ -94,7 +110,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     setDescription(event.target.value);
 
     if (!event.target.value.trim()) {
-      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required' }));
+      setErrors(prevErrors => ({ ...prevErrors, description: 'Description is required.' }));
       setState({ open: true, message: 'Description is required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
@@ -105,18 +121,24 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
     const startDateJS = date?.toDate();
     if (date && endDate && date.isAfter(endDate)) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        startDate: 'Start date cannot be after end date.',
+      }));
       setState({
         open: true,
-        message: 'Start date cannot be after due date.',
+        message: 'Start date cannot be after end date.',
         type: 'danger',
       });
     } else if (
       startDate &&
       (!startDateJS?.getDate() || !startDateJS?.getMonth() || !startDateJS?.getFullYear())
     ) {
+      setErrors(prevErrors => ({ ...prevErrors, startDate: 'Please enter a valid date.' }));
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else {
       setState({ open: false, message: '' });
+      setErrors(prevErrors => ({ ...prevErrors, startDate: '' }));
     }
     setStartDate(date);
   };
@@ -126,6 +148,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        endDate: 'End date cannot be before start date.',
+      }));
       setState({
         open: true,
         message: 'End date cannot be before start date.',
@@ -135,10 +161,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       endDate &&
       (!endDateJS?.getDate() || !endDateJS?.getMonth() || !endDateJS?.getFullYear())
     ) {
+      setErrors(prevErrors => ({ ...prevErrors, endDate: 'Please enter a valid date.' }));
       setState({ open: true, message: 'Please enter a valid date.', type: 'danger' });
     } else if (dayjs(date).isSame(dayjs(startDate))) {
       setState({ open: false, message: '' });
     } else {
+      setErrors(prevErrors => ({ ...prevErrors, endDate: '' }));
       setState({ open: false, message: '' });
     }
 
@@ -160,6 +188,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Only numbers are allowed' }));
       setState({ open: true, message: 'Worked hours can only be numbers.', type: 'danger' });
       return;
+    } else {
+      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
+      setState({ open: false, message: '' });
     }
 
     if (newValue.length > 8) {
@@ -173,17 +204,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         type: 'danger',
       });
       return;
-    }
-
-    setWorkedHours(event.target.value);
-
-    if (!event.target.value.trim()) {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
-      setState({ open: true, message: 'Worked hours are required.', type: 'danger' });
     } else {
       setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
       setState({ open: false, message: '' });
     }
+
+    setWorkedHours(event.target.value);
   };
 
   const getEmployeeNames = () => {
@@ -225,15 +251,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
       })?.id as string,
     };
 
-    try {
-      await onSubmit(payload);
-      setState({ open: true, message: 'Task updated successfully.', type: 'success' });
-      setTimeout(() => {
-        navigate(RoutesPath.TASKS + '/' + idTask, { state: { fromEdit: true } });
-      }, 2000);
-    } catch (error) {
-      setState({ open: true, message: 'Failed to update task.', type: 'danger' });
-    }
+    req.sendRequest({}, { ...payload });
   };
 
   const handleCancel = () => {
@@ -297,152 +315,136 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   return (
-    <StyledSheet className='p-10 py-4 h-[calc(100vh-190px)] overflow-scroll overflow-x-hidden'>
-      <main className='flex flex-col gap-4'>
-        <Header>
-          Title <span className='text-red-600'>*</span>
-        </Header>
-        <Input
-          type='text'
-          placeholder='Write your text here... '
-          value={title}
-          onChange={handleTitleChange}
-          sx={{
-            color: colors.gray,
-            borderColor: errors['title'] ? colors.danger : undefined,
-          }}
-        />
-
-        <Header>
-          Description <span className='text-red-600'>*</span>
-        </Header>
-        <Textarea
-          placeholder='Write your text here... '
-          value={description}
-          onChange={handleDescriptionChange}
-          sx={{
-            color: colors.gray,
-            width: '100%',
-            height: '200px',
-            padding: '10px',
-            borderRadius: '4px',
-            border: `1px solid ${errors['description'] ? colors.danger : colors.lighterGray}`,
-            '&:focus': {
-              border: '1px solid' + colors.darkGold,
-            },
-          }}
-        />
-
-        {/* Date and status columns */}
-        <Grid container spacing={2}>
-          <Grid xs={2}>
-            <Item>
-              <Header>
-                Start Date <span className='text-red-600'>*</span>
-              </Header>
-              <DatePicker
-                value={startDate}
-                onChange={handleStartDateChange}
-                sx={{
-                  borderColor: errors['startDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <Header>Due Date</Header>
-              <DatePicker
-                value={endDate}
-                onChange={handleEndDateChange}
-                sx={{
-                  borderColor: errors['endDate'] ? colors.danger : undefined,
-                }}
-              />
-            </Item>
-          </Grid>
-          <Grid xs={2}>
-            <Item>
-              <Header>
-                Status <span className='text-red-600'>*</span>
-              </Header>
-              <GenericDropdown
-                defaultValue={data.status as TaskStatus}
-                options={Object.values(TaskStatus)}
-                onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
-                placeholder='Select status'
-                colorMap={statusColorMap}
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Assigned Employee, Worked Hours */}
-        <Grid container spacing={2}>
-          <Grid container xs={2} className='md mr-20'>
-            <Item>
-              <Header>Assigned Employee</Header>
-              <GenericDropdown
-                defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
-                options={getEmployeeNames()}
-                onChange={handleAssignedEmployee}
-                placeholder='Select employee ...'
-              />
-            </Item>
-          </Grid>
-          <Grid container xs={2} className='md'>
-            <Item className='ml-20'>
-              <Header>Worked Hours</Header>
-              <Input
-                placeholder='0'
-                type='text'
-                value={workedHours ?? ''}
-                onChange={handleWorkedHoursChange}
-                sx={{
-                  color: colors.gray,
-                }}
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Cancel & send button */}
-        <Grid container justifyContent='flex-end'>
-          <Grid>
-            <Item>
-              <CancelButton onClick={handleCancel} />
-            </Item>
-          </Grid>
-          <Grid>
-            <Item>
-              <ModifyButton
-                onClick={() => {
-                  setIsPosting(true);
-                  handleSubmit();
-                  setTimeout(() => {
-                    setIsPosting(false);
-                  }, 3000);
-                }}
-                disabled={
-                  hasErrors() ||
-                  hasEmptyFields() ||
-                  datesAreNotValid() ||
-                  hasWrongLength() ||
-                  isPosting
-                }
-              />
-            </Item>
-          </Grid>
-        </Grid>
-
-        {/* Snackbar */}
-        <SnackbarContext.Provider value={{ state, setState }}>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-            {state.message}
-          </Snackbar>
-        </SnackbarContext.Provider>
-      </main>
-    </StyledSheet>
+    <Card className='overflow-y-scroll'>
+      <form className='flex flex-col gap-4'>
+        <FormControl>
+          <FormLabel>
+            Title <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Input
+            error={errors['title'] ? true : false}
+            type='text'
+            placeholder='Write your text here... '
+            value={title}
+            onChange={handleTitleChange}
+            sx={{
+              color: colors.gray,
+              borderColor: errors['title'] ? colors.danger : undefined,
+            }}
+          />
+          {errors['title'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['title']}</FormHelperText>
+          )}
+        </FormControl>
+        <FormControl>
+          <FormLabel>
+            Description <span className='text-red-600'>*</span>
+          </FormLabel>
+          <Textarea
+            error={errors['description'] ? true : false}
+            placeholder='Write your text here... '
+            value={description}
+            onChange={handleDescriptionChange}
+            sx={{
+              color: colors.gray,
+              width: '100%',
+              height: '200px',
+              padding: '10px',
+              borderRadius: '4px',
+              '&:focus': {
+                border: '1px solid' + colors.darkGold,
+              },
+            }}
+          />
+          {errors['description'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['description']}</FormHelperText>
+          )}
+        </FormControl>
+        <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
+          <FormControl>
+            <FormLabel>
+              Start Date <span className='text-red-600'>*</span>
+            </FormLabel>
+            <DatePicker
+              value={startDate?.utc()}
+              onChange={handleStartDateChange}
+              sx={{
+                borderColor: errors['startDate'] ? colors.danger : undefined,
+              }}
+            />
+            {errors['startDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>
+            )}
+          </FormControl>
+          <FormControl>
+            <FormLabel>Due Date</FormLabel>
+            <DatePicker
+              value={endDate?.utc()}
+              onChange={handleEndDateChange}
+              sx={{
+                borderColor: errors['endDate'] ? colors.danger : undefined,
+              }}
+            />
+            {errors['endDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>
+            )}
+          </FormControl>
+          <FormControl>
+            <FormLabel>
+              Status <span className='text-red-600'>*</span>
+            </FormLabel>
+            <GenericDropdown
+              defaultValue={data.status as TaskStatus}
+              options={Object.values(TaskStatus)}
+              onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
+              placeholder='Select status'
+              colorMap={statusColorMap}
+            />
+          </FormControl>
+        </section>
+        <section className='grid grid-cols-1 lg:grid-cols-2 gap-4'>
+          <FormControl>
+            <FormLabel>Assigned Employee</FormLabel>
+            <GenericDropdown
+              defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
+              options={getEmployeeNames()}
+              onChange={handleAssignedEmployee}
+              placeholder='Select employee ...'
+            />
+          </FormControl>
+          <FormControl>
+            <FormLabel>Worked Hours</FormLabel>
+            <Input
+              placeholder='0'
+              type='text'
+              value={workedHours ?? ''}
+              onChange={handleWorkedHoursChange}
+              sx={{
+                color: colors.gray,
+              }}
+            />
+            {errors['workedHours'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['workedHours']}</FormHelperText>
+            )}
+          </FormControl>
+        </section>
+        <section className='flex lg:mt-10 gap-4 justify-end'>
+          <CancelButton onClick={handleCancel} />
+          <ModifyButton
+            onClick={() => {
+              setIsPosting(true);
+              handleSubmit();
+              setTimeout(() => {
+                setIsPosting(false);
+              }, 3000);
+            }}
+            disabled={
+              hasErrors() || hasEmptyFields() || datesAreNotValid() || hasWrongLength() || isPosting
+            }
+          />
+        </section>
+      </form>
+    </Card>
   );
 };
 

@@ -1,4 +1,4 @@
-import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
+import { Box, Sheet, Typography } from '@mui/joy';
 import { AxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -8,7 +8,7 @@ import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { ProjectEntity } from '../../types/project';
@@ -28,8 +28,8 @@ import { RequestMethods } from '../../utils/constants';
  */
 const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
-
+  const [refetch, setRefetch] = useState<boolean>(false);
+  const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
   const navigate = useNavigate();
@@ -53,6 +53,7 @@ const AssignedTasks = (): JSX.Element => {
     try {
       await deleteTask.deleteTask(taskId);
       fetchTasks();
+
       setState({
         open: true,
         message: 'Task deleted successfully.',
@@ -70,28 +71,39 @@ const AssignedTasks = (): JSX.Element => {
   useEffect(() => {
     if (employeeId) fetchTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employeeId]);
+  }, [employeeId, refetch]);
 
   useEffect(() => {
     if (taskData) setTasks(taskData);
-  }, [taskData]);
+  }, [taskData, refetch]);
 
   useEffect(() => {
     fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refetch]);
 
   const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
     tasks.filter(task => task.idProject === projectId);
 
-  const sortTasksByEndDate = (tasks: Task[]): Task[] =>
-    tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
+  const sortTasks = (tasks: Task[]): Task[] =>
+    tasks.sort((a, b) => {
+      if (a.status === 'Done' && b.status !== 'Done') return 1;
+      if (a.status !== 'Done' && b.status === 'Done') return -1;
+      if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
+      if (!a.endDate || !b.endDate) return 0;
+
+      const dateA = new Date(a.endDate);
+      const dateB = new Date(b.endDate);
+
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+      return dateA.getTime() - dateB.getTime();
+    });
 
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
       const projectTasks = filterTasksByProjectId(tasks, project.id);
-      const sortedTasks = sortTasksByEndDate(projectTasks);
+      const sortedTasks = sortTasks(projectTasks);
 
       return { project, tasks: sortedTasks };
     })
@@ -117,7 +129,6 @@ const AssignedTasks = (): JSX.Element => {
           flexDirection: 'column',
           alignItems: 'center',
           justifyContent: 'center',
-          height: '100%',
           color: colors.gray,
         }}
       >
@@ -143,7 +154,7 @@ const AssignedTasks = (): JSX.Element => {
           gap: 2,
           borderRadius: 12,
           padding: 0.5,
-          overflowY: 'auto',
+          overflow: 'auto',
         }}
       >
         {taskData && projectData && tasksPerProject.length && (
@@ -167,37 +178,28 @@ const AssignedTasks = (): JSX.Element => {
                     color: colors.gray,
                     fontWeight: 'bold',
                     fontSize: '1.4rem',
+                    overflow: 'hidden',
+                    textOverflow: 'ellipsis',
+                    whiteSpace: 'nowrap',
                   }}
                 >
                   {project.name}
                 </Typography>
 
                 {tasks?.length && tasks.length > 0 && (
-                  <Box
-                    key={tasks[0].id}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                      padding: 0.5,
-                      borderRadius: 12,
-                      backgroundColor: colors.lightWhite,
-                    }}
-                  >
-                    <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
-                  </Box>
+                  <div className='rounded-lg border-2' style={{ borderColor: colors.lighterGray }}>
+                    <TaskTable
+                      tasks={tasks || []}
+                      onDelete={handleDeleteTask}
+                      setRefetch={setRefetch}
+                    />
+                  </div>
                 )}
               </Box>
             ))}
           </>
         )}
       </Sheet>
-
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </>
   );
 };

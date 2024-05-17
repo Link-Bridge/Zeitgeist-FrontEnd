@@ -1,12 +1,12 @@
 import { DeleteOutline, KeyboardArrowDown } from '@mui/icons-material';
-import { Avatar, Chip, IconButton, Option, Select, Table, selectClasses } from '@mui/joy';
-import { TableBody, TableCell, TableHead, TableRow } from '@mui/material';
-import axios from 'axios';
+import { Avatar, Chip, IconButton, Option, Select, Sheet, Table, selectClasses } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
+import { axiosInstance } from '../../../lib/axios/axios';
+import { DepartmentEntity } from '../../../types/department';
 import { Response } from '../../../types/response';
 import { Role } from '../../../types/role';
 import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
@@ -46,6 +46,16 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
 
+  const { data: departmentData, sendRequest: getDepartments } = useHttp<Response<DepartmentEntity>>(
+    `/department/getAllDepartments`,
+    RequestMethods.GET
+  );
+
+  useEffect(() => {
+    getDepartments();
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
+
   useEffect(() => {
     reqEmployees.sendRequest();
     reqRoles.sendRequest();
@@ -71,14 +81,34 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     setSearchResults(filteredEmployees);
   }, [searchTerm, reqEmployees.data, filterOption]);
 
+  const findDepartmentId = (title: string): string | null => {
+    const department = departmentData?.data.find(department => department.title === title);
+
+    return department ? department.id : null;
+  };
+
   const handleRolChange = async (newRoleId: string, userId: string) => {
-    if (!newRoleId || !userId) return;
+    if (!newRoleId || !userId || !departmentData?.data) return;
     try {
-      const response = await axios.put(
+      let departmentId: string | null = null;
+
+      const isLegal = reqRoles.data?.data.find(role => role.title === 'Legal');
+      const isAccounting = reqRoles.data?.data.find(role => role.title === 'Accounting');
+
+      if (isLegal && isLegal.id === newRoleId) {
+        departmentId = findDepartmentId('Legal');
+      } else if (isAccounting && isAccounting.id === newRoleId) {
+        departmentId = findDepartmentId('Accounting');
+      } else {
+        departmentId = findDepartmentId('Without department');
+      }
+
+      const response = await axiosInstance.put(
         `${BASE_API_URL}/admin/role`,
         {
           userId: userId,
           roleId: newRoleId,
+          departmentId: departmentId ? departmentId : null,
         },
         { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
       );
@@ -90,6 +120,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
           }
           return employee;
         });
+
         setSearchResults(updatedEmployees);
         setState({ open: true, message: 'Role updated successfully', type: 'success' });
       } else {
@@ -117,27 +148,25 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     return <ComponentPlaceholder text='No employees found' />;
 
   return (
-    <>
-      <Table>
-        <TableHead>
-          <TableRow>
-            <TableCell sx={{ width: '10%' }}>Photo</TableCell>
-            <TableCell>Name</TableCell>
-            <TableCell>Role</TableCell>
-            <TableCell>Email</TableCell>
-            <TableCell sx={{ width: '15%', textAlign: 'right' }}></TableCell>
-          </TableRow>
-        </TableHead>
-        <TableBody>
+    <Sheet sx={{ overflow: 'visible', width: '100%', maxWidth: '100%' }}>
+      <Table borderAxis='xBetween' sx={{ minWidth: '800px' }} hoverRow>
+        <thead>
+          <tr style={{ fontWeight: 600, fontSize: '0.9rem' }}>
+            <th style={{ width: '10%' }}>Photo</th>
+            <th>Name</th>
+            <th>Role</th>
+            <th>Email</th>
+            <th style={{ width: '15%', textAlign: 'right' }}></th>
+          </tr>
+        </thead>
+        <tbody>
           {searchResults.map(employee => (
-            <TableRow key={employee.id}>
-              <TableCell>
-                {employee.imageUrl ? <Avatar src={employee.imageUrl} /> : <Avatar />}
-              </TableCell>
-              <TableCell>
+            <tr key={employee.id}>
+              <td>{employee.imageUrl ? <Avatar src={employee.imageUrl} /> : <Avatar />}</td>
+              <td style={{ fontSize: '0.9rem' }}>
                 {employee.firstName} {employee.lastName}
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Select
                   variant='outlined'
                   color='neutral'
@@ -149,7 +178,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     handleRolChange((e.target as unknown)?.ariaLabel || '', employee.id);
                   }}
                   sx={{
-                    width: 150,
+                    width: 'auto',
+                    minWidth: '102px',
                     [`& .${selectClasses.indicator}`]: {
                       transition: '0.2s',
                       [`&.${selectClasses.expanded}`]: {
@@ -164,13 +194,13 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     </Option>
                   ))}
                 </Select>
-              </TableCell>
-              <TableCell>
+              </td>
+              <td>
                 <Chip className='w-full overflow' variant='soft'>
                   {employee.email}
                 </Chip>
-              </TableCell>
-              <TableCell sx={{ textAlign: 'right' }}>
+              </td>
+              <td style={{ textAlign: 'right' }}>
                 {' '}
                 {sessionEmployee !== employee.id && (
                   <IconButton>
@@ -183,10 +213,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
                     />
                   </IconButton>
                 )}
-              </TableCell>
-            </TableRow>
+              </td>
+            </tr>
           ))}
-        </TableBody>
+        </tbody>
       </Table>
       <DeleteModal
         open={open}
@@ -196,6 +226,6 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         setOpen={setOpen}
         handleDeleteEmployee={handleDeleteEmployee}
       />
-    </>
+    </Sheet>
   );
 }

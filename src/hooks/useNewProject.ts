@@ -1,6 +1,7 @@
-import axios from 'axios';
+import axios, { AxiosResponse } from 'axios';
 import dayjs from 'dayjs';
 import { FormEvent, useReducer, useState } from 'react';
+import { axiosInstance } from '../lib/axios/axios';
 import { ProjectPeriodicity, ProjectStatus } from '../types/project';
 import { APIPath, BASE_API_URL } from '../utils/constants';
 
@@ -97,9 +98,14 @@ const useNewProject = () => {
   const [error, setError] = useState<Error | null>(null);
   const [isPosting, setIsPosting] = useState(false);
   const [success, setSuccess] = useState(false);
+  const [res, setRes] = useState<AxiosResponse | null>(null);
 
   const handleChange = (field: keyof FormState, value: string | Date | boolean | null) => {
     dispatch({ type: 'CHANGE', field, value });
+  };
+
+  const setState = (initialState: FormState) => {
+    dispatch({ type: 'RESET', initialState });
   };
 
   const handleSubmit = async (e: FormEvent) => {
@@ -108,23 +114,14 @@ const useNewProject = () => {
       if (!validateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = localStorage.getItem('idToken');
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${idToken}`,
-      };
-      const res = await axios.post(
-        `${BASE_API_URL}${APIPath.PROJECTS}/create`,
-        {
-          ...formState,
-          status: ProjectStatus.NOT_STARTED,
-        },
-        {
-          headers,
-        }
-      );
+
+      const res = await axiosInstance.post(`${BASE_API_URL}${APIPath.PROJECTS}/create`, {
+        ...formState,
+        status: ProjectStatus.NOT_STARTED,
+      });
       if (res.status === 201) {
         setSuccess(true);
+        setRes(res);
       }
     } catch (err: unknown) {
       console.log(err);
@@ -146,18 +143,11 @@ const useNewProject = () => {
       if (!validateForm(formState, setError)) return;
 
       setIsPosting(true);
-      const idToken = localStorage.getItem('idToken');
-      const headers = {
-        'Content-Type': 'application/json',
-        Authorization: `Bearer ${idToken}`,
-      };
-      const res = await axios.put(
+
+      const res = await axiosInstance.put(
         `${BASE_API_URL}${APIPath.PROJECTS}/edit/${formState.id}`,
         {
           ...formState,
-        },
-        {
-          headers,
         }
       );
       if (res.status === 200) {
@@ -175,7 +165,17 @@ const useNewProject = () => {
     }
   };
 
-  return { formState, handleChange, handleSubmit, handleUpdate, error, isPosting, success };
+  return {
+    formState,
+    handleChange,
+    setState,
+    handleSubmit,
+    handleUpdate,
+    error,
+    isPosting,
+    success,
+    res,
+  };
 };
 
 export default useNewProject;

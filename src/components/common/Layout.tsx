@@ -18,6 +18,7 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
     if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/edit/`)) return 'Modify Task';
     if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Details';
     if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
@@ -25,9 +26,13 @@ const Layout = ({ children }: LayoutProps) => {
       location.pathname.startsWith(`${RoutesPath.TASKS}/`) &&
       location.pathname.endsWith('create')
     )
-      return 'New task';
-    if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
+      return 'New Task';
     if (location.pathname.startsWith(`${RoutesPath.TASKS}/edit/`)) return 'Modify Task';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Details';
+    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
+    if (location.pathname === `${RoutesPath.PROJECTS}/new`) return 'New Project';
+
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Modify Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
 
@@ -35,11 +40,11 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <main className='w-screen h-screen flex'>
+    <main className='w-screen h-screen flex min-w-[590px] min-h-screen'>
       <SideBar />
-      <div className='flex flex-col h-full w-full min-w-0 flex-1 px-14 pb-14'>
+      <div className='flex flex-col h-full w-full flex-1 px-14 pb-5 md:pb-10 min-w-[590px] min-h-screen'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-3 min-h-0 min-w-0'>{children}</section>
+        <section className='flex flex-col flex-1 mt-3 overflow-y-hidden'>{children}</section>
       </div>
     </main>
   );
