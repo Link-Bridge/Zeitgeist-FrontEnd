@@ -3,7 +3,6 @@ import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -13,7 +12,6 @@ import { RequestMethods } from '../../../utils/constants';
 import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
-dayjs.extend(utc);
 
 /**
  * @brief style object for box component
@@ -366,7 +364,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               type='Date'
               variant='outlined'
               InputLabelProps={{ shrink: true }}
-              value={companyConstitution ? dayjs(companyConstitution).utc() : null}
+              value={companyConstitution}
               onChange={event => {
                 const value = event.target.value;
 
