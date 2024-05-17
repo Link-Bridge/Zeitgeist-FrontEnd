@@ -1,5 +1,14 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea } from '@mui/joy';
+import {
+  Button,
+  Card,
+  FormControl,
+  FormHelperText,
+  FormLabel,
+  Input,
+  Switch,
+  Textarea,
+} from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -180,7 +189,9 @@ const NewProject = () => {
               }}
               className='min-w-0'
             />
-              {errors['name'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['name']}</FormHelperText>}
+            {errors['name'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['name']}</FormHelperText>
+            )}
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
             <FormControl className='flex-1'>
@@ -290,9 +301,11 @@ const NewProject = () => {
                   }
                   setStartDate(true);
                 }}
-                sx={{ borderColor: errors['startDate'] ? colors.danger : undefined, }}
+                sx={{ borderColor: errors['startDate'] ? colors.danger : undefined }}
               />
-              {errors['startDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>}
+              {errors['startDate'] !== '' && (
+                <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>
+              )}
             </FormControl>
             <FormControl>
               <FormLabel>End Date</FormLabel>
@@ -328,9 +341,11 @@ const NewProject = () => {
                     setState({ open: false, message: '' });
                   }
                 }}
-                sx={{ borderColor: errors['endDate'] ? colors.danger : undefined, }}
+                sx={{ borderColor: errors['endDate'] ? colors.danger : undefined }}
               />
-              {errors['endDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>}
+              {errors['endDate'] !== '' && (
+                <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>
+              )}
             </FormControl>
             <FormControl>
               <FormLabel>Chargeable</FormLabel>
