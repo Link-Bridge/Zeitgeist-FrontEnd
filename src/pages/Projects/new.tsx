@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
+import { Button, Card, FormControl, FormHelperText, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -153,6 +153,7 @@ const NewProject = () => {
               Project Name <span className='text-red-600'>*</span>
             </FormLabel>
             <Input
+              error={errors['name'] ? true : false}
               value={form.formState.name}
               onChange={e => {
                 if (e.target.value.length > 70) {
@@ -176,10 +177,10 @@ const NewProject = () => {
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
               }}
               className='min-w-0'
             />
+              {errors['name'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['name']}</FormHelperText>}
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
             <FormControl className='flex-1'>
@@ -214,7 +215,7 @@ const NewProject = () => {
                       type: 'danger',
                     });
                   } else {
-                    setErrors({ ...errors, name: '' });
+                    setErrors({ ...errors, matter: '' });
                     setState({ open: false, message: '' });
                   }
                   form.handleChange('matter', e.target.value);
@@ -253,6 +254,7 @@ const NewProject = () => {
                 onChange={e => {
                   form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
                   if (!e?.toDate()) {
+                    setErrors({ ...errors, startDate: 'Start date is required.' });
                     setState({
                       open: true,
                       message: 'Start date is required.',
@@ -262,6 +264,7 @@ const NewProject = () => {
                   }
 
                   if (form.formState.endDate && e && e.isAfter(dayjs(form.formState.endDate))) {
+                    setErrors({ ...errors, startDate: 'Start date cannot be after end date.' });
                     setState({
                       open: true,
                       message: 'Start date cannot be after end date.',
@@ -274,6 +277,7 @@ const NewProject = () => {
                       !e?.toDate()?.getMonth() ||
                       !e?.toDate()?.getFullYear())
                   ) {
+                    setErrors({ ...errors, startDate: 'Please enter a valid date.' });
                     setState({
                       open: true,
                       message: 'Please enter a valid date.',
@@ -286,7 +290,9 @@ const NewProject = () => {
                   }
                   setStartDate(true);
                 }}
+                sx={{ borderColor: errors['startDate'] ? colors.danger : undefined, }}
               />
+              {errors['startDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>}
             </FormControl>
             <FormControl>
               <FormLabel>End Date</FormLabel>
@@ -299,6 +305,7 @@ const NewProject = () => {
                     e &&
                     e.isBefore(dayjs(form.formState.startDate))
                   ) {
+                    setErrors({ ...errors, endDate: 'End date cannot be before start date.' });
                     setState({
                       open: true,
                       message: 'End date cannot be before start date.',
@@ -310,6 +317,7 @@ const NewProject = () => {
                       !e?.toDate()?.getMonth() ||
                       !e?.toDate()?.getFullYear())
                   ) {
+                    setErrors({ ...errors, endDate: 'Please enter a valid date.' });
                     setState({
                       open: true,
                       message: 'Please enter a valid date.',
@@ -320,7 +328,9 @@ const NewProject = () => {
                     setState({ open: false, message: '' });
                   }
                 }}
+                sx={{ borderColor: errors['endDate'] ? colors.danger : undefined, }}
               />
+              {errors['endDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>}
             </FormControl>
             <FormControl>
               <FormLabel>Chargeable</FormLabel>
