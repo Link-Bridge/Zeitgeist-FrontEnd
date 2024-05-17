@@ -72,9 +72,13 @@ const EditClientFormModal = ({
         setOpen(false);
         setRefetch((prev: boolean) => !prev);
       }
+      //TODO: Checar si la snackbar se setea a su estado neutral
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, clientData]);
-
+  /**
+   * @brief The required information
+   */
   const hasEmptyFields = () => {
     return !companyName;
   };
