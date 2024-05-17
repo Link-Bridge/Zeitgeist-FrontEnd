@@ -98,10 +98,6 @@ const EditClientFormModal = ({
   };
 
   const handleUpdate = async () => {
-    const dateString = companyConstitution;
-    const dateParts = dateString.split('-').map(Number);
-    const date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
-
     const updatedClientData = {
       id: clientData.id,
       name: companyName,
@@ -342,7 +338,7 @@ const EditClientFormModal = ({
 
                 const date = new Date(value);
                 const isValidDate = date instanceof Date && !isNaN(date.getTime());
-                if (!isValidDate && date) {
+                if (!isValidDate) {
                   setErrors(prevErrors => ({
                     ...prevErrors,
                     constitutionDate: 'Please enter a valid date.',
