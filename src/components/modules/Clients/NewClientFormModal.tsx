@@ -404,7 +404,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
                   });
                 } else if (
                   dateGreaterThanToday(date) ||
-                  dateGreaterThanToday(dayjs(date).add(1, 'day').toDate())
+                  dateGreaterThanToday(dayjs(date).subtract(1, 'day').toDate())
                 ) {
                   setErrors(prevErrors => ({
                     ...prevErrors,

@@ -2,6 +2,7 @@ import { FormControl, FormHelperText } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -11,6 +12,7 @@ import { RequestMethods } from '../../../utils/constants';
 import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
+dayjs.extend(utc);
 
 const style = {
   position: 'fixed',
@@ -345,7 +347,7 @@ const EditClientFormModal = ({
               <DatePicker
                 disableFuture
                 label='Constitution Date'
-                value={companyConstitution ? dayjs(companyConstitution) : null}
+                value={companyConstitution ? dayjs(companyConstitution).utc() : null}
                 onChange={newValue => {
                   if (!newValue) {
                     setCompanyConstitution(null);
