@@ -93,6 +93,23 @@ const EditClientFormModal = ({
     return Object.values(errors).some(error => error !== '');
   };
 
+  /**
+   * @brief Reset the form and close the modal
+   */
+  const handleClose = () => {
+    setOpen(false);
+    setErrors({});
+    setState({ open: false, message: '' });
+  };
+
+  /**
+   * @brief Reset the form and close the modal
+   */
+  const handleCancel = () => {
+    updatePerviewClientInfo();
+    handleClose();
+  };
+
   const handleUpdate = async () => {
     const updatedClientData = {
       id: clientData.id,
@@ -119,7 +136,7 @@ const EditClientFormModal = ({
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
@@ -140,9 +157,12 @@ const EditClientFormModal = ({
           }}
           autoComplete='off'
           onSubmit={handleUpdate}
+
         >
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <TextField
+              error={errors['name'] ? true : false}
+              helperText={errors['name']}
               label={
                 <>
                   Name
@@ -174,11 +194,12 @@ const EditClientFormModal = ({
               sx={{
                 width: '100ch',
                 borderRadius: '4px',
-                border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
               }}
             />
 
             <TextField
+              error={errors['email'] ? true : false}
+              helperText={errors['email']}
               label='Email'
               type='email'
               variant='outlined'
@@ -215,13 +236,14 @@ const EditClientFormModal = ({
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['email'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <TextField
+              error={errors['phoneNumber'] ? true : false}
+              helperText={errors['phoneNumber']}
               label='Phone Number'
               type='tel'
               variant='outlined'
@@ -273,11 +295,12 @@ const EditClientFormModal = ({
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['phoneNumber'] ? colors.danger : colors.lighterGray}`,
               }}
             />
 
             <TextField
+              error={errors['rfc'] ? true : false}
+              helperText={errors['rfc']}
               label='RFC'
               variant='outlined'
               value={companyRFC}
@@ -313,13 +336,13 @@ const EditClientFormModal = ({
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['rfc'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <DatePicker
+              disableFuture
               label='Constitution Date'
               value={companyConstitution ? dayjs(companyConstitution) : null}
               onChange={newValue => {
@@ -381,7 +404,7 @@ const EditClientFormModal = ({
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
-            <CancelButton onClick={() => setOpen(false)} />
+            <CancelButton onClick={handleCancel} />
             <EditClientButton
               loading={loading}
               onClick={handleUpdate}
