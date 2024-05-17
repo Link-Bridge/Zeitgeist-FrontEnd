@@ -190,14 +190,6 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
     }
 
     setWorkedHours(event.target.value);
-
-    if (!event.target.value.trim()) {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: 'Worked hours are required' }));
-      setState({ open: true, message: 'Worked hours are required.', type: 'danger' });
-    } else {
-      setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
-      setState({ open: false, message: '' });
-    }
   };
 
   const getEmployeeNames = () => {
