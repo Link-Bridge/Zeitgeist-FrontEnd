@@ -36,9 +36,10 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 interface TaskTableProps {
   tasks: Task[];
   onDelete: (taskId: string) => void;
+  setRefetch?: (value: boolean) => void;
 }
 
-const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
+const TaskTable = ({ tasks, onDelete, setRefetch }: TaskTableProps) => {
   const navigate = useNavigate();
   const idTaskPayload = useRef<string>('');
   const [collapsed, setCollapsed] = useState(false);
@@ -92,6 +93,10 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
         setTimeout(() => {
           setState({ open: false, message: '' });
         }, 2000);
+
+        if (payload.status === TaskStatus.DONE) {
+          setRefetch && setRefetch(true);
+        }
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
         console.error(error);
@@ -197,7 +202,7 @@ const TaskTable = ({ tasks, onDelete }: TaskTableProps) => {
         title='Confirm Deletion'
         description='Are you sure you want to delete this task?'
         id={taskToDelete?.id || ''}
-        handleDeleteEmployee={(id: string) => {
+        handleDelete={(id: string) => {
           onDelete(id);
           setTaskToDelete(null);
         }}
