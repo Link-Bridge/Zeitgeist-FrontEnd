@@ -18,6 +18,10 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname === RoutesPath.PROJECTS) return 'Projects';
     if (location.pathname === RoutesPath.TASKS) return 'Tasks';
     if (location.pathname === RoutesPath.EMPLOYEES) return 'Employees';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/edit/`)) return 'Modify Task';
+    if (location.pathname.startsWith(`${RoutesPath.TASKS}/`)) return 'Task Details';
+    if (location.pathname.startsWith(`${RoutesPath.CLIENTS}/details/`)) return 'Client Details';
+    if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
     if (
       location.pathname.startsWith(`${RoutesPath.TASKS}/`) &&
       location.pathname.endsWith('create')
