@@ -120,7 +120,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const handleStartDateChange = (date: dayjs.Dayjs | null) => {
     const startDateJS = date?.toDate();
     if (date && endDate && date.isAfter(endDate)) {
-      setErrors(prevErrors => ({ ...prevErrors, startDate: 'Start date cannot be after end date.' }));
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        startDate: 'Start date cannot be after end date.',
+      }));
       setState({
         open: true,
         message: 'Start date cannot be after end date.',
@@ -144,7 +147,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
     const datesAreNotValid = date && dayjs(date).isBefore(dayjs(startDate));
 
     if (datesAreNotValid) {
-      setErrors(prevErrors => ({ ...prevErrors, endDate: 'End date cannot be before start date.' }));
+      setErrors(prevErrors => ({
+        ...prevErrors,
+        endDate: 'End date cannot be before start date.',
+      }));
       setState({
         open: true,
         message: 'End date cannot be before start date.',
@@ -194,8 +200,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         type: 'danger',
       });
       return;
-    }
-    else{
+    } else {
       setErrors(prevErrors => ({ ...prevErrors, workedHours: '' }));
       setState({ open: false, message: '' });
     }
@@ -309,7 +314,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               borderColor: errors['title'] ? colors.danger : undefined,
             }}
           />
-          {errors['title'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['title']}</FormHelperText>}
+          {errors['title'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['title']}</FormHelperText>
+          )}
         </FormControl>
         <FormControl>
           <FormLabel>
@@ -330,7 +337,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               borderRadius: '4px',
             }}
           />
-          {errors['description'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['description']}</FormHelperText>}
+          {errors['description'] !== '' && (
+            <FormHelperText sx={{ color: colors.danger }}>{errors['description']}</FormHelperText>
+          )}
         </FormControl>
         <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
           <FormControl>
@@ -344,7 +353,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['startDate'] ? colors.danger : undefined,
               }}
             />
-            {errors['startDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>}
+            {errors['startDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['startDate']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>End Date</FormLabel>
@@ -355,7 +366,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['endDate'] ? colors.danger : undefined,
               }}
             />
-            {errors['endDate'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>}
+            {errors['endDate'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['endDate']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>
@@ -390,7 +403,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 borderColor: errors['workedHours'] ? colors.danger : undefined,
               }}
             />
-            {errors['workedHours'] !== '' && <FormHelperText sx={{ color: colors.danger }}>{errors['workedHours']}</FormHelperText>}
+            {errors['workedHours'] !== '' && (
+              <FormHelperText sx={{ color: colors.danger }}>{errors['workedHours']}</FormHelperText>
+            )}
           </FormControl>
           <FormControl>
             <FormLabel>Project Name</FormLabel>

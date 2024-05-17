@@ -157,7 +157,6 @@ const EditClientFormModal = ({
           }}
           autoComplete='off'
           onSubmit={handleUpdate}
-
         >
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <TextField
