@@ -97,12 +97,13 @@ const EditClientFormModal = ({
     const updatedClientData = {
       id: clientData.id,
       name: companyName,
-      email: companyEmail,
-      phoneNumber: companyPhone,
-      rfc: companyRFC,
-      constitutionDate: companyConstitution,
-      taxResidence: companyTaxResidence,
+      email: companyEmail ? companyEmail : null,
+      phoneNumber: companyPhone ? companyPhone : null,
+      rfc: companyRFC ? companyRFC : null,
+      constitutionDate: companyConstitution ? companyConstitution : null,
+      taxResidence: companyTaxResidence ? companyTaxResidence : null,
     };
+
 
     await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
   };
@@ -239,10 +240,10 @@ const EditClientFormModal = ({
                   });
                   return;
                 }
-                if (event.target.value.length > 13) {
+                if (event.target.value.length > 15) {
                   return setState({
                     open: true,
-                    message: 'Phone number cannot be longer than 13 characters.',
+                    message: 'Phone number cannot be longer than 15 characters.',
                     type: 'danger',
                   });
                 } else {
@@ -254,7 +255,7 @@ const EditClientFormModal = ({
               onBlur={event => {
                 if (
                   event.target.value &&
-                  event.target.value.length < 8 &&
+                  event.target.value.length < 10 &&
                   event.target.value.length > 0
                 ) {
                   setErrors(prevErrors => ({
