@@ -6,11 +6,13 @@ import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
@@ -55,6 +57,8 @@ const ProjectDetails = () => {
   const [updating, setUpdating] = useState(false);
 
   const [notFound, setNotFound] = useState(false);
+
+  const navigate = useNavigate();
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -152,11 +156,58 @@ const ProjectDetails = () => {
   };
 
   if (loading && loadingCompany) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading project details
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
+  }
+
+  if (error) {
+    if (error.message.includes('403')) {
+      navigate('/projects');
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='Error loading the project.' />
+        </Box>
+      );
+    }
   }
 
   if (error && errorCompany) {
-    return <div>Error loading task</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ComponentPlaceholder text='Error loading the project.' />
+      </Box>
+    );
   }
 
   async function changePayed(projectId: string, payed: boolean) {
