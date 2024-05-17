@@ -55,6 +55,22 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   );
 
   /**
+   * @brief Reset the form and close the modal
+   */
+  const handleClose = () => {
+    setOpen(false);
+    setErrors({});
+    setCompanyName('');
+    setCompanyEmail('');
+    setCompanyPhone('');
+    setCompanyRFC('');
+    setCompanyConstitution('');
+    setCompanyTaxResidence('');
+    setState({ open: false, message: '' });
+    setRefetch(true);
+  };
+
+  /**
    * @brief Manage error
    */
   const handleError = () => {
@@ -153,7 +169,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
       BackdropProps={{ onClick: () => {} }}
@@ -180,13 +196,15 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientName'
+              error={errors['name'] ? true : false}
+              helperText={errors['name']}
               label={
                 <>
                   Name
                   <span style={{ color: 'red' }}> *</span>
                 </>
               }
-              variant='outlined'
+              //variant='outlined'
               value={companyName}
               onChange={event => {
                 if (event.target.value.length > 70) {
@@ -211,12 +229,13 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               sx={{
                 width: '100ch',
                 borderRadius: '4px',
-                border: `1px solid ${errors['name'] ? colors.danger : colors.lighterGray}`,
               }}
             />
 
             <TextField
               id='clientEmail'
+              error={errors['email'] ? true : false}
+              helperText={errors['email']}
               label='Email'
               type='email'
               variant='outlined'
@@ -253,7 +272,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['email'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
@@ -261,6 +279,8 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientPhone'
+              error={errors['phoneNumber'] ? true : false}
+              helperText={errors['phoneNumber']}
               label='Phone number'
               type='tel'
               variant='outlined'
@@ -312,12 +332,13 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['phoneNumber'] ? colors.danger : colors.lighterGray}`,
               }}
             />
 
             <TextField
               id='clientRFC'
+              error={errors['rfc'] ? true : false}
+              helperText={errors['rfc']}
               label='RFC'
               variant='outlined'
               value={companyRFC}
@@ -352,7 +373,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               }}
               sx={{
                 borderRadius: '4px',
-                border: `1px solid ${errors['rfc'] ? colors.danger : colors.lighterGray}`,
               }}
             />
           </Box>
@@ -360,6 +380,8 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientConstituton'
+              error={errors['constitutionDate'] ? true : false}
+              helperText={errors['constitutionDate']}
               label='Constitution date'
               type='Date'
               variant='outlined'
@@ -386,11 +408,11 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
                 ) {
                   setErrors(prevErrors => ({
                     ...prevErrors,
-                    constitutionDate: 'Constitution date cannot be greater than today.',
+                    constitutionDate: 'Constitution date cannot be after today.',
                   }));
                   setState({
                     open: true,
-                    message: 'Constitution date cannot be greater than today.',
+                    message: 'Constitution date cannot be after today.',
                     type: 'danger',
                   });
                 } else {
@@ -423,7 +445,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
-            <CancelButton onClick={() => setOpen(false)} />
+            <CancelButton onClick={handleClose} />
             <CreateClientButton loading={loading} disabled={hasEmptyFields() || hasErrors()} />
           </Box>
         </Box>
