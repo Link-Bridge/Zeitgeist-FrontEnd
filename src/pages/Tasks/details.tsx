@@ -170,7 +170,6 @@ const TaskDetails: React.FC = () => {
                 startDecorator={<img src={trash_can} alt='Delete' style={{ width: 24 }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Delete</Typography>{' '}
-                {showUpdate && <Update />}
               </Button>
             </div>
           </section>
@@ -250,7 +249,7 @@ const TaskDetails: React.FC = () => {
             title='Confirm Deletion'
             description='Are you sure you want to delete this task?'
             id={taskToDelete?.id || ''}
-            handleDeleteEmployee={(id: string) => {
+            handleDelete={(id: string) => {
               onDelete(id);
               setTaskToDelete(null);
             }}
