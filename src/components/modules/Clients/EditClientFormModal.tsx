@@ -344,7 +344,7 @@ const EditClientFormModal = ({
             <DatePicker
               disableFuture
               label='Constitution Date'
-              value={companyConstitution ? dayjs(companyConstitution) : null}
+              value={companyConstitution ? dayjs(companyConstitution).utcOffset() : null}
               onChange={newValue => {
                 if (!newValue) {
                   setCompanyConstitution(null);
