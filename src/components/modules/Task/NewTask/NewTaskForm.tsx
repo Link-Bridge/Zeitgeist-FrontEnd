@@ -1,6 +1,7 @@
 import { Box, Card, Chip, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import { Link, useNavigate } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
@@ -14,6 +15,7 @@ import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import SendButton from '../../../common/SendButton';
+dayjs.extend(utc);
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -325,7 +327,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               Start Date <span className='text-red-600'>*</span>
             </FormLabel>
             <DatePicker
-              value={startDate}
+              value={startDate?.utc()}
               onChange={handleStartDateChange}
               sx={{
                 borderColor: errors['startDate'] ? colors.danger : undefined,
@@ -335,7 +337,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <FormControl>
             <FormLabel>End Date</FormLabel>
             <DatePicker
-              value={endDate}
+              value={endDate?.utc()}
               onChange={handleEndDateChange}
               sx={{
                 borderColor: errors['endDate'] ? colors.danger : undefined,

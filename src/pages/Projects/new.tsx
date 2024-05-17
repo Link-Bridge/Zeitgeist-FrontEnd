@@ -2,6 +2,7 @@
 import { Button, Card, FormControl, FormLabel, Input, Switch, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
@@ -15,6 +16,7 @@ import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
+dayjs.extend(utc);
 
 const NewProject = () => {
   const { employee } = useContext(EmployeeContext);
@@ -249,7 +251,7 @@ const NewProject = () => {
                 Start Date <span className='text-red-600'>*</span>
               </FormLabel>
               <DatePicker
-                value={dayjs(form.formState.startDate)}
+                value={dayjs(form.formState.startDate).utc()}
                 onChange={e => {
                   form.handleChange('startDate', e?.toDate() ?? form.formState.startDate);
                   if (!e?.toDate()) {
@@ -291,7 +293,7 @@ const NewProject = () => {
             <FormControl>
               <FormLabel>End Date</FormLabel>
               <DatePicker
-                value={form.formState.endDate ? dayjs(form.formState.endDate) : null}
+                value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => {
                   form.handleChange('endDate', e?.toDate() ?? null);
                   if (
