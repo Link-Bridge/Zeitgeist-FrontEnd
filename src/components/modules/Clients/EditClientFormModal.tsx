@@ -1,6 +1,7 @@
 import { Box, Modal, TextField, Typography } from '@mui/material';
-import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
+import timezone from 'dayjs/plugin/timezone';
+import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -10,6 +11,9 @@ import { RequestMethods } from '../../../utils/constants';
 import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
+
+dayjs.extend(utc);
+dayjs.extend(timezone);
 
 const style = {
   position: 'fixed',
@@ -45,7 +49,9 @@ const EditClientFormModal = ({
   const [companyPhone, setCompanyPhone] = useState(clientData.phoneNumber);
   const [companyRFC, setCompanyRFC] = useState(clientData.rfc);
   const [companyConstitution, setCompanyConstitution] = useState(
-    clientData.constitutionDate || null
+    clientData.constitutionDate
+      ? dayjs(clientData.constitutionDate).tz('UTC').format('YYYY-MM-DD')
+      : ''
   );
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
 
@@ -55,7 +61,7 @@ const EditClientFormModal = ({
   );
 
   useEffect(() => {
-    updatePerviewClientInfo();
+    updatePreviewClientInfo();
 
     if (error) {
       setState({ open: true, message: error.message });
@@ -66,14 +72,9 @@ const EditClientFormModal = ({
         setOpen(false);
         setRefetch((prev: boolean) => !prev);
       }
-      //TODO: Checar si la snackbar se setea a su estado neutral
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, clientData]);
 
-  /**
-   * @brief The required information
-   */
   const hasEmptyFields = () => {
     return !companyName;
   };
@@ -84,9 +85,8 @@ const EditClientFormModal = ({
       if (!date.getDate() || !date.getMonth() || !date.getFullYear()) {
         return true;
       }
-    } else {
-      return false;
     }
+    return false;
   };
 
   const hasErrors = () => {
@@ -94,25 +94,33 @@ const EditClientFormModal = ({
   };
 
   const handleUpdate = async () => {
+    const dateString = companyConstitution;
+    const dateParts = dateString.split('-').map(Number);
+    const date = new Date(Date.UTC(dateParts[0], dateParts[1] - 1, dateParts[2]));
+
     const updatedClientData = {
       id: clientData.id,
       name: companyName,
       email: companyEmail,
       phoneNumber: companyPhone,
       rfc: companyRFC,
-      constitutionDate: companyConstitution,
+      constitutionDate: date.toISOString(),
       taxResidence: companyTaxResidence,
     };
 
     await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
   };
 
-  const updatePerviewClientInfo = () => {
+  const updatePreviewClientInfo = () => {
     setCompanyName(clientData.name);
     setCompanyEmail(clientData.email);
     setCompanyPhone(clientData.phoneNumber);
     setCompanyRFC(clientData.rfc);
-    setCompanyConstitution(clientData.constitutionDate || null);
+    setCompanyConstitution(
+      clientData.constitutionDate
+        ? dayjs(clientData.constitutionDate).tz('UTC').format('YYYY-MM-DD')
+        : ''
+    );
     setCompanyTaxResidence(clientData.taxResidence);
   };
 
@@ -158,7 +166,7 @@ const EditClientFormModal = ({
                     message: 'Name cannot be longer than 70 characters.',
                     type: 'danger',
                   });
-                } else if (!e.target.value || e.target.value.length == 0) {
+                } else if (!e.target.value || e.target.value.length === 0) {
                   setErrors({ ...errors, name: 'Name is required.' });
                   setState({
                     open: true,
@@ -319,44 +327,46 @@ const EditClientFormModal = ({
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <DatePicker
+            <TextField
               label='Constitution Date'
-              value={companyConstitution ? dayjs(companyConstitution) : null}
-              onChange={newValue => {
-                if (!newValue) {
-                  setCompanyConstitution(null);
+              type='date'
+              variant='outlined'
+              InputLabelProps={{ shrink: true }}
+              value={companyConstitution}
+              onChange={event => {
+                const value = event.target.value;
+
+                const date = new Date(value);
+                const isValidDate = date instanceof Date && !isNaN(date.getTime());
+                if (!isValidDate && date) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Please enter a valid date.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid date.',
+                    type: 'danger',
+                  });
+                } else if (
+                  dateGreaterThanToday(date) ||
+                  dateGreaterThanToday(dayjs(date).add(1, 'day').toDate())
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Constitution date cannot be greater than today.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Constitution date cannot be greater than today.',
+                    type: 'danger',
+                  });
+                } else {
                   setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
                   setState({ open: false, message: '' });
-                } else {
-                  const date = newValue.toDate();
-                  const isValidDate = date instanceof Date && !isNaN(date.getTime());
-
-                  if (!isValidDate) {
-                    setState({
-                      open: true,
-                      message: 'Please enter a valid date.',
-                      type: 'danger',
-                    });
-                    setErrors(prevErrors => ({
-                      ...prevErrors,
-                      constitutionDate: 'Please enter a valid date.',
-                    }));
-                  } else if (dateGreaterThanToday(date)) {
-                    setState({
-                      open: true,
-                      message: 'Constitution date cannot be greater than today.',
-                      type: 'danger',
-                    });
-                    setErrors(prevErrors => ({
-                      ...prevErrors,
-                      constitutionDate: 'Constitution date cannot be greater than today.',
-                    }));
-                  } else {
-                    setCompanyConstitution(date);
-                    setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
-                    setState({ open: false, message: '' });
-                  }
                 }
+
+                setCompanyConstitution(event.target.value);
               }}
             />
 
