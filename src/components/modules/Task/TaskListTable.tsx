@@ -1,8 +1,8 @@
-import { Table } from '@mui/joy';
+import { Chip, Table } from '@mui/joy';
 import { AxiosRequestConfig } from 'axios';
 import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { statusChipColorCombination } from '../../../colors';
+import colors, { statusChipColorCombination } from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
@@ -20,6 +20,7 @@ type TaskListTableProps = {
   loadingTasks: boolean;
   errorTasks: Error | null;
   onDelete: (id: string) => void;
+  setRefetch: (value: boolean) => void;
 };
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
@@ -37,6 +38,7 @@ const TaskListTable = ({
   loadingTasks,
   errorTasks,
   onDelete,
+  setRefetch,
 }: TaskListTableProps) => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -76,6 +78,10 @@ const TaskListTable = ({
         setTimeout(() => {
           setState({ open: false, message: '' });
         }, 2000);
+
+        if (payload.status === TaskStatus.DONE) {
+          setRefetch && setRefetch(true);
+        }
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
         console.error(error);
@@ -134,16 +140,19 @@ const TaskListTable = ({
             <tr>
               <th style={{ width: '40%' }}>Task</th>
               <th>Status</th>
+              <th>Employee</th>
               <th style={{ width: '15%' }}>Due Date</th>
               <th style={{ width: '10%' }}></th>
             </tr>
           </thead>
+
           <tbody>
             {initialTasks.map(task => (
               <tr key={task.id}>
                 <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
                   {task.title}
                 </td>
+
                 <td>
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
@@ -153,6 +162,15 @@ const TaskListTable = ({
                     placeholder='Select status ...'
                   />
                 </td>
+
+                <td>
+                  <Chip sx={{ backgroundColor: colors.lighterGray, color: 'black' }}>
+                    {task.employeeFirstName || task.employeeLastName
+                      ? `${task.employeeFirstName} ${task.employeeLastName}`
+                      : 'No employee'}
+                  </Chip>
+                </td>
+
                 <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
                 <td>
                   <TaskActionsMenu
@@ -164,14 +182,13 @@ const TaskListTable = ({
               </tr>
             ))}
           </tbody>
-
           <DeleteModal
             open={taskToDelete !== null}
             setOpen={() => setTaskToDelete(null)}
             title='Confirm Deletion'
             description='Are you sure you want to delete this task?'
             id={taskToDelete?.id || ''}
-            handleDeleteEmployee={(id: string) => {
+            handleDelete={(id: string) => {
               onDelete(id);
               setTaskToDelete(null);
             }}

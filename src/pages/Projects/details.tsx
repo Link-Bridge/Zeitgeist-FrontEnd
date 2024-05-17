@@ -53,8 +53,8 @@ const ProjectDetails = () => {
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
-
   const [notFound, setNotFound] = useState(false);
+  const [refetch, setRefetch] = useState<boolean>(false);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -91,6 +91,8 @@ const ProjectDetails = () => {
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
 
+  console.log('tasks', tasks?.data);
+
   useEffect(() => {
     if (!tasks) getTasks();
     if (tasks && tasks.data) {
@@ -102,7 +104,13 @@ const ProjectDetails = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tasks]);
+  }, [tasks, refetch]);
+
+  tasks?.data.sort((a, b) => {
+    if (a.status === 'Done' && b.status !== 'Done') return 1;
+    if (a.status !== 'Done' && b.status === 'Done') return -1;
+    return 0;
+  });
 
   const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -353,6 +361,7 @@ const ProjectDetails = () => {
           loadingTasks={loadingTasks}
           initialTasks={initialTasks}
           onDelete={handleDeleteTask}
+          setRefetch={setRefetch}
         />
       </Card>
     </>
