@@ -27,7 +27,6 @@ export default function DeleteModal({
   id,
   handleDelete,
 }: ModalInterface) {
-
   const handleOnDelete = () => {
     setOpen(false); // This will close the modal or dialog
     handleDelete(id); // This will update the UI
