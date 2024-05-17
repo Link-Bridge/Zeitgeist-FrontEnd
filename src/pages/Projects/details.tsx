@@ -54,7 +54,6 @@ const ProjectDetails = () => {
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
   const [notFound, setNotFound] = useState(false);
-  const [refetch, setRefetch] = useState<boolean>(false);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -91,8 +90,6 @@ const ProjectDetails = () => {
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
 
-  console.log('tasks', tasks?.data);
-
   useEffect(() => {
     if (!tasks) getTasks();
     if (tasks && tasks.data) {
@@ -104,12 +101,19 @@ const ProjectDetails = () => {
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [tasks, refetch]);
+  }, [tasks]);
 
   tasks?.data.sort((a, b) => {
     if (a.status === 'Done' && b.status !== 'Done') return 1;
     if (a.status !== 'Done' && b.status === 'Done') return -1;
-    return 0;
+    if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
+    if (!a.endDate || !b.endDate) return 0;
+
+    const dateA = new Date(a.endDate);
+    const dateB = new Date(b.endDate);
+
+    if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+    return dateA.getTime() - dateB.getTime();
   });
 
   const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
@@ -361,7 +365,6 @@ const ProjectDetails = () => {
           loadingTasks={loadingTasks}
           initialTasks={initialTasks}
           onDelete={handleDeleteTask}
-          setRefetch={setRefetch}
         />
       </Card>
     </>

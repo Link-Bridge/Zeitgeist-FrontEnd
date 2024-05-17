@@ -20,7 +20,6 @@ type TaskListTableProps = {
   loadingTasks: boolean;
   errorTasks: Error | null;
   onDelete: (id: string) => void;
-  setRefetch: (value: boolean) => void;
 };
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
@@ -38,7 +37,6 @@ const TaskListTable = ({
   loadingTasks,
   errorTasks,
   onDelete,
-  setRefetch,
 }: TaskListTableProps) => {
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -79,9 +77,7 @@ const TaskListTable = ({
           setState({ open: false, message: '' });
         }, 2000);
 
-        if (payload.status === TaskStatus.DONE) {
-          window.location.reload();
-        }
+        window.location.reload();
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
         console.error(error);
