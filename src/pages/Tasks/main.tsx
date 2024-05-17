@@ -28,6 +28,7 @@ import { RequestMethods } from '../../utils/constants';
  */
 const AssignedTasks = (): JSX.Element => {
   const [tasks, setTasks] = useState<Task[]>([]);
+  const [refetch, setRefetch] = useState<boolean>(false);
   const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
@@ -70,16 +71,16 @@ const AssignedTasks = (): JSX.Element => {
   useEffect(() => {
     if (employeeId) fetchTasks();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employeeId]);
+  }, [employeeId, refetch]);
 
   useEffect(() => {
     if (taskData) setTasks(taskData);
-  }, [taskData]);
+  }, [taskData, refetch]);
 
   useEffect(() => {
     fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [refetch]);
 
   const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
     tasks.filter(task => task.idProject === projectId);
@@ -187,7 +188,11 @@ const AssignedTasks = (): JSX.Element => {
 
                 {tasks?.length && tasks.length > 0 && (
                   <div className='rounded-lg border-2' style={{ borderColor: colors.lighterGray }}>
-                    <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
+                    <TaskTable
+                      tasks={tasks || []}
+                      onDelete={handleDeleteTask}
+                      setRefetch={setRefetch}
+                    />
                   </div>
                 )}
               </Box>
