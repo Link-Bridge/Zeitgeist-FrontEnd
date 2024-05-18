@@ -1,20 +1,35 @@
-import { Box, Sheet, Typography } from '@mui/joy';
+import { AccordionGroup, Sheet } from '@mui/joy';
 import { AxiosError } from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import colors from '../../colors';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
+import DeleteModal from '../../components/common/DeleteModal';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { Task } from '../../types/task';
-import { RequestMethods } from '../../utils/constants';
+import { BASE_API_URL, RequestMethods } from '../../utils/constants';
+
+type ModalState = {
+  taskId: string;
+  open: boolean;
+};
+
+type ModalStateContext = {
+  state: ModalState;
+  setState: (state: ModalState) => void;
+};
+
+export const ModalContext = createContext<ModalStateContext>({
+  state: { open: false, taskId: '' },
+  setState: () => {},
+});
 
 /**
  * Shows the tasks assigned for the signed in employee in a table format,
@@ -27,12 +42,12 @@ import { RequestMethods } from '../../utils/constants';
  * @return {JSX.Element} - React component when the information is loaded
  */
 const AssignedTasks = (): JSX.Element => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [refetch, setRefetch] = useState<boolean>(false);
   const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
-  const navigate = useNavigate();
+  const [modalState, setModalState] = useState<ModalState>({ open: false, taskId: '' });
 
   const {
     data: taskData,
@@ -48,39 +63,15 @@ const AssignedTasks = (): JSX.Element => {
     loading: projectLoading,
   } = useHttp<Response<ProjectEntity>>(`/project/`, RequestMethods.GET);
 
-  const deleteTask = useDeleteTask();
-  const handleDeleteTask = async (taskId: string) => {
-    try {
-      await deleteTask.deleteTask(taskId);
-      fetchTasks();
-
-      setState({
-        open: true,
-        message: 'Task deleted successfully.',
-        type: 'success',
-      });
-    } catch (error) {
-      setState({
-        open: true,
-        message: 'An error occurred while deleting the task.',
-        type: 'danger',
-      });
-    }
-  };
-
   useEffect(() => {
     if (employeeId) fetchTasks();
+    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [employeeId, refetch]);
+  }, [employeeId]);
 
   useEffect(() => {
     if (taskData) setTasks(taskData);
-  }, [taskData, refetch]);
-
-  useEffect(() => {
-    fetchProjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, [taskData]);
 
   const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
     tasks.filter(task => task.idProject === projectId);
@@ -109,6 +100,17 @@ const AssignedTasks = (): JSX.Element => {
     })
     .filter(({ tasks }) => tasks.length > 0);
 
+  async function deleteTask() {
+    try {
+      await axiosInstance.delete(`${BASE_API_URL}/tasks/delete/${modalState.taskId}`);
+      setTasks(tasks.filter(task => task.id !== modalState.taskId));
+      setState({ message: 'Task deleted successfully', open: true, type: 'success' });
+    } catch (error: unknown) {
+      console.error(error);
+      setState({ message: 'Error deleting task', open: true, type: 'danger' });
+    }
+  }
+
   if (taskError || projectError) {
     if (taskError instanceof AxiosError && taskError.response?.status === 403) {
       navigate('/');
@@ -122,23 +124,7 @@ const AssignedTasks = (): JSX.Element => {
   }
 
   if (taskLoading || (projectLoading && !tasksPerProject)) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          color: colors.gray,
-        }}
-      >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading tasks
-        </Typography>
-
-        <Loader />
-      </Box>
-    );
+    return <Loader />;
   }
 
   if (!tasksPerProject || tasksPerProject.length === 0 || !taskData || !projectData) {
@@ -146,61 +132,28 @@ const AssignedTasks = (): JSX.Element => {
   }
 
   return (
-    <>
-      <Sheet
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          borderRadius: 12,
-          padding: 0.5,
-          overflow: 'auto',
-        }}
-      >
-        {taskData && projectData && tasksPerProject.length && (
-          <>
-            {tasksPerProject?.map(({ project, tasks }) => (
-              <Box
-                key={project.id}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  padding: 2,
-                  borderRadius: 12,
-                  backgroundColor: colors.white,
-                }}
-              >
-                <Typography
-                  level='h1'
-                  variant='plain'
-                  sx={{
-                    color: colors.gray,
-                    fontWeight: 'bold',
-                    fontSize: '1.4rem',
-                    overflow: 'hidden',
-                    textOverflow: 'ellipsis',
-                    whiteSpace: 'nowrap',
-                  }}
-                >
-                  {project.name}
-                </Typography>
+    <ModalContext.Provider value={{ state: modalState, setState: setModalState }}>
+      <Sheet sx={{ borderRadius: '0.6rem' }}>
+        <AccordionGroup size='lg' disableDivider>
+          {tasksPerProject.map(project => (
+            <TaskTable
+              projectName={project.project.name}
+              tasks={project.tasks}
+              key={project.project.id}
+            />
+          ))}
+        </AccordionGroup>
 
-                {tasks?.length && tasks.length > 0 && (
-                  <div className='rounded-lg border-2' style={{ borderColor: colors.lighterGray }}>
-                    <TaskTable
-                      tasks={tasks || []}
-                      onDelete={handleDeleteTask}
-                      setRefetch={setRefetch}
-                    />
-                  </div>
-                )}
-              </Box>
-            ))}
-          </>
-        )}
+        <DeleteModal
+          open={modalState.open}
+          title='Confirm Deletion'
+          description='Are you sure you want to delete this task?'
+          id={''}
+          setOpen={() => setModalState({ taskId: '', open: false })}
+          handleDelete={deleteTask}
+        />
       </Sheet>
-    </>
+    </ModalContext.Provider>
   );
 };
 

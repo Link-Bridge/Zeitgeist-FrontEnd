@@ -10,6 +10,7 @@ import OfflineModal from './components/common/OfflineModal';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
+import { configDayjs } from './lib/dayjs/dayjs';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
@@ -19,6 +20,8 @@ import Tasks from './pages/Tasks';
 import { RoutesPath } from './utils/constants';
 
 function App() {
+  configDayjs();
+
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 

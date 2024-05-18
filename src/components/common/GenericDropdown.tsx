@@ -1,5 +1,6 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box, Chip, Option, Select, selectClasses } from '@mui/joy';
+import { SxProps } from '@mui/joy/styles/types';
 import { useEffect, useState } from 'react';
 
 interface ColorMapEntity {
@@ -15,6 +16,7 @@ export interface GenericDropdownProps {
   colorMap?: Record<string, ColorMapEntity>;
   onChange: (newValue: string) => void;
   placeholder?: string;
+  sx?: SxProps;
 }
 
 /**
@@ -70,6 +72,7 @@ function GenericDropdown(props: GenericDropdownProps) {
             transform: 'rotate(-180deg)',
           },
         },
+        ...props.sx,
       }}
     >
       <Box sx={{ overflowY: 'auto', maxHeight: 300 }}>
