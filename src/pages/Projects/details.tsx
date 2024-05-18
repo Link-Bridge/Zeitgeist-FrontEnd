@@ -5,6 +5,7 @@ import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
@@ -25,7 +26,7 @@ import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
-import { formatDate, truncateText } from '../../utils/methods';
+import { truncateText } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover: string }> = {
   [ProjectStatus.NONE]: statusChipColorCombination.default,
@@ -393,12 +394,18 @@ const ProjectDetails = () => {
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>Start Date: {data?.startDate && formatDate(data?.startDate)}</p>
+              <p className='ml-3'>
+                Start Date:{' '}
+                {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
+              </p>
             </div>
 
             <div className='flex items-center'>
               <EventNoteIcon />
-              <p className='ml-3'>End Date: {data?.startDate && formatDate(data?.endDate)}</p>
+              <p className='ml-3'>
+                End Date:{' '}
+                {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
+              </p>
             </div>
           </Box>
         </section>

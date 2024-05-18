@@ -1,5 +1,6 @@
 import { Chip, Table } from '@mui/joy';
 import { AxiosRequestConfig } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../../colors';
@@ -8,7 +9,6 @@ import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../../utils/constants';
-import { formatDate } from '../../../utils/methods';
 import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
@@ -182,7 +182,9 @@ const TaskListTable = ({
                   </Chip>
                 </td>
 
-                <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
+                <td>
+                  {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
+                </td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}

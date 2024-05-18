@@ -11,7 +11,6 @@ import {
 } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate } from 'react-router-dom';
 import colors from '../../colors';
@@ -25,7 +24,6 @@ import useNewProject from '../../hooks/useNewProject';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
 import { RequestMethods } from '../../utils/constants';
-dayjs.extend(utc);
 
 const NewProject = () => {
   const { employee } = useContext(EmployeeContext);

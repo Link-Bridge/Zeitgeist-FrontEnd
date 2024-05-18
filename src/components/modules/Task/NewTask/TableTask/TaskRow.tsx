@@ -39,7 +39,7 @@ function TaskRow({ task }: TaskRowProps) {
         />
       </td>
       <td>{task.workedHours ? task.workedHours : 0}</td>
-      <td>{task.endDate ? dayjs.utc(task.endDate).format('DD-MM-YYYY') : 'No due date'}</td>
+      <td>{task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}</td>
       <td onClick={e => e.stopPropagation()}>
         <TaskActionsMenu
           task={task}
