@@ -100,9 +100,11 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      setTotalHours(() =>
-        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      const calculatedHours = tasks.data.reduce(
+        (totalHours, task) => totalHours + (task.workedHours || 0),
+        0
       );
+      setTotalHours(calculatedHours);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
