@@ -110,24 +110,26 @@ const ProjectMain = () => {
           setSelectedOption={setFilterOption}
           maxLength={70}
         />
-        {employee?.role === 'Admin' ? (
-          <div className='flex flex-wrap flex-row items-center gap-2'>
-            <div className='flex-row flex items-center gap-2'>
-              <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-              <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
-                Filter Projects:
-              </Typography>
-            </div>
-            <GenericDropdown
-              defaultValue={ProjectFilters.ALL}
-              options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
-              onChange={value => handleFilter(value)}
-            />
-            <Link to={`${RoutesPath.PROJECTS}/new`}>
-              <AddButton onClick={() => {}}></AddButton>
-            </Link>
-          </div>
-        ) : null}
+        <div className='flex flex-wrap flex-row items-center gap-2'>
+          {employee?.role === 'Admin' ? (
+            <>
+              <div className='flex-row flex items-center gap-2'>
+                <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                  Filter Projects:
+                </Typography>
+              </div>
+              <GenericDropdown
+                value={filter}
+                options={Object.values(ProjectFilters)}
+                onChange={value => handleFilter(value)}
+              />
+            </>
+          ) : null}
+          <Link to={`${RoutesPath.PROJECTS}/new`}>
+            <AddButton onClick={() => {}}></AddButton>
+          </Link>
+        </div>
       </section>
       {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />

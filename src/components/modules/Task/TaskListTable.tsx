@@ -153,7 +153,7 @@ const TaskListTable = ({
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
                     onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                    defaultValue={task.status as TaskStatus}
+                    value={task.status as TaskStatus}
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />

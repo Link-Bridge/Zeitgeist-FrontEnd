@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
@@ -121,11 +122,6 @@ const ProjectDetails = () => {
     return dateA.getTime() - dateB.getTime();
   });
 
-  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
-    `${APIPath.PROJECT_DETAILS}/${id}`,
-    RequestMethods.PUT
-  );
-
   useEffect(() => {
     if (!data) {
       sendRequest();
@@ -138,18 +134,20 @@ const ProjectDetails = () => {
       setCompanyName(company.data.name);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, company, updatedCompany, projectStatus]);
+  }, [data, company, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
     try {
-      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
-      setState({ open: true, message: 'Project status updated successfully!', type: 'success' });
-
-      if (updatedCompany) {
-        setProjectStatus(newStatus);
-      }
-    } catch (error) {
-      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
+      setUpdating(true);
+      await axiosInstance.put(`${BASE_API_URL}/project/details/${id}`, {
+        status: newStatus,
+      });
+      setProjectStatus(newStatus);
+      setState({ open: true, message: 'Status updated successfully.', type: 'success' });
+    } catch {
+      setState({ open: true, message: 'Error updating status.', type: 'danger' });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -357,12 +355,13 @@ const ProjectDetails = () => {
                 <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
+                    disabled={updating}
                     options={Object.values(ProjectStatus)}
                     colorMap={statusColorMap}
                     onChange={function (newValue: string): void {
                       handleStatusChange(newValue as ProjectStatus);
                     }}
-                    defaultValue={projectStatus}
+                    value={projectStatus}
                   ></GenericDropdown>
                 )}
               </div>

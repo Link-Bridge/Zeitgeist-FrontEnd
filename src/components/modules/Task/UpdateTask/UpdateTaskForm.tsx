@@ -393,7 +393,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               Status <span className='text-red-600'>*</span>
             </FormLabel>
             <GenericDropdown
-              defaultValue={data.status as TaskStatus}
+              value={data.status as TaskStatus}
               options={Object.values(TaskStatus)}
               onChange={newVal => handleStatusSelect(newVal as TaskStatus)}
               placeholder='Select status'
@@ -405,7 +405,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <FormControl>
             <FormLabel>Assigned Employee</FormLabel>
             <GenericDropdown
-              defaultValue={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
+              value={getSelectedEmployee(data.employeeFirstName, data.employeeLastName)}
               options={getEmployeeNames()}
               onChange={handleAssignedEmployee}
               placeholder='Select employee ...'
