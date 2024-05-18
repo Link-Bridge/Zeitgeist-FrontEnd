@@ -49,8 +49,7 @@ const SideBar = () => {
             {Items.map(item => (
               <li
                 key={item.href}
-                className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold
-              '
+                className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
               >
                 <Link
                   to={item.href}
