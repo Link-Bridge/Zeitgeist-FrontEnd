@@ -7,6 +7,7 @@ import StayPrimaryPortraitOutlinedIcon from '@mui/icons-material/StayPrimaryPort
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Button, Chip, Divider, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
@@ -20,7 +21,6 @@ import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
-import { formatDate } from '../../utils/methods';
 import { ProjectsClientList } from '../Projects/ProjectsClientList';
 
 /**
@@ -148,7 +148,9 @@ const ClientDetails = () => {
                 <div className='flex flex-wrap items-center gap-x-5'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
-                    {company.constitutionDate ? formatDate(company.constitutionDate) : 'No date'}
+                    {company.constitutionDate
+                      ? dayjs.utc(company.constitutionDate).format('DD/MM/YYYY')
+                      : 'No date'}
                   </Chip>
                 </div>
               </div>

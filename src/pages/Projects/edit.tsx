@@ -10,7 +10,6 @@ import {
 } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useLocation, useParams } from 'react-router-dom';
 import colors from '../../colors';
@@ -29,7 +28,6 @@ import {
   ProjectPeriodicity,
 } from '../../types/project';
 import { APIPath, RequestMethods } from '../../utils/constants';
-dayjs.extend(utc);
 
 const EditProject = () => {
   const location = useLocation();

@@ -2,17 +2,15 @@ import { FormControl, FormHelperText } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import utc from 'dayjs/plugin/utc';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
-import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
+import { validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
-dayjs.extend(utc);
 
 const style = {
   position: 'fixed',
@@ -31,7 +29,7 @@ const style = {
 interface EditClientFormModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  setRefetch: (refetch: boolean) => void;
+  setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
   clientData: CompanyEntity;
 }
 
@@ -367,7 +365,7 @@ const EditClientFormModal = ({
                         ...prevErrors,
                         constitutionDate: 'Please enter a valid date.',
                       }));
-                    } else if (dateGreaterThanToday(date)) {
+                    } else if (dayjs(date).isAfter(dayjs(), 'day')) {
                       setState({
                         open: true,
                         message: 'Constitution date cannot be greater than today.',
