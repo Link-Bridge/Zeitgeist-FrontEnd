@@ -24,7 +24,7 @@ const ClientList = (): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<string>(CompanyFilters.ALL);
+  const [filter, setFilter] = useState<string>(CompanyFilters.NOT_ARCHIVED);
   const { employee } = useContext(EmployeeContext);
 
   const isAdmin = employee?.role === 'Admin';

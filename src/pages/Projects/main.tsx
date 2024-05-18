@@ -20,7 +20,7 @@ import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
-  const [filter, setFilter] = useState<string>(ProjectFilters.ALL);
+  const [filter, setFilter] = useState<string>(ProjectFilters.NOT_ARCHIVED);
   const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
