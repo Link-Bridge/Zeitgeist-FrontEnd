@@ -113,6 +113,7 @@ export default function useTaskForm() {
   const [res, setRes] = useState<string>('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [error, setError] = useState<Error | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
 
   const handleChange = (
     field: keyof FormState,
@@ -127,6 +128,7 @@ export default function useTaskForm() {
   };
 
   const handleSubmit = async (idProject: string) => {
+    setIsPosting(true);
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length) return;
@@ -142,10 +144,13 @@ export default function useTaskForm() {
     } catch (error) {
       setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
       if (error instanceof Error) setError(error);
+    } finally {
+      setIsPosting(false);
     }
   };
 
   const handleUpdate = async (idTask: string) => {
+    setIsPosting(true);
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length) return;
@@ -160,8 +165,20 @@ export default function useTaskForm() {
     } catch (error) {
       setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
       if (error instanceof Error) setError(error);
+    } finally {
+      setIsPosting(false);
     }
   };
 
-  return { formState, handleChange, setState, error, errors, res, handleSubmit, handleUpdate };
+  return {
+    formState,
+    handleChange,
+    setState,
+    error,
+    errors,
+    res,
+    handleSubmit,
+    handleUpdate,
+    isPosting,
+  };
 }

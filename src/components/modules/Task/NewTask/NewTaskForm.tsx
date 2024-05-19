@@ -172,7 +172,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <Link to={`/projects/details/${idProject}`}>
             <CancelButton onClick={() => {}} />
           </Link>
-          <SendButton onClick={() => form.handleSubmit(idProject)} />
+          <SendButton disabled={form.isPosting} onClick={() => form.handleSubmit(idProject)} />
         </section>
       </form>
     </Card>
