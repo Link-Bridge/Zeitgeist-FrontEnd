@@ -40,7 +40,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   idProject,
   projectName,
 }: NewTaskFormProps): JSX.Element => {
-  const form = useTaskForm(idProject);
+  const form = useTaskForm();
 
   if (idProject === '') {
     return <ErrorView error={'Project ID is required'} />;
@@ -128,9 +128,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               options={employees.map(employee => `${employee.firstName} ${employee.lastName}`)}
               values={employees.map(employee => employee.id)}
               onChange={newVal => form.handleChange('idEmployee', newVal)}
+              clearable
             />
           </FormControl>
-          <FormControl>
+          <FormControl error={!!form.errors.workedHours}>
             <FormLabel>Worked Hours</FormLabel>
             <Input
               type='number'
@@ -143,6 +144,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 form.handleChange('workedHours', Number(e.target.value));
               }}
             />
+            {form.errors ? <FormHelperText>{form.errors.workedHours}</FormHelperText> : null}
           </FormControl>
           <FormControl>
             <FormLabel>Project Name</FormLabel>
@@ -164,10 +166,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           </FormControl>
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
-          <Link to={`/projects/details/${idProject.replace(/['"]+/g, '')}`}>
+          <Link to={`/projects/details/${idProject}`}>
             <CancelButton onClick={() => {}} />
           </Link>
-          <SendButton onClick={form.handleSubmit} />
+          <SendButton onClick={() => form.handleSubmit(idProject)} />
         </section>
       </form>
     </Card>

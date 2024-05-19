@@ -55,8 +55,20 @@ function validate(formState: FormState) {
     errors.title = 'Title is required';
   }
 
+  if (formState.title.length > 70) {
+    errors.title = 'Title must be less than 70 characters';
+  }
+
   if (formState.description.trim() === '') {
     errors.description = 'Description is required';
+  }
+
+  if (formState.description.length > 255) {
+    errors.description = 'Description must be less than 255 characters';
+  }
+
+  if (formState.workedHours < 0) {
+    errors.workedHours = 'Worked hours must be greater than or equal to 0';
   }
 
   if (!formState.startDate) {
@@ -74,7 +86,7 @@ function validate(formState: FormState) {
   return errors;
 }
 
-export default function useTaskForm(idProject: string) {
+export default function useTaskForm() {
   const location = useLocation();
   const navigate = useNavigate();
   const { setState: setSnackbar } = useContext(SnackbarContext);
@@ -96,10 +108,9 @@ export default function useTaskForm(idProject: string) {
     dispatch({ type: 'RESET', state });
   };
 
-  const handleSubmit = async () => {
+  const handleSubmit = async (idProject: string) => {
     const errors = validate(formState);
     setErrors(errors);
-    console.log(formState);
     if (Object.keys(errors).length) return;
 
     try {
@@ -116,5 +127,23 @@ export default function useTaskForm(idProject: string) {
     }
   };
 
-  return { formState, handleChange, setState, error, errors, res, handleSubmit };
+  const handleUpdate = async (idTask: string) => {
+    const errors = validate(formState);
+    setErrors(errors);
+    if (Object.keys(errors).length) return;
+
+    try {
+      const res = await axiosInstance.put(`${BASE_API_URL}/tasks/update/${idTask}`, {
+        ...formState,
+      });
+      setRes(res.data);
+      setSnackbar({ open: true, message: 'Task updated successfully', type: 'success' });
+      navigate(-1);
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
+      if (error instanceof Error) setError(error);
+    }
+  };
+
+  return { formState, handleChange, setState, error, errors, res, handleSubmit, handleUpdate };
 }
