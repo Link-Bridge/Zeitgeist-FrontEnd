@@ -7,7 +7,7 @@ import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import GenericInput from '../../components/common/GenericInput';
-import GenericTextArea from '../../components/common/GenericTexTArea';
+import GenericTextArea from '../../components/common/GenericTextArea';
 import Loader from '../../components/common/Loader';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
