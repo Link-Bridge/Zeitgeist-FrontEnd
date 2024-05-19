@@ -1,5 +1,6 @@
 import { NotificationsNone } from '@mui/icons-material';
-import { Avatar } from '@mui/joy';
+import MenuIcon from '@mui/icons-material/Menu';
+import { Avatar, IconButton } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import Colors from '../../colors';
 import { EmployeeContext } from '../../hooks/employeeContext';
@@ -22,9 +23,18 @@ const Header = ({ pageTitle }: HeaderProps) => {
     setCurrentDate(date.toLocaleDateString('en-US', dateOptions));
   }, []);
 
+  const handleSbToggle = () => {
+    console.info('Sidebar toggled');
+  };
+
   return (
     <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
       <section>
+        <div className='flex md:hidden'>
+          <IconButton onClick={handleSbToggle}>
+            <MenuIcon fontSize='large' sx={{ color: Colors.gold }} />
+          </IconButton>
+        </div>
         <p className='py-2 text-[#686868]'>{currentDate}</p>
         <h1
           style={{
@@ -43,7 +53,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
         <button className='mr-8 text-[#C29A51]'>
           <NotificationsNone fontSize='large' />
         </button>
-        <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
+        <Avatar src={employeeContext?.employee.imageUrl || ''} alt='User Profile'></Avatar>
       </section>
     </header>
   );
