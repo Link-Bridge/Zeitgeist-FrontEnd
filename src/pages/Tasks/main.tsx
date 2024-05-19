@@ -148,7 +148,7 @@ const AssignedTasks = (): JSX.Element => {
 
   return (
     <ModalContext.Provider value={{ state: modalState, setState: setModalState }}>
-      <Sheet sx={{ borderRadius: '0.6rem' }}>
+      <Sheet sx={{ borderRadius: '0.6rem', overflowY: 'auto' }}>
         <AccordionGroup size='lg' disableDivider>
           {tasksPerProject.map(project => (
             <TaskTable
