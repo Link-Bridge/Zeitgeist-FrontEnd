@@ -4,6 +4,7 @@ import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
+import useDeleteEmployee from '../../../hooks/useDeleteEmployee';
 import useHttp from '../../../hooks/useHttp';
 import { axiosInstance } from '../../../lib/axios/axios';
 import { DepartmentEntity } from '../../../types/department';
@@ -51,6 +52,8 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     RequestMethods.GET
   );
 
+  const { deleteEmployee, error: deleteError } = useDeleteEmployee(); // Use the custom hook
+
   useEffect(() => {
     getDepartments();
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -66,7 +69,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     if (reqEmployees.error) {
       setState({ open: true, message: reqEmployees.error.message, type: 'danger' });
     }
-  }, [reqEmployees.error, setState]);
+    if (deleteError) {
+      setState({ open: true, message: deleteError.message, type: 'danger' });
+    }
+  }, [reqEmployees.error, deleteError, setState]);
 
   useEffect(() => {
     const filteredEmployees =
@@ -131,12 +137,15 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     }
   };
 
-  const handleDeleteEmployee = (id: string) => {
-    if (reqEmployees.data) {
+  const handleDeleteEmployee = async (id: string) => {
+    try {
+      await deleteEmployee(id);
       const updatedEmployees = searchResults.filter(employee => employee.id !== id);
       setSearchResults(updatedEmployees);
+      setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
+    } catch (error) {
+      setState({ open: true, message: 'Failed to delete employee', type: 'danger' });
     }
-    setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
   };
 
   const { employee: employeeContext } = useContext(EmployeeContext);
@@ -224,7 +233,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         description='Are you sure you want to delete this employee?'
         id={currentEmployeeId}
         setOpen={setOpen}
-        handleDeleteEmployee={handleDeleteEmployee}
+        handleDelete={handleDeleteEmployee} // Call the handler that uses the custom hook
       />
     </Sheet>
   );
