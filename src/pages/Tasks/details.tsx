@@ -1,3 +1,4 @@
+import { EventNoteRounded } from '@mui/icons-material';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
 import { Button, Chip, Typography } from '@mui/joy';
 import Box from '@mui/joy/Box';
@@ -5,7 +6,6 @@ import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
-import calendar from '../../assets/icons/black_calendar.svg';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
@@ -182,31 +182,28 @@ const TaskDetails: React.FC = () => {
               <p style={{ fontSize: '.9rem' }}>Start date</p>
               <Box
                 sx={{
-                  bgcolor: colors.lighterGray,
                   padding: 0.5,
                   borderRadius: 4,
                   gap: 2,
-                  maxWidth: '200px',
                 }}
-                className='flex justify-between'
+                className='flex flex-row'
               >
+                <EventNoteRounded />
                 {dateParser(data.startDate)}
-                <img src={calendar} alt='Calendar' className='w-6' />
               </Box>
             </Box>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Due date</p>
               <Box
                 sx={{
-                  bgcolor: colors.lighterGray,
                   padding: 0.5,
                   borderRadius: 4,
-                  maxWidth: '200px',
+                  gap: 2,
                 }}
-                className='flex justify-between'
+                className='flex flex-row'
               >
+                <EventNoteRounded />
                 {data.endDate ? dateParser(data.endDate) : 'No due date'}
-                <img src={calendar} alt='Calendar' className='w-6 justify-self-end' />
               </Box>
             </Box>
             <Box>
