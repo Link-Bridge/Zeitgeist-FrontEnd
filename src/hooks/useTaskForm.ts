@@ -75,12 +75,30 @@ function validate(formState: FormState) {
     errors.startDate = 'Start date is required';
   }
 
+  if (
+    isNaN(formState.startDate.day()) ||
+    isNaN(formState.startDate.month()) ||
+    isNaN(formState.startDate.year())
+  ) {
+    errors.startDate = 'Invalid date';
+  }
+
   if (!formState.status) {
     errors.status = 'Status is required';
   }
 
-  if (formState.endDate && formState.startDate.isAfter(formState.endDate)) {
-    errors.startDate = 'Start date must be before end date';
+  if (formState.endDate) {
+    if (formState.startDate.isAfter(formState.endDate)) {
+      errors.startDate = 'Start date must be before end date';
+    }
+
+    if (
+      isNaN(formState.endDate.day()) ||
+      isNaN(formState.endDate.month()) ||
+      isNaN(formState.endDate.year())
+    ) {
+      errors.endDate = 'Invalid date';
+    }
   }
 
   return errors;

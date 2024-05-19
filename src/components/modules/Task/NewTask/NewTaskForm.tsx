@@ -99,12 +99,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               <FormHelperText> {form.errors.startDate}</FormHelperText>
             ) : null}
           </FormControl>
-          <FormControl>
+          <FormControl error={!!form.errors.endDate}>
             <FormLabel>End Date</FormLabel>
             <DatePicker
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
             />
+            {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>
           <FormControl>
             <FormLabel>
@@ -144,7 +145,9 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
                 form.handleChange('workedHours', Number(e.target.value));
               }}
             />
-            {form.errors ? <FormHelperText>{form.errors.workedHours}</FormHelperText> : null}
+            {form.errors.workedHours ? (
+              <FormHelperText>{form.errors.workedHours}</FormHelperText>
+            ) : null}
           </FormControl>
           <FormControl>
             <FormLabel>Project Name</FormLabel>

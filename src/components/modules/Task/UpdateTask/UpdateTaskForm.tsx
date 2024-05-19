@@ -135,12 +135,13 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               <FormHelperText> {form.errors.startDate}</FormHelperText>
             ) : null}
           </FormControl>
-          <FormControl>
+          <FormControl error={!!form.errors.endDate}>
             <FormLabel>End Date</FormLabel>
             <DatePicker
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
             />
+            {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>
           <FormControl>
             <FormLabel>
