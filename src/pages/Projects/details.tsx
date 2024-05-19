@@ -1,8 +1,10 @@
-import { EventNoteRounded } from '@mui/icons-material';
-import ArchiveIcon from '@mui/icons-material/Archive';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import {
+  ArchiveRounded,
+  AssessmentOutlined,
+  EditOutlined,
+  EventNoteRounded,
+  UnarchiveRounded,
+} from '@mui/icons-material';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -292,7 +294,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Edit</Typography>
               </Button>
@@ -307,7 +309,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Report</Typography>
               </Button>
@@ -322,7 +324,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
@@ -337,7 +339,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
