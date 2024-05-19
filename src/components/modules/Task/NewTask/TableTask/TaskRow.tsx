@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import dayjs from 'dayjs';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -20,9 +21,10 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 
 type TaskRowProps = {
   task: Task;
+  handleStatusChange: (id: string, newStatus: TaskStatus) => void;
 };
 
-function TaskRow({ task }: TaskRowProps) {
+function TaskRow({ task, handleStatusChange }: TaskRowProps) {
   const navigate = useNavigate();
 
   const modalContext = useContext(ModalContext);
@@ -31,11 +33,11 @@ function TaskRow({ task }: TaskRowProps) {
       <td>{task.title}</td>
       <td onClick={e => e.stopPropagation()}>
         <GenericDropdown
-          onChange={() => {}}
+          onChange={newStatus => handleStatusChange(task.id, newStatus as TaskStatus)}
           options={Object.values(TaskStatus)}
-          defaultValue={task.status}
           colorMap={statusColorMap}
           sx={{ width: '100%' }}
+          value={task.status}
         />
       </td>
       <td>{task.workedHours ? task.workedHours : 0}</td>

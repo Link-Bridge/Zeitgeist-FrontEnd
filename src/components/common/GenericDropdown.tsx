@@ -1,7 +1,6 @@
 import { KeyboardArrowDown } from '@mui/icons-material';
 import { Box, Chip, Option, Select, selectClasses } from '@mui/joy';
 import { SxProps } from '@mui/joy/styles/types';
-import { useEffect, useState } from 'react';
 
 interface ColorMapEntity {
   bg: string;
@@ -10,13 +9,14 @@ interface ColorMapEntity {
 }
 
 export interface GenericDropdownProps {
-  defaultValue?: string;
   options: string[];
   values?: string[];
+  value: string;
   colorMap?: Record<string, ColorMapEntity>;
   onChange: (newValue: string) => void;
   placeholder?: string;
   sx?: SxProps;
+  disabled?: boolean;
 }
 
 /**
@@ -27,18 +27,6 @@ export interface GenericDropdownProps {
  * @returns TSX Component
  */
 function GenericDropdown(props: GenericDropdownProps) {
-  const [currentValue, setCurrentValue] = useState<string | null>(null);
-
-  useEffect(() => {
-    setCurrentValue(props.defaultValue ?? null);
-  }, [props.defaultValue]);
-
-  function handleChange(_: React.SyntheticEvent | null, newVal: unknown) {
-    const val = String(newVal);
-    setCurrentValue(val);
-    props.onChange(val);
-  }
-
   let colorCombination: ColorMapEntity = {
     bg: '#C4C4C4',
     bgHover: '#A0A0A0',
@@ -46,16 +34,17 @@ function GenericDropdown(props: GenericDropdownProps) {
   };
 
   if (props.colorMap) {
-    colorCombination = props.colorMap[currentValue ?? ''] ?? colorCombination;
+    colorCombination = props.colorMap[props.value ?? ''] ?? colorCombination;
   }
 
   return (
     <Chip
       component={Select}
       indicator={<KeyboardArrowDown />}
-      onChange={handleChange}
-      value={currentValue}
+      onChange={(_, newVal) => props.onChange(newVal as string)}
+      value={props.value}
       placeholder={props.placeholder}
+      disabled={props.disabled ?? false}
       sx={{
         flex: 'none',
         bgcolor: colorCombination?.bg,

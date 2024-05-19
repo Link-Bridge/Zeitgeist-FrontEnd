@@ -113,12 +113,8 @@ const ClientList = (): JSX.Element => {
                   </Typography>
                 </div>
                 <GenericDropdown
-                  defaultValue={CompanyFilters.ALL}
-                  options={[
-                    CompanyFilters.ALL,
-                    CompanyFilters.NOT_ARCHIVED,
-                    CompanyFilters.ARCHIVED,
-                  ]}
+                  value={CompanyFilters.ALL}
+                  options={Object.values(CompanyFilters)}
                   onChange={value => handleFilter(value)}
                 />
               </div>
@@ -158,8 +154,8 @@ const ClientList = (): JSX.Element => {
                 </Typography>
               </div>
               <GenericDropdown
-                defaultValue={CompanyFilters.ALL}
-                options={[CompanyFilters.ALL, CompanyFilters.NOT_ARCHIVED, CompanyFilters.ARCHIVED]}
+                value={filter}
+                options={Object.values(CompanyFilters)}
                 onChange={value => handleFilter(value)}
               />
             </div>
