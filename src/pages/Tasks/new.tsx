@@ -27,7 +27,7 @@ const NewTaskPage = () => {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
     loading: employeeLoading,
-  } = useHttp<Response<EmployeeEntity>>(`/employee/getEmployees`, RequestMethods.GET);
+  } = useHttp<Response<EmployeeEntity>>(`/employee`, RequestMethods.GET);
 
   const {
     sendRequest: requestProject,
