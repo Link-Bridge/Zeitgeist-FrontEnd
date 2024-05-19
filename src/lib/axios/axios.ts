@@ -11,11 +11,18 @@ export const axiosInstance = axios.create({
 
 axiosInstance.interceptors.request.use(
   async config => {
-    const token = await auth.currentUser?.getIdToken(true);
-    if (token) {
-      config.headers.Authorization = `Bearer ${token}`;
-    }
-    return config;
+    return new Promise((resolve, reject) => {
+      auth.onAuthStateChanged(async user => {
+        if (user) {
+          const token = await user.getIdToken(true);
+          config.headers.Authorization = `Bearer ${token}`;
+          resolve(config);
+        } else {
+          console.error('User not logged in');
+          reject('User not logged in');
+        }
+      });
+    });
   },
   error => {
     return Promise.reject(error);
@@ -23,9 +30,7 @@ axiosInstance.interceptors.request.use(
 );
 
 axiosInstance.interceptors.response.use(
-  response => {
-    return response;
-  },
+  response => response,
   async error => {
     const originalRequest = error.config;
     if (error.response?.status === 401 && !originalRequest._retry) {
