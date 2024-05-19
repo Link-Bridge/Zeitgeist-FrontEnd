@@ -14,6 +14,7 @@ import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { Task } from '../../types/task';
+import { TaskStatus } from '../../types/task-status';
 import { BASE_API_URL, RequestMethods } from '../../utils/constants';
 
 type ModalState = {
@@ -62,6 +63,20 @@ const AssignedTasks = (): JSX.Element => {
     error: projectError,
     loading: projectLoading,
   } = useHttp<Response<ProjectEntity>>(`/project/`, RequestMethods.GET);
+
+  async function handleStatusChange(id: string, newStatus: TaskStatus) {
+    try {
+      await axiosInstance.put(`${BASE_API_URL}/tasks/update/status/${id}`, {
+        status: newStatus,
+      });
+      const task = tasks.find(task => task.id === id)!;
+      task.status = newStatus;
+      setTasks(tasks);
+      setState({ message: 'Task status updated successfully', open: true, type: 'success' });
+    } catch {
+      setState({ message: 'Error updating task status', open: true, type: 'danger' });
+    }
+  }
 
   useEffect(() => {
     if (employeeId) fetchTasks();
@@ -140,6 +155,7 @@ const AssignedTasks = (): JSX.Element => {
               projectName={project.project.name}
               tasks={project.tasks}
               key={project.project.id}
+              handleStatusChange={handleStatusChange}
             />
           ))}
         </AccordionGroup>

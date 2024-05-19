@@ -1,14 +1,16 @@
 import { Accordion, AccordionDetails, AccordionSummary, Table } from '@mui/joy';
 import { useState } from 'react';
 import { Task } from '../../../../../types/task';
+import { TaskStatus } from '../../../../../types/task-status';
 import TaskRow from './TaskRow';
 
 type TaskTableProps = {
   tasks: Task[];
   projectName: string;
+  handleStatusChange: (id: string, newStatus: TaskStatus) => void;
 };
 
-function TaskTable({ tasks, projectName }: TaskTableProps) {
+function TaskTable({ tasks, projectName, handleStatusChange }: TaskTableProps) {
   const [expanded, setExpanded] = useState(true);
   return (
     <Accordion
@@ -31,7 +33,7 @@ function TaskTable({ tasks, projectName }: TaskTableProps) {
           </thead>
           <tbody>
             {tasks.map(task => (
-              <TaskRow key={task.id} task={task} />
+              <TaskRow key={task.id} task={task} handleStatusChange={handleStatusChange} />
             ))}
           </tbody>
         </Table>
