@@ -11,7 +11,7 @@ interface ColorMapEntity {
 export interface GenericDropdownProps {
   options: string[];
   values?: string[];
-  value: string;
+  value: string | null;
   colorMap?: Record<string, ColorMapEntity>;
   onChange: (newValue: string) => void;
   placeholder?: string;
