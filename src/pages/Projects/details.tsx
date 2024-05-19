@@ -1,9 +1,11 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import ArchiveIcon from '@mui/icons-material/Archive';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
+import {
+  ArchiveRounded,
+  AssessmentOutlined,
+  EditOutlined,
+  EventNoteRounded,
+  UnarchiveRounded,
+} from '@mui/icons-material';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -101,9 +103,11 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      setTotalHours(() =>
-        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      const calculatedHours = tasks.data.reduce(
+        (totalHours, task) => totalHours + (task.workedHours || 0),
+        0
       );
+      setTotalHours(calculatedHours);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -290,7 +294,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Edit</Typography>
               </Button>
@@ -305,7 +309,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Report</Typography>
               </Button>
@@ -320,7 +324,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
@@ -335,7 +339,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
@@ -392,7 +396,7 @@ const ProjectDetails = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon />
+              <EventNoteRounded />
               <p className='ml-3'>
                 Start Date:{' '}
                 {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
@@ -400,7 +404,7 @@ const ProjectDetails = () => {
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon />
+              <EventNoteRounded />
               <p className='ml-3'>
                 End Date:{' '}
                 {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
@@ -411,7 +415,9 @@ const ProjectDetails = () => {
       </Card>
 
       <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+          Project Tasks
+        </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
           <AddButton onClick={() => {}} />
         </Link>

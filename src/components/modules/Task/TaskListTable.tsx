@@ -129,12 +129,12 @@ const TaskListTable = ({
    */
 
   return (
-    <Table>
+    <Table sx={{ minWidth: '800px' }} hoverRow>
       {initialTasks && initialTasks.length !== 0 && (
         <>
           <thead>
             <tr>
-              <th style={{ width: '40%' }}>Task</th>
+              <th style={{ width: '30%' }}>Task</th>
               <th>Status</th>
               <th>Employee</th>
               <th style={{ width: '15%' }}>Due Date</th>
