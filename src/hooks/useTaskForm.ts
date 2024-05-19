@@ -71,6 +71,10 @@ function validate(formState: FormState) {
     errors.workedHours = 'Worked hours must be greater than or equal to 0';
   }
 
+  if (formState.workedHours > 1000) {
+    errors.workedHours = 'Worked hours must be lower than or equal to 1000';
+  }
+
   if (!formState.startDate) {
     errors.startDate = 'Start date is required';
   }
