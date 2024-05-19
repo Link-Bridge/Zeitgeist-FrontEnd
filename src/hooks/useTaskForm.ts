@@ -132,11 +132,11 @@ export default function useTaskForm() {
   };
 
   const handleSubmit = async (idProject: string) => {
-    setIsPosting(true);
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length) return;
 
+    setIsPosting(true);
     try {
       const res = await axiosInstance.post(`${BASE_API_URL}/tasks/create`, {
         ...formState,
