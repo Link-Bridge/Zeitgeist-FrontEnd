@@ -1,7 +1,7 @@
+import { EventNoteRounded } from '@mui/icons-material';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
 import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EventNoteIcon from '@mui/icons-material/EventNote';
 import UnarchiveIcon from '@mui/icons-material/Unarchive';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
@@ -393,7 +393,7 @@ const ProjectDetails = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon />
+              <EventNoteRounded />
               <p className='ml-3'>
                 Start Date:{' '}
                 {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
@@ -401,7 +401,7 @@ const ProjectDetails = () => {
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon />
+              <EventNoteRounded />
               <p className='ml-3'>
                 End Date:{' '}
                 {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
