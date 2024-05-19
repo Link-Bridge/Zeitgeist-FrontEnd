@@ -68,7 +68,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
       setState({ open: true, message: 'Task created successfully.', type: 'success' });
       setTimeout(() => {
         navigate(`/projects/details/${projectId}`);
-      }, 2000);
+      }, 100);
     }
   }, [req.data]);
 
@@ -97,11 +97,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   const handleDescriptionChange = (event: React.ChangeEvent<HTMLTextAreaElement>) => {
     const newDescription = event.target.value;
 
-    if (newDescription.length > 256) {
+    if (newDescription.length > 255) {
       setErrors(prevErrors => ({ ...prevErrors, description: '' }));
       setState({
         open: true,
-        message: 'Description cannot be longer than 256 characters.',
+        message: 'Description cannot be longer than 255 characters.',
         type: 'danger',
       });
       return;
@@ -249,7 +249,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
   };
 
   const hasWrongLength = () => {
-    if (title.length > 70 || description.length > 256 || workedHours.toString().length > 8) {
+    if (title.length > 70 || description.length > 255 || workedHours.toString().length > 8) {
       return true;
     }
   };

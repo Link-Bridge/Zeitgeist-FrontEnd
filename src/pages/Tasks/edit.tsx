@@ -17,7 +17,7 @@ const EditTaskPage: React.FC = () => {
 
   const { data: cachedEmployees, sendRequest: sendEmployeeRequest } = useHttp<
     Response<EmployeeEntity>
-  >(`/employee/getEmployees`, RequestMethods.GET);
+  >(`/employee`, RequestMethods.GET);
 
   const [employees, setEmployees] = useState<EmployeeEntity[]>([]);
 
