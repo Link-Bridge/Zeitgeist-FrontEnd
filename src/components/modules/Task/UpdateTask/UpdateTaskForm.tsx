@@ -206,7 +206,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <Link to={`/projects/details/${data.idProject}`}>
             <CancelButton onClick={() => {}} />
           </Link>
-          <ModifyButton onClick={() => form.handleUpdate(data.id)} />
+          <ModifyButton disabled={form.isPosting} onClick={() => form.handleUpdate(data.id)} />
         </section>
       </form>
     </Card>

@@ -71,6 +71,10 @@ function validate(formState: FormState) {
     errors.workedHours = 'Worked hours must be greater than or equal to 0';
   }
 
+  if (formState.workedHours > 1000) {
+    errors.workedHours = 'Worked hours must be lower than or equal to 1000';
+  }
+
   if (!formState.startDate) {
     errors.startDate = 'Start date is required';
   }
@@ -113,6 +117,7 @@ export default function useTaskForm() {
   const [res, setRes] = useState<string>('');
   const [errors, setErrors] = useState<FormErrors>({});
   const [error, setError] = useState<Error | null>(null);
+  const [isPosting, setIsPosting] = useState(false);
 
   const handleChange = (
     field: keyof FormState,
@@ -131,6 +136,7 @@ export default function useTaskForm() {
     setErrors(errors);
     if (Object.keys(errors).length) return;
 
+    setIsPosting(true);
     try {
       const res = await axiosInstance.post(`${BASE_API_URL}/tasks/create`, {
         ...formState,
@@ -142,6 +148,8 @@ export default function useTaskForm() {
     } catch (error) {
       setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
       if (error instanceof Error) setError(error);
+    } finally {
+      setIsPosting(false);
     }
   };
 
@@ -150,6 +158,7 @@ export default function useTaskForm() {
     setErrors(errors);
     if (Object.keys(errors).length) return;
 
+    setIsPosting(true);
     try {
       const res = await axiosInstance.put(`${BASE_API_URL}/tasks/update/${idTask}`, {
         ...formState,
@@ -160,8 +169,20 @@ export default function useTaskForm() {
     } catch (error) {
       setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
       if (error instanceof Error) setError(error);
+    } finally {
+      setIsPosting(false);
     }
   };
 
-  return { formState, handleChange, setState, error, errors, res, handleSubmit, handleUpdate };
+  return {
+    formState,
+    handleChange,
+    setState,
+    error,
+    errors,
+    res,
+    handleSubmit,
+    handleUpdate,
+    isPosting,
+  };
 }
