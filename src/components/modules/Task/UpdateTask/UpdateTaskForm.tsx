@@ -254,7 +254,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
   };
 
   const handleCancel = () => {
-    navigate(RoutesPath.TASKS + '/' + idTask);
+    navigate(RoutesPath.TASKS + '/' + idTask, { state: location.state, replace: true });
   };
 
   const hasErrors = () => {

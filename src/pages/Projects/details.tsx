@@ -102,9 +102,11 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      setTotalHours(() =>
-        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      const calculatedHours = tasks.data.reduce(
+        (totalHours, task) => totalHours + (task.workedHours || 0),
+        0
       );
+      setTotalHours(calculatedHours);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -414,7 +416,9 @@ const ProjectDetails = () => {
       </Card>
 
       <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+          Project Tasks
+        </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
           <AddButton onClick={() => {}} />
         </Link>
