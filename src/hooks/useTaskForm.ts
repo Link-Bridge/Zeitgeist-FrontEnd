@@ -132,11 +132,11 @@ export default function useTaskForm() {
   };
 
   const handleSubmit = async (idProject: string) => {
-    setIsPosting(true);
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length) return;
 
+    setIsPosting(true);
     try {
       const res = await axiosInstance.post(`${BASE_API_URL}/tasks/create`, {
         ...formState,
@@ -154,11 +154,11 @@ export default function useTaskForm() {
   };
 
   const handleUpdate = async (idTask: string) => {
-    setIsPosting(true);
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length) return;
 
+    setIsPosting(true);
     try {
       const res = await axiosInstance.put(`${BASE_API_URL}/tasks/update/${idTask}`, {
         ...formState,
