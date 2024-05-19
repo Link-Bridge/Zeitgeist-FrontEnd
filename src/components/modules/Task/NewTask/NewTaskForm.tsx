@@ -1,13 +1,14 @@
-import { Box, Card, Chip, FormControl, FormLabel, Input, Textarea } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input, Textarea } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
-import useTaskForm from '../../../../hooks/useTaskForm';
+import useTaskForm, { Fields } from '../../../../hooks/useTaskForm';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskStatus } from '../../../../types/task-status';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
+import GenericInput from '../../../common/GenericInput';
 import SendButton from '../../../common/SendButton';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
@@ -22,7 +23,7 @@ const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
 
 interface NewTaskFormProps {
   employees: EmployeeEntity[];
-  projectId: string;
+  idProject: string;
   projectName: string;
 }
 
@@ -36,33 +37,29 @@ interface NewTaskFormProps {
  */
 const NewTaskForm: React.FC<NewTaskFormProps> = ({
   employees,
-  projectId,
+  idProject,
   projectName,
 }: NewTaskFormProps): JSX.Element => {
-  const form = useTaskForm();
+  const form = useTaskForm(idProject);
 
-  if (projectId === '') {
+  if (idProject === '') {
     return <ErrorView error={'Project ID is required'} />;
   }
 
   return (
     <Card className='overflow-y-scroll'>
       <form className='flex flex-col gap-4'>
-        <FormControl>
-          <FormLabel>
-            Title <span className='text-red-600'>*</span>
-          </FormLabel>
-          <Input
-            type='text'
-            placeholder='Write your text here... '
-            value={form.formState.title}
-            onChange={e => form.changeField('title', e.target.value)}
-            sx={{
-              color: colors.gray,
-            }}
+        <FormControl error={!!form.errors.title}>
+          <GenericInput
+            handleChange={form.handleChange}
+            name={'title' as Fields}
+            label='Title'
+            required
+            errorString={form.errors.title}
+            placeholder='Enter title...'
           />
         </FormControl>
-        <FormControl>
+        <FormControl error={!!form.errors.description}>
           <FormLabel>
             Description <span className='text-red-600'>*</span>
           </FormLabel>
@@ -71,7 +68,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             maxRows={5}
             placeholder='Write your text here... '
             value={form.formState.description}
-            onChange={e => form.changeField('description', e.target.value)}
+            onChange={e => form.handleChange('description', e.target.value)}
             sx={{
               color: colors.gray,
               width: '100%',
@@ -80,24 +77,33 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               borderRadius: '4px',
             }}
           />
+          {form.errors.description ? (
+            <FormHelperText>{form.errors.description}</FormHelperText>
+          ) : null}
         </FormControl>
         <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
-          <FormControl>
+          <FormControl error={!!form.errors.startDate}>
             <FormLabel>
               Start Date <span className='text-red-600'>*</span>
             </FormLabel>
             <DatePicker
               value={form.formState.startDate.utc()}
               onChange={newDate =>
-                form.changeField('startDate', newDate ?? form.formState.startDate)
+                form.handleChange('startDate', newDate ?? form.formState.startDate)
               }
+              sx={{
+                borderColor: form.errors.startDate ? colors.danger : undefined,
+              }}
             />
+            {form.errors.startDate ? (
+              <FormHelperText> {form.errors.startDate}</FormHelperText>
+            ) : null}
           </FormControl>
           <FormControl>
             <FormLabel>End Date</FormLabel>
             <DatePicker
               value={form.formState.endDate?.utc()}
-              onChange={newDate => form.changeField('endDate', newDate)}
+              onChange={newDate => form.handleChange('endDate', newDate)}
             />
           </FormControl>
           <FormControl>
@@ -107,7 +113,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <GenericDropdown
               value={form.formState.status}
               options={Object.values(TaskStatus)}
-              onChange={status => form.changeField('status', status)}
+              onChange={status => form.handleChange('status', status)}
               placeholder='Select status'
               colorMap={statusColorMap}
             />
@@ -117,9 +123,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <FormControl>
             <FormLabel>Assign Employee</FormLabel>
             <GenericDropdown
-              value={form.formState.assignedEmployee}
-              onChange={newVal => form.changeField('assignedEmployee', newVal)}
+              placeholder='Select employee'
+              value={form.formState.idEmployee}
               options={employees.map(employee => `${employee.firstName} ${employee.lastName}`)}
+              values={employees.map(employee => employee.id)}
+              onChange={newVal => form.handleChange('idEmployee', newVal)}
             />
           </FormControl>
           <FormControl>
@@ -127,7 +135,13 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <Input
               type='number'
               value={form.formState.workedHours}
-              onChange={e => form.changeField('workedHours', Number(e.target.value))}
+              onChange={e => {
+                if (e.target.value === '') {
+                  form.handleChange('workedHours', 0);
+                  return;
+                }
+                form.handleChange('workedHours', Number(e.target.value));
+              }}
             />
           </FormControl>
           <FormControl>
@@ -150,10 +164,10 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           </FormControl>
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
-          <Link to={`/projects/details/${projectId.replace(/['"]+/g, '')}`}>
+          <Link to={`/projects/details/${idProject.replace(/['"]+/g, '')}`}>
             <CancelButton onClick={() => {}} />
           </Link>
-          <SendButton />
+          <SendButton onClick={form.handleSubmit} />
         </section>
       </form>
     </Card>

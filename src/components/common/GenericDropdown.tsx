@@ -34,8 +34,10 @@ function GenericDropdown(props: GenericDropdownProps) {
   };
 
   if (props.colorMap) {
-    colorCombination = props.colorMap[props.value ?? ''] ?? colorCombination;
+    colorCombination = props.value ? props.colorMap[props.value] : colorCombination;
   }
+
+  const values = props.values ?? props.options;
 
   return (
     <Chip
@@ -67,7 +69,7 @@ function GenericDropdown(props: GenericDropdownProps) {
       <Box sx={{ overflowY: 'auto', maxHeight: 300 }}>
         {props.options.map((option, i) => {
           return (
-            <Option key={i} value={option}>
+            <Option key={i} value={values[i]}>
               {option}
             </Option>
           );
