@@ -198,7 +198,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         description='Are you sure you want to delete this employee?'
         id={currentEmployeeId}
         setOpen={setOpen}
-        handleDelete={handleDeleteEmployee} // Call the handler that uses the custom hook
+        handleDelete={handleDeleteEmployee}
       />
     </Sheet>
   );
