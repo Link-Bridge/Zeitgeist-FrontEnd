@@ -10,8 +10,8 @@ export const axiosInstance = axios.create({
 });
 
 axiosInstance.interceptors.request.use(
-  config => {
-    const token = localStorage.getItem('idToken');
+  async config => {
+    const token = await auth.currentUser?.getIdToken(true);
     if (token) {
       config.headers.Authorization = `Bearer ${token}`;
     }
