@@ -55,6 +55,9 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   }, []);
 
   useEffect(() => {
+    if (reqEmployees.error) {
+      setState({ open: true, message: reqEmployees.error.message, type: 'danger' });
+    }
     if (deletError) {
       setState({ open: true, message: deletError.message, type: 'danger' });
     }
