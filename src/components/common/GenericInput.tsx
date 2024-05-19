@@ -18,7 +18,7 @@ function GenericInput<T extends string = string>({
 }: GenericInputProps<T>) {
   props.type ? props.type : 'text';
   return (
-    <FormControl error={!!errorString}>
+    <FormControl sx={props.sx} error={!!errorString}>
       <FormLabel>
         {label} {required ? <span className='text-red-600'>*</span> : null}
       </FormLabel>
