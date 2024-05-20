@@ -185,6 +185,7 @@ const ProjectReport: React.FC = () => {
         <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
           <section className='flex flex-wrap justify-end gap-3 mb-5'>
             <Select
+              value={1}
               placeholder='Month'
               indicator={<KeyboardArrowDown />}
               sx={{
