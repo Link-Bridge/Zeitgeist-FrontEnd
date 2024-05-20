@@ -85,7 +85,12 @@ const ClientList = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => {}, [handleFilter]);
+  useEffect(() => {
+    if (refetch) {
+      clientsRequest.sendRequest();
+      setRefetch(false);
+    }
+  }, [clientsRequest, refetch, handleFilter]);
 
   const openModal = () => {
     setOpen(true);
