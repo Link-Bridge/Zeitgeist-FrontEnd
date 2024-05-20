@@ -145,7 +145,11 @@ const TaskListTable = ({
           <tbody>
             {initialTasks.map(task => (
               <tr key={task.id}>
-                <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
+                <td
+                  className='hover:cursor-pointer'
+                  style={{ wordBreak: 'break-word' }}
+                  onClick={() => handleClick(task.id)}
+                >
                   {task.title}
                 </td>
 
