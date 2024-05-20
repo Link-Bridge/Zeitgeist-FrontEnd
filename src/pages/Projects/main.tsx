@@ -1,7 +1,7 @@
 import FilterAltIcon from '@mui/icons-material/FilterAlt';
 import { Typography } from '@mui/joy';
 import { AxiosResponse } from 'axios';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
@@ -10,6 +10,7 @@ import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
 import ProjectCard from '../../components/modules/Projects/ProjectCard';
+import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
@@ -19,12 +20,13 @@ import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
   const [companyNames, setCompanyNames] = useState(new Map<string, string>());
-  const [filter, setFilter] = useState<string>(ProjectFilters.ALL);
+  const [filter, setFilter] = useState<string>(ProjectFilters.NOT_ARCHIVED);
   const [filteredProjects, setFilteredProjects] = useState<ProjectEntity[]>([]);
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
   const [searchTerm, setSearchTerm] = useState('');
   const [filterOption, setFilterOption] = useState('Name');
+  const { employee } = useContext(EmployeeContext);
 
   useEffect(() => {
     if (!req.data) req.sendRequest();
@@ -109,17 +111,21 @@ const ProjectMain = () => {
           maxLength={70}
         />
         <div className='flex flex-wrap flex-row items-center gap-2'>
-          <div className='flex-row flex items-center gap-2'>
-            <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-            <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
-              Filter Projects:
-            </Typography>
-          </div>
-          <GenericDropdown
-            defaultValue={ProjectFilters.ALL}
-            options={[ProjectFilters.ALL, ProjectFilters.NOT_ARCHIVED, ProjectFilters.ARCHIVED]}
-            onChange={value => handleFilter(value)}
-          />
+          {employee?.role === 'Admin' ? (
+            <>
+              <div className='flex-row flex items-center gap-2'>
+                <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                  Filter Projects:
+                </Typography>
+              </div>
+              <GenericDropdown
+                value={filter}
+                options={Object.values(ProjectFilters)}
+                onChange={value => handleFilter(value)}
+              />
+            </>
+          ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
             <AddButton onClick={() => {}}></AddButton>
           </Link>

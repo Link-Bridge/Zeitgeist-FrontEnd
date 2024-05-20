@@ -37,6 +37,7 @@ export interface TaskDetail {
   updatedAt?: Date;
   idProject: string;
   projectName: string;
+  employeeId: string;
   employeeFirstName?: string;
   employeeLastName?: string;
 }

@@ -20,20 +20,20 @@ import { RequestMethods } from '../../utils/constants';
 const NewTaskPage = () => {
   const [employees, setEmployees] = useState<EmployeeEntity[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { projectId } = useParams<{ projectId: string }>();
+  const { idProject } = useParams<{ idProject: string }>();
   const { employee } = useContext(EmployeeContext);
 
   const {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
     loading: employeeLoading,
-  } = useHttp<Response<EmployeeEntity>>(`/employee/getEmployees`, RequestMethods.GET);
+  } = useHttp<Response<EmployeeEntity>>(`/employee`, RequestMethods.GET);
 
   const {
     sendRequest: requestProject,
     data: projectData,
     loading: projectLoading,
-  } = useHttp<ProjectEntity>(`/project/details/${projectId}`, RequestMethods.GET);
+  } = useHttp<ProjectEntity>(`/project/details/${idProject}`, RequestMethods.GET);
 
   useEffect(() => {
     sendEmployeeRequest();
@@ -64,7 +64,7 @@ const NewTaskPage = () => {
   return (
     <NewTaskForm
       employees={employees || []}
-      projectId={projectId ? projectId : ''}
+      idProject={idProject!}
       projectName={projectName ? projectName : ''}
     />
   );

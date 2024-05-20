@@ -24,7 +24,7 @@ const ClientList = (): JSX.Element => {
   const [open, setOpen] = useState(false);
   const [refetch, setRefetch] = useState(false);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filter, setFilter] = useState<string>(CompanyFilters.ALL);
+  const [filter, setFilter] = useState<string>(CompanyFilters.NOT_ARCHIVED);
   const { employee } = useContext(EmployeeContext);
 
   const isAdmin = employee?.role === 'Admin';
@@ -85,7 +85,12 @@ const ClientList = (): JSX.Element => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [clientsRequest.data]);
 
-  useEffect(() => {}, [handleFilter]);
+  useEffect(() => {
+    if (refetch) {
+      clientsRequest.sendRequest();
+      setRefetch(false);
+    }
+  }, [clientsRequest, refetch, handleFilter]);
 
   const openModal = () => {
     setOpen(true);
@@ -113,12 +118,8 @@ const ClientList = (): JSX.Element => {
                   </Typography>
                 </div>
                 <GenericDropdown
-                  defaultValue={CompanyFilters.ALL}
-                  options={[
-                    CompanyFilters.ALL,
-                    CompanyFilters.NOT_ARCHIVED,
-                    CompanyFilters.ARCHIVED,
-                  ]}
+                  value={CompanyFilters.ALL}
+                  options={Object.values(CompanyFilters)}
                   onChange={value => handleFilter(value)}
                 />
               </div>
@@ -158,8 +159,8 @@ const ClientList = (): JSX.Element => {
                 </Typography>
               </div>
               <GenericDropdown
-                defaultValue={CompanyFilters.ALL}
-                options={[CompanyFilters.ALL, CompanyFilters.NOT_ARCHIVED, CompanyFilters.ARCHIVED]}
+                value={filter}
+                options={Object.values(CompanyFilters)}
                 onChange={value => handleFilter(value)}
               />
             </div>

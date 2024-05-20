@@ -1,5 +1,6 @@
 import { Chip, Table } from '@mui/joy';
 import { AxiosRequestConfig } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../../colors';
@@ -8,7 +9,6 @@ import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../../utils/constants';
-import { formatDate } from '../../../utils/methods';
 import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
@@ -129,12 +129,12 @@ const TaskListTable = ({
    */
 
   return (
-    <Table>
+    <Table sx={{ minWidth: '800px' }} hoverRow>
       {initialTasks && initialTasks.length !== 0 && (
         <>
           <thead>
             <tr>
-              <th style={{ width: '40%' }}>Task</th>
+              <th style={{ width: '30%' }}>Task</th>
               <th>Status</th>
               <th>Employee</th>
               <th style={{ width: '15%' }}>Due Date</th>
@@ -145,7 +145,11 @@ const TaskListTable = ({
           <tbody>
             {initialTasks.map(task => (
               <tr key={task.id}>
-                <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
+                <td
+                  className='hover:cursor-pointer'
+                  style={{ wordBreak: 'break-word' }}
+                  onClick={() => handleClick(task.id)}
+                >
                   {task.title}
                 </td>
 
@@ -153,7 +157,7 @@ const TaskListTable = ({
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
                     onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                    defaultValue={task.status as TaskStatus}
+                    value={task.status as TaskStatus}
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />
@@ -182,7 +186,9 @@ const TaskListTable = ({
                   </Chip>
                 </td>
 
-                <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
+                <td>
+                  {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
+                </td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}
