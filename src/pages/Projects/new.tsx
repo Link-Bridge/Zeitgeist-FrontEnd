@@ -34,6 +34,12 @@ const NewProject = () => {
     req.sendRequest();
   }, []);
 
+  useEffect(() => {
+    if (!admin) {
+      form.handleChange('area', employee!.role);
+    }
+  }, [admin]);
+
   return (
     <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
       {req.loading ? (
