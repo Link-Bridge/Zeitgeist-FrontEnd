@@ -109,8 +109,6 @@ const ProjectDetails = () => {
       );
       setTotalHours(calculatedHours);
     }
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks]);
 
   tasks?.data.sort((a, b) => {
@@ -137,7 +135,6 @@ const ProjectDetails = () => {
     if (company) {
       setCompanyName(company.data.name);
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, company, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
