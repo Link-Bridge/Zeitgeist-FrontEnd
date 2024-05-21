@@ -261,7 +261,14 @@ const ProjectReport: React.FC = () => {
               <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
             </Button>
             <PDFDownloadLink
-              document={<ProjectReportPDF data={report} />}
+              document={
+                <ProjectReportPDF
+                  data={report}
+                  usingFilters={usingFilter}
+                  month={month}
+                  year={year}
+                />
+              }
               fileName={`report_${report.project.name}.pdf`}
             >
               <Button

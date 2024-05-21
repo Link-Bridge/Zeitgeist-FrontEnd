@@ -5,6 +5,9 @@ import { truncateText } from '../../utils/methods';
 
 interface reportProps {
   data: Report;
+  usingFilters: boolean;
+  month: number;
+  year: number;
 }
 
 function dateParser(date: Date): string {
@@ -13,6 +16,37 @@ function dateParser(date: Date): string {
   const month = arr[1];
   const year = arr[0];
   return `${day}-${month}-${year}`;
+}
+
+function numberToMonth(number: number): string | null {
+  switch (number) {
+    case 1:
+      return 'January';
+    case 2:
+      return 'February';
+    case 3:
+      return 'March';
+    case 4:
+      return 'April';
+    case 5:
+      return 'May';
+    case 6:
+      return 'June';
+    case 7:
+      return 'Jule';
+    case 8:
+      return 'August';
+    case 9:
+      return 'September';
+    case 10:
+      return 'October';
+    case 11:
+      return 'November';
+    case 12:
+      return 'December';
+    default:
+      return null;
+  }
 }
 
 function statusColor(status: string) {
@@ -89,6 +123,11 @@ const ProjectReportPDF = (props: reportProps) => {
     <Document>
       <Page size='A4' style={{ backgroundColor: 'white' }}>
         <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '20px' }}>
+          {props.usingFilters === true && (
+            <Text style={{ textAlign: 'right', fontSize: 12, fontFamily: 'Times-Bold' }}>
+              {`${numberToMonth(props.month) || ''} ${props.year}`}
+            </Text>
+          )}
           <Text style={{ textAlign: 'center', fontSize: 26, fontFamily: 'Times-Bold' }}>
             {props.data.project.name}
           </Text>
