@@ -1,19 +1,18 @@
+import { ArrowBackIosNewRounded } from '@mui/icons-material';
 import Link from '@mui/joy/Link';
 import { useLocation, useNavigate } from 'react-router-dom';
-import left_arrow from '../../assets/icons/left_arrow.svg';
 import colors from '../../colors';
 
 const GoBack = () => {
   const navigate = useNavigate();
   const location = useLocation();
   const handleClick = () => {
-    if (location.state && location.state.fromEdit) navigate(-2);
+    if (location.state && location.state.fromDetail) return navigate(-2);
     navigate(-1);
   };
 
   return (
     <>
-      <img src={left_arrow} alt='Left arrow' className='w-3.5' />
       <Link
         onClick={handleClick}
         underline='none'
@@ -25,8 +24,7 @@ const GoBack = () => {
           },
         }}
       >
-        {' '}
-        &nbsp;{'Go Back'}{' '}
+        <ArrowBackIosNewRounded sx={{ color: colors.darkGold }} /> &nbsp;{'Go Back'}{' '}
       </Link>
     </>
   );

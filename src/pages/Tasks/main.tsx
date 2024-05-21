@@ -1,20 +1,36 @@
-import { Box, Sheet, Snackbar, Typography } from '@mui/joy';
+import { AccordionGroup, Sheet } from '@mui/joy';
 import { AxiosError } from 'axios';
-import { useContext, useEffect, useState } from 'react';
+import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import colors from '../../colors';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
+import DeleteModal from '../../components/common/DeleteModal';
 import ErrorView from '../../components/common/Error';
 import Loader from '../../components/common/Loader';
 import TaskTable from '../../components/modules/Task/NewTask/TableTask/TaskTable';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { SnackbarContext, SnackbarState } from '../../hooks/snackbarContext';
-import useDeleteTask from '../../hooks/useDeleteTask';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { Task } from '../../types/task';
-import { RequestMethods } from '../../utils/constants';
+import { TaskStatus } from '../../types/task-status';
+import { BASE_API_URL, RequestMethods } from '../../utils/constants';
+
+type ModalState = {
+  taskId: string;
+  open: boolean;
+};
+
+type ModalStateContext = {
+  state: ModalState;
+  setState: (state: ModalState) => void;
+};
+
+export const ModalContext = createContext<ModalStateContext>({
+  state: { open: false, taskId: '' },
+  setState: () => {},
+});
 
 /**
  * Shows the tasks assigned for the signed in employee in a table format,
@@ -27,12 +43,12 @@ import { RequestMethods } from '../../utils/constants';
  * @return {JSX.Element} - React component when the information is loaded
  */
 const AssignedTasks = (): JSX.Element => {
+  const navigate = useNavigate();
   const [tasks, setTasks] = useState<Task[]>([]);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
-
+  const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const employeeId = employee?.employee.id;
-  const navigate = useNavigate();
+  const [modalState, setModalState] = useState<ModalState>({ open: false, taskId: '' });
 
   const {
     data: taskData,
@@ -48,27 +64,23 @@ const AssignedTasks = (): JSX.Element => {
     loading: projectLoading,
   } = useHttp<Response<ProjectEntity>>(`/project/`, RequestMethods.GET);
 
-  const deleteTask = useDeleteTask();
-  const handleDeleteTask = async (taskId: string) => {
+  async function handleStatusChange(id: string, newStatus: TaskStatus) {
     try {
-      await deleteTask.deleteTask(taskId);
-      fetchTasks();
-      setState({
-        open: true,
-        message: 'Task deleted successfully.',
-        type: 'success',
+      await axiosInstance.put(`${BASE_API_URL}/tasks/update/status/${id}`, {
+        status: newStatus,
       });
-    } catch (error) {
-      setState({
-        open: true,
-        message: 'An error occurred while deleting the task.',
-        type: 'danger',
-      });
+      const task = tasks.find(task => task.id === id)!;
+      task.status = newStatus;
+      setTasks(tasks);
+      setState({ message: 'Task status updated successfully', open: true, type: 'success' });
+    } catch {
+      setState({ message: 'Error updating task status', open: true, type: 'danger' });
     }
-  };
+  }
 
   useEffect(() => {
     if (employeeId) fetchTasks();
+    fetchProjects();
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [employeeId]);
 
@@ -76,26 +88,43 @@ const AssignedTasks = (): JSX.Element => {
     if (taskData) setTasks(taskData);
   }, [taskData]);
 
-  useEffect(() => {
-    fetchProjects();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
-
   const filterTasksByProjectId = (tasks: Task[], projectId: string): Task[] =>
     tasks.filter(task => task.idProject === projectId);
 
-  const sortTasksByEndDate = (tasks: Task[]): Task[] =>
-    tasks.sort((a, b) => new Date(a.endDate).getTime() - new Date(b.endDate).getTime());
+  const sortTasks = (tasks: Task[]): Task[] =>
+    tasks.sort((a, b) => {
+      if (a.status === 'Done' && b.status !== 'Done') return 1;
+      if (a.status !== 'Done' && b.status === 'Done') return -1;
+      if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
+      if (!a.endDate || !b.endDate) return 0;
+
+      const dateA = new Date(a.endDate);
+      const dateB = new Date(b.endDate);
+
+      if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+      return dateA.getTime() - dateB.getTime();
+    });
 
   const tasksPerProject: { project: ProjectEntity; tasks: Task[] }[] = (projectData?.data ?? [])
     .sort((a, b) => a.name.localeCompare(b.name))
     .map(project => {
       const projectTasks = filterTasksByProjectId(tasks, project.id);
-      const sortedTasks = sortTasksByEndDate(projectTasks);
+      const sortedTasks = sortTasks(projectTasks);
 
       return { project, tasks: sortedTasks };
     })
     .filter(({ tasks }) => tasks.length > 0);
+
+  async function deleteTask() {
+    try {
+      await axiosInstance.delete(`${BASE_API_URL}/tasks/delete/${modalState.taskId}`);
+      setTasks(tasks.filter(task => task.id !== modalState.taskId));
+      setState({ message: 'Task deleted successfully', open: true, type: 'success' });
+    } catch (error: unknown) {
+      console.error(error);
+      setState({ message: 'Error deleting task', open: true, type: 'danger' });
+    }
+  }
 
   if (taskError || projectError) {
     if (taskError instanceof AxiosError && taskError.response?.status === 403) {
@@ -110,24 +139,7 @@ const AssignedTasks = (): JSX.Element => {
   }
 
   if (taskLoading || (projectLoading && !tasksPerProject)) {
-    return (
-      <Box
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          alignItems: 'center',
-          justifyContent: 'center',
-          height: '100%',
-          color: colors.gray,
-        }}
-      >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading tasks
-        </Typography>
-
-        <Loader />
-      </Box>
-    );
+    return <Loader />;
   }
 
   if (!tasksPerProject || tasksPerProject.length === 0 || !taskData || !projectData) {
@@ -135,70 +147,29 @@ const AssignedTasks = (): JSX.Element => {
   }
 
   return (
-    <>
-      <Sheet
-        sx={{
-          display: 'flex',
-          flexDirection: 'column',
-          gap: 2,
-          borderRadius: 12,
-          padding: 0.5,
-          overflowY: 'auto',
-        }}
-      >
-        {taskData && projectData && tasksPerProject.length && (
-          <>
-            {tasksPerProject?.map(({ project, tasks }) => (
-              <Box
-                key={project.id}
-                sx={{
-                  display: 'flex',
-                  flexDirection: 'column',
-                  gap: 2,
-                  padding: 2,
-                  borderRadius: 12,
-                  backgroundColor: colors.white,
-                }}
-              >
-                <Typography
-                  level='h1'
-                  variant='plain'
-                  sx={{
-                    color: colors.gray,
-                    fontWeight: 'bold',
-                    fontSize: '1.4rem',
-                  }}
-                >
-                  {project.name}
-                </Typography>
+    <ModalContext.Provider value={{ state: modalState, setState: setModalState }}>
+      <Sheet sx={{ borderRadius: '0.6rem', overflowY: 'auto' }}>
+        <AccordionGroup size='lg' disableDivider>
+          {tasksPerProject.map(project => (
+            <TaskTable
+              projectName={project.project.name}
+              tasks={project.tasks}
+              key={project.project.id}
+              handleStatusChange={handleStatusChange}
+            />
+          ))}
+        </AccordionGroup>
 
-                {tasks?.length && tasks.length > 0 && (
-                  <Box
-                    key={tasks[0].id}
-                    sx={{
-                      display: 'flex',
-                      flexDirection: 'column',
-                      gap: 1,
-                      padding: 0.5,
-                      borderRadius: 12,
-                      backgroundColor: colors.lightWhite,
-                    }}
-                  >
-                    <TaskTable tasks={tasks || []} onDelete={handleDeleteTask} />
-                  </Box>
-                )}
-              </Box>
-            ))}
-          </>
-        )}
+        <DeleteModal
+          open={modalState.open}
+          title='Confirm Deletion'
+          description='Are you sure you want to delete this task?'
+          id={''}
+          setOpen={() => setModalState({ taskId: '', open: false })}
+          handleDelete={deleteTask}
+        />
       </Sheet>
-
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
-    </>
+    </ModalContext.Provider>
   );
 };
 

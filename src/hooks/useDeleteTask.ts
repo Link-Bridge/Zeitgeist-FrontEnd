@@ -1,5 +1,6 @@
 import axios from 'axios';
 import { useState } from 'react';
+import { axiosInstance } from '../lib/axios/axios';
 import { BASE_API_URL } from '../utils/constants';
 
 /**
@@ -17,11 +18,7 @@ const useDeleteTask = () => {
    */
   const deleteTask = async (id: string) => {
     try {
-      await axios.delete(`${BASE_API_URL}/tasks/delete/${id}`, {
-        headers: {
-          Authorization: `Bearer ${localStorage.getItem('idToken')}`,
-        },
-      });
+      await axiosInstance.delete(`${BASE_API_URL}/tasks/delete/${id}`);
     } catch (err: unknown) {
       console.error(err);
 

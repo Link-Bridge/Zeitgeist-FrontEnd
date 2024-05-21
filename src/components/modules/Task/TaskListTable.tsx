@@ -1,13 +1,14 @@
-import { Snackbar, Table } from '@mui/joy';
-import axios, { AxiosRequestConfig } from 'axios';
-import { useRef, useState } from 'react';
+import { Chip, Table } from '@mui/joy';
+import { AxiosRequestConfig } from 'axios';
+import dayjs from 'dayjs';
+import { useContext, useRef, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
-import { statusChipColorCombination } from '../../../colors';
-import { SnackbarContext, SnackbarState } from '../../../hooks/snackbarContext';
+import colors, { statusChipColorCombination } from '../../../colors';
+import { SnackbarContext } from '../../../hooks/snackbarContext';
+import { axiosInstance } from '../../../lib/axios/axios';
 import { Task, TaskDetail } from '../../../types/task';
 import { TaskStatus } from '../../../types/task-status';
-import { APIPath, RequestMethods } from '../../../utils/constants';
-import { formatDate } from '../../../utils/methods';
+import { APIPath, BASE_API_URL, RequestMethods } from '../../../utils/constants';
 import ComponentPlaceholder from '../../common/ComponentPlaceholder';
 import DeleteModal from '../../common/DeleteModal';
 import GenericDropdown from '../../common/GenericDropdown';
@@ -40,7 +41,7 @@ const TaskListTable = ({
   const navigate = useNavigate();
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [newStatus, setNewStatus] = useState<TaskStatus | null>(null);
-  const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
+  const { setState } = useContext(SnackbarContext);
   const idTaskPayload = useRef<string>('');
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [deleteDialogOpen, setDeleteDialogOpen] = useState(false);
@@ -75,6 +76,8 @@ const TaskListTable = ({
         setTimeout(() => {
           setState({ open: false, message: '' });
         }, 2000);
+
+        window.location.reload();
       } catch (error) {
         setState({ open: true, message: 'Failed to update status task.', type: 'danger' });
         console.error(error);
@@ -85,19 +88,12 @@ const TaskListTable = ({
   };
 
   const doFetch = async (payload: { status: TaskStatus }) => {
-    const BASE_URL = import.meta.env.VITE_BASE_API_URL as string;
-    const idToken = localStorage.getItem('idToken');
-    const headers = {
-      'Content-Type': 'application/json',
-      Authorization: `Bearer ${idToken}`,
-    };
     const options: AxiosRequestConfig = {
       method: RequestMethods.PUT,
-      url: `${BASE_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
-      headers: headers,
+      url: `${BASE_API_URL}${APIPath.UPDATE_TASK_STATUS}/${idTaskPayload.current}`,
       data: payload,
     };
-    await axios(options);
+    await axiosInstance(options);
   };
 
   if (loadingTasks) {
@@ -133,33 +129,66 @@ const TaskListTable = ({
    */
 
   return (
-    <Table>
+    <Table sx={{ minWidth: '800px' }} hoverRow>
       {initialTasks && initialTasks.length !== 0 && (
         <>
           <thead>
             <tr>
-              <th style={{ width: '40%' }}>Task</th>
+              <th style={{ width: '30%' }}>Task</th>
               <th>Status</th>
+              <th>Employee</th>
               <th style={{ width: '15%' }}>Due Date</th>
               <th style={{ width: '10%' }}></th>
             </tr>
           </thead>
+
           <tbody>
             {initialTasks.map(task => (
               <tr key={task.id}>
-                <td className='hover:cursor-pointer' onClick={() => handleClick(task.id)}>
+                <td
+                  className='hover:cursor-pointer'
+                  style={{ wordBreak: 'break-word' }}
+                  onClick={() => handleClick(task.id)}
+                >
                   {task.title}
                 </td>
+
                 <td>
                   <GenericDropdown
                     options={Object.values(TaskStatus)}
                     onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                    defaultValue={task.status as TaskStatus}
+                    value={task.status as TaskStatus}
                     colorMap={statusColorMap}
                     placeholder='Select status ...'
                   />
                 </td>
-                <td>{task.endDate ? formatDate(task.endDate) : 'No due date'}</td>
+
+                <td className='p-2'>
+                  <Chip
+                    sx={{
+                      backgroundColor: colors.lighterGray,
+                      color: 'black',
+                      width: 'auto',
+                      maxWidth: '100%',
+                      textOverflow: 'ellipsis',
+                      overflow: 'hidden',
+                      whiteSpace: 'nowrap',
+
+                      '@media (max-width: 640px)': {
+                        fontSize: '0.875rem',
+                      },
+                    }}
+                    className='truncate'
+                  >
+                    {task.employeeFirstName && task.employeeLastName
+                      ? `${task.employeeFirstName.split(' ')[0]} ${task.employeeLastName.split(' ')[0]}`
+                      : 'No employee'}
+                  </Chip>
+                </td>
+
+                <td>
+                  {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
+                </td>
                 <td>
                   <TaskActionsMenu
                     task={task as Task}
@@ -170,26 +199,19 @@ const TaskListTable = ({
               </tr>
             ))}
           </tbody>
-
           <DeleteModal
             open={taskToDelete !== null}
             setOpen={() => setTaskToDelete(null)}
             title='Confirm Deletion'
             description='Are you sure you want to delete this task?'
             id={taskToDelete?.id || ''}
-            handleDeleteEmployee={(id: string) => {
+            handleDelete={(id: string) => {
               onDelete(id);
               setTaskToDelete(null);
             }}
           />
         </>
       )}
-      {/* Snackbar */}
-      <SnackbarContext.Provider value={{ state, setState }}>
-        <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
-          {state.message}
-        </Snackbar>
-      </SnackbarContext.Provider>
     </Table>
   );
 };

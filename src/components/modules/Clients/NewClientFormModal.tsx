@@ -2,6 +2,7 @@ import { TextField } from '@mui/material';
 import Box from '@mui/material/Box';
 import Modal from '@mui/material/Modal';
 import Typography from '@mui/material/Typography';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -16,16 +17,17 @@ import CreateClientButton from './CreateClientButton';
  * @brief style object for box component
  */
 const style = {
-  position: 'absolute' as const,
+  position: 'fixed',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 620,
   bgcolor: 'background.paper',
   border: '2px solid' && colors.darkGold,
   boxShadow: 24,
   p: 4,
   borderRadius: 3,
+  minWidth: '448px',
+  maxWidth: '50vw',
 };
 
 interface NewClientFormModalProps {
@@ -35,6 +37,8 @@ interface NewClientFormModalProps {
 }
 
 const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalProps) => {
+  const { setState } = useContext(SnackbarContext);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState('');
   const [companyEmail, setCompanyEmail] = useState('');
   const [companyPhone, setCompanyPhone] = useState('');
@@ -42,7 +46,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const [companyConstitution, setCompanyConstitution] = useState('');
   const [companyTaxResidence, setCompanyTaxResidence] = useState('');
 
-  const { setState } = useContext(SnackbarContext);
   /**
    * @brief using http hook being able to send new client information
    */
@@ -50,6 +53,22 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     '/company/new',
     RequestMethods.POST
   );
+
+  /**
+   * @brief Reset the form and close the modal
+   */
+  const handleClose = () => {
+    setOpen(false);
+    setErrors({});
+    setCompanyName('');
+    setCompanyEmail('');
+    setCompanyPhone('');
+    setCompanyRFC('');
+    setCompanyConstitution('');
+    setCompanyTaxResidence('');
+    setState({ open: false, message: '' });
+    setRefetch(true);
+  };
 
   /**
    * @brief Manage error
@@ -63,19 +82,25 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
       });
 
     if (error && 'response' in error && error.response?.data)
-      return setState({ open: true, message: error.response.data?.error, type: 'danger' });
+      return setState({
+        open: true,
+        message: (error.response.data as { error: string })?.error,
+        type: 'danger',
+      });
     if (error) return setState({ open: true, message: 'Error', type: 'danger' });
   };
 
   /**
-   * @brief Supervise the're no error, if it's clean, send a succuess message, close the modal
+   * @brief Supervise the're no error, if it's clean, send a success message, close the modal
    * and refetch
    */
   const handleSuccess = () => {
     if (!error && data && data.id) {
-      setState({ open: true, message: 'Company created', type: 'success' });
-      setOpen(false);
-
+      setState({ open: true, message: 'Company created succesfully,', type: 'success' });
+      setTimeout(() => {
+        setOpen(false);
+        setState({ open: false, message: '' });
+      }, 2000);
       setCompanyName('');
       setCompanyEmail('');
       setCompanyPhone('');
@@ -96,15 +121,12 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   /**
    * @brief The required information
    */
-  const validateForm = () => {
-    return (
-      companyName != '' &&
-      companyEmail != '' &&
-      companyPhone != '' &&
-      companyRFC != '' &&
-      companyConstitution != '' &&
-      companyTaxResidence != ''
-    );
+  const hasEmptyFields = () => {
+    return !companyName;
+  };
+
+  const hasErrors = () => {
+    return Object.values(errors).some(error => error !== '');
   };
 
   /**
@@ -114,28 +136,6 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   const handleSubmit = async (event: { preventDefault: () => void }) => {
     event.preventDefault();
 
-    if (companyPhone.length < 8) {
-      setState({
-        open: true,
-        message: 'Phone number must have at least 8 characters',
-        type: 'danger',
-      });
-      return;
-    } else if (companyPhone.length > 15) {
-      setState({
-        open: true,
-        message: 'Phone number must have at most 15 characters',
-        type: 'danger',
-      });
-      return;
-    }
-
-    if (!validRFC(companyRFC))
-      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
-
-    if (!validateForm())
-      return setState({ open: true, message: 'All fields are required', type: 'danger' });
-
     // Parse date
     const dateString = companyConstitution;
     const dateParts = dateString.split('-').map(Number);
@@ -144,11 +144,11 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
     const body = {
       company: {
         name: companyName,
-        email: companyEmail,
-        phoneNumber: companyPhone,
-        rfc: companyRFC,
-        constitutionDate: date.toUTCString(),
-        taxResidence: companyTaxResidence,
+        email: companyEmail ? companyEmail : null,
+        phoneNumber: companyPhone ? companyPhone : null,
+        rfc: companyRFC ? companyRFC : null,
+        constitutionDate: date ? date : null,
+        taxResidence: companyTaxResidence ? companyTaxResidence : null,
       },
     };
 
@@ -169,7 +169,7 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
       BackdropProps={{ onClick: () => {} }}
@@ -196,23 +196,82 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientName'
-              label='Clients name'
-              variant='outlined'
+              error={errors['name'] ? true : false}
+              helperText={errors['name']}
+              label={
+                <>
+                  Name
+                  <span style={{ color: 'red' }}> *</span>
+                </>
+              }
+              //variant='outlined'
               value={companyName}
               onChange={event => {
+                if (event.target.value.length > 70) {
+                  return setState({
+                    open: true,
+                    message: 'Name cannot be longer than 70 characters.',
+                    type: 'danger',
+                  });
+                } else if (!event.target.value || event.target.value.length == 0) {
+                  setErrors({ ...errors, name: 'Name is required.' });
+                  setState({
+                    open: true,
+                    message: 'Name is required.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors({ ...errors, name: '' });
+                  setState({ open: false, message: '' });
+                }
                 setCompanyName(event.target.value);
               }}
-              sx={{ width: '100ch' }}
+              sx={{
+                width: '100ch',
+                borderRadius: '4px',
+              }}
             />
 
             <TextField
               id='clientEmail'
+              error={errors['email'] ? true : false}
+              helperText={errors['email']}
               label='Email'
               type='email'
               variant='outlined'
               value={companyEmail}
               onChange={event => {
+                if (event.target.value.length > 70) {
+                  return setState({
+                    open: true,
+                    message: 'Email cannot be longer than 70 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
+                }
                 setCompanyEmail(event.target.value);
+              }}
+              onBlur={event => {
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+                const email = event.target.value;
+                if (email && !emailRegex.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    email: 'Please enter a valid email address.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid email address.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, email: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
               }}
             />
           </Box>
@@ -220,27 +279,100 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientPhone'
-              label='Phone number'
+              error={errors['phoneNumber'] ? true : false}
+              helperText={errors['phoneNumber']}
+              label='Phone Number'
               type='tel'
               variant='outlined'
               value={companyPhone}
               onChange={event => {
-                const input = event.target.value.replace(/\D/g, '');
-                if (input.length > 13) return;
-                setCompanyPhone(input);
+                if (!/^\d*\.?\d*$/.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Only numbers are allowed.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Phone number can only be numbers.',
+                    type: 'danger',
+                  });
+                  return;
+                }
+                if (event.target.value.length > 15) {
+                  return setState({
+                    open: true,
+                    message: 'Phone number cannot be longer than 15 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+                setCompanyPhone(event.target.value);
+              }}
+              onBlur={event => {
+                if (
+                  event.target.value &&
+                  event.target.value.length < 10 &&
+                  event.target.value.length > 0
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Phone number must be at least 10 characters.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Phone number must be at least 10 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
               }}
             />
 
             <TextField
               id='clientRFC'
+              error={errors['rfc'] ? true : false}
+              helperText={errors['rfc']}
               label='RFC'
               variant='outlined'
               value={companyRFC}
               onChange={event => {
                 const inputValue = event.target.value;
-                if (inputValue.length <= 13) {
-                  setCompanyRFC(event.target.value);
+                if (inputValue.length > 13) {
+                  return setState({
+                    open: true,
+                    message: 'RFC cannot be longer than 13 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
                 }
+                setCompanyRFC(inputValue.toUpperCase());
+              }}
+              onBlur={event => {
+                if (event.target.value && !validRFC(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    rfc: 'Please enter a valid RFC.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid RFC.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, rfc: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
               }}
             />
           </Box>
@@ -248,12 +380,46 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
           <Box sx={{ display: 'flex', flexdirection: 'row' }}>
             <TextField
               id='clientConstituton'
+              error={errors['constitutionDate'] ? true : false}
+              helperText={errors['constitutionDate']}
               label='Constitution date'
               type='Date'
               variant='outlined'
               InputLabelProps={{ shrink: true }}
               value={companyConstitution}
               onChange={event => {
+                const value = event.target.value;
+
+                const date = new Date(value);
+                const isValidDate = date instanceof Date && !isNaN(date.getTime());
+                if (!isValidDate && date) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Please enter a valid date.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid date.',
+                    type: 'danger',
+                  });
+                } else if (
+                  dayjs(date).isAfter(dayjs(), 'day') ||
+                  dayjs(date).subtract(1, 'day').isAfter(dayjs(), 'day')
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    constitutionDate: 'Constitution date cannot be after today.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Constitution date cannot be after today.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                  setState({ open: false, message: '' });
+                }
+
                 setCompanyConstitution(event.target.value);
               }}
             />
@@ -264,14 +430,23 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
               variant='outlined'
               value={companyTaxResidence}
               onChange={event => {
+                if (event.target.value.length > 150) {
+                  return setState({
+                    open: true,
+                    message: 'Tax residence cannot be longer than 150 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
+                }
                 setCompanyTaxResidence(event.target.value);
               }}
             />
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
-            <CancelButton onClick={() => setOpen(false)} />
-            <CreateClientButton loading={loading} />
+            <CancelButton onClick={handleClose} />
+            <CreateClientButton loading={loading} disabled={hasEmptyFields() || hasErrors()} />
           </Box>
         </Box>
       </Box>

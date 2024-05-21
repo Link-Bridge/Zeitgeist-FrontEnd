@@ -1,28 +1,35 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  ArchiveRounded,
+  AssessmentOutlined,
+  EditOutlined,
+  EventNoteRounded,
+  UnarchiveRounded,
+} from '@mui/icons-material';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
-import axios, { isAxiosError } from 'axios';
+import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
+import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
+import Loader from '../../components/common/Loader';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
+import { axiosInstance } from '../../lib/axios/axios';
 import { CompanyEntity } from '../../types/company';
 import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
-import { formatDate, truncateText } from '../../utils/methods';
+import { truncateText } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover: string }> = {
   [ProjectStatus.NONE]: statusChipColorCombination.default,
@@ -52,8 +59,9 @@ const ProjectDetails = () => {
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
-
   const [notFound, setNotFound] = useState(false);
+
+  const navigate = useNavigate();
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -95,18 +103,28 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      setTotalHours(() =>
-        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      const calculatedHours = tasks.data.reduce(
+        (totalHours, task) => totalHours + (task.workedHours || 0),
+        0
       );
+      setTotalHours(calculatedHours);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [tasks]);
 
-  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
-    `${APIPath.PROJECT_DETAILS}/${id}`,
-    RequestMethods.PUT
-  );
+  tasks?.data.sort((a, b) => {
+    if (a.status === 'Done' && b.status !== 'Done') return 1;
+    if (a.status !== 'Done' && b.status === 'Done') return -1;
+    if (a.status === b.status) return a.status === 'Done' ? 1 : -1;
+    if (!a.endDate || !b.endDate) return 0;
+
+    const dateA = new Date(a.endDate);
+    const dateB = new Date(b.endDate);
+
+    if (isNaN(dateA.getTime()) || isNaN(dateB.getTime())) return 0;
+    return dateA.getTime() - dateB.getTime();
+  });
 
   useEffect(() => {
     if (!data) {
@@ -120,18 +138,20 @@ const ProjectDetails = () => {
       setCompanyName(company.data.name);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, company, updatedCompany, projectStatus]);
+  }, [data, company, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
     try {
-      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
-      setState({ open: true, message: 'Project status updated successfully!', type: 'success' });
-
-      if (updatedCompany) {
-        setProjectStatus(newStatus);
-      }
-    } catch (error) {
-      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
+      setUpdating(true);
+      await axiosInstance.put(`${BASE_API_URL}/project/details/${id}`, {
+        status: newStatus,
+      });
+      setProjectStatus(newStatus);
+      setState({ open: true, message: 'Status updated successfully.', type: 'success' });
+    } catch {
+      setState({ open: true, message: 'Error updating status.', type: 'danger' });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -151,21 +171,67 @@ const ProjectDetails = () => {
   };
 
   if (loading && loadingCompany) {
-    return <div>Loading...</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading project details
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
+  }
+
+  if (error) {
+    if (error.message.includes('403')) {
+      navigate('/projects');
+    } else {
+      return (
+        <Box
+          sx={{
+            display: 'flex',
+            flexDirection: 'column',
+            alignItems: 'center',
+            justifyContent: 'center',
+          }}
+        >
+          <ComponentPlaceholder text='Error loading the project.' />
+        </Box>
+      );
+    }
   }
 
   if (error && errorCompany) {
-    return <div>Error loading task</div>;
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+        }}
+      >
+        <ComponentPlaceholder text='Error loading the project.' />
+      </Box>
+    );
   }
 
   async function changePayed(projectId: string, payed: boolean) {
     if (data) {
       setUpdating(true);
-      const res = await axios.put(
-        `${BASE_API_URL}/project/edit/${projectId}`,
-        { payed, id: projectId },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
-      );
+      const res = await axiosInstance.put(`${BASE_API_URL}/project/edit/${projectId}`, {
+        payed,
+        id: projectId,
+      });
       data.payed = res.data.data.payed;
       setUpdating(false);
     }
@@ -178,7 +244,7 @@ const ProjectDetails = () => {
   const chipData = [
     { label: 'Total Hours', content: totalHours },
     { label: 'Client', content: truncateText(companyName, 20) },
-    { label: 'Matter', content: data?.matter },
+    { label: 'Matter', content: data?.matter || '-' },
     { label: 'Category', content: data?.category },
     { label: 'Area', content: data?.area },
     { label: 'Periodicity', content: data?.periodicity },
@@ -207,16 +273,20 @@ const ProjectDetails = () => {
         <GoBack />
       </Box>
 
-      <Card className='bg-white' sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}>
+      <Card
+        className='bg-white overflow-y-auto overflow-hidden'
+        sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
+      >
         <section className='font-montserrat'>
-          <section className='flex justify-between'>
-            <h3 className='text-[22px] font-medium' style={{ marginTop: '10px' }}>
-              {truncateText(data?.name)}
+          <section className='flex flex-wrap justify-between gap-y-2'>
+            <h3 className='text-[22px] font-medium truncate' style={{ marginTop: '10px' }}>
+              {data?.name}
             </h3>
-            <section className='flex justify-end gap-3'>
+            <div className='flex gap-3'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
+                state={{ fromDetail: true }}
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': {
@@ -224,7 +294,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Edit</Typography>
               </Button>
@@ -239,7 +309,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Report</Typography>
               </Button>
@@ -254,7 +324,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
@@ -269,32 +339,33 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
                 </Button>
               )}
-            </section>
+            </div>
           </section>
 
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
           {data && (
             <div
-              className=' flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
+              className='flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
               style={{ color: colors.gray }}
             >
               <div style={{ fontSize: '15px' }}>
                 <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
+                    disabled={updating}
                     options={Object.values(ProjectStatus)}
                     colorMap={statusColorMap}
                     onChange={function (newValue: string): void {
                       handleStatusChange(newValue as ProjectStatus);
                     }}
-                    defaultValue={projectStatus}
+                    value={projectStatus}
                   ></GenericDropdown>
                 )}
               </div>
@@ -325,20 +396,28 @@ const ProjectDetails = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon />
-              <p className='ml-3'>Start Date: {data?.startDate && formatDate(data?.startDate)}</p>
+              <EventNoteRounded />
+              <p className='ml-3'>
+                Start Date:{' '}
+                {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
+              </p>
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon />
-              <p className='ml-3'>End Date: {data?.startDate && formatDate(data?.endDate)}</p>
+              <EventNoteRounded />
+              <p className='ml-3'>
+                End Date:{' '}
+                {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
+              </p>
             </div>
           </Box>
         </section>
       </Card>
 
       <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+          Project Tasks
+        </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
           <AddButton onClick={() => {}} />
         </Link>

@@ -8,7 +8,6 @@ import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
 import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
-import { BareboneTask } from '../../types/task';
 import { RequestMethods } from '../../utils/constants';
 
 /**
@@ -21,20 +20,20 @@ import { RequestMethods } from '../../utils/constants';
 const NewTaskPage = () => {
   const [employees, setEmployees] = useState<EmployeeEntity[]>([]);
   const [isLoaded, setIsLoaded] = useState(false);
-  const { projectId } = useParams<{ projectId: string }>();
+  const { idProject } = useParams<{ idProject: string }>();
   const { employee } = useContext(EmployeeContext);
 
   const {
     data: cachedEmployees,
     sendRequest: sendEmployeeRequest,
     loading: employeeLoading,
-  } = useHttp<Response<EmployeeEntity>>(`/employee/getEmployees`, RequestMethods.GET);
+  } = useHttp<Response<EmployeeEntity>>(`/employee`, RequestMethods.GET);
 
   const {
     sendRequest: requestProject,
     data: projectData,
     loading: projectLoading,
-  } = useHttp<ProjectEntity>(`/project/details/${projectId}`, RequestMethods.GET);
+  } = useHttp<ProjectEntity>(`/project/details/${idProject}`, RequestMethods.GET);
 
   useEffect(() => {
     sendEmployeeRequest();
@@ -55,12 +54,6 @@ const NewTaskPage = () => {
   }, [employeeLoading, projectLoading]);
 
   const projectName = projectData?.name;
-  const { sendRequest } = useHttp<BareboneTask>('/tasks/create', RequestMethods.POST);
-
-  const handleOnSubmit = async (payload: BareboneTask) => {
-    await sendRequest({}, { ...payload });
-  };
-
   if (!isLoaded) {
     <>
       <Typography component='h1'>Loading</Typography>
@@ -70,9 +63,8 @@ const NewTaskPage = () => {
 
   return (
     <NewTaskForm
-      onSubmit={handleOnSubmit}
       employees={employees || []}
-      projectId={projectId ? projectId : ''}
+      idProject={idProject!}
       projectName={projectName ? projectName : ''}
     />
   );

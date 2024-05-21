@@ -9,3 +9,11 @@ export interface EmployeeEntity {
   idDepartment: string;
   idRole: string;
 }
+
+export interface EmployeeReponse {
+  data: {
+    employee: EmployeeEntity;
+    role: string;
+    department: string;
+  };
+}

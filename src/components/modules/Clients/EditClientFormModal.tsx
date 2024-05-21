@@ -1,3 +1,4 @@
+import { FormControl, FormHelperText } from '@mui/joy';
 import { Box, Modal, TextField, Typography } from '@mui/material';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
@@ -7,28 +8,28 @@ import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity, UpdateCompanyData } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
-import { dateGreaterThanToday, validEmail, validRFC } from '../../../utils/methods';
+import { validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import EditClientButton from './EditClientButton';
 
 const style = {
-  position: 'absolute',
+  position: 'fixed',
   top: '50%',
   left: '50%',
   transform: 'translate(-50%, -50%)',
-  width: 620,
   bgcolor: 'background.paper',
-  border: '2px solid',
-  borderColor: colors.darkGold,
+  border: '2px solid' && colors.darkGold,
   boxShadow: 24,
   p: 4,
   borderRadius: 3,
+  minWidth: '448px',
+  maxWidth: '50vw',
 };
 
 interface EditClientFormModalProps {
   open: boolean;
   setOpen: (open: boolean) => void;
-  setRefetch: (refetch: boolean) => void;
+  setRefetch: React.Dispatch<React.SetStateAction<boolean>>;
   clientData: CompanyEntity;
 }
 
@@ -38,14 +39,17 @@ const EditClientFormModal = ({
   setRefetch,
   clientData,
 }: EditClientFormModalProps) => {
+  const { setState } = useContext(SnackbarContext);
+  const [errors, setErrors] = useState<Record<string, string>>({});
   const [companyName, setCompanyName] = useState(clientData.name);
   const [companyEmail, setCompanyEmail] = useState(clientData.email);
   const [companyPhone, setCompanyPhone] = useState(clientData.phoneNumber);
   const [companyRFC, setCompanyRFC] = useState(clientData.rfc);
-  const [companyConstitution, setCompanyConstitution] = useState(clientData.constitutionDate);
+  const [companyConstitution, setCompanyConstitution] = useState(
+    clientData.constitutionDate || null
+  );
   const [companyTaxResidence, setCompanyTaxResidence] = useState(clientData.taxResidence);
 
-  const { setState } = useContext(SnackbarContext);
   const { sendRequest, data, error, loading } = useHttp<UpdateCompanyData>(
     `/company/${clientData.id}`,
     RequestMethods.PUT
@@ -63,57 +67,59 @@ const EditClientFormModal = ({
         setOpen(false);
         setRefetch((prev: boolean) => !prev);
       }
+      //TODO: Checar si la snackbar se setea a su estado neutral
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error, clientData]);
 
-  const handleUpdate = async () => {
-    if (
-      !companyName ||
-      !companyEmail ||
-      !companyPhone ||
-      !companyRFC ||
-      !companyConstitution ||
-      !companyTaxResidence
-    ) {
-      return setState({ open: true, message: 'All fields are required.', type: 'danger' });
+  /**
+   * @brief The required information
+   */
+  const hasEmptyFields = () => {
+    return !companyName;
+  };
+
+  const hasInvalidDate = () => {
+    if (companyConstitution) {
+      const date = new Date(companyConstitution);
+      if (!date.getDate() || !date.getMonth() || !date.getFullYear()) {
+        return true;
+      }
+    } else {
+      return false;
     }
+  };
 
-    if (!validEmail(companyEmail))
-      return setState({ open: true, message: 'Email is invalid', type: 'danger' });
+  const hasErrors = () => {
+    return Object.values(errors).some(error => error !== '');
+  };
 
-    if (companyPhone.length < 8)
-      return setState({
-        open: true,
-        message: 'Phone number must have at least 8 characters.',
-        type: 'danger',
-      });
+  /**
+   * @brief Reset the form and close the modal
+   */
+  const handleClose = () => {
+    setOpen(false);
+    setErrors({});
+    setState({ open: false, message: '' });
+  };
 
-    if (companyPhone.length > 15)
-      return setState({
-        open: true,
-        message: 'Phone number must have at most 15 characters.',
-        type: 'danger',
-      });
+  /**
+   * @brief Reset the form and close the modal
+   */
+  const handleCancel = () => {
+    updatePerviewClientInfo();
+    handleClose();
+  };
 
-    if (!validRFC(companyRFC))
-      return setState({ open: true, message: 'RFC is invalid', type: 'danger' });
-
-    if (dateGreaterThanToday(companyConstitution))
-      return setState({
-        open: true,
-        message: 'Constitution date cannot be greater than today',
-        type: 'danger',
-      });
-
+  const handleUpdate = async () => {
     const updatedClientData = {
       id: clientData.id,
       name: companyName,
-      email: companyEmail,
-      phoneNumber: companyPhone,
-      rfc: companyRFC,
-      constitutionDate: companyConstitution,
-      taxResidence: companyTaxResidence,
+      email: companyEmail ? companyEmail : null,
+      phoneNumber: companyPhone ? companyPhone : null,
+      rfc: companyRFC ? companyRFC : null,
+      constitutionDate: companyConstitution ? companyConstitution : null,
+      taxResidence: companyTaxResidence ? companyTaxResidence : null,
     };
 
     await sendRequest({ method: RequestMethods.PUT }, updatedClientData);
@@ -124,14 +130,14 @@ const EditClientFormModal = ({
     setCompanyEmail(clientData.email);
     setCompanyPhone(clientData.phoneNumber);
     setCompanyRFC(clientData.rfc);
-    setCompanyConstitution(clientData.constitutionDate);
+    setCompanyConstitution(clientData.constitutionDate || null);
     setCompanyTaxResidence(clientData.taxResidence);
   };
 
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={handleClose}
       aria-labelledby='modal-modal-title'
       aria-describedby='modal-modal-description'
     >
@@ -155,89 +161,250 @@ const EditClientFormModal = ({
         >
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <TextField
-              label='Client Name'
+              error={errors['name'] ? true : false}
+              helperText={errors['name']}
+              label={
+                <>
+                  Name
+                  <span style={{ color: 'red' }}> *</span>
+                </>
+              }
               variant='outlined'
               value={companyName}
               onChange={e => {
-                if (e.target.value.length > 255)
+                if (e.target.value.length > 70) {
                   return setState({
                     open: true,
-                    message: 'Company name must have at most 255 characters',
+                    message: 'Name cannot be longer than 70 characters.',
                     type: 'danger',
                   });
+                } else if (!e.target.value || e.target.value.length == 0) {
+                  setErrors({ ...errors, name: 'Name is required.' });
+                  setState({
+                    open: true,
+                    message: 'Name is required.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors({ ...errors, name: '' });
+                  setState({ open: false, message: '' });
+                }
                 setCompanyName(e.target.value);
               }}
-              sx={{ width: '100ch' }}
+              sx={{
+                width: '100ch',
+                borderRadius: '4px',
+              }}
             />
 
             <TextField
+              error={errors['email'] ? true : false}
+              helperText={errors['email']}
               label='Email'
               type='email'
               variant='outlined'
               value={companyEmail}
-              onChange={e => setCompanyEmail(e.target.value)}
+              onChange={event => {
+                if (event.target.value.length > 70) {
+                  return setState({
+                    open: true,
+                    message: 'Email cannot be longer than 70 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
+                }
+                setCompanyEmail(event.target.value);
+              }}
+              onBlur={event => {
+                const emailRegex = /^[\w-\.]+@([\w-]+\.)+[\w-]{2,4}$/g;
+                const email = event.target.value;
+                if (email && !emailRegex.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    email: 'Please enter a valid email address.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid email address.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, email: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
+              }}
             />
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
             <TextField
+              error={errors['phoneNumber'] ? true : false}
+              helperText={errors['phoneNumber']}
               label='Phone Number'
               type='tel'
               variant='outlined'
               value={companyPhone}
-              onChange={e => {
-                const input = e.target.value.replace(/\D/g, '');
-                if (input.length > 15)
-                  return setState({
+              onChange={event => {
+                if (!/^\d*\.?\d*$/.test(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Only numbers are allowed.',
+                  }));
+                  setState({
                     open: true,
-                    message: 'Phone number must have at most 15 characters',
+                    message: 'Phone number can only be numbers.',
                     type: 'danger',
                   });
-                setCompanyPhone(input);
+                  return;
+                }
+                if (event.target.value.length > 15) {
+                  return setState({
+                    open: true,
+                    message: 'Phone number cannot be longer than 15 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+                setCompanyPhone(event.target.value);
+              }}
+              onBlur={event => {
+                if (
+                  event.target.value &&
+                  event.target.value.length < 10 &&
+                  event.target.value.length > 0
+                ) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    phoneNumber: 'Phone number must be at least 10 characters.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Phone number must be at least 10 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, phoneNumber: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
               }}
             />
 
             <TextField
+              error={errors['rfc'] ? true : false}
+              helperText={errors['rfc']}
               label='RFC'
               variant='outlined'
               value={companyRFC}
-              onChange={e => {
-                const inputValue = e.target.value;
-                if (inputValue.length <= 13) {
-                  setCompanyRFC(e.target.value);
+              onChange={event => {
+                const inputValue = event.target.value;
+                if (inputValue.length > 13) {
+                  return setState({
+                    open: true,
+                    message: 'RFC cannot be longer than 13 characters.',
+                    type: 'danger',
+                  });
+                } else {
+                  setState({ open: false, message: '' });
                 }
+                setCompanyRFC(inputValue.toUpperCase());
+              }}
+              onBlur={event => {
+                const inputRFC = event.target.value;
+                if (inputRFC && !validRFC(event.target.value)) {
+                  setErrors(prevErrors => ({
+                    ...prevErrors,
+                    rfc: 'Please enter a valid RFC.',
+                  }));
+                  setState({
+                    open: true,
+                    message: 'Please enter a valid RFC.',
+                    type: 'danger',
+                  });
+                } else {
+                  setErrors(prevErrors => ({ ...prevErrors, rfc: '' }));
+                  setState({ open: false, message: '' });
+                }
+              }}
+              sx={{
+                borderRadius: '4px',
               }}
             />
           </Box>
 
           <Box sx={{ display: 'flex', flexDirection: 'row' }}>
-            <DatePicker
-              label='Constitution Date'
-              value={dayjs(companyConstitution)}
-              onChange={e => {
-                if (dateGreaterThanToday(e?.toDate())) {
-                  setState({
-                    open: true,
-                    message: 'Constitution date cannot be greater than today',
-                    type: 'danger',
-                  });
-                  return setCompanyConstitution(new Date());
-                }
-                setCompanyConstitution(e?.toDate() ?? companyConstitution);
-              }}
-            />
+            <FormControl>
+              <DatePicker
+                disableFuture
+                label='Constitution Date'
+                value={companyConstitution ? dayjs(companyConstitution).utc() : null}
+                onChange={newValue => {
+                  if (!newValue) {
+                    setCompanyConstitution(null);
+                    setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                    setState({ open: false, message: '' });
+                  } else {
+                    const date = newValue.toDate();
+                    const isValidDate = date instanceof Date && !isNaN(date.getTime());
+
+                    if (!isValidDate) {
+                      setState({
+                        open: true,
+                        message: 'Please enter a valid date.',
+                        type: 'danger',
+                      });
+                      setErrors(prevErrors => ({
+                        ...prevErrors,
+                        constitutionDate: 'Please enter a valid date.',
+                      }));
+                    } else if (dayjs(date).isAfter(dayjs(), 'day')) {
+                      setState({
+                        open: true,
+                        message: 'Constitution date cannot be greater than today.',
+                        type: 'danger',
+                      });
+                      setErrors(prevErrors => ({
+                        ...prevErrors,
+                        constitutionDate: 'Constitution date cannot be greater than today.',
+                      }));
+                    } else {
+                      setCompanyConstitution(date);
+                      setErrors(prevErrors => ({ ...prevErrors, constitutionDate: '' }));
+                      setState({ open: false, message: '' });
+                    }
+                  }
+                }}
+                sx={{ borderColor: errors['constitutionDate'] ? colors.danger : undefined }}
+              />
+              {errors['constitutionDate'] !== '' && (
+                <FormHelperText sx={{ color: colors.danger }}>
+                  {errors['constitutionDate']}
+                </FormHelperText>
+              )}
+            </FormControl>
 
             <TextField
               label='Tax Residence'
               variant='outlined'
               value={companyTaxResidence}
               onChange={e => {
-                if (e.target.value.length > 254)
+                if (e.target.value.length > 150) {
                   return setState({
                     open: true,
-                    message: 'Tax residence must have at most 255 characters',
+                    message: 'Tax residence cannot be longer than 150 characters.',
                     type: 'danger',
                   });
+                } else {
+                  setState({ open: false, message: '' });
+                }
                 setCompanyTaxResidence(e.target.value);
               }}
               inputProps={{ maxLength: 255 }}
@@ -245,8 +412,12 @@ const EditClientFormModal = ({
           </Box>
 
           <Box sx={{ display: 'flex', justifyContent: 'right', mt: 2, mb: -2.5, mr: 1, gap: 2.5 }}>
-            <CancelButton onClick={() => setOpen(false)} />
-            <EditClientButton loading={loading} onClick={handleUpdate} />
+            <CancelButton onClick={handleCancel} />
+            <EditClientButton
+              loading={loading}
+              onClick={handleUpdate}
+              disabled={hasEmptyFields() || hasErrors() || hasInvalidDate()}
+            />
           </Box>
         </Box>
       </Box>

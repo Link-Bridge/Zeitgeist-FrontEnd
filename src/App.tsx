@@ -1,6 +1,7 @@
 import { Snackbar } from '@mui/joy';
 import { LocalizationProvider } from '@mui/x-date-pickers';
 import { AdapterDayjs } from '@mui/x-date-pickers/AdapterDayjs';
+import 'dayjs/locale/es-mx';
 import { useEffect, useState } from 'react';
 import { Outlet, Route, BrowserRouter as Router, Routes } from 'react-router-dom';
 import Layout from './components/common/Layout';
@@ -9,6 +10,7 @@ import OfflineModal from './components/common/OfflineModal';
 import ProtectedRoute from './components/common/ProtectedRoute';
 import { EmployeeBodyType, EmployeeContext } from './hooks/employeeContext';
 import { SnackbarContext, SnackbarState } from './hooks/snackbarContext';
+import { configDayjs } from './lib/dayjs/dayjs';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
@@ -18,6 +20,8 @@ import Tasks from './pages/Tasks';
 import { RoutesPath } from './utils/constants';
 
 function App() {
+  configDayjs();
+
   const [state, setState] = useState<SnackbarState>({ open: false, message: '' });
   const [employee, setEmployee] = useState<EmployeeBodyType | null>(null);
 
@@ -42,7 +46,7 @@ function App() {
 
   return (
     <EmployeeContext.Provider value={{ employee, setEmployee }}>
-      <LocalizationProvider dateAdapter={AdapterDayjs}>
+      <LocalizationProvider dateAdapter={AdapterDayjs} adapterLocale='es-mx'>
         <SnackbarContext.Provider value={{ state, setState }}>
           <OfflineModal />
           <Router>
