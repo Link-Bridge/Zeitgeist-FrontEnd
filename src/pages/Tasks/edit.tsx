@@ -25,7 +25,6 @@ const EditTaskPage: React.FC = () => {
 
   useEffect(() => {
     sendEmployeeRequest();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, []);
 
   useEffect(() => {
@@ -48,7 +47,6 @@ const EditTaskPage: React.FC = () => {
     if (!cachedTask) {
       sendGetTaskRequest();
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cachedTask]);
 
   useEffect(() => {
