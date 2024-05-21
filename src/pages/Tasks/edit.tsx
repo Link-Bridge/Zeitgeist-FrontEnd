@@ -1,3 +1,4 @@
+/* eslint-disable react-hooks/exhaustive-deps */
 import { Box, Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { useParams } from 'react-router-dom';
@@ -7,6 +8,7 @@ import UpdateTaskForm from '../../components/modules/Task/UpdateTask/UpdateTaskF
 import { EmployeeBodyType, EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { EmployeeEntity } from '../../types/employee';
+import { ProjectEntity } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
@@ -17,7 +19,7 @@ const EditTaskPage: React.FC = () => {
 
   const { data: cachedEmployees, sendRequest: sendEmployeeRequest } = useHttp<
     Response<EmployeeEntity>
-  >(`/employee/getEmployees`, RequestMethods.GET);
+  >(`/employee`, RequestMethods.GET);
 
   const [employees, setEmployees] = useState<EmployeeEntity[]>([]);
 
@@ -37,6 +39,11 @@ const EditTaskPage: React.FC = () => {
     RequestMethods.GET
   );
 
+  const projectReq = useHttp<ProjectEntity>(
+    `/project/details/${cachedTask?.idProject}`,
+    RequestMethods.GET
+  );
+
   useEffect(() => {
     if (!cachedTask) {
       sendGetTaskRequest();
@@ -44,7 +51,13 @@ const EditTaskPage: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [cachedTask]);
 
-  if (!cachedTask) {
+  useEffect(() => {
+    if (cachedTask) {
+      projectReq.sendRequest();
+    }
+  }, [cachedTask]);
+
+  if (!projectReq.data) {
     return (
       <Box
         sx={{
@@ -64,7 +77,13 @@ const EditTaskPage: React.FC = () => {
     );
   }
 
-  return <UpdateTaskForm data={cachedTask || ({} as TaskDetail)} employees={employees || []} />;
+  return (
+    <UpdateTaskForm
+      data={cachedTask || ({} as TaskDetail)}
+      employees={employees || []}
+      projectName={projectReq.data.name}
+    />
+  );
 };
 
 /**

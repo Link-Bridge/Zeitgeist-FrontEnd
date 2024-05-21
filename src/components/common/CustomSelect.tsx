@@ -1,39 +1,36 @@
 import { Option, Select } from '@mui/joy';
-import { useEffect, useState } from 'react';
-import { FormState } from '../../hooks/useNewProject';
+import { FormState, FormStateTypes } from '../../hooks/useProjectForm';
 
-interface CustomSelectProps {
-  values: string[];
-  handleChange: (field: keyof FormState, value: string | Date | boolean | null) => void;
+type CustomSelectProps = {
+  options: string[];
+  value: string;
+  values?: string[];
+  handleChange: (field: keyof FormState, value: FormStateTypes) => void;
   name: keyof FormState;
   defaultValue?: string;
   disabled?: boolean;
-}
+};
 
 const CustomSelect = ({
+  options,
   values,
   handleChange,
   name,
-  defaultValue,
+  value,
   disabled = false,
 }: CustomSelectProps) => {
-  const [currentValue, setCurrentValue] = useState<string | null>(null);
-
-  useEffect(() => {
-    setCurrentValue(defaultValue ?? null);
-  }, [defaultValue]);
-
   function onChange(_: React.SyntheticEvent | null, newVal: string | null) {
-    setCurrentValue(newVal);
     handleChange(name, newVal);
   }
 
+  const valuesSet = values ?? options;
+
   return (
-    <Select value={currentValue} onChange={onChange} disabled={disabled}>
-      {values.map(value => {
+    <Select value={value} onChange={onChange} disabled={disabled}>
+      {options.map((option, i) => {
         return (
-          <Option key={value} value={value}>
-            {value}
+          <Option key={i} value={valuesSet[i]}>
+            {option}
           </Option>
         );
       })}

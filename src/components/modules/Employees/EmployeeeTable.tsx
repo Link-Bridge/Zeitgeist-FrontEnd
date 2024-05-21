@@ -4,9 +4,9 @@ import { useContext, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
+import useDeleteEmployee from '../../../hooks/useDeleteEmployee';
 import useHttp from '../../../hooks/useHttp';
 import { axiosInstance } from '../../../lib/axios/axios';
-import { DepartmentEntity } from '../../../types/department';
 import { Response } from '../../../types/response';
 import { Role } from '../../../types/role';
 import { BASE_API_URL, RequestMethods } from '../../../utils/constants';
@@ -46,15 +46,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
 
-  const { data: departmentData, sendRequest: getDepartments } = useHttp<Response<DepartmentEntity>>(
-    `/department/getAllDepartments`,
-    RequestMethods.GET
-  );
-
-  useEffect(() => {
-    getDepartments();
-    // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  const { deleteEmployee, error: deletError } = useDeleteEmployee();
 
   useEffect(() => {
     reqEmployees.sendRequest();
@@ -66,7 +58,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     if (reqEmployees.error) {
       setState({ open: true, message: reqEmployees.error.message, type: 'danger' });
     }
-  }, [reqEmployees.error, setState]);
+    if (deletError) {
+      setState({ open: true, message: deletError.message, type: 'danger' });
+    }
+  }, [reqEmployees.error, deletError, setState]);
 
   useEffect(() => {
     const filteredEmployees =
@@ -81,37 +76,13 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     setSearchResults(filteredEmployees);
   }, [searchTerm, reqEmployees.data, filterOption]);
 
-  const findDepartmentId = (title: string): string | null => {
-    const department = departmentData?.data.find(department => department.title === title);
-
-    return department ? department.id : null;
-  };
-
   const handleRolChange = async (newRoleId: string, userId: string) => {
-    if (!newRoleId || !userId || !departmentData?.data) return;
+    if (!newRoleId || !userId) return;
     try {
-      let departmentId: string | null = null;
-
-      const isLegal = reqRoles.data?.data.find(role => role.title === 'Legal');
-      const isAccounting = reqRoles.data?.data.find(role => role.title === 'Accounting');
-
-      if (isLegal && isLegal.id === newRoleId) {
-        departmentId = findDepartmentId('Legal');
-      } else if (isAccounting && isAccounting.id === newRoleId) {
-        departmentId = findDepartmentId('Accounting');
-      } else {
-        departmentId = findDepartmentId('Without department');
-      }
-
-      const response = await axiosInstance.put(
-        `${BASE_API_URL}/admin/role`,
-        {
-          userId: userId,
-          roleId: newRoleId,
-          departmentId: departmentId ? departmentId : null,
-        },
-        { headers: { Authorization: `Bearer ${localStorage.getItem('idToken')}` } }
-      );
+      const response = await axiosInstance.put(`${BASE_API_URL}/admin/role`, {
+        userId: userId,
+        roleId: newRoleId,
+      });
 
       if (response.status === 200) {
         const updatedEmployees = searchResults.map(employee => {
@@ -131,12 +102,15 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     }
   };
 
-  const handleDeleteEmployee = (id: string) => {
-    if (reqEmployees.data) {
+  const handleDeleteEmployee = async (id: string) => {
+    try {
+      await deleteEmployee(id);
       const updatedEmployees = searchResults.filter(employee => employee.id !== id);
       setSearchResults(updatedEmployees);
+      setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
+    } catch (error) {
+      setState({ open: true, message: 'Failed to delete employee', type: 'danger' });
     }
-    setState({ open: true, message: 'Employee deleted successfully', type: 'success' });
   };
 
   const { employee: employeeContext } = useContext(EmployeeContext);
@@ -224,7 +198,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
         description='Are you sure you want to delete this employee?'
         id={currentEmployeeId}
         setOpen={setOpen}
-        handleDeleteEmployee={handleDeleteEmployee}
+        handleDelete={handleDeleteEmployee}
       />
     </Sheet>
   );

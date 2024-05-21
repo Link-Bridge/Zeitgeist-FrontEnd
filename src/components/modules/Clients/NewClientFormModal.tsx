@@ -9,7 +9,7 @@ import { SnackbarContext } from '../../../hooks/snackbarContext';
 import useHttp from '../../../hooks/useHttp';
 import { CompanyEntity } from '../../../types/company';
 import { RequestMethods } from '../../../utils/constants';
-import { dateGreaterThanToday, validRFC } from '../../../utils/methods';
+import { validRFC } from '../../../utils/methods';
 import CancelButton from '../../common/CancelButton';
 import CreateClientButton from './CreateClientButton';
 
@@ -403,8 +403,8 @@ const NewClientFormModal = ({ open, setOpen, setRefetch }: NewClientFormModalPro
                     type: 'danger',
                   });
                 } else if (
-                  dateGreaterThanToday(date) ||
-                  dateGreaterThanToday(dayjs(date).subtract(1, 'day').toDate())
+                  dayjs(date).isAfter(dayjs(), 'day') ||
+                  dayjs(date).subtract(1, 'day').isAfter(dayjs(), 'day')
                 ) {
                   setErrors(prevErrors => ({
                     ...prevErrors,

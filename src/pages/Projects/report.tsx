@@ -90,8 +90,10 @@ const ProjectReport: React.FC = () => {
     setYear(Number(value));
   };
 
-  const handleMonthChange = (event: SyntheticEvent | null, value: string | null) => {
-    setMonth(Number(value));
+  const handleMonthChange = (event: SyntheticEvent | null, value: number | null) => {
+    if (value !== null) {
+      setMonth(value);
+    }
   };
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -174,7 +176,7 @@ const ProjectReport: React.FC = () => {
       <Box
         sx={{
           display: 'flex',
-          justifyContent: 'flex-end',
+          justifyContent: 'flex-start',
           marginBottom: '10px',
         }}
       >
@@ -185,6 +187,7 @@ const ProjectReport: React.FC = () => {
         <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
           <section className='flex flex-wrap justify-end gap-3 mb-5'>
             <Select
+              defaultValue={1}
               placeholder='Month'
               indicator={<KeyboardArrowDown />}
               sx={{

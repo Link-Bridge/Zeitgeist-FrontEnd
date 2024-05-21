@@ -8,7 +8,7 @@ const Tasks = () => {
   return (
     <Routes>
       <Route path='/' element={<AssignedTasks />} />
-      <Route path='/:projectId/create' element={<NewTask />} />
+      <Route path='/:idProject/create' element={<NewTask />} />
       <Route path='/:id' element={<TaskDetails />} />
       <Route path='/edit/:id' element={<EditTask />} />
       <Route path='*' element={<Navigate to='/404' />} />

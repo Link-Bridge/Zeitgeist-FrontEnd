@@ -1,10 +1,14 @@
-import ArchiveIcon from '@mui/icons-material/Archive';
-import AssessmentOutlinedIcon from '@mui/icons-material/AssessmentOutlined';
-import EditOutlinedIcon from '@mui/icons-material/EditOutlined';
-import EventNoteIcon from '@mui/icons-material/EventNote';
-import UnarchiveIcon from '@mui/icons-material/Unarchive';
+/* eslint-disable react-hooks/exhaustive-deps */
+import {
+  ArchiveRounded,
+  AssessmentOutlined,
+  EditOutlined,
+  EventNoteRounded,
+  UnarchiveRounded,
+} from '@mui/icons-material';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
@@ -25,7 +29,7 @@ import { ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
-import { formatDate, truncateText } from '../../utils/methods';
+import { truncateText } from '../../utils/methods';
 
 const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover: string }> = {
   [ProjectStatus.NONE]: statusChipColorCombination.default,
@@ -99,9 +103,11 @@ const ProjectDetails = () => {
     if (tasks && tasks.data) {
       setInitialTasks(tasks.data);
 
-      setTotalHours(() =>
-        initialTasks.reduce((totalHours, task) => totalHours + (task.workedHours || 0), 0)
+      const calculatedHours = tasks.data.reduce(
+        (totalHours, task) => totalHours + (task.workedHours || 0),
+        0
       );
+      setTotalHours(calculatedHours);
     }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -120,11 +126,6 @@ const ProjectDetails = () => {
     return dateA.getTime() - dateB.getTime();
   });
 
-  const { data: updatedCompany, sendRequest: updateStatus } = useHttp<{ data: CompanyEntity }>(
-    `${APIPath.PROJECT_DETAILS}/${id}`,
-    RequestMethods.PUT
-  );
-
   useEffect(() => {
     if (!data) {
       sendRequest();
@@ -137,18 +138,20 @@ const ProjectDetails = () => {
       setCompanyName(company.data.name);
     }
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [data, company, updatedCompany, projectStatus]);
+  }, [data, company, projectStatus]);
 
   const handleStatusChange = async (newStatus: ProjectStatus) => {
     try {
-      await updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
-      setState({ open: true, message: 'Project status updated successfully!', type: 'success' });
-
-      if (updatedCompany) {
-        setProjectStatus(newStatus);
-      }
-    } catch (error) {
-      setState({ open: true, message: `Error updating project status: ${error}`, type: 'danger' });
+      setUpdating(true);
+      await axiosInstance.put(`${BASE_API_URL}/project/details/${id}`, {
+        status: newStatus,
+      });
+      setProjectStatus(newStatus);
+      setState({ open: true, message: 'Status updated successfully.', type: 'success' });
+    } catch {
+      setState({ open: true, message: 'Error updating status.', type: 'danger' });
+    } finally {
+      setUpdating(false);
     }
   };
 
@@ -291,7 +294,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<EditOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Edit</Typography>
               </Button>
@@ -306,7 +309,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                 }}
-                startDecorator={<AssessmentOutlinedIcon sx={{ width: 24, color: colors.gold }} />}
+                startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
                 <Typography sx={{ color: colors.gold }}>Report</Typography>
               </Button>
@@ -321,7 +324,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<UnarchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Unarchive</Typography>
@@ -336,7 +339,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                   }}
-                  startDecorator={<ArchiveIcon sx={{ width: 24, color: colors.gold }} />}
+                  startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
                   {' '}
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
@@ -356,12 +359,13 @@ const ProjectDetails = () => {
                 <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
+                    disabled={updating}
                     options={Object.values(ProjectStatus)}
                     colorMap={statusColorMap}
                     onChange={function (newValue: string): void {
                       handleStatusChange(newValue as ProjectStatus);
                     }}
-                    defaultValue={projectStatus}
+                    value={projectStatus}
                   ></GenericDropdown>
                 )}
               </div>
@@ -392,20 +396,28 @@ const ProjectDetails = () => {
 
           <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
             <div className='flex items-center'>
-              <EventNoteIcon />
-              <p className='ml-3'>Start Date: {data?.startDate && formatDate(data?.startDate)}</p>
+              <EventNoteRounded />
+              <p className='ml-3'>
+                Start Date:{' '}
+                {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
+              </p>
             </div>
 
             <div className='flex items-center'>
-              <EventNoteIcon />
-              <p className='ml-3'>End Date: {data?.startDate && formatDate(data?.endDate)}</p>
+              <EventNoteRounded />
+              <p className='ml-3'>
+                End Date:{' '}
+                {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
+              </p>
             </div>
           </Box>
         </section>
       </Card>
 
       <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold'>Project Tasks</h1>
+        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+          Project Tasks
+        </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
           <AddButton onClick={() => {}} />
         </Link>

@@ -1,6 +1,6 @@
-import { KeyboardArrowDown } from '@mui/icons-material';
-import { Box, Chip, Option, Select, selectClasses } from '@mui/joy';
-import { useEffect, useState } from 'react';
+import { CloseRounded, KeyboardArrowDown } from '@mui/icons-material';
+import { Box, Chip, IconButton, Option, Select, selectClasses } from '@mui/joy';
+import { SxProps } from '@mui/joy/styles/types';
 
 interface ColorMapEntity {
   bg: string;
@@ -9,12 +9,15 @@ interface ColorMapEntity {
 }
 
 export interface GenericDropdownProps {
-  defaultValue?: string;
   options: string[];
   values?: string[];
+  value: string | null;
   colorMap?: Record<string, ColorMapEntity>;
-  onChange: (newValue: string) => void;
+  onChange: (newValue: string | null) => void;
   placeholder?: string;
+  sx?: SxProps;
+  disabled?: boolean;
+  clearable?: boolean;
 }
 
 /**
@@ -25,18 +28,6 @@ export interface GenericDropdownProps {
  * @returns TSX Component
  */
 function GenericDropdown(props: GenericDropdownProps) {
-  const [currentValue, setCurrentValue] = useState<string | null>(null);
-
-  useEffect(() => {
-    setCurrentValue(props.defaultValue ?? null);
-  }, [props.defaultValue]);
-
-  function handleChange(_: React.SyntheticEvent | null, newVal: unknown) {
-    const val = String(newVal);
-    setCurrentValue(val);
-    props.onChange(val);
-  }
-
   let colorCombination: ColorMapEntity = {
     bg: '#C4C4C4',
     bgHover: '#A0A0A0',
@@ -44,44 +35,69 @@ function GenericDropdown(props: GenericDropdownProps) {
   };
 
   if (props.colorMap) {
-    colorCombination = props.colorMap[currentValue ?? ''] ?? colorCombination;
+    colorCombination = props.value ? props.colorMap[props.value] : colorCombination;
   }
 
-  return (
-    <Chip
-      component={Select}
-      indicator={<KeyboardArrowDown />}
-      onChange={handleChange}
-      value={currentValue}
-      placeholder={props.placeholder}
-      sx={{
-        flex: 'none',
-        bgcolor: colorCombination?.bg,
-        color: colorCombination?.font,
-        width: 240,
-        fontSize: '1rem',
+  const values = props.values ?? props.options;
+  const clearable = props.clearable ?? false;
 
-        [`&:hover`]: {
-          bgcolor: colorCombination.bgHover,
-        },
-        [`& .${selectClasses.indicator}`]: {
-          transition: '0.2s',
-          [`&.${selectClasses.expanded}`]: {
-            transform: 'rotate(-180deg)',
+  return (
+    <div className='flex'>
+      <Chip
+        component={Select}
+        indicator={<KeyboardArrowDown />}
+        onChange={(_, newVal) => props.onChange(newVal as string)}
+        value={props.value}
+        placeholder={props.placeholder}
+        disabled={props.disabled ?? false}
+        sx={{
+          flex: 'none',
+          bgcolor: colorCombination?.bg,
+          color: colorCombination?.font,
+          width: 240,
+          fontSize: '1rem',
+
+          [`&:hover`]: {
+            bgcolor: colorCombination.bgHover,
           },
-        },
-      }}
-    >
-      <Box sx={{ overflowY: 'auto', maxHeight: 300 }}>
-        {props.options.map((option, i) => {
-          return (
-            <Option key={i} value={option}>
-              {option}
-            </Option>
-          );
-        })}
-      </Box>
-    </Chip>
+          [`& .${selectClasses.indicator}`]: {
+            transition: '0.2s',
+            [`&.${selectClasses.expanded}`]: {
+              transform: 'rotate(-180deg)',
+            },
+          },
+          ...props.sx,
+        }}
+      >
+        <Box sx={{ overflowY: 'auto', maxHeight: 300 }}>
+          {props.options.map((option, i) => {
+            return (
+              <Option key={i} value={values[i]}>
+                {option}
+              </Option>
+            );
+          })}
+        </Box>
+      </Chip>
+      {clearable && props.value && (
+        // display the button and remove select indicator
+        // when user has selected a value
+        <IconButton
+          size='sm'
+          variant='plain'
+          color='neutral'
+          onMouseDown={event => {
+            // don't open the popup when clicking on this button
+            event.stopPropagation();
+          }}
+          onClick={() => {
+            props.onChange(null);
+          }}
+        >
+          <CloseRounded />
+        </IconButton>
+      )}
+    </div>
   );
 }
 
