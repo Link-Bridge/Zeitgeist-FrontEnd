@@ -22,7 +22,9 @@ function GenericTextArea<T extends string = string>({
 }: GenericTextAreaProps<T>) {
   return (
     <FormControl error={!!errorString}>
-      <FormLabel>{label}</FormLabel>
+      <FormLabel>
+        {label} {required && <span className='text-red-600'>*</span>}
+      </FormLabel>
       <Textarea
         {...props}
         required={required}
