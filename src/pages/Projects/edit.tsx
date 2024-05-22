@@ -76,6 +76,7 @@ const NewProject = () => {
               required
               label='Project Name'
               value={form.formState.name}
+              max={70}
             />
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
@@ -115,6 +116,7 @@ const NewProject = () => {
               handleChange={form.handleChange}
               label='Matter'
               value={form.formState.matter}
+              max={70}
             />
           </section>
           <FormControl>
@@ -126,6 +128,7 @@ const NewProject = () => {
               handleChange={form.handleChange}
               label='Description'
               value={form.formState.description}
+              max={255}
             />
           </FormControl>
           <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
@@ -138,6 +141,7 @@ const NewProject = () => {
                 onChange={newVal => {
                   form.handleChange('startDate', newVal ?? form.formState.startDate);
                 }}
+                slotProps={{ textField: { error: !!form.errors.startDate } }}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
@@ -148,6 +152,7 @@ const NewProject = () => {
               <DatePicker
                 value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => form.handleChange('endDate', e)}
+                slotProps={{ textField: { error: !!form.errors.endDate } }}
               />
               {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
             </FormControl>

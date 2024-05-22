@@ -51,7 +51,7 @@ const formReducer = (state: FormState, action: FormAction) => {
 function validate(formState: FormState) {
   const errors: FormErrors = {};
 
-  if (formState.title.trim() === '') {
+  if (!formState.title.trim()) {
     errors.title = 'Title is required';
   }
 
@@ -64,7 +64,7 @@ function validate(formState: FormState) {
   }
 
   if (formState.description.length > 255) {
-    errors.description = 'Description must be less than 255 characters';
+    errors.description = 'Description must be less than 256 characters';
   }
 
   if (formState.workedHours < 0) {
