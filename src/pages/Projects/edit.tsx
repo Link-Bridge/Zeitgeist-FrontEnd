@@ -44,13 +44,12 @@ const NewProject = () => {
   }, []);
 
   useEffect(() => {
-    console.log(projectReq.data);
     if (projectReq.data) {
       form.setState({
         name: projectReq.data.name,
         idCompany: projectReq.data.idCompany,
         category: projectReq.data.category,
-        matter: projectReq.data.matter,
+        matter: projectReq.data.matter ?? '',
         description: projectReq.data.description,
         startDate: dayjs(projectReq.data.startDate),
         endDate: projectReq.data.endDate ? dayjs(projectReq.data.endDate) : null,
