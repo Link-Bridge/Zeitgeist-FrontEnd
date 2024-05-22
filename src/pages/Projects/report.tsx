@@ -291,7 +291,7 @@ const ProjectReport: React.FC = () => {
                   {report.project.name}
                 </p>
               </section>
-              <section className='mb-4 xl:mb-8'>
+              <section className='mb-4 xl:mb-8 break-words'>
                 {' '}
                 <p>{report.project.description}</p>{' '}
               </section>
@@ -445,7 +445,7 @@ const ProjectReport: React.FC = () => {
                     </div>
 
                     <div className='mb-4'>
-                      <p>{item.description}</p>
+                      <p className='break-words'>{item.description}</p>
                     </div>
 
                     <div className='flex gap-4 mb-4'>
