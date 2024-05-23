@@ -1,15 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
 
-import colors from '../../colors';
-import { SnackbarContext } from '../../hooks/snackbarContext';
-import useHttp from '../../hooks/useHttp';
-
+import InfoIcon from '@mui/icons-material/Info';
 import { Box } from '@mui/joy';
+import Alert from '@mui/joy/Alert';
 import Button from '@mui/joy/Button';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
+import colors from '../../colors';
+import { SnackbarContext } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
 
 import { useNavigate } from 'react-router-dom';
 import { ProjectEntity } from '../../types/project';
@@ -108,6 +109,15 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
             ? 'Are sure you want to unarchive this project?'
             : 'Are sure you want to archive this project?'}
         </Typography>
+        <Alert
+          size='lg'
+          sx={{ mt: 2, pr: 8, border: '#333333' }}
+          startDecorator={<InfoIcon />}
+          variant='soft'
+          color='primary'
+        >
+          Don't worry, this action can be undone.
+        </Alert>
         <Box
           mt={3}
           display='flex'
