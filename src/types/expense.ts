@@ -48,6 +48,8 @@ export interface ExpenseEntity {
  * @param createdAt?: Date - Expense Report creation date (optional)
  * @param updatedAt?: Date - Expense Report update date (optional)
  * @param idEmployee: string - Unique identifier of the employee associated
+ * @param employeeFirstName?: string - Employee first name (optional)
+ * @param employeeLastName?: string - Employee last name (optional)
  * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
  * @param totalAmount?: Decimal - Total amount of the expenses associated with the report (optional)
  *
@@ -63,6 +65,8 @@ export interface ExpenseReport {
   createdAt?: Date | null;
   updatedAt?: Date | null;
   idEmployee: string;
+  employeeFirstName?: string;
+  employeeLastName?: string;
   expenses?: ExpenseEntity[];
   totalAmount?: number | null;
 }

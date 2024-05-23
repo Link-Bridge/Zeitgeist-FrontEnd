@@ -1,6 +1,6 @@
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Box, Button, Typography } from '@mui/joy';
+import { Box, Button, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import { useEffect, useState } from 'react';
@@ -10,6 +10,8 @@ import colors from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
+import { ExpensesTable } from '../../components/modules/Expenses/ExpensesTable';
+import StatusChip from '../../components/modules/Expenses/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport } from '../../types/expense';
 import { APIPath, RequestMethods } from '../../utils/constants';
@@ -22,10 +24,21 @@ function dateParser(date: Date): string {
   return `${day}/${month}/${year}`;
 }
 
+function capitalize(data: string): string {
+  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
+}
+
 const ExpenseDetails = () => {
+  function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
+    if (firstName && lastName) {
+      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
+    }
+  }
+
   const { id } = useParams();
+  const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
-  const [ERToDelete, setDelete] = useState<ExpenseReport | null>(null);
+  const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
     `${APIPath.EXPENSE_REPORT}/${id}`,
     RequestMethods.GET
@@ -34,6 +47,8 @@ const ExpenseDetails = () => {
   useEffect(() => {
     if (!data) {
       sendRequest();
+    } else {
+      employeeNameParser(data.employeeFirstName, data.employeeLastName);
     }
   }, [data]);
 
@@ -117,13 +132,13 @@ const ExpenseDetails = () => {
             </div>
           </section>
           <section className='flex-wrap grid my-2'>
-            <p className='grow-0 text-clip overflow-hidden'>{data.description}</p>
+            <p className='grow-0 text-wrap break-words'>{data.description}</p>
           </section>
-          <Divider sx={{ marginBottom: '30px' }} />
-          <section className='grid grid-cols-2 lg:grid-cols-4 gap-4 items-center'>
+          <Divider sx={{ marginBottom: '10px' }} />
+          <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
-              {/* <StatusChip status={capitalize(data.status)} /> */}
+              <StatusChip status={data.status ? capitalize(data.status) : 'NONE'} />
             </Box>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Total</p>
@@ -134,8 +149,8 @@ const ExpenseDetails = () => {
             </Box>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Name</p>
-              {data.idEmployee ? (
-                <ColorChip label={`${data.idEmployee}`} color={`${colors.null}`}></ColorChip>
+              {employeeName != '' ? (
+                <ColorChip label={`${employeeName}`} color={`${colors.null}`}></ColorChip>
               ) : (
                 <ColorChip label='No employee assigned' color={`${colors.null}`}></ColorChip>
               )}
@@ -155,7 +170,12 @@ const ExpenseDetails = () => {
               </Box>
             </Box>
           </section>
-          <section className='flex justify-end '>
+          <section className='mb-4'>
+            <Sheet className='max-h-[132px] lg:max-h-[230px]' sx={{ overflow: 'auto' }}>
+              <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
+            </Sheet>
+          </section>
+          <section className='flex justify-end'>
             <Box className='flex flex-row gap-4'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
