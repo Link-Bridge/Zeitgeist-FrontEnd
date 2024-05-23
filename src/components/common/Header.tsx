@@ -40,8 +40,8 @@ const Header = ({ pageTitle }: HeaderProps) => {
       </section>
 
       <section className='hidden md:flex justify-between items-center mt-3'>
-        <a href='https://calendar.google.com/calendar/' target='_blank'>
-          <CalendarMonthIcon fontSize='large' className='mr-8 text-[#C29A51]' />
+        <a href='https://calendar.google.com/calendar/' className='mr-8' target='_blank'>
+          <CalendarMonthIcon fontSize='large' className='text-[#C29A51]' />
         </a>
         <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
       </section>
