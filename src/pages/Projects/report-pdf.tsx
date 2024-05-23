@@ -3,6 +3,15 @@ import colors from '../../colors';
 import { Report } from '../../types/project-report';
 import { truncateText } from '../../utils/methods';
 
+function chunkText(text: string, len: number): string {
+  let txt = '';
+  for (let i = 0; i < text.length; i += len) {
+    txt += text.substring(i, i + len > text.length ? text.length : i + len);
+    txt += '\n';
+  }
+  return txt;
+}
+
 interface reportProps {
   data: Report;
 }
@@ -90,10 +99,10 @@ const ProjectReportPDF = (props: reportProps) => {
       <Page size='A4' style={{ backgroundColor: 'white' }}>
         <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '20px' }}>
           <Text style={{ textAlign: 'center', fontSize: 26, fontFamily: 'Times-Bold' }}>
-            {props.data.project.name}
+            {chunkText(props.data.project.name, 38)}
           </Text>
           {props.data.project.description && (
-            <Text style={{ fontSize: 14 }}>{props.data.project.description}</Text>
+            <Text style={{ fontSize: 14 }}>{chunkText(props.data.project.description, 68)}</Text>
           )}
 
           <View style={{ gap: '20px' }}>
@@ -214,13 +223,15 @@ const ProjectReportPDF = (props: reportProps) => {
               key={item.title}
             >
               <View style={{ gap: '10px' }}>
-                {tasks % 4 == 0 && (
+                {tasks % 3 == 0 && (
                   <Text break style={{ fontSize: 20 }}>
-                    {item.title}
+                    {chunkText(item.title, 47)}
                   </Text>
                 )}
-                {tasks % 4 != 0 && <Text style={{ fontSize: 20 }}>{item.title}</Text>}
-                <Text style={{ fontSize: 14 }}>{item.description}</Text>
+                {tasks % 3 != 0 && (
+                  <Text style={{ fontSize: 20 }}>{chunkText(item.title, 47)}</Text>
+                )}
+                <Text style={{ fontSize: 14 }}>{chunkText(item.description, 68)}</Text>
 
                 <View
                   style={{
