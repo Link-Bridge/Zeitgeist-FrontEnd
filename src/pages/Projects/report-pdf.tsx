@@ -2,7 +2,7 @@ import { Document, Page, Text, View } from '@react-pdf/renderer';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
 import { truncateText } from '../../utils/methods';
-import { numberToMonth, dateParser, statusColor } from './reportMethods';
+import { dateParser, numberToMonth, statusColor } from './reportMethods';
 
 interface reportProps {
   data: Report;

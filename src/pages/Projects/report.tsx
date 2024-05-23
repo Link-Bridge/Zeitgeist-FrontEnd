@@ -23,8 +23,8 @@ import { axiosInstance } from '../../lib/axios/axios';
 import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
-import { dateParser, filterteParser, capitalize } from './reportMethods';
 import ProjectReportPDF from './report-pdf';
+import { capitalize, dateParser, filterteParser } from './reportMethods';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
