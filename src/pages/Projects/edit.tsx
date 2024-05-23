@@ -89,6 +89,7 @@ const NewProject = () => {
                 name='idCompany'
                 handleChange={form.handleChange}
                 value={form.formState.idCompany}
+                disabled
               />
               {form.errors.idCompany ? (
                 <FormHelperText>{form.errors.idCompany}</FormHelperText>

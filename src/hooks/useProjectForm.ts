@@ -105,9 +105,9 @@ const validate = (formState: FormState) => {
     }
 
     if (
-      isNaN(formState.startDate.day()) ||
-      isNaN(formState.startDate.month()) ||
-      isNaN(formState.startDate.year())
+      isNaN(formState.endDate.day()) ||
+      isNaN(formState.endDate.month()) ||
+      isNaN(formState.endDate.year())
     ) {
       errors.endDate = 'Invalid date';
     }
