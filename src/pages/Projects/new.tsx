@@ -3,7 +3,7 @@ import { Button, Card, FormControl, FormHelperText, FormLabel, Switch } from '@m
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link } from 'react-router-dom';
+import { Link, useLocation } from 'react-router-dom';
 import colors from '../../colors';
 import CustomSelect from '../../components/common/CustomSelect';
 import GenericInput from '../../components/common/GenericInput';
@@ -17,6 +17,7 @@ import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/p
 import { RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
+  const location = useLocation();
   const { employee } = useContext(EmployeeContext);
 
   const form = useProjectForm();
@@ -32,13 +33,15 @@ const NewProject = () => {
 
   useEffect(() => {
     req.sendRequest();
+    if (location.state && location.state.clientId)
+      form.handleChange('idCompany', location.state.clientId);
   }, []);
 
   useEffect(() => {
     if (!admin) {
-      form.handleChange('area', employee!.role);
+      form.handleChange('area', employee?.role ?? null);
     }
-  }, [admin]);
+  }, [admin, employee]);
 
   return (
     <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
@@ -54,6 +57,7 @@ const NewProject = () => {
               required
               label='Project Name'
               value={form.formState.name}
+              max={70}
             />
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
@@ -93,19 +97,19 @@ const NewProject = () => {
               handleChange={form.handleChange}
               label='Matter'
               value={form.formState.matter}
+              max={70}
             />
           </section>
-          <FormControl>
-            <GenericTextArea
-              minRows={5}
-              maxRows={5}
-              name='description'
-              errorString={form.errors.description}
-              handleChange={form.handleChange}
-              label='Description'
-              value={form.formState.description}
-            />
-          </FormControl>
+          <GenericTextArea
+            minRows={5}
+            maxRows={5}
+            name='description'
+            errorString={form.errors.description}
+            handleChange={form.handleChange}
+            label='Description'
+            value={form.formState.description}
+            max={255}
+          />
           <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
             <FormControl error={!!form.errors.startDate}>
               <FormLabel>
@@ -116,6 +120,7 @@ const NewProject = () => {
                 onChange={newVal => {
                   form.handleChange('startDate', newVal ?? form.formState.startDate);
                 }}
+                slotProps={{ textField: { error: !!form.errors.startDate } }}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
@@ -126,6 +131,7 @@ const NewProject = () => {
               <DatePicker
                 value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => form.handleChange('endDate', e)}
+                slotProps={{ textField: { error: !!form.errors.startDate } }}
               />
               {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
             </FormControl>

@@ -53,7 +53,7 @@ export const ProjectsClientList = ({ clientId, isCompanyArchived }: ProjectsClie
           <section className='flex gap-5'>
             <AddButton
               onClick={() => {
-                navigate(`${RoutesPath.PROJECTS}/new`);
+                navigate(`${RoutesPath.PROJECTS}/new`, { state: { clientId } });
               }}
             ></AddButton>
           </section>
