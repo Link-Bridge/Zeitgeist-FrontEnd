@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import dayjs from 'dayjs';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
