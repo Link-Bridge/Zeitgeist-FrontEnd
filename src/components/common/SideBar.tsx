@@ -35,7 +35,7 @@ const SideBar = () => {
 
   const SideBarContent = () => (
     <aside
-      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-80 h-full`}
+      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 h-full w-full`}
     >
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
       <div className='relative z-10 w-full'>
@@ -77,14 +77,12 @@ const SideBar = () => {
           <MenuRounded />
         </IconButton>
       </div>
-      <div className='hidden md:block'>
+      <div className='hidden md:block w-72'>
         <SideBarContent />
       </div>
-      <div className='md:hidden'>
-        <Drawer open={isSidebarOpen} onClose={toggleSidebar}>
-          <SideBarContent />
-        </Drawer>
-      </div>
+      <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
+        <SideBarContent />
+      </Drawer>
     </div>
   );
 };
