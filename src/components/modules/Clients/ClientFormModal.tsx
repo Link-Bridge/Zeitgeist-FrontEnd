@@ -71,7 +71,6 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             try {
               const res = await form.handleSubmit(e, data ? true : false, id);
               if (data) (updateFunction as Dispatch<SetStateAction<CompanyEntity | null>>)(res);
-              // eslint-disable-next-line @typescript-eslint/no-explicit-any
               else
                 (updateFunction as Dispatch<SetStateAction<CompanyEntity[]>>)(prev =>
                   [...prev, res].sort((a, b) => a.name.localeCompare(b.name))
