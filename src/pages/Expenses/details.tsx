@@ -21,7 +21,7 @@ function dateParser(date: Date): string {
   const day = arr[2].substring(0, 2);
   const month = arr[1];
   const year = arr[0];
-  return `${day}/${month}/${year}`;
+  return `${day}-${month}-${year}`;
 }
 
 function capitalize(data: string): string {
