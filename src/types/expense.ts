@@ -7,10 +7,7 @@ export enum ExpenseReportStatus {
 }
 
 /**
- * This class is used to define the structure of the Expense entity
- *
- * @remarks
- * This class is used to define the structure of the Expense entity
+ * This class is used to define the structure of the Expense Entity
  *
  * @param id: string - Unique identifier of the expense
  * @param title: string - Expense title
@@ -23,7 +20,6 @@ export enum ExpenseReportStatus {
  * @param updatedAt?: Date - Expense update date (optional)
  * @param idReport: string - Unique identifier of expense report associated
  * @param urlFile?: string - URL of the file associated with the expense (optional)
- * @returns void
  */
 
 export interface ExpenseEntity {
@@ -41,7 +37,7 @@ export interface ExpenseEntity {
 }
 
 /**
- * @brief This class is used to define the structure of the Expense Report entity
+ * This class is used to define the structure of the ExpenseReport Entity
  *
  * @param id: string - Unique identifier of the expense report
  * @param title: string - Expense Report title
@@ -55,9 +51,6 @@ export interface ExpenseEntity {
  * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
  * @param totalAmount?: Decimal - Total amount of the expenses associated with the report (optional)
  *
- * @return void
- *
- * @description The structure is based on the MER, and there's the idea of using custom data types, like UUID.
  */
 
 export interface ExpenseReport {
