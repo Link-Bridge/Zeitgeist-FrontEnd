@@ -39,7 +39,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
         </a>
         {employeeContext?.employee.imageUrl ? (
           <Avatar
-            src={employeeContext.employee.imageUrl ?? ''}
+            src={employeeContext.employee.imageUrl}
             alt={employeeContext.employee.firstName}
           />
         ) : (
