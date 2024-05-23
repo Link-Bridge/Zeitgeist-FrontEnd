@@ -35,7 +35,7 @@ const SideBar = () => {
 
   const SideBarContent = () => (
     <aside
-      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-screen top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-80`}
+      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-full top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-80`}
     >
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
       <div className='relative z-10 w-full'>
