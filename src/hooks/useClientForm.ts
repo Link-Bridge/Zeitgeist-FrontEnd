@@ -112,13 +112,22 @@ const useClientForm = () => {
         data: payload,
       };
       const res = await axiosInstance(config);
-      setSnackbar({ open: true, message: 'Client created successfully', type: 'success' });
+      setSnackbar({
+        open: true,
+        message: `Client ${update ? 'updated' : 'created'} successfully`,
+        type: 'success',
+      });
       return res.data;
     } catch (error: unknown) {
       console.error(error);
       if (error instanceof AxiosError)
         setSnackbar({ open: true, message: error.response?.data.error, type: 'danger' });
-      else setSnackbar({ open: true, message: 'Error creating client', type: 'danger' });
+      else
+        setSnackbar({
+          open: true,
+          message: `Error ${update ? 'updating' : 'creating'} client`,
+          type: 'danger',
+        });
       throw error;
     } finally {
       setIsPosting(false);
