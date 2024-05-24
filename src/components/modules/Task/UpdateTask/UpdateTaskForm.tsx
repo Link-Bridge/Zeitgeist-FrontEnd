@@ -11,7 +11,13 @@ import useTaskForm, { Fields } from '../../../../hooks/useTaskForm';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail, UpdatedTask } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
-import { APIPath, RequestMethods, RoutesPath } from '../../../../utils/constants';
+import {
+  APIPath,
+  MAX_DATE,
+  MIN_DATE,
+  RequestMethods,
+  RoutesPath,
+} from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import GenericInput from '../../../common/GenericInput';
@@ -124,12 +130,10 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <DatePicker
               value={form.formState.startDate.utc()}
               onChange={newDate => {
-                console.log(newDate);
                 form.handleChange('startDate', newDate ?? form.formState.startDate);
               }}
-              sx={{
-                borderColor: form.errors.startDate ? colors.danger : undefined,
-              }}
+              slotProps={{ textField: { error: !!form.errors.startDate } }}
+              minDate={MIN_DATE}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
@@ -140,6 +144,8 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <DatePicker
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
+              slotProps={{ textField: { error: !!form.errors.endDate } }}
+              maxDate={MAX_DATE}
             />
             {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>
