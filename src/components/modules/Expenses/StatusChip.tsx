@@ -8,8 +8,8 @@ interface StatusChipProps {
 
 const getStatusColor = (status: ExpenseReportStatus) => {
   const statusColors: Record<ExpenseReportStatus, typeof statusChipColorCombination.accepted> = {
-    [ExpenseReportStatus.ACCEPTED]: statusChipColorCombination.done,
-    [ExpenseReportStatus.PAYED]: statusChipColorCombination.accepted,
+    [ExpenseReportStatus.ACCEPTED]: statusChipColorCombination.accepted,
+    [ExpenseReportStatus.PAYED]: statusChipColorCombination.done,
     [ExpenseReportStatus.PENDING]: statusChipColorCombination.inProgress,
     [ExpenseReportStatus.REJECTED]: statusChipColorCombination.cancelled,
     [ExpenseReportStatus.NONE]: statusChipColorCombination.default,

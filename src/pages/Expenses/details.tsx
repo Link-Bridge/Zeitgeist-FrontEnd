@@ -1,4 +1,5 @@
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
+import LinkIcon from '@mui/icons-material/Link';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Box, Button, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
@@ -38,6 +39,7 @@ const ExpenseDetails = () => {
   const { id } = useParams();
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
+  // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
     `${APIPath.EXPENSE_REPORT}/${id}`,
@@ -175,7 +177,24 @@ const ExpenseDetails = () => {
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
-          <section className='flex justify-end'>
+          <section className='flex justify-between items-center'>
+            {data.status == 'Payed' ? (
+              <Button
+                component='a'
+                href={''}
+                variant='plain'
+                startDecorator={<LinkIcon />}
+                target='_blank'
+                sx={{
+                  color: colors.gold,
+                  ':hover': { backgroundColor: colors.lighterGray },
+                }}
+              >
+                Link to voucher
+              </Button>
+            ) : (
+              <div></div>
+            )}
             <Box className='flex flex-row gap-4'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
