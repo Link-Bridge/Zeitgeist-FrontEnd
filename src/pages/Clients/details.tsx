@@ -13,7 +13,7 @@ import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
 import GoBack from '../../components/common/GoBack';
-import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
@@ -38,7 +38,6 @@ const ClientDetails = () => {
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
-  const [refetch, setRefetch] = useState(false);
   const { setState } = useContext(SnackbarContext);
   const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
@@ -73,9 +72,8 @@ const ClientDetails = () => {
   useEffect(() => {
     sendRequest();
     if (data && data.data) setCompany(data.data);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, []);
 
   if (loading) {
     return <div>Loading...</div>;
@@ -136,11 +134,12 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <>
-            <EditClientFormModal
+            <ClientFormModal
               open={editModalOpen}
               setOpen={setEditModalOpen}
-              clientData={company}
-              setRefetch={setRefetch}
+              data={company}
+              id={clientId}
+              updateFunction={setCompany}
             />
             <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
               <div className='flex flex-auto flex-col lg:flex-row justify-between'>
@@ -197,19 +196,19 @@ const ClientDetails = () => {
             </section>
 
             <section className={`flex justify-between mt-8 flex-wrap ${styles.container}`}>
-              <article className='flex gap-1 truncate'>
+              <article className='flex flex-1 min-w-44 gap-1 truncate'>
                 <EmailOutlinedIcon />
-                <p>{company.email}</p>
+                <p className='max-w-full truncate'>{company.email}</p>
               </article>
-              <article className='flex gap-1'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <AbcOutlinedIcon />
                 <p>{company.rfc}</p>
               </article>
-              <article className='flex gap-1 truncate'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <BusinessOutlinedIcon />
-                <p>{company.taxResidence}</p>
+                <p className='max-w-full truncate'>{company.taxResidence}</p>
               </article>
-              <article className='flex gap-1'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <StayPrimaryPortraitOutlinedIcon />
                 <p>{company.phoneNumber}</p>
               </article>
