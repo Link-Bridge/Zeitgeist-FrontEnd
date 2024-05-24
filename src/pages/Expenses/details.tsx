@@ -4,6 +4,7 @@ import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Box, Button, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import trash_can from '../../assets/icons/trash_can.svg';
@@ -16,14 +17,6 @@ import StatusChip from '../../components/modules/Expenses/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport } from '../../types/expense';
 import { APIPath, RequestMethods } from '../../utils/constants';
-
-function dateParser(date: Date): string {
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}-${month}-${year}`;
-}
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -168,7 +161,7 @@ const ExpenseDetails = () => {
                 }}
                 className='flex flex-row'
               >
-                {dateParser(data.startDate)}
+                {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
               </Box>
             </Box>
           </section>

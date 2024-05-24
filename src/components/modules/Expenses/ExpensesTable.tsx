@@ -11,11 +11,13 @@ type ExpensesTableProps = {
 
 const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
   if (expenses?.length === 0) {
-    <ComponentPlaceholder
-      text='No expenses associated to this Report were found.'
-      width='20vh'
-      height='15vh'
-    />;
+    return (
+      <ComponentPlaceholder
+        text='No expenses associated to this Report were found.'
+        width='20vh'
+        height='15vh'
+      />
+    );
   }
 
   return (
@@ -45,7 +47,7 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
               {expense.urlFile ? (
                 <Button
                   component='a'
-                  href={expense.urlFile ? expense.urlFile : ''}
+                  href={expense.urlFile}
                   variant='plain'
                   startDecorator={<LinkIcon />}
                   target='_blank'
