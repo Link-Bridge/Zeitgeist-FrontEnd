@@ -6,7 +6,7 @@ import {
   Toc,
   ViewTimeline,
 } from '@mui/icons-material';
-import { Drawer, IconButton } from '@mui/joy';
+import { Drawer, IconButton, ModalClose } from '@mui/joy';
 import { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
@@ -35,7 +35,7 @@ const SideBar = () => {
 
   const SideBarContent = () => (
     <aside
-      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-cover h-full top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-80`}
+      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-full h-full overflow-y-auto`}
     >
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
       <div className='relative z-10 w-full'>
@@ -77,11 +77,12 @@ const SideBar = () => {
           <MenuRounded />
         </IconButton>
       </div>
-      <div className='hidden md:block'>
+      <div className='hidden md:block w-72'>
         <SideBarContent />
       </div>
-      <div className='md:hidden'>
-        <Drawer open={isSidebarOpen} onClose={toggleSidebar}>
+      <div className='min-h-screen h-full'>
+        <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
+          <ModalClose size='lg' />
           <SideBarContent />
         </Drawer>
       </div>
