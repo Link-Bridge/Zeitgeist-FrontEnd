@@ -59,7 +59,7 @@ const formReducer = (state: FormState, action: FormAction) => {
 
 const validate = (formState: FormState) => {
   const errors: FormErrors = {};
-  if (!formState.name) {
+  if (!formState.name.trim()) {
     errors.name = 'Project name is required';
   }
 
@@ -76,7 +76,7 @@ const validate = (formState: FormState) => {
   }
 
   if (formState.description && formState.description.length > 255) {
-    errors.description = 'Project description must be less than 255 characters';
+    errors.description = 'Project description must be less than 256 characters';
   }
 
   if (!formState.category) {
@@ -105,9 +105,9 @@ const validate = (formState: FormState) => {
     }
 
     if (
-      isNaN(formState.startDate.day()) ||
-      isNaN(formState.startDate.month()) ||
-      isNaN(formState.startDate.year())
+      isNaN(formState.endDate.day()) ||
+      isNaN(formState.endDate.month()) ||
+      isNaN(formState.endDate.year())
     ) {
       errors.endDate = 'Invalid date';
     }
@@ -142,9 +142,15 @@ const useProjectForm = () => {
 
     try {
       setIsPosting(true);
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
 
       const res = await axiosInstance.post(`${BASE_API_URL}${APIPath.PROJECTS}/create`, {
-        ...formState,
+        ...payload,
         status: ProjectStatus.NOT_STARTED,
       });
       setData(res.data);
@@ -166,8 +172,15 @@ const useProjectForm = () => {
     try {
       setIsPosting(true);
 
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
+
       const res = await axiosInstance.put(`${BASE_API_URL}${APIPath.PROJECTS}/edit/${id}`, {
-        ...formState,
+        ...payload,
       });
       setData(res.data);
       setSnackbar({ open: true, message: 'Project updated successfully', type: 'success' });

@@ -6,6 +6,8 @@ type GenericTextAreaProps<T extends string = string> = TextareaProps & {
   handleChange: (name: T, value: string) => void;
   label: string;
   required?: boolean;
+  min?: number;
+  max?: number;
 };
 
 function GenericTextArea<T extends string = string>({
@@ -14,10 +16,12 @@ function GenericTextArea<T extends string = string>({
   handleChange,
   label,
   required = false,
+  min,
+  max,
   ...props
 }: GenericTextAreaProps<T>) {
   return (
-    <FormControl>
+    <FormControl error={!!errorString}>
       <FormLabel>{label}</FormLabel>
       <Textarea
         {...props}
@@ -25,6 +29,7 @@ function GenericTextArea<T extends string = string>({
         name={name}
         value={props.value}
         onChange={e => handleChange(name, e.target.value)}
+        slotProps={{ textarea: { minLength: min, maxLength: max } }}
       />
       {errorString ? <FormHelperText>{errorString}</FormHelperText> : null}
     </FormControl>
