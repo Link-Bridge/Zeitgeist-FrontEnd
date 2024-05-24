@@ -24,26 +24,7 @@ import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
-
-function dateParser(date: Date): string {
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}-${month}-${year}`;
-}
-
-function filterteParser(date: Date): string {
-  const arr = date.toISOString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${year}-${month}-${day}`;
-}
-
-function capitalize(data: string): string {
-  return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
-}
+import { capitalize, dateParser, filterteParser } from './reportMethods';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
@@ -261,7 +242,14 @@ const ProjectReport: React.FC = () => {
               <Typography sx={{ color: colors.gold, paddingTop: '3px' }}>Reset</Typography>
             </Button>
             <PDFDownloadLink
-              document={<ProjectReportPDF data={report} />}
+              document={
+                <ProjectReportPDF
+                  data={report}
+                  usingFilters={usingFilter}
+                  month={month}
+                  year={year}
+                />
+              }
               fileName={`report_${report.project.name}.pdf`}
             >
               <Button

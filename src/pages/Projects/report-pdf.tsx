@@ -2,6 +2,7 @@ import { Document, Page, Text, View } from '@react-pdf/renderer';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
 import { truncateText } from '../../utils/methods';
+import { dateParser, numberToMonth, statusColor } from './reportMethods';
 
 function chunkText(text: string, len: number): string {
   let txt = '';
@@ -14,45 +15,9 @@ function chunkText(text: string, len: number): string {
 
 interface reportProps {
   data: Report;
-}
-
-function dateParser(date: Date): string {
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}-${month}-${year}`;
-}
-
-function statusColor(status: string) {
-  status = status.toUpperCase();
-
-  switch (status) {
-    case 'ACCEPTED':
-      return colors.lightSuccess;
-    case 'NOT STARTED':
-      return colors.lightRed;
-    case 'IN PROGRESS':
-      return colors.warning;
-    case 'IN PROCESS':
-      return colors.warning;
-    case 'UNDER REVISION':
-      return colors.purple;
-    case 'DELAYED':
-      return colors.lightOrange;
-    case 'POSTPONED':
-      return colors.blue;
-    case 'DONE':
-      return colors.success;
-    case 'CANCELLED':
-      return colors.warning;
-    case 'IN QUOTATION':
-      return colors.darkBlue;
-    case 'AREA':
-      return colors.extra;
-    default:
-      return colors.null;
-  }
+  usingFilters: boolean;
+  month: number;
+  year: number;
 }
 
 function infoComponent(title: string, value: string, style: string = '-') {
@@ -84,6 +49,7 @@ function infoComponent(title: string, value: string, style: string = '-') {
 const ProjectReportPDF = (props: reportProps) => {
   let tasks: number = -1;
   const totalTasks: number = Number(props.data?.statistics?.total) || 1;
+  const filterMonth = numberToMonth(props.month);
   const keyMap = new Map<string, string>([
     ['done', 'Done'],
     ['inprogress', 'In process'],
@@ -98,6 +64,11 @@ const ProjectReportPDF = (props: reportProps) => {
     <Document>
       <Page size='A4' style={{ backgroundColor: 'white' }}>
         <View style={{ color: 'black', textAlign: 'justify', margin: 30, gap: '20px' }}>
+          {props.usingFilters === true && (
+            <Text style={{ textAlign: 'right', fontSize: 12, fontFamily: 'Times-Bold' }}>
+              {`${filterMonth !== 'Invalid month number' ? filterMonth : ''} ${props.year}`}
+            </Text>
+          )}
           <Text style={{ textAlign: 'center', fontSize: 26, fontFamily: 'Times-Bold' }}>
             {chunkText(props.data.project.name, 38)}
           </Text>
