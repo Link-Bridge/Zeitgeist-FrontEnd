@@ -6,7 +6,7 @@ import {
   Toc,
   ViewTimeline,
 } from '@mui/icons-material';
-import { Drawer, IconButton } from '@mui/joy';
+import { Drawer, IconButton, ModalClose } from '@mui/joy';
 import { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
@@ -81,6 +81,7 @@ const SideBar = () => {
         <SideBarContent />
       </div>
       <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
+        <ModalClose size='lg' />
         <SideBarContent />
       </Drawer>
     </div>
