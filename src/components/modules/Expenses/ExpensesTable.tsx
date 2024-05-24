@@ -42,7 +42,7 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
           <tr key={expense.id}>
             <td className='truncate'>{expense.title}</td>
             <td>{expense.date ? dayjs.utc(expense.date).format('DD/MM/YYYY') : 'No due date'}</td>
-            <td>{'-'}</td>
+            <td>{expense.supplier ? expense.supplier : '-'}</td>
             <td>
               {expense.urlFile ? (
                 <Button

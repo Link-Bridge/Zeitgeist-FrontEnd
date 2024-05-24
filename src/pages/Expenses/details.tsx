@@ -174,7 +174,7 @@ const ExpenseDetails = () => {
             {data.status == 'Payed' ? (
               <Button
                 component='a'
-                href={''}
+                href={data.urlVoucher ? data.urlVoucher : ''}
                 variant='plain'
                 startDecorator={<LinkIcon />}
                 target='_blank'
