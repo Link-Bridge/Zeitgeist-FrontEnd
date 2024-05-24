@@ -210,7 +210,7 @@ const NewProject = () => {
                 },
               }}
             >
-              <Link to={'..'} replace>
+              <Link to={`/projects/details/${id}`} replace>
                 Cancel
               </Link>
             </Button>

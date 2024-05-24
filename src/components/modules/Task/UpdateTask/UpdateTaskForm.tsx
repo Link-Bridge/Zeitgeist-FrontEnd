@@ -171,7 +171,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           </FormControl>
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
-          <Link to={`/projects/details/${data.idProject}`}>
+          <Link to={`/projects/details/${data.idProject}`} replace>
             <CancelButton onClick={() => {}} />
           </Link>
           <ModifyButton disabled={form.isPosting} onClick={() => form.handleUpdate(data.id)} />

@@ -82,7 +82,7 @@ const SideBar = () => {
       </div>
       <div className='min-h-screen h-full'>
         <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
-          <ModalClose size='lg' />
+          <ModalClose size='lg' sx={{ '&:hover': { bgcolor: 'transparent', color: 'white' } }} />
           <SideBarContent />
         </Drawer>
       </div>
