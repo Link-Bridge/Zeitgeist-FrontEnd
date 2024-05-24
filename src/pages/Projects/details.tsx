@@ -224,13 +224,19 @@ const ProjectDetails = () => {
 
   async function changePayed(projectId: string, payed: boolean) {
     if (data) {
-      setUpdating(true);
-      const res = await axiosInstance.put(`${BASE_API_URL}/project/edit/${projectId}`, {
-        payed,
-        id: projectId,
-      });
-      data.payed = res.data.data.payed;
-      setUpdating(false);
+      try {
+        setUpdating(true);
+        const res = await axiosInstance.put(`${BASE_API_URL}/project/edit/${projectId}`, {
+          payed,
+          id: projectId,
+        });
+        data.payed = res.data.data.payed;
+        setState({ open: true, message: 'Payed status updated successfully.', type: 'success' });
+      } catch {
+        setState({ open: true, message: 'Error updating payed status.', type: 'danger' });
+      } finally {
+        setUpdating(false);
+      }
     }
   }
 
@@ -359,7 +365,7 @@ const ProjectDetails = () => {
                     disabled={updating}
                     options={Object.values(ProjectStatus)}
                     colorMap={statusColorMap}
-                    onChange={function (newValue: string): void {
+                    onChange={function (newValue: string | null): void {
                       handleStatusChange(newValue as ProjectStatus);
                     }}
                     value={projectStatus}

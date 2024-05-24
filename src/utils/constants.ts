@@ -1,3 +1,5 @@
+import dayjs from 'dayjs';
+
 export const BASE_API_URL = import.meta.env.VITE_BASE_API_URL;
 
 export enum RoutesPath {
@@ -26,3 +28,6 @@ export enum RequestMethods {
   PUT = 'PUT',
   DELETE = 'DELETE',
 }
+
+export const MIN_DATE = dayjs('2018-01-01T00:00:00.000Z');
+export const MAX_DATE = dayjs().startOf('day').add(10, 'year');

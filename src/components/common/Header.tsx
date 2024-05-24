@@ -1,5 +1,6 @@
 import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Avatar } from '@mui/joy';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import Colors from '../../colors';
 import { EmployeeContext } from '../../hooks/employeeContext';
@@ -12,14 +13,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
   const { employee: employeeContext } = useContext(EmployeeContext);
   const [currentDate, setCurrentDate] = useState('');
   useEffect(() => {
-    const date = new Date();
-    const dateOptions: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-    setCurrentDate(date.toLocaleDateString('en-US', dateOptions));
+    setCurrentDate(dayjs().format('dddd, MMMM D, YYYY'));
   }, []);
 
   return (
@@ -43,7 +37,16 @@ const Header = ({ pageTitle }: HeaderProps) => {
         <a href='https://calendar.google.com/calendar/' className='mr-8' target='_blank'>
           <CalendarMonthIcon fontSize='large' className='text-[#C29A51]' />
         </a>
-        <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
+        {employeeContext?.employee.imageUrl ? (
+          <Avatar
+            src={employeeContext.employee.imageUrl}
+            alt={employeeContext.employee.firstName}
+          />
+        ) : (
+          <Avatar>
+            {`${employeeContext?.employee.firstName[0]}${employeeContext?.employee.lastName[0]}`}
+          </Avatar>
+        )}
       </section>
     </header>
   );
