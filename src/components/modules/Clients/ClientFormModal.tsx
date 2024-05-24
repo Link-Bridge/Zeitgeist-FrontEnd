@@ -9,7 +9,7 @@ import {
 } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { Dispatch, SetStateAction, useEffect } from 'react';
+import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import useClientForm, { Fields, initialFormState } from '../../../hooks/useClientForm';
 import { CompanyEntity } from '../../../types/company';
@@ -42,10 +42,11 @@ function phoneNumberMask(value: string) {
 
 function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientFormModalProps) {
   const form = useClientForm();
+  const [defaultData, setDefaultData] = useState(initialFormState);
 
   useEffect(() => {
     if (data) {
-      form.setState({
+      setDefaultData({
         name: data.name,
         email: data.email ?? '',
         phoneNumber: phoneNumberMask(data.phoneNumber ?? ''),
@@ -54,14 +55,18 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
         taxResidence: data.taxResidence ?? '',
       });
     }
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
+
+  useEffect(() => {
+    form.setState(defaultData);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [defaultData]);
 
   return (
     <Modal
       open={open}
       onClose={() => {
-        form.setState(initialFormState);
+        form.setState(defaultData);
         setOpen(false);
       }}
       sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
@@ -78,7 +83,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 (updateFunction as Dispatch<SetStateAction<CompanyEntity[]>>)(prev =>
                   [...prev, res].sort((a, b) => a.name.localeCompare(b.name))
                 );
-              form.setState(initialFormState);
+              form.setState(defaultData);
               setOpen(false);
             } catch (err) {}
           }}
@@ -148,7 +153,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 },
               }}
               onClick={() => {
-                form.setState(initialFormState);
+                form.setState(defaultData);
                 setOpen(false);
               }}
             >
