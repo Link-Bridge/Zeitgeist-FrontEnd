@@ -196,19 +196,19 @@ const ClientDetails = () => {
             </section>
 
             <section className={`flex justify-between mt-8 flex-wrap ${styles.container}`}>
-              <article className='flex flex-1 min-w-fit gap-1 truncate'>
+              <article className='flex flex-1 min-w-44 gap-1 truncate'>
                 <EmailOutlinedIcon />
-                <p>{company.email}</p>
+                <p className='max-w-full truncate'>{company.email}</p>
               </article>
-              <article className='flex flex-1 min-w-fit gap-1'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <AbcOutlinedIcon />
                 <p>{company.rfc}</p>
               </article>
-              <article className='flex flex-1 min-w-fit gap-1 truncate'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <BusinessOutlinedIcon />
-                <p>{company.taxResidence}</p>
+                <p className='max-w-full truncate'>{company.taxResidence}</p>
               </article>
-              <article className='flex flex-1 min-w-fit gap-1'>
+              <article className='flex flex-1 min-w-44 gap-1'>
                 <StayPrimaryPortraitOutlinedIcon />
                 <p>{company.phoneNumber}</p>
               </article>
