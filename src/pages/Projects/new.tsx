@@ -14,7 +14,7 @@ import useHttp from '../../hooks/useHttp';
 import useProjectForm, { Fields } from '../../hooks/useProjectForm';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
-import { MIN_DATE, RequestMethods } from '../../utils/constants';
+import { MAX_DATE, MIN_DATE, RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
   const location = useLocation();
@@ -132,7 +132,8 @@ const NewProject = () => {
               <DatePicker
                 value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => form.handleChange('endDate', e)}
-                slotProps={{ textField: { error: !!form.errors.startDate } }}
+                slotProps={{ textField: { error: !!form.errors.endDate } }}
+                maxDate={MAX_DATE}
               />
               {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
             </FormControl>

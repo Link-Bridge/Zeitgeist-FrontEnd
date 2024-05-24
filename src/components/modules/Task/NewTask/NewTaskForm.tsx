@@ -5,7 +5,7 @@ import { default as colors, statusChipColorCombination } from '../../../../color
 import useTaskForm, { Fields } from '../../../../hooks/useTaskForm';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskStatus } from '../../../../types/task-status';
-import { MIN_DATE } from '../../../../utils/constants';
+import { MAX_DATE, MIN_DATE } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
@@ -104,6 +104,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <DatePicker
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
+              slotProps={{ textField: { error: !!form.errors.endDate } }}
+              maxDate={MAX_DATE}
             />
             {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>

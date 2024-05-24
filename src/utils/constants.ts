@@ -30,3 +30,4 @@ export enum RequestMethods {
 }
 
 export const MIN_DATE = dayjs('2018-01-01T00:00:00.000Z');
+export const MAX_DATE = dayjs().startOf('day').add(10, 'year');
