@@ -121,7 +121,9 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   if (reqEmployees.data?.data.length === 0)
     return <ComponentPlaceholder text='No employees found' />;
 
-  return (
+  return searchResults.length === 0 ? (
+    <ComponentPlaceholder text='No employees were found' />
+  ) : (
     <Sheet sx={{ overflow: 'visible', width: '100%', maxWidth: '100%' }}>
       <Table borderAxis='xBetween' sx={{ minWidth: '800px' }} hoverRow>
         <thead>

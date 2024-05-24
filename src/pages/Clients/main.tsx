@@ -9,7 +9,7 @@ import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
-import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
+import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
@@ -31,7 +31,7 @@ const ClientList = (): JSX.Element => {
 
   useEffect(() => {
     handleFilter(filter);
-  }, [searchTerm, clientsRequest.data]);
+  }, [searchTerm, clientsRequest.data, companies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
@@ -120,14 +120,14 @@ const ClientList = (): JSX.Element => {
                 <GenericDropdown
                   value={CompanyFilters.ALL}
                   options={Object.values(CompanyFilters)}
-                  onChange={value => handleFilter(value)}
+                  onChange={value => handleFilter(value ?? CompanyFilters.NOT_ARCHIVED)}
                 />
               </div>
             )}
             <AddButton onClick={openModal} />
           </div>
         </section>
-        <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
+        <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
         <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
           <Loader />
         </section>
@@ -161,14 +161,13 @@ const ClientList = (): JSX.Element => {
               <GenericDropdown
                 value={filter}
                 options={Object.values(CompanyFilters)}
-                onChange={value => handleFilter(value)}
+                onChange={value => handleFilter(value ?? CompanyFilters.NOT_ARCHIVED)}
               />
             </div>
           )}
           <AddButton onClick={openModal} />
         </div>
       </section>
-      <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
       {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
       ) : (
@@ -186,6 +185,7 @@ const ClientList = (): JSX.Element => {
           ))}
         </section>
       )}
+      <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
     </main>
   );
 };

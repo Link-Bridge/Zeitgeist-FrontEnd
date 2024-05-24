@@ -9,6 +9,7 @@ import useTaskForm, { Fields } from '../../../../hooks/useTaskForm';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
+import { MAX_DATE, MIN_DATE } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import GenericInput from '../../../common/GenericInput';
@@ -90,10 +91,11 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             </FormLabel>
             <DatePicker
               value={form.formState.startDate.utc()}
-              onChange={newDate =>
-                form.handleChange('startDate', newDate ?? form.formState.startDate)
-              }
+              onChange={newDate => {
+                form.handleChange('startDate', newDate ?? form.formState.startDate);
+              }}
               slotProps={{ textField: { error: !!form.errors.startDate } }}
+              minDate={MIN_DATE}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
@@ -105,6 +107,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.endDate } }}
+              maxDate={MAX_DATE}
             />
             {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>
