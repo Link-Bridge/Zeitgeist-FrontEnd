@@ -151,7 +151,8 @@ const useProjectForm = () => {
       const payload = { ...formState };
       for (const key in payload) {
         if (typeof payload[key as Fields] === 'string') {
-          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+          (payload[key as Fields] as string | undefined) =
+            (payload[key as Fields] as string).trim() || undefined;
         }
       }
 
@@ -181,7 +182,8 @@ const useProjectForm = () => {
       const payload = { ...formState };
       for (const key in payload) {
         if (typeof payload[key as Fields] === 'string') {
-          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+          (payload[key as Fields] as string | null) =
+            (payload[key as Fields] as string).trim() || null;
         }
       }
 
