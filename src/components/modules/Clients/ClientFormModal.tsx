@@ -90,6 +90,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             label={'Name'}
             value={form.formState.name}
             required
+            max={70}
           />
           <GenericInput
             name={'email' as Fields}
@@ -97,6 +98,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             value={form.formState.email}
             handleChange={form.handleChange}
             label={'Email'}
+            max={150}
           />
           <GenericInput
             name={'phoneNumber' as Fields}
