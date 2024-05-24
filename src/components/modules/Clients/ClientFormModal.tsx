@@ -11,7 +11,7 @@ import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { Dispatch, SetStateAction, useEffect } from 'react';
 import colors from '../../../colors';
-import useClientForm, { Fields } from '../../../hooks/useClientForm';
+import useClientForm, { Fields, initialFormState } from '../../../hooks/useClientForm';
 import { CompanyEntity } from '../../../types/company';
 import GenericInput from '../../common/GenericInput';
 
@@ -60,7 +60,10 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
   return (
     <Modal
       open={open}
-      onClose={() => setOpen(false)}
+      onClose={() => {
+        form.setState(initialFormState);
+        setOpen(false);
+      }}
       sx={{ display: 'flex', alignItems: 'center', justifyContent: 'center' }}
     >
       <ModalDialog size='lg'>
@@ -75,6 +78,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 (updateFunction as Dispatch<SetStateAction<CompanyEntity[]>>)(prev =>
                   [...prev, res].sort((a, b) => a.name.localeCompare(b.name))
                 );
+              form.setState(initialFormState);
               setOpen(false);
             } catch (err) {}
           }}
@@ -141,7 +145,10 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                   color: 'white',
                 },
               }}
-              onClick={() => setOpen(false)}
+              onClick={() => {
+                form.setState(initialFormState);
+                setOpen(false);
+              }}
             >
               Cancel
             </Button>

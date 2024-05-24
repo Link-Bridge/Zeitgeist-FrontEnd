@@ -1,4 +1,4 @@
-import { AxiosRequestConfig } from 'axios';
+import { AxiosError, AxiosRequestConfig } from 'axios';
 import { Dayjs } from 'dayjs';
 import { FormEvent, useContext, useReducer, useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
@@ -19,7 +19,7 @@ export type FormStateTypes = FormState[keyof FormState];
 
 type FormErrors = Partial<Record<keyof FormState, string>>;
 
-const initialFormState: FormState = {
+export const initialFormState: FormState = {
   name: '',
   email: '',
   phoneNumber: '',
@@ -45,15 +45,6 @@ const formReducer = (state: FormState, action: FormAction) => {
       return state;
   }
 };
-
-/*
-const phoneNumberMask = (value: string) => {
-  return value
-    .replace(/\D/g, '')
-    .replace(/^(\d{2})(\d)/g, '($1) $2')
-    .replace(/(\d{5})(\d)/, '$1-$2');
-};
-*/
 
 const validate = (formState: FormState) => {
   const errors: FormErrors = {};
@@ -123,9 +114,11 @@ const useClientForm = () => {
       const res = await axiosInstance(config);
       setSnackbar({ open: true, message: 'Client created successfully', type: 'success' });
       return res.data;
-    } catch (error) {
+    } catch (error: unknown) {
       console.error(error);
-      setSnackbar({ open: true, message: 'Error creating client', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.error, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error creating client', type: 'danger' });
       throw error;
     } finally {
       setIsPosting(false);

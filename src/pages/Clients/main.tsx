@@ -31,7 +31,7 @@ const ClientList = (): JSX.Element => {
 
   useEffect(() => {
     handleFilter(filter);
-  }, [searchTerm, clientsRequest.data]);
+  }, [searchTerm, clientsRequest.data, companies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
