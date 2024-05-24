@@ -1,4 +1,4 @@
-import { NotificationsNone } from '@mui/icons-material';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Avatar } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import Colors from '../../colors';
@@ -40,9 +40,9 @@ const Header = ({ pageTitle }: HeaderProps) => {
       </section>
 
       <section className='hidden md:flex justify-between items-center mt-3'>
-        <button className='mr-8 text-[#C29A51]'>
-          <NotificationsNone fontSize='large' />
-        </button>
+        <a href='https://calendar.google.com/calendar/' className='mr-8' target='_blank'>
+          <CalendarMonthIcon fontSize='large' className='text-[#C29A51]' />
+        </a>
         <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
       </section>
     </header>
