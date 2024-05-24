@@ -35,7 +35,7 @@ const SideBar = () => {
 
   const SideBarContent = () => (
     <aside
-      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 h-full w-full`}
+      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-full h-full overflow-y-auto`}
     >
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
       <div className='relative z-10 w-full'>
@@ -80,10 +80,12 @@ const SideBar = () => {
       <div className='hidden md:block w-72'>
         <SideBarContent />
       </div>
-      <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
-        <ModalClose size='lg' />
-        <SideBarContent />
-      </Drawer>
+      <div className='min-h-screen h-full'>
+        <Drawer size={'md'} open={isSidebarOpen} onClose={toggleSidebar}>
+          <ModalClose size='lg' />
+          <SideBarContent />
+        </Drawer>
+      </div>
     </div>
   );
 };
