@@ -144,6 +144,13 @@ export default function useTaskForm() {
 
     setIsPosting(true);
     try {
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
+
       const res = await axiosInstance.post(`${BASE_API_URL}/tasks/create`, {
         ...formState,
         idProject,
@@ -166,6 +173,12 @@ export default function useTaskForm() {
 
     setIsPosting(true);
     try {
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
       const res = await axiosInstance.put(`${BASE_API_URL}/tasks/update/${idTask}`, {
         ...formState,
       });
