@@ -14,7 +14,7 @@ import useHttp from '../../hooks/useHttp';
 import useProjectForm, { Fields } from '../../hooks/useProjectForm';
 import { CompanyEntity } from '../../types/company';
 import { ProjectAreas, ProjectCategory, ProjectPeriodicity } from '../../types/project';
-import { RequestMethods } from '../../utils/constants';
+import { MIN_DATE, RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
   const location = useLocation();
@@ -121,6 +121,7 @@ const NewProject = () => {
                   form.handleChange('startDate', newVal ?? form.formState.startDate);
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
+                minDate={MIN_DATE}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
