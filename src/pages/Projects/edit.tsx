@@ -19,7 +19,7 @@ import {
   ProjectEntity,
   ProjectPeriodicity,
 } from '../../types/project';
-import { RequestMethods } from '../../utils/constants';
+import { MAX_DATE, MIN_DATE, RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
   const { employee } = useContext(EmployeeContext);
@@ -142,6 +142,7 @@ const NewProject = () => {
                   form.handleChange('startDate', newVal ?? form.formState.startDate);
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
+                minDate={MIN_DATE}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
@@ -153,6 +154,7 @@ const NewProject = () => {
                 value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => form.handleChange('endDate', e)}
                 slotProps={{ textField: { error: !!form.errors.endDate } }}
+                maxDate={MAX_DATE}
               />
               {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
             </FormControl>

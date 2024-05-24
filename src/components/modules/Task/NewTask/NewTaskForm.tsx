@@ -1,14 +1,16 @@
-import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input, Textarea } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
 import useTaskForm, { Fields } from '../../../../hooks/useTaskForm';
 import { EmployeeEntity } from '../../../../types/employee';
 import { TaskStatus } from '../../../../types/task-status';
+import { MAX_DATE, MIN_DATE } from '../../../../utils/constants';
 import CancelButton from '../../../common/CancelButton';
 import ErrorView from '../../../common/Error';
 import GenericDropdown from '../../../common/GenericDropdown';
 import GenericInput from '../../../common/GenericInput';
+import GenericTextArea from '../../../common/GenericTextArea';
 import SendButton from '../../../common/SendButton';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
@@ -57,30 +59,19 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             required
             errorString={form.errors.title}
             placeholder='Enter title...'
+            max={70}
           />
         </FormControl>
-        <FormControl error={!!form.errors.description}>
-          <FormLabel>
-            Description <span className='text-red-600'>*</span>
-          </FormLabel>
-          <Textarea
-            minRows={5}
-            maxRows={5}
-            placeholder='Write your text here... '
-            value={form.formState.description}
-            onChange={e => form.handleChange('description', e.target.value)}
-            sx={{
-              color: colors.gray,
-              width: '100%',
-              height: '200px',
-              padding: '10px',
-              borderRadius: '4px',
-            }}
-          />
-          {form.errors.description ? (
-            <FormHelperText>{form.errors.description}</FormHelperText>
-          ) : null}
-        </FormControl>
+        <GenericTextArea
+          name={'description' as Fields}
+          value={form.formState.description}
+          errorString={form.errors.description}
+          handleChange={form.handleChange}
+          label={'Description'}
+          placeholder='Enter description...'
+          max={255}
+          required
+        />
         <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
           <FormControl error={!!form.errors.startDate}>
             <FormLabel>
@@ -91,9 +82,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               onChange={newDate =>
                 form.handleChange('startDate', newDate ?? form.formState.startDate)
               }
-              sx={{
-                borderColor: form.errors.startDate ? colors.danger : undefined,
-              }}
+              slotProps={{ textField: { error: !!form.errors.startDate } }}
+              minDate={MIN_DATE}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
@@ -104,6 +94,8 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
             <DatePicker
               value={form.formState.endDate?.utc()}
               onChange={newDate => form.handleChange('endDate', newDate)}
+              slotProps={{ textField: { error: !!form.errors.endDate } }}
+              maxDate={MAX_DATE}
             />
             {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>

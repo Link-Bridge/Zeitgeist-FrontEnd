@@ -3,7 +3,7 @@ import { FormEvent, useContext, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios/axios';
 import { ProjectAreas, ProjectEntity, ProjectPeriodicity, ProjectStatus } from '../types/project';
-import { APIPath, BASE_API_URL } from '../utils/constants';
+import { APIPath, BASE_API_URL, MAX_DATE, MIN_DATE } from '../utils/constants';
 import { SnackbarContext } from './snackbarContext';
 
 export type FormState = {
@@ -99,6 +99,9 @@ const validate = (formState: FormState) => {
     errors.startDate = 'Invalid date';
   }
 
+  if (!formState.startDate.isSame(MIN_DATE) && formState.startDate.isBefore(MIN_DATE))
+    errors.startDate = 'Start date must be after 01/01/2018';
+
   if (formState.endDate) {
     if (formState.endDate.isBefore(formState.startDate)) {
       errors.startDate = 'Start date must be before end date';
@@ -111,6 +114,9 @@ const validate = (formState: FormState) => {
     ) {
       errors.endDate = 'Invalid date';
     }
+
+    if (formState.endDate.isAfter(MAX_DATE))
+      errors.endDate = `End date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
   }
 
   return errors;
