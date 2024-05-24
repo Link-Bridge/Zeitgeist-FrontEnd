@@ -161,7 +161,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           </FormControl>
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
-          <Link to={`/projects/details/${idProject}`}>
+          <Link to={`/projects/details/${idProject}`} replace>
             <CancelButton onClick={() => {}} />
           </Link>
           <SendButton disabled={form.isPosting} onClick={() => form.handleSubmit(idProject)} />

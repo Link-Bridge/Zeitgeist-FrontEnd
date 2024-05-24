@@ -1,5 +1,6 @@
 import { AccordionGroup, Sheet } from '@mui/joy';
 import { AxiosError } from 'axios';
+import dayjs from 'dayjs';
 import { createContext, useContext, useEffect, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -71,6 +72,7 @@ const AssignedTasks = (): JSX.Element => {
       });
       const task = tasks.find(task => task.id === id)!;
       task.status = newStatus;
+      if (newStatus === 'Done') task.endDate = dayjs().startOf('day').toDate();
       setTasks(tasks);
       setState({ message: 'Task status updated successfully', open: true, type: 'success' });
     } catch {
