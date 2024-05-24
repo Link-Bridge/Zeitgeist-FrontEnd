@@ -12,6 +12,7 @@ export enum ExpenseReportStatus {
  * @param id: string - Unique identifier of the expense
  * @param title: string - Expense title
  * @param justification: string - Expense justification
+ * @param supplier?: string - Expense supplier (optional)
  * @param totalAmount: number - Expense amount
  * @param status?: string - Expense status (optional)
  * @param category?: string - Expense category (optional)
@@ -26,6 +27,7 @@ export interface ExpenseEntity {
   id: string;
   title: string;
   justification: string;
+  supplier?: string | null;
   totalAmount: number;
   status?: string | null;
   category?: string | null;
@@ -47,6 +49,7 @@ export interface ExpenseEntity {
  * @param status?: string - Expense Report status (optional)
  * @param createdAt?: Date - Expense Report creation date (optional)
  * @param updatedAt?: Date - Expense Report update date (optional)
+ * @param urlVoucher?: string - URL of the voucher associated with the report (optional)
  * @param idEmployee: string - Unique identifier of the employee associated
  * @param employeeFirstName?: string - Employee first name (optional)
  * @param employeeLastName?: string - Employee last name (optional)
@@ -64,6 +67,7 @@ export interface ExpenseReport {
   status?: ExpenseReportStatus;
   createdAt?: Date | null;
   updatedAt?: Date | null;
+  urlVoucher?: string | null;
   idEmployee: string;
   employeeFirstName?: string;
   employeeLastName?: string;
