@@ -14,6 +14,7 @@ import { configDayjs } from './lib/dayjs/dayjs';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
+import Expenses from './pages/Expenses';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
@@ -90,6 +91,14 @@ function App() {
                   element={
                     <ProtectedRoute>
                       <Employees />
+                    </ProtectedRoute>
+                  }
+                />
+                <Route
+                  path={`${RoutesPath.EXPENSES}/*`}
+                  element={
+                    <ProtectedRoute>
+                      <Expenses />
                     </ProtectedRoute>
                   }
                 />

@@ -9,6 +9,7 @@ export enum RoutesPath {
   TASKS = '/tasks',
   CLIENTS = '/clients',
   EMPLOYEES = '/employees',
+  EXPENSES = '/expenses',
 }
 
 export enum APIPath {
@@ -20,6 +21,7 @@ export enum APIPath {
   CREATE_TASK = '/tasks/:projectId/create',
   UPDATE_TASK = '/tasks/update',
   UPDATE_TASK_STATUS = '/tasks/update/status',
+  EXPENSE_REPORT = '/expense/report',
 }
 
 export enum RequestMethods {
