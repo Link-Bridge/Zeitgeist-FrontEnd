@@ -26,6 +26,7 @@ const SideBar = () => {
     { icon: ViewTimeline, href: RoutesPath.PROJECTS, title: 'Projects' },
     { icon: Toc, href: RoutesPath.TASKS, title: 'Tasks' },
     { icon: FolderShared, href: RoutesPath.CLIENTS, title: 'Clients' },
+    { icon: ViewTimeline, href: RoutesPath.EXPENSES, title: 'Expenses' },
     ...(isAdmin ? [{ icon: SwitchAccount, href: RoutesPath.EMPLOYEES, title: 'Employees' }] : []),
   ];
 
