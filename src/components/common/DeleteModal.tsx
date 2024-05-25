@@ -17,6 +17,7 @@ interface ModalInterface {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleModal?: () => void;
   handleDelete: (id: string) => void;
+  alertColor?: string;
 }
 
 export default function DeleteModal({
@@ -26,6 +27,7 @@ export default function DeleteModal({
   description,
   id,
   handleDelete,
+  alertColor = 'warning', // Default alert color is warning
 }: ModalInterface) {
   const handleOnDelete = () => {
     setOpen(false); // This will close the modal or dialog
@@ -66,7 +68,7 @@ export default function DeleteModal({
             sx={{ mt: 2, pr: 15, border: '#333333' }}
             startDecorator={<WarningIcon />}
             variant='soft'
-            color='warning'
+            color={alertColor}
           >
             This action cannot be undone.
           </Alert>

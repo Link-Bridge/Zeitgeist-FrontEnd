@@ -26,8 +26,6 @@ import { ResponseEntity } from '../../types/response';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 import { ProjectsClientList } from '../Projects/ProjectsClientList';
 
-import { IconButton } from '@mui/material';
-
 /**
  * Client Details Page page
  *
@@ -203,30 +201,6 @@ const ClientDetails = () => {
                 </Button>
 
                 {isAdmin && (
-                  <Button
-                    onClick={ToggleModalArchive}
-                    sx={{
-                      backgroundColor: colors.lightWhite,
-                      ':hover': {
-                        backgroundColor: colors.orangeChip,
-                      },
-                      height: '5px',
-                      color: 'text-gold',
-                    }}
-                    startDecorator={
-                      company?.archived ? (
-                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      ) : (
-                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      )
-                    }
-                  >
-                    <Typography sx={{ color: colors.gold }}>
-                      {company?.archived ? 'Unarchive' : 'Archive'}
-                    </Typography>
-                  </Button>
-                )}
-                {isAdmin && (
                   <>
                     <Button
                       onClick={ToggleModalArchive}
@@ -249,9 +223,17 @@ const ClientDetails = () => {
                       </Typography>
                     </Button>
 
-                    <IconButton onClick={() => setOpenDelete(true)} sx={{ color: colors.gold }}>
-                      <DeleteOutline />
-                    </IconButton>
+                    <Button
+                      onClick={() => setOpenDelete(true)}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                      }}
+                      startDecorator={<DeleteOutline sx={{ width: 24, color: colors.gold }} />}
+                    >
+                      <Typography sx={{ color: colors.gold }}>Delete</Typography>
+                    </Button>
                   </>
                 )}
               </div>
@@ -284,9 +266,10 @@ const ClientDetails = () => {
         open={openDelete}
         setOpen={setOpenDelete}
         title='Delete Company'
-        description='Are you sure you want to delete this company? This action cannot be undone.'
+        description='Every project and task associated with this company will be eliminated.'
         id={company?.id ?? ''}
         handleDelete={handleDeleteCompany}
+        alertColor='danger' // Change alert color to red
       />
     </main>
   );
