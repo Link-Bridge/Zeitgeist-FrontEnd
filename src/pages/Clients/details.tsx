@@ -1,3 +1,4 @@
+import { DeleteOutline } from '@mui/icons-material';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
@@ -12,16 +13,20 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
+import DeleteModal from '../../components/common/DeleteModal'; // Import DeleteModal
 import GoBack from '../../components/common/GoBack';
 import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteCompany from '../../hooks/useDeleteCompany'; // Import useDeleteCompany
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
 import { RequestMethods, RoutesPath } from '../../utils/constants';
 import { ProjectsClientList } from '../Projects/ProjectsClientList';
+
+import { IconButton } from '@mui/material';
 
 /**
  * Client Details Page page
@@ -34,7 +39,7 @@ import { ProjectsClientList } from '../Projects/ProjectsClientList';
  */
 
 const ClientDetails = () => {
-  // const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
@@ -46,6 +51,7 @@ const ClientDetails = () => {
   );
   const { employee } = useContext(EmployeeContext);
   const [notFound, setNotFound] = useState(false);
+  const { deleteCompany, error: deleteError } = useDeleteCompany();
 
   useEffect(() => {
     if (isAxiosError(error)) {
@@ -55,6 +61,16 @@ const ClientDetails = () => {
       }
     }
   }, [error]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  }, [deleteError, setState]);
 
   const navigate = useNavigate();
 
@@ -88,6 +104,24 @@ const ClientDetails = () => {
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
+
+  const handleDeleteCompany = async (id: string) => {
+    try {
+      await deleteCompany(id);
+      setState({
+        open: true,
+        message: 'Company deleted successfully',
+        type: 'success',
+      });
+      navigate(RoutesPath.CLIENTS); // Navigate to clients list after deletion
+    } catch (error) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  };
 
   const isAdmin = employee?.role === 'Admin';
 
@@ -192,6 +226,34 @@ const ClientDetails = () => {
                     </Typography>
                   </Button>
                 )}
+                {isAdmin && (
+                  <>
+                    <Button
+                      onClick={ToggleModalArchive}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                        color: 'text-gold',
+                      }}
+                      startDecorator={
+                        company?.archived ? (
+                          <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        ) : (
+                          <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        )
+                      }
+                    >
+                      <Typography sx={{ color: colors.gold }}>
+                        {company?.archived ? 'Unarchive' : 'Archive'}
+                      </Typography>
+                    </Button>
+
+                    <IconButton onClick={() => setOpenDelete(true)} sx={{ color: colors.gold }}>
+                      <DeleteOutline />
+                    </IconButton>
+                  </>
+                )}
               </div>
             </section>
 
@@ -218,6 +280,14 @@ const ClientDetails = () => {
         <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
+      <DeleteModal
+        open={openDelete}
+        setOpen={setOpenDelete}
+        title='Delete Company'
+        description='Are you sure you want to delete this company? This action cannot be undone.'
+        id={company?.id ?? ''}
+        handleDelete={handleDeleteCompany}
+      />
     </main>
   );
 };
