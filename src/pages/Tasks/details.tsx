@@ -175,7 +175,7 @@ const TaskDetails: React.FC = () => {
           </section>
           <section className='flex-wrap grid my-2'>
             <p className='grow-0 text-clip overflow-scroll max-h-44'>
-              <pre>{data.description}</pre>
+              <span>{data.description}</span>
             </p>
           </section>
           <Divider sx={{ marginBottom: '30px' }} />
