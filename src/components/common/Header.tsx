@@ -24,10 +24,10 @@ const Header = ({ pageTitle }: HeaderProps) => {
           style={{
             color: Colors.gold,
             fontFamily: 'Didot',
-            fontSize: '3.5rem',
             lineHeight: '1.1',
             letterSpacing: '1.5px',
           }}
+          className='text-[30px] sm-text[40px]'
         >
           {pageTitle}
         </h1>
