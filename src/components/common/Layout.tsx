@@ -35,9 +35,9 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <main className='w-screen h-screen flex min-w-[590px] overflow-y-hidden'>
+    <main className='w-screen h-screen flex overflow-y-hidden'>
       <SideBar />
-      <div className='flex flex-col h-screen w-full flex-1 px-14 pb-5 md:pb-10 min-w-[590px] overflow-y-hidden'>
+      <div className='flex flex-col h-screen w-full flex-1 pt-10 md:pt-0 px-4 md:px-10 pb-5 md:pb-1 overflow-y-hidden'>
         <Header pageTitle={pathToText()} />
         <section className='flex flex-col flex-1 mt-3 overflow-y-hidden'>{children}</section>
       </div>

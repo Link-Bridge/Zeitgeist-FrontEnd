@@ -27,7 +27,7 @@ const Header = ({ pageTitle }: HeaderProps) => {
             lineHeight: '1.1',
             letterSpacing: '1.5px',
           }}
-          className='text-[30px] sm-text[40px]'
+          className='text-[30px] sm:text-[50px]'
         >
           {pageTitle}
         </h1>
