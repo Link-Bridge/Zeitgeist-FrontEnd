@@ -1,6 +1,7 @@
 import {
   FolderShared,
   Home,
+  Logout,
   MenuRounded,
   SwitchAccount,
   Toc,
@@ -12,10 +13,13 @@ import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
 import colors from '../../colors';
 import { EmployeeContext } from '../../hooks/employeeContext';
-import { RoutesPath } from '../../utils/constants';
+import { SnackbarContext } from '../../hooks/snackbarContext';
+import { axiosInstance } from '../../lib/axios/axios';
+import { BASE_API_URL, RoutesPath } from '../../utils/constants';
 
 const SideBar = () => {
   const { employee } = useContext(EmployeeContext);
+  const { setState } = useContext(SnackbarContext);
   const pathname = useLocation().pathname;
   const [isSidebarOpen, setIsSidebarOpen] = useState(false);
 
@@ -33,39 +37,80 @@ const SideBar = () => {
     setIsSidebarOpen(!isSidebarOpen);
   };
 
+  const handleLogout = async () => {
+    try {
+      const token = localStorage.getItem('deviceToken');
+      if (token) {
+        await axiosInstance.post(`${BASE_API_URL}/notification/revoke-token`, {
+          deviceToken: token,
+        });
+      }
+    } catch (error) {
+      console.error('Error revoking token:', error);
+    }
+
+    localStorage.removeItem('idToken');
+    localStorage.removeItem('refreshToken');
+    localStorage.removeItem('employee');
+    localStorage.removeItem('deviceToken');
+
+    setState({ open: true, message: 'Logged out successfully', type: 'success' });
+  };
+
   const SideBarContent = () => (
     <aside
       className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-full h-full overflow-y-auto`}
     >
       <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
-      <div className='relative z-10 w-full'>
-        <div className='flex justify-center'>
-          <Link to={RoutesPath.HOME}>
-            <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
-          </Link>
+      <div className='relative z-10 w-full flex flex-col justify-between h-full'>
+        <div>
+          <div className='flex justify-center'>
+            <Link to={RoutesPath.HOME}>
+              <img src={LogoZeitgeist} alt='Zeitgeist Logo' className='w-16 mb-10' />
+            </Link>
+          </div>
+          <nav className='w-full'>
+            <ul className='w-full'>
+              {Items.map(item => (
+                <li
+                  key={item.href}
+                  className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
+                >
+                  <Link
+                    to={item.href}
+                    className='flex items-center gap-3 px-9 py-5 opacity'
+                    style={{
+                      color: colors.lightGold,
+                      opacity: pathname.includes(item.href) ? 1 : 0.7,
+                    }}
+                  >
+                    <item.icon></item.icon>
+                    <p>{item.title}</p>
+                  </Link>
+                </li>
+              ))}
+            </ul>
+          </nav>
         </div>
-        <nav className='w-full'>
-          <ul className='w-full'>
-            {Items.map(item => (
-              <li
-                key={item.href}
-                className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
-              >
-                <Link
-                  to={item.href}
+        <div className='w-full'>
+          <nav className='w-full'>
+            <ul className='w-full'>
+              <li className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'>
+                <button
+                  onClick={handleLogout}
                   className='flex items-center gap-3 px-9 py-5 opacity'
                   style={{
                     color: colors.lightGold,
-                    opacity: pathname.includes(item.href) ? 1 : 0.7,
+                    opacity: 0.7,
                   }}
                 >
-                  <item.icon></item.icon>
-                  <p>{item.title}</p>
-                </Link>
+                  <Logout />
+                  <p>Log Out</p>
+                </button>
               </li>
-            ))}
-          </ul>
-        </nav>
+            </ul>
+          </nav>
+        </div>
       </div>
     </aside>
   );
