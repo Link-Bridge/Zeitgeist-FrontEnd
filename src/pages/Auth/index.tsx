@@ -1,6 +1,6 @@
 import Button from '@mui/joy/Button';
-import { signInWithPopup } from 'firebase/auth';
-import React, { useContext } from 'react';
+import { getRedirectResult, signInWithRedirect } from 'firebase/auth';
+import React, { useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import loginImage from '../../assets/images/login-image.png';
@@ -17,6 +17,31 @@ const Auth: React.FC = () => {
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
 
+  useEffect(() => {
+    const checkRedirectResult = async () => {
+      try {
+        const result = await getRedirectResult(auth);
+        if (result) {
+          const token = await result.user.getIdToken(true);
+          const refreshToken = result.user.refreshToken;
+          localStorage.setItem('idToken', token);
+          localStorage.setItem('refreshToken', refreshToken);
+
+          const response = await sendRequest();
+          if (!response) {
+            setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+            return;
+          }
+          await updateUserContext(response);
+        }
+      } catch (error) {
+        setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+      }
+    };
+
+    checkRedirectResult();
+  }, []);
+
   const sendRequest = async () => {
     try {
       const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
@@ -29,18 +54,7 @@ const Auth: React.FC = () => {
 
   const handleGoogleSignIn = async () => {
     try {
-      const result = await signInWithPopup(auth, provider);
-      const token = await result.user.getIdToken(true);
-      const refreshToken = result.user.refreshToken;
-      localStorage.setItem('idToken', token);
-      localStorage.setItem('refreshToken', refreshToken);
-
-      const response = await sendRequest();
-      if (!response) {
-        setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-        return;
-      }
-      await updateUserContext(response);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
     }
