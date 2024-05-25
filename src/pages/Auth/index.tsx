@@ -65,7 +65,7 @@ const Auth: React.FC = () => {
 
   return (
     <div className='bg-cover bg-center h-screen' style={{ backgroundImage: `url(${loginImage})` }}>
-      <div className='flex justify-end pr-16 pt-10'>
+      <div className='flex justify-center sm:justify-end p-2 sm:pr-16 pt-10'>
         <Button
           onClick={handleGoogleSignIn}
           sx={{
@@ -75,11 +75,11 @@ const Auth: React.FC = () => {
             ':hover': {
               backgroundColor: '#f0f0f0',
             },
-            paddingX: '40px',
+            paddingX: '20px',
             paddingY: '16px',
             justifyContent: 'start',
             fontWeight: 'normal',
-            fontSize: '16px',
+            fontSize: '14px',
           }}
           startDecorator={<img src={googleImage} alt='Google' style={{ width: 24, height: 24 }} />}
           size='lg'
