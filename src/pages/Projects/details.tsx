@@ -285,7 +285,7 @@ const ProjectDetails = () => {
             <h3 className='text-[22px] font-medium truncate' style={{ marginTop: '10px' }}>
               {data?.name}
             </h3>
-            <div className='flex gap-3'>
+            <div className='flex flex-wrap gap-3'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -296,6 +296,7 @@ const ProjectDetails = () => {
                     backgroundColor: colors.orangeChip,
                   },
                   height: '5px',
+                  flexGrow: '1',
                 }}
                 startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -311,6 +312,7 @@ const ProjectDetails = () => {
                     backgroundColor: colors.orangeChip,
                   },
                   height: '5px',
+                  flexGrow: '1',
                 }}
                 startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -326,6 +328,7 @@ const ProjectDetails = () => {
                       backgroundColor: colors.orangeChip,
                     },
                     height: '5px',
+                    flexGrow: '1',
                   }}
                   startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
@@ -341,6 +344,7 @@ const ProjectDetails = () => {
                       backgroundColor: colors.orangeChip,
                     },
                     height: '5px',
+                    flexGrow: '1',
                   }}
                   startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
@@ -397,28 +401,39 @@ const ProjectDetails = () => {
             </div>
           )}
 
-          <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
-            <div className='flex items-center'>
-              <EventNoteRounded />
-              <p className='ml-3'>
-                Start Date:{' '}
-                {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
-              </p>
-            </div>
+          <Box
+            sx={{
+              mt: 5,
+              mb: 3,
+              mr: 1,
+              gap: 18,
+            }}
+          >
+            <section className='flex flex-col gap-4 sm:gap-10 sm:flex-row justify-start'>
+              <div className='flex items-center'>
+                <EventNoteRounded />
+                <p className='ml-3'>
+                  Start Date:{' '}
+                  {data?.startDate
+                    ? dayjs.utc(data.startDate).format('DD/MM/YYYY')
+                    : 'No start date'}
+                </p>
+              </div>
 
-            <div className='flex items-center'>
-              <EventNoteRounded />
-              <p className='ml-3'>
-                End Date:{' '}
-                {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
-              </p>
-            </div>
+              <div className='flex items-center'>
+                <EventNoteRounded />
+                <p className='ml-3'>
+                  End Date:{' '}
+                  {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
+                </p>
+              </div>
+            </section>
           </Box>
         </section>
       </Card>
 
-      <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+      <section className='flex justify-between my-4'>
+        <h1 className='text-[25px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>

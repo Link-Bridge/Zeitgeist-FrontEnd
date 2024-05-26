@@ -49,6 +49,7 @@ const SideBar = () => {
             {Items.map(item => (
               <li
                 key={item.href}
+                onClick={() => setIsSidebarOpen(false)}
                 className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
               >
                 <Link
@@ -72,7 +73,7 @@ const SideBar = () => {
 
   return (
     <div className='flex h-screen'>
-      <div className='md:hidden fixed top-7 left-5 z-50'>
+      <div className='md:hidden fixed top-7 left-3 z-50'>
         <IconButton onClick={toggleSidebar}>
           <MenuRounded />
         </IconButton>

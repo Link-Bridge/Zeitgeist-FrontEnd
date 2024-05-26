@@ -100,8 +100,8 @@ const ProjectMain = () => {
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
-    <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
-      <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
+    <main className='min-h-full flex flex-col overflow-hidden'>
+      <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -110,12 +110,12 @@ const ProjectMain = () => {
           setSelectedOption={setFilterOption}
           maxLength={70}
         />
-        <div className='flex flex-wrap flex-row items-center gap-2'>
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4'>
           {employee?.role === 'Admin' ? (
             <>
-              <div className='flex-row flex items-center gap-2'>
+              <div className='flex-row flex items-center gap-1'>
                 <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                <Typography sx={{ color: colors.gold, fontWeight: '600' }}>
                   Filter Projects:
                 </Typography>
               </div>

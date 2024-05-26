@@ -22,20 +22,22 @@ function TaskTable({ tasks, projectName, handleStatusChange }: TaskTableProps) {
       <AccordionSummary>{projectName}</AccordionSummary>
       <AccordionDetails>
         <Table size='md' hoverRow>
-          <thead>
-            <tr>
-              <th style={{ width: '30%' }}>Task</th>
-              <th>Status</th>
-              <th>Hours</th>
-              <th>Due Date</th>
-              <th style={{ width: '10%' }}></th>
-            </tr>
-          </thead>
-          <tbody>
-            {tasks.map(task => (
-              <TaskRow key={task.id} task={task} handleStatusChange={handleStatusChange} />
-            ))}
-          </tbody>
+          <section className='overflow-x-auto'>
+            <thead>
+              <tr>
+                <th style={{ width: '30%' }}>Task</th>
+                <th>Status</th>
+                <th>Hours</th>
+                <th>Due Date</th>
+                <th style={{ width: '10%' }}></th>
+              </tr>
+            </thead>
+            <tbody>
+              {tasks.map(task => (
+                <TaskRow key={task.id} task={task} handleStatusChange={handleStatusChange} />
+              ))}
+            </tbody>
+          </section>
         </Table>
       </AccordionDetails>
     </Accordion>

@@ -44,7 +44,7 @@ const NewProject = () => {
   }, [admin, employee]);
 
   return (
-    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
+    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '20px' }}>
       {req.loading ? (
         <Loader />
       ) : (
