@@ -36,7 +36,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className='flex items-center space-x-2'>
+    <div className='flex items-center space-x-2 w-full'>
       <Input
         value={searchTerm}
         onChange={e => {
@@ -47,7 +47,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         placeholder={selectedOption || placeholder}
         startDecorator={<Search style={{ color: colors.gold }} />}
         sx={{
-          width: 300,
           alignItems: 'center',
         }}
         endDecorator={

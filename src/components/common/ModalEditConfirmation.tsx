@@ -82,6 +82,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        padding: '0 20px',
       }}
     >
       <Sheet
