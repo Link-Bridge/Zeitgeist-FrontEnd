@@ -73,7 +73,8 @@ const SearchBar: React.FC<SearchBarProps> = ({
           </Menu>
         )}
       </div>
-      );
+    </div>
+  );
 };
 
-      export default SearchBar;
+export default SearchBar;
