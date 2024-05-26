@@ -1,7 +1,7 @@
 import { Navigate, Route, Routes } from 'react-router-dom';
-import { ExpensesMain } from './main';
+import ExpensesMain from './main';
 
-const Projects = () => {
+const Expenses = () => {
   return (
     <Routes>
       <Route path='/' element={<ExpensesMain />} />
@@ -10,4 +10,4 @@ const Projects = () => {
   );
 };
 
-export default Projects;
+export default Expenses;

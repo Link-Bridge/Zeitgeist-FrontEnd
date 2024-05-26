@@ -34,3 +34,18 @@ export const truncateText = (text: string | undefined | null, maxLength: number 
   if (text.length > maxLength) return text.substring(0, maxLength) + '...';
   return text;
 };
+
+/**
+ *
+ * @param date: Date
+ * @returns string
+ *
+ * @description Method to convert a Date into a string (dd-mm-yyyy)
+ */
+export const dateParser = (date: Date, separator: string): string => {
+  const arr = date.toString().split('-');
+  const day = arr[2].substring(0, 2);
+  const month = arr[1];
+  const year = arr[0];
+  return `${day}${separator}${month}${separator}${year}`;
+};

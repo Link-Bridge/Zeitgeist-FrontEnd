@@ -22,9 +22,9 @@ import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
-import { truncateText } from '../../utils/methods';
+import { dateParser, truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
-import { capitalize, dateParser, filterteParser } from './reportMethods';
+import { capitalize, filterDateParser } from './reportMethods';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
@@ -80,7 +80,7 @@ const ProjectReport: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     setUsingFilter(true);
-    date.current = filterteParser(new Date(year, month - 1));
+    date.current = filterDateParser(new Date(year, month - 1));
     const doFetch = async (): Promise<void> => {
       const data = await axiosInstance.get(
         `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`
@@ -341,7 +341,7 @@ const ProjectReport: React.FC = () => {
                     <img src={calendar} alt='calendar' className='w-5' />
                     <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                   </div>
-                  <p>{dateParser(report.project.startDate)}</p>
+                  <p>{dateParser(report.project.startDate, '-')}</p>
                 </div>
 
                 {report.project.endDate && (
@@ -350,7 +350,7 @@ const ProjectReport: React.FC = () => {
                       <img src={calendar} alt='calendar' className='w-5' />
                       <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                     </div>
-                    <p>{dateParser(report.project.endDate)}</p>
+                    <p>{dateParser(report.project.endDate, '-')}</p>
                   </div>
                 )}
               </section>
@@ -477,7 +477,7 @@ const ProjectReport: React.FC = () => {
                             <img src={calendar} alt='calendar' className='w-5' />
                             <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                           </div>
-                          <p>{dateParser(item.startDate)}</p>
+                          <p>{dateParser(item.startDate, '-')}</p>
                         </div>
 
                         {item.endDate && (
@@ -486,7 +486,7 @@ const ProjectReport: React.FC = () => {
                               <img src={calendar} alt='calendar' className='w-5' />
                               <p style={{ fontSize: '1em' }}>&nbsp;Due Date</p>
                             </div>
-                            <p>{dateParser(item.endDate)}</p>
+                            <p>{dateParser(item.endDate, '-')}</p>
                           </div>
                         )}
                       </div>

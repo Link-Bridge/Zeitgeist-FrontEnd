@@ -77,21 +77,6 @@ export const statusColor = (status: string) => {
 
 /**
  *
- * @param date: Date
- * @returns string
- *
- * @description Method to convert a Date into a string (dd-mm-yyyy)
- */
-export const dateParser = (date: Date): string => {
-  const arr = date.toString().split('-');
-  const day = arr[2].substring(0, 2);
-  const month = arr[1];
-  const year = arr[0];
-  return `${day}-${month}-${year}`;
-};
-
-/**
- *
  * @param data: string
  * @returns string
  *
@@ -108,7 +93,7 @@ export const capitalize = (data: string): string => {
  *
  * @description Method to convert a Date into a string (yyyy-mm-dd)
  */
-export const filterteParser = (date: Date): string => {
+export const filterDateParser = (date: Date): string => {
   const arr = date.toISOString().split('-');
   const day = arr[2].substring(0, 2);
   const month = arr[1];
