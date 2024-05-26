@@ -25,7 +25,7 @@ function capitalize(data: string): string {
 const ExpenseDetails = () => {
   function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
     if (firstName && lastName) {
-      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
+      setEmployeeName(`${firstName} ${lastName}`);
     }
   }
 

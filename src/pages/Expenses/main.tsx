@@ -1,5 +1,7 @@
+import { Box, Typography } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
+import colors from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import Loader from '../../components/common/Loader';
@@ -14,7 +16,6 @@ const ExpensesMain = () => {
   const req = useHttp<ExpenseReport[]>(`${APIPath.EXPENSES}/`, RequestMethods.GET);
   const [filteredExpenses, setFilteredExpenses] = useState<ExpenseReport[]>([]);
   const [expenses, setExpenses] = useState<ExpenseReport[]>([]);
-  const [filterOption, setFilterOption] = useState('Employee');
   const [searchTerm, setSearchTerm] = useState('');
   const { employee } = useContext(EmployeeContext);
 
@@ -39,6 +40,27 @@ const ExpensesMain = () => {
     );
   }, [searchTerm]);
 
+  if (req.loading) {
+    return (
+      <Box
+        sx={{
+          display: 'flex',
+          flexDirection: 'column',
+          alignItems: 'center',
+          justifyContent: 'center',
+          height: '100%',
+          color: colors.gray[500],
+        }}
+      >
+        <Typography variant='plain' level='h1' mb={4}>
+          Loading expenses
+        </Typography>
+
+        <Loader />
+      </Box>
+    );
+  }
+
   return (
     <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
@@ -47,9 +69,7 @@ const ExpensesMain = () => {
           <SearchBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
-            placeholder='Search by employee'
-            options={['Employee']}
-            setSelectedOption={setFilterOption}
+            placeholder='Employee'
             maxLength={70}
           />
         ) : (
