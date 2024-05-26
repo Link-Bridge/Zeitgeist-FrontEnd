@@ -21,15 +21,15 @@ function TaskTable({ tasks, projectName, handleStatusChange }: TaskTableProps) {
     >
       <AccordionSummary>{projectName}</AccordionSummary>
       <AccordionDetails>
-        <Table size='md' hoverRow>
-          <section className='overflow-x-auto'>
+        <div className='overflow-x-auto'>
+          <Table size='md' hoverRow>
             <thead>
-              <tr>
-                <th style={{ width: '30%' }}>Task</th>
-                <th>Status</th>
-                <th>Hours</th>
-                <th>Due Date</th>
-                <th style={{ width: '10%' }}></th>
+              <tr className='block lg:table-row'>
+                <th className='min-w-[200px] lg:max-w-1/3'>Task</th>
+                <th className='min-w-[200px]'>Status</th>
+                <th className='min-w-[80px]'>Hours</th>
+                <th className='min-w-[80px]'>Due Date</th>
+                <th className='w-1/12'></th>
               </tr>
             </thead>
             <tbody>
@@ -37,8 +37,8 @@ function TaskTable({ tasks, projectName, handleStatusChange }: TaskTableProps) {
                 <TaskRow key={task.id} task={task} handleStatusChange={handleStatusChange} />
               ))}
             </tbody>
-          </section>
-        </Table>
+          </Table>
+        </div>
       </AccordionDetails>
     </Accordion>
   );
