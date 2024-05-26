@@ -42,14 +42,19 @@ const ExpensesMain = () => {
   return (
     <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder='Search by employee'
-          options={['Employee']}
-          setSelectedOption={setFilterOption}
-          maxLength={70}
-        />
+        {employee?.role.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||
+        employee?.role.toUpperCase() === SupportedRoles.ADMIN.toUpperCase() ? (
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            placeholder='Search by employee'
+            options={['Employee']}
+            setSelectedOption={setFilterOption}
+            maxLength={70}
+          />
+        ) : (
+          <div></div>
+        )}
         <div className='flex flex-wrap flex-row items-center gap-2'>
           <Link to={`${RoutesPath.EXPENSES}/new`}>
             <AddButton onClick={() => {}}></AddButton>

@@ -48,13 +48,13 @@ const ExpenseCard = ({
       <section className='mt-3 flex flex-nowrap gap-3 overflow-hidden'>
         <ColorChip label={`$${totalAmount}`} color={`${colors.extra}`}></ColorChip>
         <StatusChip status={status} />
-        {employeeRole.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||
-          (employeeRole.toUpperCase() === SupportedRoles.ADMIN.toUpperCase() && (
-            <ColorChip
-              label={`${employeeFirstName} ${employeeLastName}`}
-              color={`${colors.lighterGray}`}
-            ></ColorChip>
-          ))}
+        {(employeeRole.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||
+          employeeRole.toUpperCase() === SupportedRoles.ADMIN.toUpperCase()) && (
+          <ColorChip
+            label={`${employeeFirstName} ${employeeLastName}`}
+            color={`${colors.lighterGray}`}
+          ></ColorChip>
+        )}
       </section>
     </section>
   );
