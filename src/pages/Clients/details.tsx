@@ -13,13 +13,13 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
-import DeleteModal from '../../components/common/DeleteModal'; // Import DeleteModal
+import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
 import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import useDeleteCompany from '../../hooks/useDeleteCompany'; // Import useDeleteCompany
+import useDeleteCompany from '../../hooks/useDeleteCompany';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
@@ -111,7 +111,7 @@ const ClientDetails = () => {
         message: 'Company deleted successfully',
         type: 'success',
       });
-      navigate(RoutesPath.CLIENTS); // Navigate to clients list after deletion
+      navigate(RoutesPath.CLIENTS);
     } catch (error) {
       setState({
         open: true,
@@ -173,10 +173,10 @@ const ClientDetails = () => {
               id={clientId}
               updateFunction={setCompany}
             />
-            <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
-              <div className='flex flex-auto flex-col lg:flex-row justify-between'>
-                <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
-                <div className='flex flex-wrap items-center gap-x-5'>
+            <section className='flex justify-between overflow-x-hidden gap-x-4 items-center'>
+              <div className='flex flex-grow flex-col lg:flex-row justify-between items-center gap-4 min-w-0'>
+                <p className='text-2xl text-gold font-medium truncate flex-grow'>{company.name}</p>
+                <div className='flex flex-wrap items-center gap-x-5 flex-shrink-0'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
                     {company.constitutionDate
@@ -185,7 +185,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex gap-5'>
+              <div className='flex gap-5 flex-shrink-0'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -269,7 +269,7 @@ const ClientDetails = () => {
         description='Every project and task associated with this company will be eliminated.'
         id={company?.id ?? ''}
         handleDelete={handleDeleteCompany}
-        alertColor='danger' // Change alert color to red
+        alertColor='danger'
       />
     </main>
   );

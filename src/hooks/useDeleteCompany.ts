@@ -3,6 +3,11 @@ import { useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
 import { BASE_API_URL } from '../utils/constants';
 
+/**
+ * Deletes a company by id
+ *
+ * @param id: string - Unique identifier of the company
+ */
 const useDeleteCompany = () => {
   const [error, setError] = useState<Error | null>(null);
 
