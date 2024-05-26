@@ -112,10 +112,20 @@ const ProjectMain = () => {
         />
         <div className='flex flex-wrap flex-row items-center gap-2 my-4'>
           {employee?.role === 'Admin' ? (
-            <>
-              <div className='flex-row flex items-center gap-1'>
+            <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                <Typography sx={{ color: colors.gold, fontWeight: '600' }}>
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}>
                   Filter Projects:
                 </Typography>
               </div>
@@ -124,10 +134,10 @@ const ProjectMain = () => {
                 options={Object.values(ProjectFilters)}
                 onChange={value => handleFilter(value)}
               />
-            </>
+            </div>
           ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => {}}></AddButton>
+            <AddButton onClick={() => { }}></AddButton>
           </Link>
         </div>
       </section>
