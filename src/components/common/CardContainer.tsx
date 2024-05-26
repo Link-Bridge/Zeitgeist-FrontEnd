@@ -20,6 +20,7 @@ export default function CardContainer({ children }: CardContainerProps) {
       sx={{
         bgcolor: '#EFEFEF',
         maxWidth: '100%',
+        padding: '16px',
         transition: 'background-color 0.3s',
         '&:hover': {
           bgcolor: '#DEDEDE',

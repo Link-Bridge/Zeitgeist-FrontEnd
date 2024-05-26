@@ -36,8 +36,9 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className='flex items-center space-x-2'>
+    <div className='flex items-center space-x-2 w-full'>
       <Input
+        className='w-full'
         value={searchTerm}
         onChange={e => {
           if (!maxLength || e.target.value.length <= maxLength) {
@@ -46,10 +47,6 @@ const SearchBar: React.FC<SearchBarProps> = ({
         }}
         placeholder={selectedOption || placeholder}
         startDecorator={<Search style={{ color: colors.gold }} />}
-        sx={{
-          width: 300,
-          alignItems: 'center',
-        }}
         endDecorator={
           options.length > 0 && (
             <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>

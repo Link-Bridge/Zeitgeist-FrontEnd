@@ -28,7 +28,7 @@ function GenericInput<T extends string = string>({
       </FormLabel>
       <Input
         {...props}
-        className='md:max-h-8'
+        className='md:max-h-8 w-full'
         onChange={e => handleChange(name, e.target.value)}
         slotProps={{ input: { maxLength: max, minLength: min } }}
       />

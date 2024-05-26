@@ -104,7 +104,7 @@ const ClientDetails = () => {
         <GoBack />
       </Box>
 
-      <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+      <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 mb-6'>
         <ArchiveModal
           sendRequest={sendRequest}
           toggleModal={ToggleModalArchive}
@@ -141,10 +141,12 @@ const ClientDetails = () => {
               id={clientId}
               updateFunction={setCompany}
             />
-            <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
-              <div className='flex flex-auto flex-col lg:flex-row justify-between'>
-                <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
-                <div className='flex flex-wrap items-center gap-x-5'>
+            <section className='flex flex-wrap flex-col-reverse justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
+              <div className='flex flex-wrap justify-between gap-5'>
+                <p className='text-2xl text-gold font-medium whitespace-break-spaces'>
+                  {company.name}
+                </p>
+                <div className='flex flex-wrap items-center gap-x-2'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
                     {company.constitutionDate
@@ -153,7 +155,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex gap-5'>
+              <div className='flex justify-between gap-5 mb-6'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -195,23 +197,23 @@ const ClientDetails = () => {
               </div>
             </section>
 
-            <section className={`flex justify-between mt-8 flex-wrap ${styles.container}`}>
-              <article className='flex flex-1 min-w-44 gap-1 truncate'>
+            <section className={`flex flex-wrap mt-8 lg:grid grid-cols-2 ${styles.container}`}>
+              <span className='w-full flex gap-3'>
                 <EmailOutlinedIcon />
-                <p className='max-w-full truncate'>{company.email}</p>
-              </article>
-              <article className='flex flex-1 min-w-44 gap-1'>
+                <p className='whitespace-break-spaces text-sm md:text-md'>{company.email}</p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <AbcOutlinedIcon />
-                <p>{company.rfc}</p>
-              </article>
-              <article className='flex flex-1 min-w-44 gap-1'>
+                <p className='whitespace-break-spaces text-sm md:text-md'>{company.rfc}</p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <BusinessOutlinedIcon />
-                <p className='max-w-full truncate'>{company.taxResidence}</p>
-              </article>
-              <article className='flex flex-1 min-w-44 gap-1'>
+                <p className='whitespace-break-spaces text-sm md:text-md'>{company.taxResidence}</p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <StayPrimaryPortraitOutlinedIcon />
-                <p>{company.phoneNumber}</p>
-              </article>
+                <p className='whitespace-break-spaces text-sm md:text-md'>{company.phoneNumber}</p>
+              </span>
             </section>
           </>
         )}

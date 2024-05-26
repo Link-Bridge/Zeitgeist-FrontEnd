@@ -31,6 +31,7 @@ const ClientList = (): JSX.Element => {
 
   useEffect(() => {
     handleFilter(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, clientsRequest.data, companies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
@@ -98,27 +99,41 @@ const ClientList = (): JSX.Element => {
 
   if (isLoading) {
     return (
-      <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
+      <main className='min-h-full flex flex-col gap-2 overflow-hidden mb-8'>
         <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
           <SearchBar
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             placeholder='Search by name'
-            setSelectedOption={() => {}}
+            setSelectedOption={() => { }}
             options={[]}
             maxLength={70}
           />
-          <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
+          <div className='flex flex-wrap w-full md:justify-self-end items-center gap-2'>
             {isAdmin && (
-              <div className='flex flex-row items-center gap-2'>
-                <div className='flex-row flex items-center gap-2'>
-                  <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                  <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+              <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+                <div className='flex-row flex items-center sm:gap-2'>
+                  <FilterAltIcon
+                    sx={{ width: '30px', height: '30px' }}
+                    className='text-gold flex-none'
+                  />
+                  <Typography
+                    sx={{
+                      color: colors.gold,
+                      fontWeight: 'bold',
+                      '@media (max-width: 600px)': {
+                        fontSize: '14px',
+                      },
+                      '@media (min-width: 960px)': {
+                        fontSize: '20px',
+                      },
+                    }}
+                  >
                     Filter Clients:
                   </Typography>
                 </div>
                 <GenericDropdown
-                  value={CompanyFilters.ALL}
+                  value={filter}
                   options={Object.values(CompanyFilters)}
                   onChange={value => handleFilter(value ?? CompanyFilters.NOT_ARCHIVED)}
                 />
@@ -128,7 +143,7 @@ const ClientList = (): JSX.Element => {
           </div>
         </section>
         <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5 mt-5'>
           <Loader />
         </section>
       </main>
@@ -142,19 +157,30 @@ const ClientList = (): JSX.Element => {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           placeholder='Search by name'
-          setSelectedOption={() => {}}
+          setSelectedOption={() => { }}
           options={[]}
           maxLength={70}
         />
-        <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
+        <div className='flex flex-wrap w-full md:justify-self-end items-center gap-2'>
           {isAdmin && (
-            <div className='flex flex-row items-center gap-2'>
-              <div className='flex-row flex items-center gap-2'>
+            <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon
                   sx={{ width: '30px', height: '30px' }}
                   className='text-gold flex-none'
                 />
-                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}
+                >
                   Filter Clients:
                 </Typography>
               </div>
@@ -171,7 +197,7 @@ const ClientList = (): JSX.Element => {
       {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
       ) : (
-        <section className='overflow-y-auto overflow-hidden bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto overflow-hidden bg-cardBg mt-5 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 shadow-lg p-4 gap-5 mb-4'>
           {filteredCompanies.map(company => (
             <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
               <ClientCard
