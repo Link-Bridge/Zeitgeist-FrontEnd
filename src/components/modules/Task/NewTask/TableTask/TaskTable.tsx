@@ -19,7 +19,7 @@ function TaskTable({ tasks, projectName, handleStatusChange }: TaskTableProps) {
         setExpanded(exp);
       }}
     >
-      <AccordionSummary>{projectName}</AccordionSummary>
+      <AccordionSummary sx={{ wordBreak: 'break-word' }}>{projectName}</AccordionSummary>
       <AccordionDetails>
         <div className='overflow-x-auto'>
           <Table size='md' hoverRow>
