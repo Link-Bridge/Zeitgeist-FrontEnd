@@ -10,7 +10,7 @@ import { SnackbarContext } from './snackbarContext';
 export type FormState = {
   title: string;
   description: string;
-  startDate: Dayjs;
+  startDate: Dayjs | null;
   endDate: Dayjs | null;
   status: TaskStatus;
   idEmployee: string | null;
@@ -52,6 +52,8 @@ const formReducer = (state: FormState, action: FormAction) => {
 function validate(formState: FormState) {
   const errors: FormErrors = {};
 
+  console.log(formState);
+
   if (!formState.title.trim()) {
     errors.title = 'Title is required';
   }
@@ -81,14 +83,19 @@ function validate(formState: FormState) {
   }
 
   if (
-    isNaN(formState.startDate.day()) ||
-    isNaN(formState.startDate.month()) ||
-    isNaN(formState.startDate.year())
+    formState.startDate &&
+    (isNaN(formState.startDate.day()) ||
+      isNaN(formState.startDate.month()) ||
+      isNaN(formState.startDate.year()))
   ) {
     errors.startDate = 'Invalid date';
   }
 
-  if (!formState.startDate.isSame(MIN_DATE) && formState.startDate.isBefore(MIN_DATE))
+  if (
+    formState.startDate &&
+    !formState.startDate.isSame(MIN_DATE) &&
+    formState.startDate.isBefore(MIN_DATE)
+  )
     errors.startDate = 'Start date must be after 01/01/2018';
 
   if (!formState.status) {
@@ -96,7 +103,7 @@ function validate(formState: FormState) {
   }
 
   if (formState.endDate) {
-    if (formState.startDate.isAfter(formState.endDate)) {
+    if (formState.startDate && formState.startDate.isAfter(formState.endDate)) {
       errors.startDate = 'Start date must be before end date';
     }
 

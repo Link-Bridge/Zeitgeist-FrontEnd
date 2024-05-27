@@ -78,9 +78,11 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               Start Date <span className='text-red-600'>*</span>
             </FormLabel>
             <DatePicker
-              value={form.formState.startDate.utc()}
-              onChange={newDate =>
+              value={form.formState.startDate?.utc()}
+              onChange={newDate => {
+                if (!newDate) return form.formState.startDate = null
                 form.handleChange('startDate', newDate ?? form.formState.startDate)
+              }
               }
               slotProps={{ textField: { error: !!form.errors.startDate } }}
               minDate={MIN_DATE}
@@ -163,7 +165,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
           <Link to={`/projects/details/${idProject}`} replace>
-            <CancelButton onClick={() => {}} />
+            <CancelButton onClick={() => { }} />
           </Link>
           <SendButton disabled={form.isPosting} onClick={() => form.handleSubmit(idProject)} />
         </section>

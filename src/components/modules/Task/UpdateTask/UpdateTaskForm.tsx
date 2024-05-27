@@ -90,8 +90,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               Start Date <span className='text-red-600'>*</span>
             </FormLabel>
             <DatePicker
-              value={form.formState.startDate.utc()}
+              value={form.formState.startDate?.utc()}
               onChange={newDate => {
+                if (!newDate) return form.formState.startDate = null
                 form.handleChange('startDate', newDate ?? form.formState.startDate);
               }}
               slotProps={{ textField: { error: !!form.errors.startDate } }}
@@ -173,7 +174,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
           <Link to={`/projects/details/${data.idProject}`} replace>
-            <CancelButton onClick={() => {}} />
+            <CancelButton onClick={() => { }} />
           </Link>
           <ModifyButton disabled={form.isPosting} onClick={() => form.handleUpdate(data.id)} />
         </section>
