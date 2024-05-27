@@ -71,7 +71,7 @@ const ExpensesMain = () => {
         ) : (
           <div></div>
         )}
-        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4'>
           <Link to={`${RoutesPath.EXPENSES}/new`}>
             <AddButton onClick={() => {}}></AddButton>
           </Link>
