@@ -61,6 +61,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
         navigate(`/projects/`);
       }, 2000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
   const handleArchive = async () => {

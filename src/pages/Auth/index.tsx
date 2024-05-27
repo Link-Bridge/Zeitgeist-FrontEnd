@@ -3,8 +3,6 @@ import { signInWithPopup } from 'firebase/auth';
 import React, { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
-import loginImage from '../../assets/images/login-image.png';
-import loginImageMobile from '../../assets/images/bg-mobile.png';
 import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';

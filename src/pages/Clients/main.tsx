@@ -105,7 +105,7 @@ const ClientList = (): JSX.Element => {
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             placeholder='Search by name'
-            setSelectedOption={() => { }}
+            setSelectedOption={() => {}}
             options={[]}
             maxLength={70}
           />
@@ -157,7 +157,7 @@ const ClientList = (): JSX.Element => {
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
           placeholder='Search by name'
-          setSelectedOption={() => { }}
+          setSelectedOption={() => {}}
           options={[]}
           maxLength={70}
         />

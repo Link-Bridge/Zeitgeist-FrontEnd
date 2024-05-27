@@ -97,6 +97,7 @@ const ProjectMain = () => {
 
   useEffect(() => {
     handleFilter(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
@@ -125,7 +126,8 @@ const ProjectMain = () => {
                     '@media (min-width: 960px)': {
                       fontSize: '20px',
                     },
-                  }}>
+                  }}
+                >
                   Filter Projects:
                 </Typography>
               </div>
@@ -137,7 +139,7 @@ const ProjectMain = () => {
             </div>
           ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => { }}></AddButton>
+            <AddButton onClick={() => {}}></AddButton>
           </Link>
         </div>
       </section>
