@@ -47,7 +47,9 @@ const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover:
 const chipStyle = {
   bgcolor: colors.orangeChip,
   fontSize: '1rem',
-  minWidth: '5px0px',
+  minWidth: '100px',
+  padding: '0 10px',
+  height: '30px',
 };
 
 const ProjectDetails = () => {
@@ -281,11 +283,9 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap justify-between gap-y-2'>
-            <h3 className='text-[22px] font-medium truncate' style={{ marginTop: '10px' }}>
-              {data?.name}
-            </h3>
-            <div className='flex flex-wrap gap-3'>
+          <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
+            <h3 className='text-xl font-medium'>{data?.name}</h3>
+            <div className='flex flex-wrap gap-3 mb-6'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -358,11 +358,8 @@ const ProjectDetails = () => {
           <p style={{ marginTop: '15px' }}>{data?.description}</p>
 
           {data && (
-            <div
-              className='flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
-              style={{ color: colors.gray }}
-            >
-              <div style={{ fontSize: '15px' }}>
+            <div className='flex flex-wrap gap-5 pt-5 text-[10px]' style={{ color: colors.gray }}>
+              <div>
                 <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
@@ -382,8 +379,8 @@ const ProjectDetails = () => {
               })}
 
               {data?.isChargeable && (
-                <div style={{ fontSize: '15px' }}>
-                  <p style={{ marginLeft: '7px' }}>Payed</p>
+                <div>
+                  <p>Payed</p>
                   <Chip
                     component={Select}
                     sx={chipStyle}
@@ -437,10 +434,10 @@ const ProjectDetails = () => {
           Project Tasks
         </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
+          <AddButton onClick={() => { }} />
         </Link>
       </section>
-      <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white overflow-auto mb-4'>
         <TaskListTable
           errorTasks={errorTasks}
           loadingTasks={loadingTasks}

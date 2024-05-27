@@ -129,7 +129,7 @@ const TaskListTable = ({
    */
 
   return (
-    <main className='h-[400px]'>
+    <main>
       <Table sx={{ minWidth: '800px' }} hoverRow>
         {initialTasks && initialTasks.length !== 0 && (
           <>

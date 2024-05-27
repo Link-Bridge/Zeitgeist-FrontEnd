@@ -404,7 +404,7 @@ const ProjectReport: React.FC = () => {
                 <section>
                   <Box key={item.id}>
                     <div className='mb-4'>
-                      <h3 className='text-2xl font-semibold'>{item.title}</h3>
+                      <h3 className='text-2xl font-semibold break-words'>{item.title}</h3>
                     </div>
 
                     <div className='mb-4'>
