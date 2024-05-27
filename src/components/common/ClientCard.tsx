@@ -18,6 +18,17 @@ interface ClientCardProps {
   totalProjects: number;
 }
 
+const styles = {
+  fontSize: '13px',
+  overflow: 'hidden',
+  textOverflow: 'ellipsis',
+  whiteSpace: 'nowrap',
+  minWidth: '70%',
+  '@media (min-width: 400px)': {
+    minWidth: 'fit-content',
+  },
+};
+
 const ClientCard = ({
   name,
   accountingHours,
@@ -33,11 +44,11 @@ const ClientCard = ({
           {name}
         </span>
       </header>
-      <div className='grid grid-cols-2 gap-2'>
+      <div className='flex flex-wrap gap-2'>
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
-            fontSize: '13px',
+            ...styles,
           }}
         >
           Accounting Hours: {accountingHours}
@@ -45,10 +56,7 @@ const ClientCard = ({
         <Chip
           sx={{
             bgcolor: colors.orangeChip,
-            fontSize: '13px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            ...styles,
           }}
         >
           Legal Hours: {legalHours}
@@ -56,10 +64,7 @@ const ClientCard = ({
         <Chip
           sx={{
             bgcolor: colors.brownChip,
-            fontSize: '13px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            ...styles,
           }}
         >
           Chargeable Hours: {chargeableHours}
@@ -69,10 +74,7 @@ const ClientCard = ({
             bgcolor: colors.blueChip,
             color: '#0B6BCB',
             border: '1px solid #97C3F0',
-            fontSize: '13px',
-            overflow: 'hidden',
-            textOverflow: 'ellipsis',
-            whiteSpace: 'nowrap',
+            ...styles,
           }}
         >
           Total Projects: {totalProjects}

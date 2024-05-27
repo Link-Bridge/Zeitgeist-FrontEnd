@@ -75,7 +75,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
       <ModalDialog size='lg'>
         <ModalClose />
         <form
-          className='grid grid-cols-2 gap-4'
+          className='flex flex-wrap overflow-y-scroll lg:overflow-y-hidden sm:grid grid-cols-2 gap-4'
           onSubmit={async e => {
             try {
               const res = await form.handleSubmit(e, data ? true : false, id);
@@ -97,6 +97,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             value={form.formState.name}
             required
             max={70}
+            sx={{ width: '100%' }}
           />
           <GenericInput
             name={'email' as Fields}
@@ -105,6 +106,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             handleChange={form.handleChange}
             label={'Email'}
             max={150}
+            sx={{ width: '100%' }}
           />
           <GenericInput
             name={'phoneNumber' as Fields}
@@ -113,6 +115,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             handleChange={(name, value) => form.handleChange(name, phoneNumberMask(value))}
             label={'Phone Number'}
             max={12}
+            sx={{ width: '100%' }}
           />
           <GenericInput
             name={'rfc' as Fields}
@@ -121,8 +124,9 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             handleChange={form.handleChange}
             label={'RFC'}
             max={13}
+            sx={{ width: '100%' }}
           />
-          <FormControl error={!!form.errors.constitutionDate}>
+          <FormControl error={!!form.errors.constitutionDate} sx={{ width: '100%' }}>
             <FormLabel>Constitution Date</FormLabel>
             <DatePicker
               value={form.formState.constitutionDate}
@@ -142,8 +146,9 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
             handleChange={form.handleChange}
             label={'Tax Residence'}
             max={150}
+            sx={{ width: '100%' }}
           />
-          <section className='flex col-span-2 justify-end gap-2'>
+          <section className='flex justify-between w-full gap-2 col-span-full mt-3'>
             <Button
               variant='outlined'
               sx={{
