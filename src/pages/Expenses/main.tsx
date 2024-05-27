@@ -1,4 +1,4 @@
-import { Box, Typography } from '@mui/joy';
+import { Box } from '@mui/joy';
 import { useContext, useEffect, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
@@ -52,10 +52,6 @@ const ExpensesMain = () => {
           color: colors.gray[500],
         }}
       >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading expenses
-        </Typography>
-
         <Loader />
       </Box>
     );
