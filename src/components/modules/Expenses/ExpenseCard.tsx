@@ -45,7 +45,7 @@ const ExpenseCard = ({
         <h5 className='text-[#424242] font-montserrat truncate'>{title}</h5>
       </section>
       <h5 className='text-sm text-gold truncate'>{dateParser(date, '/')}</h5>
-      <section className='mt-3 flex flex-nowrap gap-3 overflow-hidden'>
+      <section className='mt-3 flex flex-wrap gap-3 overflow-hidden'>
         <ColorChip label={`$${totalAmount}`} color={`${colors.extra}`}></ColorChip>
         <StatusChip status={status} />
         {(employeeRole.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||

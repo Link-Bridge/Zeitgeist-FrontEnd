@@ -58,8 +58,8 @@ const ExpensesMain = () => {
   }
 
   return (
-    <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
-      <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
+    <main className='min-h-full flex flex-col overflow-hidden'>
+      <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
         {employee?.role.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||
         employee?.role.toUpperCase() === SupportedRoles.ADMIN.toUpperCase() ? (
           <SearchBar
@@ -71,7 +71,7 @@ const ExpensesMain = () => {
         ) : (
           <div></div>
         )}
-        <div className='flex flex-wrap flex-row items-center gap-2'>
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
           <Link to={`${RoutesPath.EXPENSES}/new`}>
             <AddButton onClick={() => {}}></AddButton>
           </Link>
