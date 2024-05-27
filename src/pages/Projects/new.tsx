@@ -44,7 +44,7 @@ const NewProject = () => {
   }, [admin, employee]);
 
   return (
-    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
+    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '20px' }}>
       {req.loading ? (
         <Loader />
       ) : (
@@ -122,6 +122,7 @@ const NewProject = () => {
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
                 minDate={MIN_DATE}
+                maxDate={MAX_DATE}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>

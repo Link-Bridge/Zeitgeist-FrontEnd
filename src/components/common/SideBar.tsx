@@ -84,7 +84,7 @@ const SideBar = () => {
                       opacity: pathname.includes(item.href) ? 1 : 0.7,
                     }}
                   >
-                    <item.icon></item.icon>
+                    <item.icon />
                     <p>{item.title}</p>
                   </Link>
                 </li>
@@ -117,7 +117,7 @@ const SideBar = () => {
 
   return (
     <div className='flex h-screen'>
-      <div className='md:hidden fixed top-7 left-5 z-50'>
+      <div className='md:hidden fixed top-7 left-3 z-50'>
         <IconButton onClick={toggleSidebar}>
           <MenuRounded />
         </IconButton>
