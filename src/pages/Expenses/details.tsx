@@ -198,9 +198,7 @@ const ExpenseDetails = () => {
           </section>
         </section>
       ) : (
-        <Typography variant='plain' level='h1' mb={4}>
-          <p className='grow-0 text-2xl font-medium break-words col-span-2'>{`Expense with id: ${id} not found`}</p>
-        </Typography>
+          <Navigate to='/404' replace />
       )}
     </main>
   );
