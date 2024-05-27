@@ -139,6 +139,7 @@ const NewProject = () => {
               <DatePicker
                 value={dayjs(form.formState.startDate).utc()}
                 onChange={newVal => {
+                  if (!newVal) return (form.formState.startDate = null);
                   form.handleChange('startDate', newVal ?? form.formState.startDate);
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
