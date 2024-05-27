@@ -18,8 +18,8 @@ import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
-import Update from './edit';
 import { truncateText } from '../../utils/methods';
+import Update from './edit';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();

@@ -208,7 +208,9 @@ const ClientDetails = () => {
               </span>
               <span className='w-full flex gap-3'>
                 <BusinessOutlinedIcon />
-                <p className='whitespace-break-spaces break-all text-sm md:text-md'>{company.taxResidence}</p>
+                <p className='whitespace-break-spaces break-all text-sm md:text-md'>
+                  {company.taxResidence}
+                </p>
               </span>
               <span className='w-full flex gap-3'>
                 <StayPrimaryPortraitOutlinedIcon />
