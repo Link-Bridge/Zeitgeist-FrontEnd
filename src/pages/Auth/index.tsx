@@ -1,6 +1,6 @@
 import Button from '@mui/joy/Button';
 import { getRedirectResult, signInWithRedirect } from 'firebase/auth';
-import React, { useContext, useEffect } from 'react';
+import React, { useCallback, useContext, useEffect } from 'react';
 import { useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import { auth, provider } from '../../config/firebase.config';
@@ -15,6 +15,35 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
+
+  const sendRequest = useCallback(async () => {
+    try {
+      const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
+      return response.data as EmployeeReponse;
+    } catch (error) {
+      setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+    }
+  }, [setState]);
+
+  const updateUserContext = useCallback(
+    async (data: EmployeeReponse) => {
+      if (data) {
+        if (data.data.role !== 'No role') {
+          setEmployee(data.data);
+          localStorage.setItem('employee', JSON.stringify(data.data));
+          navigate(RoutesPath.HOME);
+          handleGetDeviceToken(data.data.employee.email);
+        } else {
+          setState({
+            open: true,
+            message: 'User not authorized',
+            type: 'danger',
+          });
+        }
+      }
+    },
+    [navigate, setEmployee, setState]
+  );
 
   useEffect(() => {
     const checkRedirectResult = async () => {
@@ -39,40 +68,13 @@ const Auth: React.FC = () => {
     };
 
     checkRedirectResult();
-  }, []);
-
-  const sendRequest = async () => {
-    try {
-      const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
-
-      return response.data as EmployeeReponse;
-    } catch (error) {
-      setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-    }
-  };
+  }, [sendRequest, setState, updateUserContext]);
 
   const handleGoogleSignIn = async () => {
     try {
       await signInWithRedirect(auth, provider);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-    }
-  };
-
-  const updateUserContext = async (data: EmployeeReponse) => {
-    if (data) {
-      if (data.data.role !== 'No role') {
-        setEmployee(data.data);
-        localStorage.setItem('employee', JSON.stringify(data.data));
-        navigate(RoutesPath.HOME);
-        handleGetDeviceToken(data.data.employee.email);
-      } else {
-        setState({
-          open: true,
-          message: 'User not authorized',
-          type: 'danger',
-        });
-      }
     }
   };
 
