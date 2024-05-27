@@ -84,6 +84,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               }
               slotProps={{ textField: { error: !!form.errors.startDate } }}
               minDate={MIN_DATE}
+              maxDate={MAX_DATE}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
