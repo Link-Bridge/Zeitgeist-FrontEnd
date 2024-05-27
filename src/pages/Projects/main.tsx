@@ -110,7 +110,7 @@ const ProjectMain = () => {
           setSelectedOption={setFilterOption}
           maxLength={70}
         />
-        <div className='flex flex-wrap flex-row items-center gap-2 my-4'>
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
           {employee?.role === 'Admin' ? (
             <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
               <div className='flex-row flex items-center sm:gap-2'>

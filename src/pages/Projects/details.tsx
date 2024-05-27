@@ -285,7 +285,7 @@ const ProjectDetails = () => {
         <section className='font-montserrat'>
           <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
             <h3 className='text-xl font-medium'>{data?.name}</h3>
-            <div className='flex flex-wrap gap-3 mb-6'>
+            <div className='flex flex-wrap gap-3 mb-6 lg:justify-end'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -297,6 +297,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                   flexGrow: '1',
+                  maxWidth: '120px',
                 }}
                 startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -313,6 +314,7 @@ const ProjectDetails = () => {
                   },
                   height: '5px',
                   flexGrow: '1',
+                  maxWidth: '120px',
                 }}
                 startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -329,6 +331,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                     flexGrow: '1',
+                    maxWidth: '120px',
                   }}
                   startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
@@ -345,6 +348,7 @@ const ProjectDetails = () => {
                     },
                     height: '5px',
                     flexGrow: '1',
+                    maxWidth: '120px',
                   }}
                   startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
