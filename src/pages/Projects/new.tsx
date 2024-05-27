@@ -118,8 +118,7 @@ const NewProject = () => {
               <DatePicker
                 value={dayjs(form.formState.startDate).utc()}
                 onChange={newVal => {
-                  if (!newVal) return (form.formState.startDate = null);
-                  form.handleChange('startDate', newVal ?? form.formState.startDate);
+                  form.handleChange('startDate', newVal);
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
                 minDate={MIN_DATE}

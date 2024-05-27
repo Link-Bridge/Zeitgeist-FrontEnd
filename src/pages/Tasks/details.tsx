@@ -147,7 +147,7 @@ const TaskDetails: React.FC = () => {
             <h1 className='text-gray text-[2rem] break-all whitespace-break-spaces'>
               {data.title}
             </h1>
-            <div className='flex gap-3'>
+            <div className='flex justify-end gap-3'>
               <Button
                 onClick={handleEdit}
                 sx={{
