@@ -1,7 +1,7 @@
 import Button from '@mui/joy/Button';
 import { signInWithPopup } from 'firebase/auth';
 import React, { useContext } from 'react';
-import { useNavigate } from 'react-router-dom';
+import { Navigate, useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import { auth, provider } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
@@ -15,6 +15,11 @@ const Auth: React.FC = () => {
   const navigate = useNavigate();
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
+
+  const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? null);
+  if (currentEmployee) {
+    return <Navigate to='/home' replace />;
+  }
 
   const sendRequest = async () => {
     try {
