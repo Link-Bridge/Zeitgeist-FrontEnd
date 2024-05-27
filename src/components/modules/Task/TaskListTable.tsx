@@ -129,90 +129,92 @@ const TaskListTable = ({
    */
 
   return (
-    <Table sx={{ minWidth: '800px' }} hoverRow>
-      {initialTasks && initialTasks.length !== 0 && (
-        <>
-          <thead>
-            <tr>
-              <th style={{ width: '30%' }}>Task</th>
-              <th>Status</th>
-              <th>Employee</th>
-              <th style={{ width: '15%' }}>Due Date</th>
-              <th style={{ width: '10%' }}></th>
-            </tr>
-          </thead>
-
-          <tbody>
-            {initialTasks.map(task => (
-              <tr key={task.id}>
-                <td
-                  className='hover:cursor-pointer'
-                  style={{ wordBreak: 'break-word' }}
-                  onClick={() => handleClick(task.id)}
-                >
-                  {task.title}
-                </td>
-
-                <td>
-                  <GenericDropdown
-                    options={Object.values(TaskStatus)}
-                    onChange={value => handleStatusChange(task.id, value as TaskStatus)}
-                    value={task.status as TaskStatus}
-                    colorMap={statusColorMap}
-                    placeholder='Select status ...'
-                  />
-                </td>
-
-                <td className='p-2'>
-                  <Chip
-                    sx={{
-                      backgroundColor: colors.lighterGray,
-                      color: 'black',
-                      width: 'auto',
-                      maxWidth: '100%',
-                      textOverflow: 'ellipsis',
-                      overflow: 'hidden',
-                      whiteSpace: 'nowrap',
-
-                      '@media (max-width: 640px)': {
-                        fontSize: '0.875rem',
-                      },
-                    }}
-                    className='truncate'
-                  >
-                    {task.employeeFirstName && task.employeeLastName
-                      ? `${task.employeeFirstName.split(' ')[0]} ${task.employeeLastName.split(' ')[0]}`
-                      : 'No employee'}
-                  </Chip>
-                </td>
-
-                <td>
-                  {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
-                </td>
-                <td>
-                  <TaskActionsMenu
-                    task={task as Task}
-                    onEdit={handleEdit}
-                    onOpenDeleteDialog={handleDeleteButtonClick}
-                  />
-                </td>
+    <main>
+      <Table sx={{ minWidth: '800px' }} hoverRow>
+        {initialTasks && initialTasks.length !== 0 && (
+          <>
+            <thead>
+              <tr>
+                <th style={{ width: '30%' }}>Task</th>
+                <th>Status</th>
+                <th>Employee</th>
+                <th style={{ width: '15%' }}>Due Date</th>
+                <th style={{ width: '10%' }}></th>
               </tr>
-            ))}
-          </tbody>
-          <DeleteModal
-            open={taskToDelete !== null}
-            setOpen={() => setTaskToDelete(null)}
-            title='Confirm Deletion'
-            description='Are you sure you want to delete this task?'
-            id={taskToDelete?.id || ''}
-            handleDelete={(id: string) => {
-              onDelete(id);
-              setTaskToDelete(null);
-            }}
-          />
-        </>
-      )}
-    </Table>
+            </thead>
+
+            <tbody>
+              {initialTasks.map(task => (
+                <tr key={task.id}>
+                  <td
+                    className='hover:cursor-pointer'
+                    style={{ wordBreak: 'break-word' }}
+                    onClick={() => handleClick(task.id)}
+                  >
+                    {task.title}
+                  </td>
+
+                  <td>
+                    <GenericDropdown
+                      options={Object.values(TaskStatus)}
+                      onChange={value => handleStatusChange(task.id, value as TaskStatus)}
+                      value={task.status as TaskStatus}
+                      colorMap={statusColorMap}
+                      placeholder='Select status ...'
+                    />
+                  </td>
+
+                  <td className='p-2'>
+                    <Chip
+                      sx={{
+                        backgroundColor: colors.lighterGray,
+                        color: 'black',
+                        width: 'auto',
+                        maxWidth: '100%',
+                        textOverflow: 'ellipsis',
+                        overflow: 'hidden',
+                        whiteSpace: 'nowrap',
+
+                        '@media (max-width: 640px)': {
+                          fontSize: '0.875rem',
+                        },
+                      }}
+                      className='truncate'
+                    >
+                      {task.employeeFirstName && task.employeeLastName
+                        ? `${task.employeeFirstName.split(' ')[0]} ${task.employeeLastName.split(' ')[0]}`
+                        : 'No employee'}
+                    </Chip>
+                  </td>
+
+                  <td>
+                    {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
+                  </td>
+                  <td>
+                    <TaskActionsMenu
+                      task={task as Task}
+                      onEdit={handleEdit}
+                      onOpenDeleteDialog={handleDeleteButtonClick}
+                    />
+                  </td>
+                </tr>
+              ))}
+            </tbody>
+            <DeleteModal
+              open={taskToDelete !== null}
+              setOpen={() => setTaskToDelete(null)}
+              title='Confirm Deletion'
+              description='Are you sure you want to delete this task?'
+              id={taskToDelete?.id || ''}
+              handleDelete={(id: string) => {
+                onDelete(id);
+                setTaskToDelete(null);
+              }}
+            />
+          </>
+        )}
+      </Table>
+    </main>
   );
 };
 

@@ -36,41 +36,43 @@ const SearchBar: React.FC<SearchBarProps> = ({
   };
 
   return (
-    <div className='flex items-center space-x-2'>
-      <Input
-        value={searchTerm}
-        onChange={e => {
-          if (!maxLength || e.target.value.length <= maxLength) {
-            setSearchTerm(e.target.value);
+    <div className='flex items-center space-x-2 w-full'>
+      <div className='flex items-center space-x-2 w-full'>
+        <Input
+          className='w-full'
+          value={searchTerm}
+          onChange={e => {
+            if (!maxLength || e.target.value.length <= maxLength) {
+              setSearchTerm(e.target.value);
+            }
+          }}
+          placeholder={selectedOption || placeholder}
+          startDecorator={<Search style={{ color: colors.gold }} />}
+          sx={{
+            alignItems: 'center',
+          }}
+          endDecorator={
+            options.length > 0 && (
+              <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>
+                <MoreVert />
+              </IconButton>
+            )
           }
-        }}
-        placeholder={selectedOption || placeholder}
-        startDecorator={<Search style={{ color: colors.gold }} />}
-        sx={{
-          width: 300,
-          alignItems: 'center',
-        }}
-        endDecorator={
-          options.length > 0 && (
-            <IconButton onClick={handleMenuClick} style={{ color: colors.gold }}>
-              <MoreVert />
-            </IconButton>
-          )
-        }
-      />
-      {options.length > 0 && (
-        <Menu
-          anchorEl={anchorEl}
-          open={Boolean(anchorEl)}
-          onClose={() => handleMenuClose(selectedOption)}
-        >
-          {options.map((option, index) => (
-            <MenuItem key={index} onClick={() => handleMenuClose(option)}>
-              {option}
-            </MenuItem>
-          ))}
-        </Menu>
-      )}
+        />
+        {options.length > 0 && (
+          <Menu
+            anchorEl={anchorEl}
+            open={Boolean(anchorEl)}
+            onClose={() => handleMenuClose(selectedOption)}
+          >
+            {options.map((option, index) => (
+              <MenuItem key={index} onClick={() => handleMenuClose(option)}>
+                {option}
+              </MenuItem>
+            ))}
+          </Menu>
+        )}
+      </div>
     </div>
   );
 };
