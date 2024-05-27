@@ -52,8 +52,6 @@ const formReducer = (state: FormState, action: FormAction) => {
 function validate(formState: FormState) {
   const errors: FormErrors = {};
 
-  console.log(formState);
-
   if (!formState.title.trim()) {
     errors.title = 'Title is required';
   }
