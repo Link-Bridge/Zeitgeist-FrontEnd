@@ -108,7 +108,7 @@ const ProjectReport: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
-  useEffect(() => {}, [handleClose]);
+  useEffect(() => { }, [handleClose]);
 
   if (reqReport.loading) {
     return (
@@ -165,7 +165,7 @@ const ProjectReport: React.FC = () => {
       </Box>
 
       {report ? (
-        <section className='overflow-y-scroll bg-white rounded-xl p-3 md:p-6 mb-5'>
+        <section className='bg-white rounded-xl p-3 md:p-6 mb-5'>
           <section className='grid grid-cols-2 md:flex flex-wrap justify-end gap-3 mb-5'>
             <Select
               defaultValue={1}
@@ -260,10 +260,10 @@ const ProjectReport: React.FC = () => {
           </section>
           <section className='grid lg:grid-cols-2 mb-8 gap-y-8'>
             <div className='mr-5 xl:mr-10'>
-              <section className='break-words mb-4 leading-tight text-2xl font-semibold'>
-                <p>{report.project.name}</p>
+              <section className='mb-4 leading-tight text-2xl font-semibold'>
+                <p className='break-all whitespace-break-spaces'>{report.project.name}</p>
               </section>
-              <section className='mb-4 xl:mb-8 break-words'>
+              <section className='mb-4 xl:mb-8 break-all whitespace-break-spaces'>
                 {' '}
                 <p>{report.project.description}</p>{' '}
               </section>
@@ -315,7 +315,10 @@ const ProjectReport: React.FC = () => {
                 {report.project.matter && (
                   <div className='max-w-full'>
                     <p className='text-sm'>Matter</p>
-                    <ColorChip label={report.project.matter} color={`${colors.null}`}></ColorChip>
+                    <ColorChip
+                      label={truncateText(report.project.matter, 30)}
+                      color={`${colors.null}`}
+                    ></ColorChip>
                   </div>
                 )}
               </section>
@@ -404,11 +407,13 @@ const ProjectReport: React.FC = () => {
                 <section>
                   <Box key={item.id}>
                     <div className='mb-4'>
-                      <h3 className='text-2xl font-semibold break-words'>{item.title}</h3>
+                      <h3 className='text-2xl font-semibold break-all whitespace-break-spaces'>
+                        {item.title}
+                      </h3>
                     </div>
 
                     <div className='mb-4'>
-                      <p className='break-words'>{item.description}</p>
+                      <p className='break-all whitespace-break-spaces'>{item.description}</p>
                     </div>
 
                     <div className='flex flex-wrap gap-4 mb-10'>

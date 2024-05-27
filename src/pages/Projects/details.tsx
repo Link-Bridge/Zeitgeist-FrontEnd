@@ -284,8 +284,8 @@ const ProjectDetails = () => {
       >
         <section className='font-montserrat'>
           <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
-            <h3 className='text-xl font-medium'>{data?.name}</h3>
-            <div className='flex flex-wrap gap-3 mb-6 lg:justify-end'>
+            <h3 className='text-xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
+            <div className='flex flex-wrap gap-3 mb-6 justify-end'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -359,7 +359,7 @@ const ProjectDetails = () => {
             </div>
           </section>
 
-          <p style={{ marginTop: '15px' }}>{data?.description}</p>
+          <p className='mt-4 whitespace-break-spaces break-all'>{data?.description}</p>
 
           {data && (
             <div className='flex flex-wrap gap-5 pt-5 text-[10px]' style={{ color: colors.gray }}>
@@ -438,7 +438,7 @@ const ProjectDetails = () => {
           Project Tasks
         </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
+          <AddButton onClick={() => { }} />
         </Link>
       </section>
       <Card className='bg-white overflow-auto mb-4'>

@@ -143,7 +143,7 @@ const ClientDetails = () => {
             />
             <section className='flex flex-wrap flex-col-reverse justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
               <div className='flex flex-wrap justify-between gap-5'>
-                <p className='text-2xl text-gold font-medium whitespace-break-spaces'>
+                <p className='text-2xl text-gold font-medium whitespace-break-spaces break-all'>
                   {company.name}
                 </p>
                 <div className='flex flex-wrap items-center gap-x-2'>
@@ -155,7 +155,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex justify-between gap-5 mb-6'>
+              <div className='flex justify-end gap-2 mb-6'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -208,7 +208,7 @@ const ClientDetails = () => {
               </span>
               <span className='w-full flex gap-3'>
                 <BusinessOutlinedIcon />
-                <p className='whitespace-break-spaces text-sm md:text-md'>{company.taxResidence}</p>
+                <p className='whitespace-break-spaces break-all text-sm md:text-md'>{company.taxResidence}</p>
               </span>
               <span className='w-full flex gap-3'>
                 <StayPrimaryPortraitOutlinedIcon />
