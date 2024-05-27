@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
 import { useContext, useReducer, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -159,7 +160,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task created successfully', type: 'success' });
       navigate(`/tasks/${res.data.id}`, { state: location.state, replace: true });
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);
@@ -186,7 +189,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task updated successfully', type: 'success' });
       navigate(-1);
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);
