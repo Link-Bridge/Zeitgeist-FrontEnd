@@ -59,9 +59,9 @@ const SideBar = () => {
 
   const SideBarContent = () => (
     <aside
-      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-full h-full overflow-y-auto`}
+      className={`relative bg-[url('/src/assets/marmol.jpg')] bg-repeat top-0 left-0 md:flex flex-col items-center pt-16 gap-10 w-full h-full overflow-y-auto bg-black bg-opacity-50`}
     >
-      <div className='absolute top-0 left-0 w-full h-full bg-black bg-opacity-50'></div>
+      <div className='absolute top-0 left-0 w-full h-full '></div>
       <div className='relative z-10 w-full flex flex-col justify-between h-full'>
         <div>
           <div className='flex justify-center'>
