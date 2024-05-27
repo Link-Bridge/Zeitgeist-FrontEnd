@@ -110,13 +110,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
             ? 'Are sure you want to unarchive this project?'
             : 'Are sure you want to archive this project?'}
         </Typography>
-        <Alert
-          size='lg'
-          sx={{ mt: 2, pr: 8, border: '#333333' }}
-          startDecorator={<InfoIcon />}
-          variant='soft'
-          color='primary'
-        >
+        <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
           Don't worry, this action can be undone.
         </Alert>
         <Box
