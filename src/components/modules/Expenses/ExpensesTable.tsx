@@ -24,7 +24,7 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
     <Table
       stickyHeader
       sx={{
-        minWidth: '800px',
+        minWidth: '600px',
         '& tr > *:not(:first-of-type)': { textAlign: 'center' },
       }}
     >
@@ -42,7 +42,7 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
           <tr key={expense.id}>
             <td className='truncate'>{expense.title}</td>
             <td>{expense.date ? dayjs.utc(expense.date).format('DD/MM/YYYY') : 'No due date'}</td>
-            <td>{expense.supplier ? expense.supplier : '-'}</td>
+            <td className='truncate'>{expense.supplier ? expense.supplier : '-'}</td>
             <td>
               {expense.urlFile ? (
                 <Button
