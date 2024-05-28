@@ -5,22 +5,31 @@ import { Box, Button, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import trash_can from '../../assets/icons/trash_can.svg';
-import colors from '../../colors';
+import colors, { statusChipColorCombination } from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import { ExpensesTable } from '../../components/modules/Expenses/ExpensesTable';
 import StatusChip from '../../components/modules/Expenses/StatusChip';
 import useHttp from '../../hooks/useHttp';
-import { ExpenseReport } from '../../types/expense';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
+import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import GenericDropdown from '../../components/common/GenericDropdown';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
 }
+
+const statusColorMap: Record<ExpenseReportStatus, { bg: string; font: string; bgHover: string }> = {
+  [ExpenseReportStatus.ACCEPTED]: statusChipColorCombination.accepted,
+  [ExpenseReportStatus.PAYED]: statusChipColorCombination.done,
+  [ExpenseReportStatus.PENDING]: statusChipColorCombination.inProgress,
+  [ExpenseReportStatus.REJECTED]: statusChipColorCombination.cancelled,
+};
 
 const ExpenseDetails = () => {
   function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
@@ -29,10 +38,13 @@ const ExpenseDetails = () => {
     }
   }
 
+  const { employee } = useContext(EmployeeContext);
   const { id } = useParams();
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
+  const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(ExpenseReportStatus.PENDING);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
@@ -41,11 +53,10 @@ const ExpenseDetails = () => {
   );
 
   useEffect(() => {
-    if (!data) {
-      sendRequest();
-    } else {
-      employeeNameParser(data.employeeFirstName, data.employeeLastName);
-    }
+    if (!data) sendRequest();
+    else employeeNameParser(data.employeeFirstName, data.employeeLastName);
+
+    if (data) setExpenseStatus(data.status as ExpenseReportStatus)
   }, [data]);
 
   useEffect(() => {
@@ -59,6 +70,23 @@ const ExpenseDetails = () => {
       }
     }
   }, [error]);
+
+  const handleStatusChange = async (newStatus: ExpenseReportStatus) => {
+    console.log('updating status')
+    console.log(newStatus)
+    // try {
+    //   setUpdating(true);
+    //   await axiosInstance.put(`${BASE_API_URL}/project/details/${id}`, {
+    //     status: newStatus,
+    //   });
+    //   setProjectStatus(newStatus);
+    //   setState({ open: true, message: 'Status updated successfully.', type: 'success' });
+    // } catch {
+    //   setState({ open: true, message: 'Error updating status.', type: 'danger' });
+    // } finally {
+    //   setUpdating(false);
+    // }
+  };
 
   if (notFound || notAuthorized) {
     return <Navigate to='/404' replace />;
@@ -133,7 +161,17 @@ const ExpenseDetails = () => {
           <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
-              <StatusChip status={data.status ? capitalize(data.status) : 'NONE'} />
+              {employee?.role == SupportedRoles.ADMIN || employee?.role == SupportedRoles.ACCOUNTING ? (
+                <GenericDropdown
+                  // disabled={updating}
+                  options={Object.values(ExpenseReportStatus)}
+                  colorMap={statusColorMap}
+                  onChange={function (newValue: string | null): void {
+                    handleStatusChange(newValue as ExpenseReportStatus);
+                  }}
+                  value={expenseStatus}
+                ></GenericDropdown>
+              ) : <StatusChip status={data.status ? capitalize(data.status) : 'NONE'} />}
             </Box>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Total</p>
