@@ -1,7 +1,7 @@
+import * as dayjs from 'dayjs';
 import colors from '../../../colors';
 import { ExpenseReportStatus } from '../../../types/expense';
 import { SupportedRoles } from '../../../utils/constants';
-import { dateParser } from '../../../utils/methods';
 import ColorChip from '../../common/ColorChip';
 import StatusChip from './StatusChip';
 
@@ -44,7 +44,7 @@ const ExpenseCard = ({
         <div className='border-2 h-8 border-[#9C844C]' />
         <h5 className='text-[#424242] font-montserrat truncate'>{title}</h5>
       </section>
-      <h5 className='text-sm text-gold truncate'>{dateParser(date, '/')}</h5>
+      <h5 className='text-sm text-gold truncate'>{dayjs.utc(date).format('DD/MM/YYYY')}</h5>
       <section className='mt-3 flex flex-wrap gap-3 overflow-hidden'>
         <ColorChip label={`$${totalAmount}`} color={`${colors.extra}`}></ColorChip>
         <StatusChip status={status} />
