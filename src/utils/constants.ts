@@ -22,6 +22,7 @@ export enum APIPath {
   UPDATE_TASK = '/tasks/update',
   UPDATE_TASK_STATUS = '/tasks/update/status',
   EXPENSE_REPORT = '/expense/report',
+  NOTIFICATION = '/notification',
 }
 
 export enum RequestMethods {

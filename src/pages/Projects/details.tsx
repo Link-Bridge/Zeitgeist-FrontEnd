@@ -19,6 +19,7 @@ import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
+import SendNotificationModal from '../../components/modules/Projects/SendNotificationModal';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteTask from '../../hooks/useDeleteTask';
@@ -60,6 +61,7 @@ const ProjectDetails = () => {
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const navigate = useNavigate();
 
@@ -67,19 +69,6 @@ const ProjectDetails = () => {
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
-
-  const toggleModal = () => {
-    setOpen(!open);
-  };
-
-  useEffect(() => {
-    if (isAxiosError(error)) {
-      const message = error.response?.data.message;
-      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
-        setNotFound(true);
-      }
-    }
-  }, [error]);
 
   const {
     data: company,
@@ -97,6 +86,19 @@ const ProjectDetails = () => {
     loading: loadingTasks,
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  const toggleModal = () => {
+    setOpen(!open);
+  };
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!tasks) getTasks();
@@ -254,6 +256,21 @@ const ProjectDetails = () => {
     { label: 'Chargeable', content: data?.isChargeable ? 'Yes' : 'No' },
     { label: 'isArchived', content: data?.isArchived ? 'Yes' : 'No' },
   ];
+
+  const handleOpenNotificationModal = () => {
+    setIsNotificationModalOpen(true);
+  };
+
+  const handleCloseNotificationModal = () => {
+    setIsNotificationModalOpen(false);
+  };
+
+  const handleSendNotification = message => {
+    // Lógica para enviar la notificación
+    console.log('Sending notification with message:', message);
+    // Cerrar modal después del envío
+    setIsNotificationModalOpen(false);
+  };
 
   return (
     <>
@@ -417,13 +434,36 @@ const ProjectDetails = () => {
         </section>
       </Card>
 
+      {isNotificationModalOpen && (
+        <SendNotificationModal
+          open={isNotificationModalOpen}
+          onClose={handleCloseNotificationModal}
+          onSend={handleSendNotification}
+        />
+      )}
+
       <section className='flex justify-between my-6'>
         <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
-        <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
-        </Link>
+        <Box sx={{ display: 'flex', gap: 2 }}>
+          <Button
+            variant='solid'
+            size='sm'
+            sx={{
+              backgroundColor: colors.darkGold,
+              '&:hover': {
+                backgroundColor: colors.darkerGold,
+              },
+            }}
+            onClick={handleOpenNotificationModal}
+          >
+            Send notification
+          </Button>
+          <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
+            <AddButton onClick={() => {}} />
+          </Link>
+        </Box>
       </section>
       <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
         <TaskListTable
