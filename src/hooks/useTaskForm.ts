@@ -1,3 +1,4 @@
+import { AxiosError } from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
 import { useContext, useReducer, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
@@ -9,7 +10,7 @@ import { SnackbarContext } from './snackbarContext';
 export type FormState = {
   title: string;
   description: string;
-  startDate: Dayjs;
+  startDate: Dayjs | null;
   endDate: Dayjs | null;
   status: TaskStatus;
   idEmployee: string | null;
@@ -80,14 +81,19 @@ function validate(formState: FormState) {
   }
 
   if (
-    isNaN(formState.startDate.day()) ||
-    isNaN(formState.startDate.month()) ||
-    isNaN(formState.startDate.year())
+    formState.startDate &&
+    (isNaN(formState.startDate.day()) ||
+      isNaN(formState.startDate.month()) ||
+      isNaN(formState.startDate.year()))
   ) {
     errors.startDate = 'Invalid date';
   }
 
-  if (!formState.startDate.isSame(MIN_DATE) && formState.startDate.isBefore(MIN_DATE))
+  if (
+    formState.startDate &&
+    !formState.startDate.isSame(MIN_DATE) &&
+    formState.startDate.isBefore(MIN_DATE)
+  )
     errors.startDate = 'Start date must be after 01/01/2018';
 
   if (!formState.status) {
@@ -95,7 +101,7 @@ function validate(formState: FormState) {
   }
 
   if (formState.endDate) {
-    if (formState.startDate.isAfter(formState.endDate)) {
+    if (formState.startDate && formState.startDate.isAfter(formState.endDate)) {
       errors.startDate = 'Start date must be before end date';
     }
 
@@ -159,7 +165,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task created successfully', type: 'success' });
       navigate(`/tasks/${res.data.id}`, { state: location.state, replace: true });
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);
@@ -186,7 +194,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task updated successfully', type: 'success' });
       navigate(-1);
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);
