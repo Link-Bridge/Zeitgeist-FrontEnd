@@ -95,9 +95,9 @@ const ExpenseDetails = () => {
 
       {data ? (
         <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
-          <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4 items-center'>
+          <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
             <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
-            <div className='flex gap-3'>
+            <div className='flex gap-3 shrink-0'>
               <Button
                 //onClick={}
                 sx={{
@@ -127,7 +127,7 @@ const ExpenseDetails = () => {
             </div>
           </section>
           <section className='flex-wrap grid my-2'>
-            <p className='grow-0 text-wrap break-words'>{data.description}</p>
+            <p className='text-wrap break-words text-justify'>{data.description}</p>
           </section>
           <Divider sx={{ marginBottom: '10px' }} />
           <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8'>
@@ -150,23 +150,18 @@ const ExpenseDetails = () => {
                 <ColorChip label='No employee assigned' color={`${colors.null}`}></ColorChip>
               )}
             </Box>
-            <Box className='flex items-center self-end gap-2'>
-              <EventNoteRoundedIcon />
-              <p style={{ fontSize: '.9rem' }}>Date: </p>
-              <Box
-                sx={{
-                  padding: 0.5,
-                  borderRadius: 4,
-                  gap: 2,
-                }}
-                className='flex flex-row'
-              >
-                {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
-              </Box>
+            <Box className='flex flex-col md:flex-row md:items-center self-end gap-x-2'>
+              <div className='flex'>
+                <div className='hidden md:flex'>
+                  <EventNoteRoundedIcon />
+                </div>
+                <p style={{ fontSize: '.9rem' }}>Date: </p>
+              </div>
+              {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
             </Box>
           </section>
           <section className='mb-4'>
-            <Sheet className='max-h-[132px] lg:max-h-[230px]' sx={{ overflow: 'auto' }}>
+            <Sheet sx={{ overflow: 'auto' }}>
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
