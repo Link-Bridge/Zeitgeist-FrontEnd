@@ -8,7 +8,7 @@ import { BASE_API_URL } from '../utils/constants';
  *
  * @param id: string - Unique identifier of the company
  *
- * @returns deleteCmpany
+ * @returns deleteCompany
  */
 const useDeleteCompany = () => {
   const [error, setError] = useState<Error | null>(null);
