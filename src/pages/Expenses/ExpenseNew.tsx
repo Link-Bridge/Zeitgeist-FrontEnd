@@ -1,54 +1,40 @@
 import { Button, Card, Chip, FormControl, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import ExpenseContainerInput from '../../components/modules/Expenses/ExpenseContainerInput';
 import ModalConfirmation from '../../components/modules/Expenses/ModalConfirmation';
+import { ExpenseContext } from '../../hooks/expenseContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
-import { ExpenseDraft, InitialStateReimbursement } from '../../types/expense';
 import { formatCurrency } from '../../utils/methods';
 
 type ExpenseNewProps = {};
 
-const reimbursementSkeleton: ExpenseDraft = {
-  title: '',
-  totalAmount: 0,
-  supplier: '',
-  date: dayjs().startOf('day'),
-  urlFile: '',
-};
-
-const initialState: InitialStateReimbursement = {
-  reason: '',
-  date: dayjs().startOf('day'),
-  expenses: [reimbursementSkeleton],
-  total: 0,
-};
-
 const ExpenseNew = ({}: ExpenseNewProps) => {
-  const [open, setOpen] = useState<boolean>(false);
+  const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
-  const [reimbursementRequest, setReimbursementRequest] = useState(initialState);
+
   const totalAmount = useMemo(
-    () => reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
-    [reimbursementRequest.expenses]
+    () => state.reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
+    [state.reimbursementRequest.expenses]
   );
 
   const formValidation = (): boolean => {
     if (
-      reimbursementRequest.reason.trim() === '' ||
-      !reimbursementRequest.date ||
+      state.reimbursementRequest.reason.trim() === '' ||
+      !state.reimbursementRequest.date ||
       isNaN(totalAmount)
     ) {
       setState({
         open: true,
-        message: 'All of the fields are required',
+        message: 'All fields are required',
         type: 'danger',
       });
       return false;
     }
+
     if (totalAmount <= 0) {
       setState({
         open: true,
@@ -57,7 +43,8 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
       });
       return false;
     }
-    for (const expense of reimbursementRequest.expenses) {
+
+    for (const expense of state.reimbursementRequest.expenses) {
       if (
         !expense.title ||
         expense.totalAmount <= 0 ||
@@ -73,19 +60,20 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
         return false;
       }
     }
+
     return true;
   };
 
   const handleForm = (e: any) => {
     e.preventDefault();
     if (formValidation()) {
-      setOpen(true);
+      dispatch({ type: 'toggle-modal' });
     }
   };
 
   return (
     <>
-      {open && <ModalConfirmation setOpen={setOpen} />}
+      {state.modalOpen && <ModalConfirmation />}
       <Card className='bg-white font-montserrat' sx={{ padding: '20px' }}>
         <form onSubmit={handleForm}>
           <FormControl
@@ -98,24 +86,20 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
               <Input
                 sx={{ paddingY: '14px' }}
                 placeholder='Write the name of the expense'
-                value={reimbursementRequest.reason}
-                onChange={e =>
-                  setReimbursementRequest(prevState => ({
-                    ...prevState,
-                    reason: e.target.value,
-                  }))
-                }
+                value={state.reimbursementRequest.reason}
+                onChange={e => dispatch({ type: 'update-reason', payload: e.target.value })}
               />
             </FormControl>
             <FormControl>
               <label className='text-[#686868] font-semibold text-base mb-4'>Date*:</label>
               <DatePicker
-                value={dayjs(reimbursementRequest.date).utc()}
-                onChange={e =>
-                  setReimbursementRequest({
-                    ...reimbursementRequest,
-                    date: dayjs(e.target.value).utc(),
-                  })
+                value={
+                  state.reimbursementRequest.date
+                    ? dayjs(state.reimbursementRequest.date).utc()
+                    : null
+                }
+                onChange={date =>
+                  dispatch({ type: 'update-date', payload: date || dayjs().startOf('day') })
                 }
               />
             </FormControl>
@@ -123,18 +107,14 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
           <FormControl>
             <label className='text-[#686868] font-semibold text-base my-6'>Expenses:</label>
           </FormControl>
-          {reimbursementRequest.expenses.map((_, idx) => (
-            <ExpenseContainerInput
-              key={idx}
-              index={idx}
-              reimbursementSkeleton={reimbursementSkeleton}
-              setReimbursementRequest={setReimbursementRequest}
-              reimbursementRequest={reimbursementRequest}
-            />
+          {state.reimbursementRequest.expenses.map((expense, idx) => (
+            <ExpenseContainerInput key={idx} index={idx} expense={expense} />
           ))}
           <section className='flex gap-3 justify-end my-8'>
             <p className='text-[#686868] font-semibold text-base'>Total</p>
-            <Chip sx={{ backgroundColor: colors.lightGold }}>{formatCurrency(totalAmount)}</Chip>
+            <Chip sx={{ backgroundColor: colors.lightGold }}>
+              {isNaN(totalAmount) ? formatCurrency(0) : formatCurrency(totalAmount)}
+            </Chip>
           </section>
           <section className='flex gap-4 justify-end'>
             <Button
@@ -170,4 +150,5 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
     </>
   );
 };
+
 export default ExpenseNew;

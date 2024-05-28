@@ -30,7 +30,7 @@ export type ExpenseEntity = {
   totalAmount: number;
   status?: string | null;
   category?: string | null;
-  date: Date;
+  date: Date | null;
   createdAt: Date;
   updatedAt?: Date | null;
   idReport: string;
@@ -81,7 +81,7 @@ export interface ExpenseReport {
 
 export type InitialStateReimbursement = {
   reason: string;
-  date: Date;
+  date: Date | null;
   expenses: ExpenseDraft[];
   total: number;
 };

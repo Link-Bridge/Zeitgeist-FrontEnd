@@ -1,4 +1,4 @@
-import { Dispatch, SetStateAction, useContext } from 'react';
+import { useContext } from 'react';
 
 import InfoIcon from '@mui/icons-material/Info';
 import { Box } from '@mui/joy';
@@ -10,13 +10,13 @@ import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import { useNavigate } from 'react-router-dom';
 import colors from '../../../colors';
+import { ExpenseContext } from '../../../hooks/expenseContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 
-type ModalConfirmationProps = {
-  setOpen: Dispatch<SetStateAction<boolean>>;
-};
+type ModalConfirmationProps = {};
 
-const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
+const ModalConfirmation = ({}: ModalConfirmationProps) => {
+  const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
   const navigate = useNavigate();
 
@@ -26,7 +26,7 @@ const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
 
   return (
     <Modal
-      open={true}
+      open={state.modalOpen}
       onClose={() => {}}
       sx={{
         display: 'flex',
@@ -44,7 +44,11 @@ const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
           width: '500px',
         }}
       >
-        <ModalClose variant='plain' sx={{ m: 1 }} />
+        <ModalClose
+          onClick={() => dispatch({ type: 'toggle-modal' })}
+          variant='plain'
+          sx={{ m: 1 }}
+        />
         <Typography
           component='h2'
           id='modal-title'
@@ -53,10 +57,10 @@ const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
           fontWeight='lg'
           mb={1}
         >
-          Reimbursement Request
+          Send reimbursement request
         </Typography>
         <Typography component='h2' id='modal-desc' textColor='text.tertiary' sx={{ py: 2 }}>
-          Are you sure you want to send the reimbursement request?
+          Double-check that all the information is correct.
         </Typography>
         <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
           This information cannot be modified once it is sent.
@@ -70,7 +74,7 @@ const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
           onSubmit={() => {}}
         >
           <Button
-            onClick={() => setOpen(prevState => !prevState)}
+            onClick={() => dispatch({ type: 'toggle-modal' })}
             variant='outlined'
             size='lg'
             sx={{
@@ -93,7 +97,7 @@ const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
             }}
             onClick={handleConfirmation}
           >
-            Send Request
+            Send
           </Button>
         </Box>
       </Sheet>
