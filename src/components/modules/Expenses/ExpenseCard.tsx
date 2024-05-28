@@ -1,4 +1,4 @@
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 import colors from '../../../colors';
 import { ExpenseReportStatus } from '../../../types/expense';
 import { SupportedRoles } from '../../../utils/constants';

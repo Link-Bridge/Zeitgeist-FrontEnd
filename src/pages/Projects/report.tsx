@@ -25,7 +25,7 @@ import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
 import { capitalize } from './reportMethods';
-import * as dayjs from 'dayjs';
+import dayjs from 'dayjs';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
