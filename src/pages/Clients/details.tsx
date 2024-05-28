@@ -1,3 +1,4 @@
+import { DeleteOutline } from '@mui/icons-material';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
@@ -12,11 +13,13 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
+import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
 import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteCompany from '../../hooks/useDeleteCompany';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
@@ -34,7 +37,7 @@ import { ProjectsClientList } from '../Projects/ProjectsClientList';
  */
 
 const ClientDetails = () => {
-  // const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
@@ -46,6 +49,7 @@ const ClientDetails = () => {
   );
   const { employee } = useContext(EmployeeContext);
   const [notFound, setNotFound] = useState(false);
+  const { deleteCompany, error: deleteError } = useDeleteCompany();
 
   useEffect(() => {
     if (isAxiosError(error)) {
@@ -55,6 +59,16 @@ const ClientDetails = () => {
       }
     }
   }, [error]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  }, [deleteError, setState]);
 
   const navigate = useNavigate();
 
@@ -88,6 +102,24 @@ const ClientDetails = () => {
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
+
+  const handleDeleteCompany = async (id: string) => {
+    try {
+      await deleteCompany(id);
+      setState({
+        open: true,
+        message: 'Company deleted successfully',
+        type: 'success',
+      });
+      navigate(RoutesPath.CLIENTS);
+    } catch (error) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  };
 
   const isAdmin = employee?.role === 'Admin';
 
@@ -155,7 +187,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex justify-end gap-2 mb-6'>
+              <div className='flex flex-wrap justify-end gap-2 mb-6'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -171,28 +203,40 @@ const ClientDetails = () => {
                 </Button>
 
                 {isAdmin && (
-                  <Button
-                    onClick={ToggleModalArchive}
-                    sx={{
-                      backgroundColor: colors.lightWhite,
-                      ':hover': {
-                        backgroundColor: colors.orangeChip,
-                      },
-                      height: '5px',
-                      color: 'text-gold',
-                    }}
-                    startDecorator={
-                      company?.archived ? (
-                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      ) : (
-                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      )
-                    }
-                  >
-                    <Typography sx={{ color: colors.gold }}>
-                      {company?.archived ? 'Unarchive' : 'Archive'}
-                    </Typography>
-                  </Button>
+                  <>
+                    <Button
+                      onClick={ToggleModalArchive}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                        color: 'text-gold',
+                      }}
+                      startDecorator={
+                        company?.archived ? (
+                          <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        ) : (
+                          <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        )
+                      }
+                    >
+                      <Typography sx={{ color: colors.gold }}>
+                        {company?.archived ? 'Unarchive' : 'Archive'}
+                      </Typography>
+                    </Button>
+
+                    <Button
+                      onClick={() => setOpenDelete(true)}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                      }}
+                      startDecorator={<DeleteOutline sx={{ width: 24, color: colors.gold }} />}
+                    >
+                      <Typography sx={{ color: colors.gold }}>Delete</Typography>
+                    </Button>
+                  </>
                 )}
               </div>
             </section>
@@ -222,6 +266,15 @@ const ClientDetails = () => {
         <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
+      <DeleteModal
+        open={openDelete}
+        setOpen={setOpenDelete}
+        title='Delete Company'
+        description='Every project and task associated with this company will be eliminated.'
+        id={company?.id ?? ''}
+        handleDelete={handleDeleteCompany}
+        alertColor='danger'
+      />
     </main>
   );
 };
