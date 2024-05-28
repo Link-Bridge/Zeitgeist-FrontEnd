@@ -1,4 +1,4 @@
-import { Button, Card, Chip, FormControl, Input } from '@mui/joy';
+import { Button, Card, Chip, FormControl, Input, useTheme } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useMemo } from 'react';
@@ -13,6 +13,8 @@ import { formatCurrency } from '../../utils/methods';
 type ExpenseNewProps = {};
 
 const ExpenseNew = ({}: ExpenseNewProps) => {
+  const theme = useTheme();
+
   const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
 
@@ -76,21 +78,21 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
       {state.modalOpen && <ModalConfirmation />}
       <Card className='bg-white font-montserrat' sx={{ padding: '20px' }}>
         <form onSubmit={handleForm}>
-          <FormControl
-            sx={{ display: 'flex', flexDirection: 'row', gap: '30px', alignItems: 'center' }}
-          >
-            <FormControl sx={{ flexGrow: '1' }}>
+          <section className='flex flex-col md:flex-row gap-4 items-center'>
+            <section className='flex flex-col flex-grow w-full md:w-3/4'>
               <label className='text-[#686868] font-semibold text-base mb-4'>
                 Reason for expense*
               </label>
               <Input
-                sx={{ paddingY: '14px' }}
+                sx={{
+                  paddingY: '14px',
+                }}
                 placeholder='Write the name of the expense'
                 value={state.reimbursementRequest.reason}
                 onChange={e => dispatch({ type: 'update-reason', payload: e.target.value })}
               />
-            </FormControl>
-            <FormControl>
+            </section>
+            <section className='flex flex-grow flex-col w-full md:w-1/4'>
               <label className='text-[#686868] font-semibold text-base mb-4'>Date*:</label>
               <DatePicker
                 value={
@@ -102,8 +104,8 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
                   dispatch({ type: 'update-date', payload: date || dayjs().startOf('day') })
                 }
               />
-            </FormControl>
-          </FormControl>
+            </section>
+          </section>
           <FormControl>
             <label className='text-[#686868] font-semibold text-base my-6'>Expenses:</label>
           </FormControl>

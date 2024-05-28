@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import LinkIcon from '@mui/icons-material/Link';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { Input } from '@mui/joy';
+import { Input, useTheme } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { ChangeEvent, useContext } from 'react';
@@ -15,6 +15,7 @@ type ExpenseContainerInputProps = {
 };
 
 const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) => {
+  const theme = useTheme();
   const { state, dispatch } = useContext(ExpenseContext);
 
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
@@ -38,9 +39,15 @@ const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) =
       <div className={`flex items-start gap-3 ${index === 0 ? 'mt-0' : 'mt-10'}`}>
         <p className='text-[#686868] font-semibold text-base'>{`${index + 1}.`}</p>
         <main className='flex flex-col flex-1'>
-          <section className='flex flex-1 gap-4'>
+          <section className='flex flex-col md:flex-row flex-1 gap-4'>
             <Input
-              sx={{ width: '80%', paddingY: '14px' }}
+              sx={{
+                width: '100%',
+                paddingY: '14px',
+                [theme.breakpoints.up('md')]: {
+                  width: '80%',
+                },
+              }}
               type='text'
               placeholder='Expense Description'
               name='title'
@@ -48,7 +55,13 @@ const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) =
               onChange={handleInputChange}
             />
             <Input
-              sx={{ paddingY: '14px' }}
+              sx={{
+                width: '100%',
+                paddingY: '14px',
+                [theme.breakpoints.up('md')]: {
+                  width: '20%',
+                },
+              }}
               type='number'
               placeholder='$000.00'
               name='totalAmount'
@@ -56,18 +69,22 @@ const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) =
               onChange={handleInputChange}
             />
           </section>
-          <section className='flex flex-1 gap-4 mt-4'>
+          <section className='flex flex-col md:flex-row flex-1 gap-4 items-center mt-4'>
             <Input
-              sx={{ width: '80%', paddingY: '14px' }}
+              sx={{ width: '100%', paddingY: '14px' }}
               type='text'
               placeholder='Supplier'
               name='supplier'
               value={expense.supplier!}
               onChange={handleInputChange}
             />
-            <DatePicker value={dayjs(expense.date).utc()} onChange={handleDateChange} />
-            <section className='flex flex-1 items-center gap-4 mt-4'>
-              <div className='flex items-center gap-3'>
+            <DatePicker
+              sx={{ width: '100%' }}
+              value={dayjs(expense.date).utc()}
+              onChange={handleDateChange}
+            />
+            <section className='flex flex-1 items-center gap-4 w-full'>
+              <div className='flex items-center w-full gap-3'>
                 <LinkIcon sx={{ color: colors.gold }} />
                 <Input
                   sx={{
