@@ -165,8 +165,8 @@ const ProjectReport: React.FC = () => {
       </Box>
 
       {report ? (
-        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
-          <section className='flex flex-wrap justify-end gap-3 mb-5'>
+        <section className='bg-white rounded-xl p-3 md:p-6 mb-5'>
+          <section className='grid grid-cols-2 md:flex flex-wrap justify-end gap-3 mb-5'>
             <Select
               defaultValue={1}
               placeholder='Month'
@@ -179,8 +179,6 @@ const ProjectReport: React.FC = () => {
                     transform: 'rotate(-180deg)',
                   },
                 },
-                width: '132px',
-                height: '35px',
               }}
               onChange={handleMonthChange}
             >
@@ -201,13 +199,11 @@ const ProjectReport: React.FC = () => {
               type='number'
               placeholder='Year'
               defaultValue={year}
-              sx={{
-                width: '132px',
-                height: '35px',
-              }}
               onChange={e => handleYearChange(e.target.value)}
+              className='md:max-w-[110px]'
             />
             <Button
+              className='col-span-full'
               sx={{
                 backgroundColor: colors.lightWhite,
                 ':hover': {
@@ -216,8 +212,6 @@ const ProjectReport: React.FC = () => {
                 ':disabled': {
                   backgroundColor: colors.lighterGray,
                 },
-                width: '132px',
-                height: '35px',
               }}
               onClick={handleClose}
               disabled={hasErrors()}
@@ -233,8 +227,6 @@ const ProjectReport: React.FC = () => {
                 ':hover': {
                   backgroundColor: colors.orangeChip,
                 },
-                width: '132px',
-                height: '35px',
               }}
               onClick={handleClear}
               startDecorator={<CachedIcon style={{ width: 24, color: colors.gold }} />}
@@ -253,13 +245,12 @@ const ProjectReport: React.FC = () => {
               fileName={`report_${report.project.name}.pdf`}
             >
               <Button
+                className='w-full'
                 sx={{
                   backgroundColor: colors.lighterWhite,
                   ':hover': {
                     backgroundColor: colors.orangeChip,
                   },
-                  width: '132px',
-                  height: '35px',
                 }}
                 startDecorator={<PictureAsPdfIcon style={{ width: 24, color: colors.gold }} />}
               >
@@ -267,46 +258,39 @@ const ProjectReport: React.FC = () => {
               </Button>
             </PDFDownloadLink>
           </section>
-          <section className='grid grid-cols-2 mb-8 gap-y-4'>
+          <section className='grid lg:grid-cols-2 mb-8 gap-y-8'>
             <div className='mr-5 xl:mr-10'>
-              <section className='break-words mb-4 leading-tight'>
-                <p
-                  style={{
-                    color: 'black',
-                    fontSize: '1.7rem',
-                  }}
-                >
-                  {report.project.name}
-                </p>
+              <section className='mb-4 leading-tight text-2xl font-semibold'>
+                <p className='break-all whitespace-break-spaces'>{report.project.name}</p>
               </section>
-              <section className='mb-4 xl:mb-8 break-words'>
+              <section className='mb-4 xl:mb-8 break-all whitespace-break-spaces'>
                 {' '}
                 <p>{report.project.description}</p>{' '}
               </section>
-              <section className='flex flex-wrap gap-2 flex-col md:flex-row xl:grid xl:grid-cols-3 mb-2 lg:mb-4'>
+              <section className='flex flex-wrap gap-4 flex-col md:flex-row xl:grid xl:grid-cols-3 mb-2 lg:mb-4'>
                 <div>
-                  <p style={{ fontSize: '.9rem' }}>Status</p>
+                  <p className='text-sm'>Status</p>
                   <StatusChip status={report.project.status} />
                 </div>
                 <div>
-                  <p style={{ fontSize: '.9rem' }}>Total Hours</p>
+                  <p className='text-sm'>Total Hours</p>
                   <ColorChip
                     label={`${report.project.totalHours}`}
                     color={`${colors.extra}`}
                   ></ColorChip>
                 </div>
                 <div>
-                  <p style={{ fontSize: '.9rem' }}>Company</p>
+                  <p className='text-sm'>Company</p>
                   <ColorChip
                     label={`${truncateText(report.project.companyName, 30)}`}
                     color={`${colors.null}`}
                   ></ColorChip>
                 </div>
               </section>
-              <section className='flex flex-wrap gap-2 flex-col md:flex-row xl:grid xl:grid-cols-3 overflow-hidden mb-2 lg:mb-4'>
+              <section className='flex flex-wrap gap-4 flex-col md:flex-row xl:grid xl:grid-cols-3 overflow-hidden mb-2 lg:mb-4'>
                 {report.project.area && (
                   <div>
-                    <p style={{ fontSize: '.9rem' }}>Area</p>
+                    <p className='text-sm'>Area</p>
                     <ColorChip
                       label={capitalize(report.project.area)}
                       color={`${colors.extra}`}
@@ -314,7 +298,7 @@ const ProjectReport: React.FC = () => {
                   </div>
                 )}
                 <div>
-                  <p style={{ fontSize: '.9rem' }}>Chargeable</p>
+                  <p className='text-sm'>Chargeable</p>
                   <ColorChip
                     label={report.project.isChargeable ? 'Yes' : 'No'}
                     color={`${colors.null}`}
@@ -322,7 +306,7 @@ const ProjectReport: React.FC = () => {
                 </div>
                 {report.project.category && (
                   <div>
-                    <p style={{ fontSize: '.9rem' }}>Category</p>
+                    <p className='text-sm'>Category</p>
                     <ColorChip label={report.project.category} color={`${colors.null}`}></ColorChip>
                   </div>
                 )}
@@ -330,8 +314,11 @@ const ProjectReport: React.FC = () => {
               <section className='flex flex-wrap gap-2 xl:justify-between mb-4'>
                 {report.project.matter && (
                   <div className='max-w-full'>
-                    <p style={{ fontSize: '.9rem' }}>Matter</p>
-                    <ColorChip label={report.project.matter} color={`${colors.null}`}></ColorChip>
+                    <p className='text-sm'>Matter</p>
+                    <ColorChip
+                      label={truncateText(report.project.matter, 30)}
+                      color={`${colors.null}`}
+                    ></ColorChip>
                   </div>
                 )}
               </section>
@@ -420,31 +407,24 @@ const ProjectReport: React.FC = () => {
                 <section>
                   <Box key={item.id}>
                     <div className='mb-4'>
-                      <h3
-                        style={{
-                          color: 'black',
-                          fontSize: '1.5rem',
-                          lineHeight: '1.1',
-                          letterSpacing: '1.5px',
-                        }}
-                      >
+                      <h3 className='text-2xl font-semibold break-all whitespace-break-spaces'>
                         {item.title}
                       </h3>
                     </div>
 
                     <div className='mb-4'>
-                      <p className='break-words'>{item.description}</p>
+                      <p className='break-all whitespace-break-spaces'>{item.description}</p>
                     </div>
 
-                    <div className='flex gap-4 mb-4'>
+                    <div className='flex flex-wrap gap-4 mb-10'>
                       <div>
-                        <p style={{ fontSize: '.9rem' }}>Status</p>
+                        <p className='text-sm'>Status</p>
                         <StatusChip status={item.status} />
                       </div>
 
                       {item.workedHours && (
                         <div className='min-w-[92px]'>
-                          <p style={{ fontSize: '.9rem' }}>Worked Hours</p>
+                          <p className='text-sm'>Worked Hours</p>
                           <ColorChip
                             label={`${item.workedHours} ${item.workedHours === 1 ? 'hr.' : 'hrs.'}`}
                             color={`${colors.extra}`}
@@ -454,7 +434,7 @@ const ProjectReport: React.FC = () => {
 
                       {item.employeeFirstName && item.employeeLastName && (
                         <Box>
-                          <p style={{ fontSize: '.9rem' }}>Responsible</p>
+                          <p className='text-sm'>Responsible</p>
                           <ColorChip
                             label={`${item.employeeFirstName} ${item.employeeLastName}`}
                             color={`${colors.null}`}
@@ -464,7 +444,7 @@ const ProjectReport: React.FC = () => {
 
                       {item.waitingFor && (
                         <Box>
-                          <p style={{ fontSize: '.9rem' }}>Waiting For</p>
+                          <p className='text-sm'>Waiting For</p>
                           <ColorChip label={item.waitingFor} color={`${colors.null}`}></ColorChip>
                         </Box>
                       )}

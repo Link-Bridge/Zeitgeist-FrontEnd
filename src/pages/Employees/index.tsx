@@ -19,7 +19,7 @@ const Employees = () => {
           />
         </div>
       </section>
-      <section className='overflow-y-auto bg-cardBg rounded-xl min-h-0 shadow-lg p-4 gap-5'>
+      <section className='overflow-y-auto bg-cardBg rounded-xl min-h-0 shadow-lg p-4 gap-5 mb-2'>
         <EmployeeTable searchTerm={searchTerm} filterOption={filterOption} />
       </section>
     </main>

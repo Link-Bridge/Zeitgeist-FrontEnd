@@ -14,6 +14,7 @@ const AddButton: React.FC<AddButtonProps> = ({ onClick }: AddButtonProps) => {
       size='sm'
       sx={{
         backgroundColor: colors.darkGold,
+
         '&:hover': {
           backgroundColor: colors.darkerGold,
         },

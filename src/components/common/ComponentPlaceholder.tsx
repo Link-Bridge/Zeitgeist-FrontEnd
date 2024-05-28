@@ -12,14 +12,14 @@ import animation from '../../assets/data-not-found.json';
  */
 const ComponentPlaceholder = ({
   text = 'Content is on the way...',
-  height = '25vh',
-  width = '35vh',
+  height = '20vh',
+  width = '25vh',
 }) => {
   return (
     <div
       style={{
         width: '100%',
-        height: '100%',
+        height: 'fit-content',
         display: 'flex',
         flexDirection: 'column',
         justifyContent: 'center',
