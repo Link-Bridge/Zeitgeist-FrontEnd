@@ -187,7 +187,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex justify-end gap-2 mb-6'>
+              <div className='flex flex-wrap justify-end gap-2 mb-6'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
