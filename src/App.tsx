@@ -52,7 +52,7 @@ function App() {
           <OfflineModal />
           <Router>
             <Routes>
-              {<Route path={RoutesPath.ROOT} element={<Auth />} />}
+              <Route path={RoutesPath.ROOT} element={<Auth />} />
               <Route element={<Layout children={<Outlet />} />}>
                 <Route
                   path={RoutesPath.HOME}

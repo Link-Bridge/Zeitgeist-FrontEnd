@@ -5,7 +5,8 @@ import { truncateText } from '../../../utils/methods';
 const chipStyle = {
   bgcolor: colors.orangeChip,
   fontSize: '1rem',
-  minWidth: '5px0px',
+  minWidth: '100px',
+  padding: '0 10px',
   height: '30px',
 };
 
@@ -16,7 +17,7 @@ export interface ChipWithLabelProps {
 
 const ChipWithLabel = ({ label, content }: ChipWithLabelProps) => {
   return (
-    <div style={{ fontSize: '15px' }}>
+    <div>
       <p>{label}</p>
       <Chip sx={chipStyle}>{truncateText(String(content), 20)}</Chip>
     </div>

@@ -97,11 +97,12 @@ const ProjectMain = () => {
 
   useEffect(() => {
     handleFilter(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
-    <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
-      <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
+    <main className='min-h-full flex flex-col overflow-hidden'>
+      <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
         <SearchBar
           searchTerm={searchTerm}
           setSearchTerm={setSearchTerm}
@@ -110,12 +111,23 @@ const ProjectMain = () => {
           setSelectedOption={setFilterOption}
           maxLength={70}
         />
-        <div className='flex flex-wrap flex-row items-center gap-2'>
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
           {employee?.role === 'Admin' ? (
-            <>
-              <div className='flex-row flex items-center gap-2'>
+            <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}
+                >
                   Filter Projects:
                 </Typography>
               </div>
@@ -124,7 +136,7 @@ const ProjectMain = () => {
                 options={Object.values(ProjectFilters)}
                 onChange={value => handleFilter(value)}
               />
-            </>
+            </div>
           ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
             <AddButton onClick={() => {}}></AddButton>
