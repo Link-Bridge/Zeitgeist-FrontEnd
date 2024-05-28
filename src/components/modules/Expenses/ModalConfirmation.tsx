@@ -1,4 +1,4 @@
-import { useContext } from 'react';
+import { Dispatch, SetStateAction, useContext } from 'react';
 
 import InfoIcon from '@mui/icons-material/Info';
 import { Box } from '@mui/joy';
@@ -12,11 +12,17 @@ import { useNavigate } from 'react-router-dom';
 import colors from '../../../colors';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
 
-type ModalEditProps = {};
+type ModalConfirmationProps = {
+  setOpen: Dispatch<SetStateAction<boolean>>;
+};
 
-const ModalConfirmation = ({}: ModalEditProps) => {
+const ModalConfirmation = ({ setOpen }: ModalConfirmationProps) => {
   const { setState } = useContext(SnackbarContext);
   const navigate = useNavigate();
+
+  const handleConfirmation = () => {
+    navigate('/expenses/');
+  };
 
   return (
     <Modal
@@ -47,13 +53,13 @@ const ModalConfirmation = ({}: ModalEditProps) => {
           fontWeight='lg'
           mb={1}
         >
-          Archive Project
+          Reimbursement Request
         </Typography>
-        <Typography component='h2' id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
-          Are sure you want to archive this project?
+        <Typography component='h2' id='modal-desc' textColor='text.tertiary' sx={{ py: 2 }}>
+          Are you sure you want to send the reimbursement request?
         </Typography>
         <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
-          Don't worry, this action can be undone.
+          This information cannot be modified once it is sent.
         </Alert>
         <Box
           mt={3}
@@ -64,7 +70,7 @@ const ModalConfirmation = ({}: ModalEditProps) => {
           onSubmit={() => {}}
         >
           <Button
-            onClick={() => {}}
+            onClick={() => setOpen(prevState => !prevState)}
             variant='outlined'
             size='lg'
             sx={{
@@ -85,9 +91,9 @@ const ModalConfirmation = ({}: ModalEditProps) => {
                 backgroundColor: colors.darkerGold,
               },
             }}
-            onClick={() => {}}
+            onClick={handleConfirmation}
           >
-            Archive
+            Send Request
           </Button>
         </Box>
       </Sheet>
