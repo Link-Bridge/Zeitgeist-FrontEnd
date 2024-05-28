@@ -3,7 +3,6 @@ export enum ExpenseReportStatus {
   PAYED = 'Payed',
   PENDING = 'Pending',
   REJECTED = 'Rejected',
-  NONE = '-',
 }
 
 /**

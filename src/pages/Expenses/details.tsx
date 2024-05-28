@@ -76,10 +76,6 @@ const ExpenseDetails = () => {
           color: colors.gray[500],
         }}
       >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading expense report details...
-        </Typography>
-
         <Loader />
       </Box>
     );

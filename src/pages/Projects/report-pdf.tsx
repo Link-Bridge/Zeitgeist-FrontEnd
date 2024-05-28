@@ -2,7 +2,8 @@ import { Document, Page, Text, View } from '@react-pdf/renderer';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
 import { truncateText } from '../../utils/methods';
-import { dateParser, numberToMonth, statusColor } from './reportMethods';
+import { numberToMonth, statusColor } from './reportMethods';
+import dayjs from 'dayjs';
 
 function chunkText(text: string, len: number): string {
   let txt = '';
@@ -118,13 +119,13 @@ const ProjectReportPDF = (props: reportProps) => {
             <View style={{ fontSize: 14, gap: '20px', display: 'flex', flexDirection: 'row' }}>
               <View>
                 <Text style={{ fontSize: 10 }}>Start Date</Text>
-                <Text>{dateParser(props.data.project.startDate)}</Text>
+                <Text>{dayjs.utc(props.data.project.startDate).format('DD-MM-YYYY')}</Text>
               </View>
 
               {props.data.project.endDate && (
                 <View>
                   <Text style={{ fontSize: 10 }}>End Date</Text>
-                  <Text>{dateParser(props.data.project.endDate)}</Text>
+                  <Text>{dayjs.utc(props.data.project.endDate).format('DD-MM-YYYY')}</Text>
                 </View>
               )}
             </View>
@@ -227,13 +228,13 @@ const ProjectReportPDF = (props: reportProps) => {
                 <View style={{ fontSize: 14, gap: '20px', display: 'flex', flexDirection: 'row' }}>
                   <View>
                     <Text style={{ fontSize: 10 }}>Start Date</Text>
-                    <Text>{dateParser(item.startDate)}</Text>
+                    <Text>{dayjs.utc(item.startDate).format('DD-MM-YYYY')}</Text>
                   </View>
 
                   {item.endDate && (
                     <View>
                       <Text style={{ fontSize: 10 }}>End Date</Text>
-                      <Text>{dateParser(item.endDate)}</Text>
+                      <Text>{dayjs.utc(item.endDate).format('DD-MM-YYYY')}</Text>
                     </View>
                   )}
                 </View>
