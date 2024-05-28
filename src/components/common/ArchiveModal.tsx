@@ -49,7 +49,7 @@ export default function ArchiveModal({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 20px' }}
       >
         <Sheet
           variant='outlined'
@@ -73,13 +73,7 @@ export default function ArchiveModal({
           <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
             {description}
           </Typography>
-          <Alert
-            size='lg'
-            sx={{ mt: 2, pr: 8, border: '#333333' }}
-            startDecorator={<InfoIcon />}
-            variant='soft'
-            color='primary'
-          >
+          <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
             Don't worry, this action can be undone.
           </Alert>
           <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>

@@ -17,17 +17,17 @@ const Header = ({ pageTitle }: HeaderProps) => {
   }, []);
 
   return (
-    <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
+    <header className='flex flex-row flex-wrap justify-between items-start pt-6'>
       <section>
-        <p className='py-2 text-[#686868]'>{currentDate}</p>
+        <p className='pt-2 text-[#686868]'>{currentDate}</p>
         <h1
           style={{
             color: Colors.gold,
             fontFamily: 'Didot',
-            fontSize: '3.5rem',
             lineHeight: '1.1',
             letterSpacing: '1.5px',
           }}
+          className='text-[25px] sm:text-[35px] lg:text-[45px] my-3'
         >
           {pageTitle}
         </h1>

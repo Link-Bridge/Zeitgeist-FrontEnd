@@ -32,6 +32,7 @@ const ExpenseDetails = () => {
   const { id } = useParams();
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
+  const [notAuthorized, setNotAuthorized] = useState(false);
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
@@ -53,10 +54,13 @@ const ExpenseDetails = () => {
       if (message.includes('unexpected error')) {
         setNotFound(true);
       }
+      if (message.includes('Unauthorized employee')) {
+        setNotAuthorized(true);
+      }
     }
   }, [error]);
 
-  if (notFound) {
+  if (notFound || notAuthorized) {
     return <Navigate to='/404' replace />;
   }
 
@@ -194,9 +198,11 @@ const ExpenseDetails = () => {
           </section>
         </section>
       ) : (
-        <Typography variant='plain' level='h1' mb={4}>
-          <p className='grow-0 text-2xl font-medium break-words col-span-2'>{`Expense with id: ${id} not found`}</p>
-        </Typography>
+        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+          <Typography variant='plain' level='h1'>
+            No data available
+          </Typography>
+        </section>
       )}
     </main>
   );

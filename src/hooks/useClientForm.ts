@@ -51,7 +51,12 @@ const validate = (formState: FormState) => {
 
   if (!formState.name.trim()) errors.name = 'Name is required';
 
-  if (formState.email.trim() && !/^[^\s@]+@[^\s@]+\.[^\s@]+$/.test(formState.email))
+  if (
+    formState.email.trim() &&
+    !/^(([^<>()[\]\\.,;:\s@"]+(\.[^<>()[\]\\.,;:\s@"]+)*)|.(".+"))@((\[[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\.[0-9]{1,3}\])|(([a-zA-Z\-0-9]+\.)+[a-zA-Z]{2,}))$/.test(
+      formState.email
+    )
+  )
     errors.email = 'Invalid email format';
 
   if (formState.phoneNumber.trim() && formState.phoneNumber.trim().length < 12)

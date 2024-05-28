@@ -12,7 +12,7 @@ export type FormState = {
   category: string;
   matter: string;
   description: string;
-  startDate: Dayjs;
+  startDate: Dayjs | null;
   endDate: Dayjs | null;
   periodicity: ProjectPeriodicity;
   isChargeable: boolean;
@@ -92,14 +92,19 @@ const validate = (formState: FormState) => {
   }
 
   if (
-    isNaN(formState.startDate.day()) ||
-    isNaN(formState.startDate.month()) ||
-    isNaN(formState.startDate.year())
+    formState.startDate &&
+    (isNaN(formState.startDate.day()) ||
+      isNaN(formState.startDate.month()) ||
+      isNaN(formState.startDate.year()))
   ) {
     errors.startDate = 'Invalid date';
   }
 
-  if (!formState.startDate.isSame(MIN_DATE) && formState.startDate.isBefore(MIN_DATE))
+  if (
+    formState.startDate &&
+    !formState.startDate.isSame(MIN_DATE) &&
+    formState.startDate.isBefore(MIN_DATE)
+  )
     errors.startDate = 'Start date must be after 01/01/2018';
 
   if (formState.endDate) {
