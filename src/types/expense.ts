@@ -22,7 +22,7 @@ export enum ExpenseReportStatus {
  * @param urlFile?: string - URL of the file associated with the expense (optional)
  */
 
-export interface ExpenseEntity {
+export type ExpenseEntity = {
   id: string;
   title: string;
   justification: string;
@@ -35,7 +35,12 @@ export interface ExpenseEntity {
   updatedAt?: Date | null;
   idReport: string;
   urlFile?: string | null;
-}
+};
+
+export type ExpenseDraft = Pick<
+  ExpenseEntity,
+  'title' | 'totalAmount' | 'supplier' | 'date' | 'urlFile'
+>;
 
 /**
  * This class is used to define the structure of the ExpenseReport Entity
@@ -73,3 +78,10 @@ export interface ExpenseReport {
   expenses?: ExpenseEntity[];
   totalAmount?: number | null;
 }
+
+export type InitialStateReimbursement = {
+  reason: string;
+  date: Date;
+  expenses: ExpenseDraft[];
+  total: number;
+};
