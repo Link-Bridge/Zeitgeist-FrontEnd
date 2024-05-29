@@ -5,7 +5,7 @@ export interface DepartmentEntity {
   updatedAt?: Date | null;
 }
 
-enum SupportedDepartments {
+export enum SupportedDepartments {
   WITHOUT_DEPARTMENT = 'Without department',
   LEGAL = 'Legal',
   ACCOUNTING = 'Accounting',

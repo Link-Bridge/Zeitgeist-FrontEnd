@@ -10,6 +10,7 @@ export enum RoutesPath {
   CLIENTS = '/clients',
   EMPLOYEES = '/employees',
   EXPENSES = '/expenses',
+  NOTIFICATIONS = '/notification',
 }
 
 export enum APIPath {

@@ -257,21 +257,6 @@ const ProjectDetails = () => {
     { label: 'isArchived', content: data?.isArchived ? 'Yes' : 'No' },
   ];
 
-  const handleOpenNotificationModal = () => {
-    setIsNotificationModalOpen(true);
-  };
-
-  const handleCloseNotificationModal = () => {
-    setIsNotificationModalOpen(false);
-  };
-
-  const handleSendNotification = message => {
-    // Lógica para enviar la notificación
-    console.log('Sending notification with message:', message);
-    // Cerrar modal después del envío
-    setIsNotificationModalOpen(false);
-  };
-
   return (
     <>
       {open && (
@@ -437,8 +422,9 @@ const ProjectDetails = () => {
       {isNotificationModalOpen && (
         <SendNotificationModal
           open={isNotificationModalOpen}
-          onClose={handleCloseNotificationModal}
-          onSend={handleSendNotification}
+          setOpen={() => setIsNotificationModalOpen(true)}
+          onClose={() => setIsNotificationModalOpen(false)}
+          projectId={data!.id}
         />
       )}
 
@@ -456,7 +442,7 @@ const ProjectDetails = () => {
                 backgroundColor: colors.darkerGold,
               },
             }}
-            onClick={handleOpenNotificationModal}
+            onClick={() => setIsNotificationModalOpen(true)}
           >
             Send notification
           </Button>

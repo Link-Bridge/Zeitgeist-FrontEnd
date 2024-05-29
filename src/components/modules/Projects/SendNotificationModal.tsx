@@ -1,13 +1,17 @@
 import { Box, Button, Modal, ModalClose, ModalDialog, Typography } from '@mui/joy';
-import { useContext, useState } from 'react';
+import { useContext, useMemo, useState } from 'react';
 import Colors from '../../../colors';
+import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
+import useHttp from '../../../hooks/useHttp';
+import { SupportedDepartments } from '../../../types/department';
+import { RequestMethods, RoutesPath } from '../../../utils/constants';
 import GenericDropdown from '../../common/GenericDropdown';
 
 interface ModalProps {
   open: boolean;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
-  departments: string[];
+  projectId: string;
   onClose: () => void;
 }
 
@@ -20,32 +24,38 @@ interface ModalProps {
  * @returns JSX.Element - React component
  */
 
-const SendNotificationModal = ({ open, setOpen, departments, onClose }: ModalProps) => {
+const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps) => {
   const { setState } = useContext(SnackbarContext);
-  const [message, setMessage] = useState<string>('');
+  const { employee } = useContext(EmployeeContext);
   const [department, setDepartment] = useState<string>('');
+  const { sendRequest, error } = useHttp<string>(
+    `${RoutesPath.NOTIFICATIONS}/send/deparment`,
+    RequestMethods.POST
+  );
 
-  //   useEffect(() => {
-  //     if (error) {
-  //       setState({ open: true, message: error.message });
-  //     }
-  //     if (data) {
-  //       setState({
-  //         open: true,
-  //         message: 'Notification sent successfully',
-  //         type: 'success',
-  //       });
-  //       onClose();
-  //     }
-  //   }, [data, error]);
+  const departmentOptions = useMemo(() => {
+    if (!employee) return Object.values(SupportedDepartments);
+    console.log(employee.department);
+    switch (employee.department) {
+      case SupportedDepartments.ACCOUNTING:
+        return [SupportedDepartments.LEGAL];
+      case SupportedDepartments.LEGAL:
+        return [SupportedDepartments.ACCOUNTING];
+      default:
+        return Object.values(SupportedDepartments);
+    }
+  }, [employee]);
 
   const handleDropdownChange = (newValue: string) => {
     setDepartment(newValue);
   };
 
   const handleSend = async () => {
-    // await sendRequest({}, { message });
-    onSend(message);
+    await sendRequest({}, { departmentTitle: department, projectId: projectId });
+    if (error) {
+      setState({ open: true, message: 'Failed to send notification', type: 'danger' });
+    }
+    setState({ open: true, message: 'Notification sent successfully', type: 'success' });
     setOpen(false);
   };
 
@@ -72,9 +82,10 @@ const SendNotificationModal = ({ open, setOpen, departments, onClose }: ModalPro
           project?
         </Typography>
         <GenericDropdown
-          options={['Department 1', 'Department 2', 'Department 3']}
-          value={null}
-          onChange={handleDropdownChange}
+          placeholder='Select department'
+          options={departmentOptions}
+          value={department}
+          onChange={event => handleDropdownChange(event!)}
         ></GenericDropdown>
         <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
           <Button
@@ -96,7 +107,7 @@ const SendNotificationModal = ({ open, setOpen, departments, onClose }: ModalPro
               backgroundColor: Colors.darkGold,
               '&:hover': { backgroundColor: Colors.darkerGold },
             }}
-            onClick={() => handleSend}
+            onClick={handleSend}
           >
             Send
           </Button>
