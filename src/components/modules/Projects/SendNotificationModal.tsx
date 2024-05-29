@@ -1,5 +1,5 @@
 import { Box, Button, Modal, ModalClose, ModalDialog, Typography } from '@mui/joy';
-import { useContext, useMemo, useState } from 'react';
+import { useContext, useEffect, useMemo, useState } from 'react';
 import Colors from '../../../colors';
 import { EmployeeContext } from '../../../hooks/employeeContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
@@ -28,10 +28,14 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
   const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const [department, setDepartment] = useState<string>('');
-  const { sendRequest, error } = useHttp<string>(
+  const { data, loading, sendRequest, error } = useHttp<string>(
     `${RoutesPath.NOTIFICATIONS}/send/deparment`,
     RequestMethods.POST
   );
+
+  const handleClose = () => {
+    setOpen(false);
+  };
 
   const departmentOptions = useMemo(() => {
     if (!employee) return Object.values(SupportedDepartments);
@@ -51,12 +55,15 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
 
   const handleSend = async () => {
     await sendRequest({}, { departmentTitle: department, projectId: projectId });
+  };
+
+  useEffect(() => {
     if (error) {
       setState({ open: true, message: 'Failed to send notification', type: 'danger' });
+    } else if (data) {
+      setState({ open: true, message: 'Notification sent successfully', type: 'success' });
     }
-    setState({ open: true, message: 'Notification sent successfully', type: 'success' });
-    setOpen(false);
-  };
+  }, [error, data, setState]);
 
   return (
     <Modal
@@ -90,7 +97,7 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
           <Button
             variant='outlined'
             size='md'
-            onClick={() => setOpen(false)}
+            onClick={handleClose}
             sx={{
               color: Colors.darkGold,
               borderColor: Colors.darkGold,
@@ -108,6 +115,7 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
               '&:hover': { backgroundColor: Colors.darkerGold },
             }}
             onClick={handleSend}
+            disabled={loading || !department}
           >
             Send
           </Button>
