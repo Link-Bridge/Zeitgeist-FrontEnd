@@ -271,7 +271,7 @@ const ExpenseDetails = () => {
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
-          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between items-center mt-16 gap-5'>
+          <section className='flex flex-wrap flex-col-reverse sm:flex-row justify-between mt-16 gap-5'>
             {expenseStatus == ExpenseReportStatus.PAYED && urlVoucher && (
               <Button
                 component='a'
@@ -308,11 +308,12 @@ const ExpenseDetails = () => {
                       className='mt-0'
                       sx={{
                         width: '70vw',
-                        '@media (min-width: 500px)': {
+                        '@media (min-width: 640px)': {
                           width: '50vw',
+                          maxWidth: '300px',
                         },
-                        '@media (min-width: 800px)': {
-                          width: '450px',
+                        '@media (min-width: 1400px)': {
+                          maxWidth: '450px',
                         },
                       }}
                     />
@@ -334,7 +335,7 @@ const ExpenseDetails = () => {
             ) : (
               <div></div>
             )}
-            <Box className='flex flex-row gap-4'>
+            <Box className='flex flex-row gap-4 justify-end items-center'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
                 label={`\$ ${data.totalAmount ? data.totalAmount : 0}`}
