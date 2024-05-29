@@ -27,7 +27,7 @@ import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity, ProjectStatus } from '../../types/project';
+import { ProjectAreas, ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
@@ -434,21 +434,23 @@ const ProjectDetails = () => {
           Project Tasks
         </h1>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
-          <Button
-            startDecorator={<NotificationsIcon />}
-            variant='solid'
-            size='sm'
-            sx={{
-              height: '30px',
-              backgroundColor: colors.darkGold,
-              '&:hover': {
-                backgroundColor: colors.darkerGold,
-              },
-            }}
-            onClick={() => setIsNotificationModalOpen(true)}
-          >
-            Send notification
-          </Button>
+          {data && data.area === ProjectAreas.LEGAL_AND_ACCOUNTING && (
+            <Button
+              startDecorator={<NotificationsIcon />}
+              variant='solid'
+              size='sm'
+              sx={{
+                height: '30px',
+                backgroundColor: colors.darkGold,
+                '&:hover': {
+                  backgroundColor: colors.darkerGold,
+                },
+              }}
+              onClick={() => setIsNotificationModalOpen(true)}
+            >
+              Send notification
+            </Button>
+          )}
           <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
             <AddButton onClick={() => {}} />
           </Link>
