@@ -98,7 +98,10 @@ const ExpenseDetails = () => {
         type: 'danger',
       });
 
-    if (form.data?.urlVoucher) setUrlVoucher(form.data.urlVoucher);
+    if (form.data?.urlVoucher) {
+      setExpenseStatus(ExpenseReportStatus.PAYED)
+      setUrlVoucher(form.data.urlVoucher);
+    }
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newStatus, loadingStatus, errorStatus, form.data]);
@@ -216,8 +219,8 @@ const ExpenseDetails = () => {
           <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8 gap-5'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
-              {employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING ? (
+              {!urlVoucher && (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -228,7 +231,7 @@ const ExpenseDetails = () => {
                   value={expenseStatus}
                 ></GenericDropdown>
               ) : (
-                <StatusChip status={data.status ? capitalize(data.status) : 'NONE'} />
+                <StatusChip status={expenseStatus ? capitalize(expenseStatus) : ExpenseReportStatus.PENDING} />
               )}
             </Box>
             <Box>

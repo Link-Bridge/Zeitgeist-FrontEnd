@@ -44,7 +44,7 @@ const validate = (formState: FormState) => {
 
   if (!urlVoucher) errors.urlVoucher = 'Voucher URL is required';
   else if (!googleDriveLinkRegEx.exec(urlVoucher))
-    errors.urlVoucher = 'Voucher URL must be a Google Drive link';
+    errors.urlVoucher = 'Voucher URL must be a Google Drive link (drive.google.com)';
 
   return errors;
 };
