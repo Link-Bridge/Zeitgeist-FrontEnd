@@ -69,7 +69,7 @@ const useExpenseForm = () => {
   const handleUpdate = async (
     id: string,
     confirmation: boolean,
-    setOpenModal: (val: boolean) => {}
+    setOpenModal: (val: boolean) => void
   ) => {
     const errors = validate(formState);
     setErrors(errors);

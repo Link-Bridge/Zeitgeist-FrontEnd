@@ -10,6 +10,7 @@ import { Navigate, useParams } from 'react-router-dom';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors, { statusChipColorCombination } from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import CreateConfirmationModal from '../../components/common/CreateConfirmationModal';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GenericInput from '../../components/common/GenericInput';
 import GoBack from '../../components/common/GoBack';
@@ -22,7 +23,6 @@ import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
 import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
-import CreateConfirmationModal from '../../components/common/CreateConfirmationModal';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -99,7 +99,7 @@ const ExpenseDetails = () => {
       });
 
     if (form.data?.urlVoucher) {
-      setExpenseStatus(ExpenseReportStatus.PAYED)
+      setExpenseStatus(ExpenseReportStatus.PAYED);
       setUrlVoucher(form.data.urlVoucher);
     }
 
@@ -177,12 +177,14 @@ const ExpenseDetails = () => {
             url={form.formState.urlVoucher}
             handleOnClick={() => {
               setOpenModal(false);
-              form.handleUpdate(id!, true, setOpenModal)
+              form.handleUpdate(id!, true, setOpenModal);
             }}
           />
 
           <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
-            <h1 className='truncate text-gray text-[2rem] break-all whitespace-break-spaces'>{data.title}</h1>
+            <h1 className='truncate text-gray text-[2rem] break-all whitespace-break-spaces'>
+              {data.title}
+            </h1>
             <div className='flex gap-3'>
               <Button
                 //onClick={}
@@ -213,13 +215,16 @@ const ExpenseDetails = () => {
             </div>
           </section>
           <section className='flex-wrap grid my-2'>
-            <p className='text-wrap break-all whitespace-break-spaces text-justify'>{data.description}</p>
+            <p className='text-wrap break-all whitespace-break-spaces text-justify'>
+              {data.description}
+            </p>
           </section>
           <Divider sx={{ marginBottom: '10px' }} />
           <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8 gap-5'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
-              {!urlVoucher && (employee?.role == SupportedRoles.ADMIN ||
+              {!urlVoucher &&
+              (employee?.role == SupportedRoles.ADMIN ||
                 employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
@@ -231,7 +236,9 @@ const ExpenseDetails = () => {
                   value={expenseStatus}
                 ></GenericDropdown>
               ) : (
-                <StatusChip status={expenseStatus ? capitalize(expenseStatus) : ExpenseReportStatus.PENDING} />
+                <StatusChip
+                  status={expenseStatus ? capitalize(expenseStatus) : ExpenseReportStatus.PENDING}
+                />
               )}
             </Box>
             <Box>
@@ -281,12 +288,12 @@ const ExpenseDetails = () => {
               </Button>
             )}
             {expenseStatus == ExpenseReportStatus.PAYED &&
-              !urlVoucher &&
-              (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) ? (
+            !urlVoucher &&
+            (employee?.role == SupportedRoles.ADMIN ||
+              employee?.role == SupportedRoles.ACCOUNTING) ? (
               <form
                 className='flex flex-col sm:flex-row items-start gap-3'
-              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+                // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
               >
                 <div className='sm:flex gap-2'>
                   <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
@@ -324,7 +331,9 @@ const ExpenseDetails = () => {
                   Upload
                 </Button>
               </form>
-            ) : <div></div>}
+            ) : (
+              <div></div>
+            )}
             <Box className='flex flex-row gap-4'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
@@ -340,9 +349,8 @@ const ExpenseDetails = () => {
             No data available
           </Typography>
         </section>
-      )
-      }
-    </main >
+      )}
+    </main>
   );
 };
 
