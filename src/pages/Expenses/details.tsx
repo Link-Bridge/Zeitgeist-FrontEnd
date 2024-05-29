@@ -1,7 +1,7 @@
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import LinkIcon from '@mui/icons-material/Link';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Box, Button, Sheet, Typography } from '@mui/joy';
+import { Box, Button, FormControl, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -20,6 +20,8 @@ import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import GenericInput from '../../components/common/GenericInput';
+import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -33,13 +35,19 @@ const statusColorMap: Record<ExpenseReportStatus, { bg: string; font: string; bg
 };
 
 const ExpenseDetails = () => {
+  const { id } = useParams();
+
   const { setState: setSnackbar } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
-  const { id } = useParams();
+  const form = useExpenseForm();
+
+
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
+
   const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(ExpenseReportStatus.PENDING);
+  const [urlVoucher, setUrlVoucher] = useState<string | null | undefined>(null)
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
@@ -57,7 +65,10 @@ const ExpenseDetails = () => {
     if (!data) sendRequest();
     else employeeNameParser(data.employeeFirstName, data.employeeLastName);
 
-    if (data) setExpenseStatus(data.status as ExpenseReportStatus)
+    if (data) {
+      setExpenseStatus(data.status as ExpenseReportStatus)
+      setUrlVoucher(data.urlVoucher)
+    }
   }, [data]);
 
   useEffect(() => {
@@ -77,13 +88,27 @@ const ExpenseDetails = () => {
       setExpenseStatus(newStatus.status ?? expenseStatus);
     }
     if (errorStatus) setSnackbar({ open: true, message: 'Error updating expense status. Please, try again', type: 'danger' });
-  }, [newStatus, loadingStatus, errorStatus])
 
-  function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
+    if (form.data?.urlVoucher) setUrlVoucher(form.data.urlVoucher);
+
+  }, [newStatus, loadingStatus, errorStatus, form.data])
+
+
+  /**
+   * Method to parse the employee's name and get one first name and one last name
+   * @param firstName string | undefined first name of employee
+   * @param lastName string | undefined last name of employee
+   */
+  const employeeNameParser = (firstName: string | undefined, lastName: string | undefined): void => {
     if (firstName && lastName) {
       setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
     }
   }
+
+  /**
+   * @description Method tu handle the status change and PUT it in the backend
+   * @param newStatus ExpsenseReportStatus the new status to be updated
+   */
   const handleStatusChange = async (newStatus: ExpenseReportStatus) => {
     try {
       updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' })
@@ -207,11 +232,11 @@ const ExpenseDetails = () => {
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
-          <section className='flex justify-between items-center'>
-            {data.status == 'Payed' ? (
+          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between items-center mt-16 gap-5'>
+            {expenseStatus == ExpenseReportStatus.PAYED && urlVoucher && (
               <Button
                 component='a'
-                href={data.urlVoucher ? data.urlVoucher : ''}
+                href={urlVoucher ? urlVoucher : ''}
                 variant='plain'
                 startDecorator={<LinkIcon />}
                 target='_blank'
@@ -222,8 +247,45 @@ const ExpenseDetails = () => {
               >
                 Link to voucher
               </Button>
-            ) : (
-              <div></div>
+            )}
+            {expenseStatus == ExpenseReportStatus.PAYED && !urlVoucher && (employee?.role == SupportedRoles.ADMIN || employee?.role == SupportedRoles.ACCOUNTING) && (
+              <form className='flex flex-col sm:flex-row items-start gap-3' onSubmit={e => form.handleUpdate(e, id!)}>
+                <div className='sm:flex gap-2'>
+                  <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
+                  <FormControl>
+                    <GenericInput
+                      name={'urlVoucher' as Fields}
+                      placeholder='Link to voucher'
+                      errorString={form.errors.urlVoucher}
+                      handleChange={form.handleChange}
+                      value={form.formState.urlVoucher}
+                      max={512}
+                      className='mt-0'
+                      sx={{
+                        width: '70vw',
+                        '@media (min-width: 500px)': {
+                          width: '50vw'
+                        },
+                        '@media (min-width: 800px)': {
+                          width: '450px'
+                        }
+                      }}
+                    />
+                  </FormControl>
+                </div>
+                <Button
+                  type='submit'
+                  sx={{
+                    marginTop: '6px',
+                    background: colors.darkGold,
+                    '&:hover': {
+                      backgroundColor: colors.darkerGold,
+                    },
+                  }}
+                >
+                  Upload
+                </Button>
+              </form>
             )}
             <Box className='flex flex-row gap-4'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
