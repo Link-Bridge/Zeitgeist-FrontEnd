@@ -1,4 +1,4 @@
-import { FormEvent, useContext, useReducer, useState } from 'react';
+import { useContext, useReducer, useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
 import { ExpenseReport } from '../types/expense';
 import { APIPath, BASE_API_URL } from '../utils/constants';
@@ -66,11 +66,16 @@ const useExpenseForm = () => {
     dispatch({ type: 'RESET', initialState });
   };
 
-  const handleUpdate = async (e: FormEvent, id: string) => {
-    e.preventDefault();
+  const handleUpdate = async (
+    id: string,
+    confirmation: boolean,
+    setOpenModal: (val: boolean) => {}
+  ) => {
     const errors = validate(formState);
     setErrors(errors);
     if (Object.keys(errors).length > 0) return;
+
+    if (!confirmation) return setOpenModal(true);
 
     try {
       setIsPosting(true);

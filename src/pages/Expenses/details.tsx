@@ -22,6 +22,7 @@ import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
 import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
+import CreateConfirmationModal from '../../components/common/CreateConfirmationModal';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -44,6 +45,7 @@ const ExpenseDetails = () => {
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
 
   const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(
     ExpenseReportStatus.PENDING
@@ -166,6 +168,16 @@ const ExpenseDetails = () => {
 
       {data ? (
         <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+          <CreateConfirmationModal
+            open={openModal}
+            setOpen={setOpenModal}
+            url={form.formState.urlVoucher}
+            handleOnClick={() => {
+              setOpenModal(false);
+              form.handleUpdate(id!, true, setOpenModal)
+            }}
+          />
+
           <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
             <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
             <div className='flex gap-3 shrink-0'>
@@ -205,7 +217,7 @@ const ExpenseDetails = () => {
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {employee?.role == SupportedRoles.ADMIN ||
-              employee?.role == SupportedRoles.ACCOUNTING ? (
+                employee?.role == SupportedRoles.ACCOUNTING ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -268,48 +280,48 @@ const ExpenseDetails = () => {
             {expenseStatus == ExpenseReportStatus.PAYED &&
               !urlVoucher &&
               (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) && (
-                <form
-                  className='flex flex-col sm:flex-row items-start gap-3'
-                  onSubmit={e => form.handleUpdate(e, id!)}
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
+              <form
+                className='flex flex-col sm:flex-row items-start gap-3'
+              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+              >
+                <div className='sm:flex gap-2'>
+                  <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
+                  <FormControl>
+                    <GenericInput
+                      name={'urlVoucher' as Fields}
+                      placeholder='Link to voucher'
+                      errorString={form.errors.urlVoucher}
+                      handleChange={form.handleChange}
+                      value={form.formState.urlVoucher}
+                      max={512}
+                      className='mt-0'
+                      sx={{
+                        width: '70vw',
+                        '@media (min-width: 500px)': {
+                          width: '50vw',
+                        },
+                        '@media (min-width: 800px)': {
+                          width: '450px',
+                        },
+                      }}
+                    />
+                  </FormControl>
+                </div>
+                <Button
+                  onClick={() => form.handleUpdate(id!, false, setOpenModal)}
+                  sx={{
+                    marginTop: '6px',
+                    background: colors.darkGold,
+                    '&:hover': {
+                      backgroundColor: colors.darkerGold,
+                    },
+                  }}
                 >
-                  <div className='sm:flex gap-2'>
-                    <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
-                    <FormControl>
-                      <GenericInput
-                        name={'urlVoucher' as Fields}
-                        placeholder='Link to voucher'
-                        errorString={form.errors.urlVoucher}
-                        handleChange={form.handleChange}
-                        value={form.formState.urlVoucher}
-                        max={512}
-                        className='mt-0'
-                        sx={{
-                          width: '70vw',
-                          '@media (min-width: 500px)': {
-                            width: '50vw',
-                          },
-                          '@media (min-width: 800px)': {
-                            width: '450px',
-                          },
-                        }}
-                      />
-                    </FormControl>
-                  </div>
-                  <Button
-                    type='submit'
-                    sx={{
-                      marginTop: '6px',
-                      background: colors.darkGold,
-                      '&:hover': {
-                        backgroundColor: colors.darkerGold,
-                      },
-                    }}
-                  >
-                    Upload
-                  </Button>
-                </form>
-              )}
+                  Upload
+                </Button>
+              </form>
+            ) : <div></div>}
             <Box className='flex flex-row gap-4'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
@@ -325,8 +337,9 @@ const ExpenseDetails = () => {
             No data available
           </Typography>
         </section>
-      )}
-    </main>
+      )
+      }
+    </main >
   );
 };
 
