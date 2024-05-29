@@ -2,6 +2,7 @@
 import {
   ArchiveRounded,
   AssessmentOutlined,
+  DeleteOutline,
   EditOutlined,
   EventNoteRounded,
   UnarchiveRounded,
@@ -356,6 +357,17 @@ const ProjectDetails = () => {
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
                 </Button>
               )}
+              <Button
+                /*onClick={() => setOpenDelete(true)}*/
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': { backgroundColor: colors.orangeChip },
+                  height: '5px',
+                }}
+                startDecorator={<DeleteOutline sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Delete</Typography>
+              </Button>
             </div>
           </section>
 
