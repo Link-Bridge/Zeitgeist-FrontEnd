@@ -37,6 +37,7 @@ const ExpensesMain = () => {
           .includes(searchTerm.toLowerCase());
       })
     );
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm]);
 
   if (req.loading) {

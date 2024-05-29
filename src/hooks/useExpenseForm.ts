@@ -1,5 +1,4 @@
 import { FormEvent, useContext, useReducer, useState } from 'react';
-import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios/axios';
 import { ExpenseReport } from '../types/expense';
 import { APIPath, BASE_API_URL } from '../utils/constants';
@@ -51,7 +50,6 @@ const validate = (formState: FormState) => {
 };
 
 const useExpenseForm = () => {
-  const navigate = useNavigate();
   const { setState: setSnackbar } = useContext(SnackbarContext);
 
   const [formState, dispatch] = useReducer(formReducer, initialFormState);
