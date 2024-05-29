@@ -6,6 +6,7 @@ import {
   EventNoteRounded,
   UnarchiveRounded,
 } from '@mui/icons-material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -432,11 +433,13 @@ const ProjectDetails = () => {
         <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
-        <Box sx={{ display: 'flex', gap: 2 }}>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
           <Button
+            startDecorator={<NotificationsIcon />}
             variant='solid'
             size='sm'
             sx={{
+              height: '30px',
               backgroundColor: colors.darkGold,
               '&:hover': {
                 backgroundColor: colors.darkerGold,

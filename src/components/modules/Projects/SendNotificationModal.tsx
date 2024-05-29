@@ -35,7 +35,6 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
 
   const departmentOptions = useMemo(() => {
     if (!employee) return Object.values(SupportedDepartments);
-    console.log(employee.department);
     switch (employee.department) {
       case SupportedDepartments.ACCOUNTING:
         return [SupportedDepartments.LEGAL];
@@ -90,6 +89,7 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
         <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
           <Button
             variant='outlined'
+            size='md'
             onClick={() => setOpen(false)}
             sx={{
               color: Colors.darkGold,
@@ -102,7 +102,7 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
             Cancel
           </Button>
           <Button
-            size='lg'
+            size='md'
             sx={{
               backgroundColor: Colors.darkGold,
               '&:hover': { backgroundColor: Colors.darkerGold },
