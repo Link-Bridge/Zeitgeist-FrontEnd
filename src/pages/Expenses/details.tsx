@@ -179,8 +179,8 @@ const ExpenseDetails = () => {
           />
 
           <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
-            <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
-            <div className='flex gap-3 shrink-0'>
+            <h1 className='truncate text-gray text-[2rem] break-all whitespace-break-spaces'>{data.title}</h1>
+            <div className='flex gap-3'>
               <Button
                 //onClick={}
                 sx={{
@@ -210,10 +210,10 @@ const ExpenseDetails = () => {
             </div>
           </section>
           <section className='flex-wrap grid my-2'>
-            <p className='text-wrap break-words text-justify'>{data.description}</p>
+            <p className='text-wrap break-all whitespace-break-spaces text-justify'>{data.description}</p>
           </section>
           <Divider sx={{ marginBottom: '10px' }} />
-          <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8'>
+          <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8 gap-5'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {employee?.role == SupportedRoles.ADMIN ||
@@ -247,7 +247,7 @@ const ExpenseDetails = () => {
               )}
             </Box>
             <Box className='flex flex-col md:flex-row md:items-center self-end gap-x-2'>
-              <div className='flex'>
+              <div className='flex items-center'>
                 <div className='hidden md:flex'>
                   <EventNoteRoundedIcon />
                 </div>
