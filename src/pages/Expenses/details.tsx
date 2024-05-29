@@ -19,6 +19,7 @@ import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
 import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import GenericDropdown from '../../components/common/GenericDropdown';
+import { SnackbarContext } from '../../hooks/snackbarContext';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -32,12 +33,7 @@ const statusColorMap: Record<ExpenseReportStatus, { bg: string; font: string; bg
 };
 
 const ExpenseDetails = () => {
-  function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
-    if (firstName && lastName) {
-      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
-    }
-  }
-
+  const { setState: setSnackbar } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const { id } = useParams();
   const [employeeName, setEmployeeName] = useState<string>('');
@@ -52,6 +48,11 @@ const ExpenseDetails = () => {
     RequestMethods.GET
   );
 
+  const { data: newStatus, loading: loadingStatus, error: errorStatus, sendRequest: updateStatus } = useHttp<ExpenseReport>(
+    `${APIPath.EXPENSE_REPORT}/status/${id}`,
+    RequestMethods.PUT
+  );
+
   useEffect(() => {
     if (!data) sendRequest();
     else employeeNameParser(data.employeeFirstName, data.employeeLastName);
@@ -62,30 +63,33 @@ const ExpenseDetails = () => {
   useEffect(() => {
     if (isAxiosError(error)) {
       const message = error.response?.data.message;
-      if (message.includes('unexpected error')) {
+      if (message.includes('unexpected error'))
         setNotFound(true);
-      }
-      if (message.includes('Unauthorized employee')) {
+
+      if (message.includes('Unauthorized employee'))
         setNotAuthorized(true);
-      }
     }
   }, [error]);
 
+  useEffect(() => {
+    if (newStatus) {
+      setSnackbar({ open: true, message: 'Expense status updated successfully', type: 'success' });
+      setExpenseStatus(newStatus.status ?? expenseStatus);
+    }
+    if (errorStatus) setSnackbar({ open: true, message: 'Error updating expense status. Please, try again', type: 'danger' });
+  }, [newStatus, loadingStatus, errorStatus])
+
+  function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
+    if (firstName && lastName) {
+      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
+    }
+  }
   const handleStatusChange = async (newStatus: ExpenseReportStatus) => {
-    console.log('updating status')
-    console.log(newStatus)
-    // try {
-    //   setUpdating(true);
-    //   await axiosInstance.put(`${BASE_API_URL}/project/details/${id}`, {
-    //     status: newStatus,
-    //   });
-    //   setProjectStatus(newStatus);
-    //   setState({ open: true, message: 'Status updated successfully.', type: 'success' });
-    // } catch {
-    //   setState({ open: true, message: 'Error updating status.', type: 'danger' });
-    // } finally {
-    //   setUpdating(false);
-    // }
+    try {
+      updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' })
+    } catch (error) {
+      setSnackbar({ open: true, message: 'Error updating expense status. Please, try again', type: 'success' });
+    }
   };
 
   if (notFound || notAuthorized) {
@@ -163,7 +167,7 @@ const ExpenseDetails = () => {
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {employee?.role == SupportedRoles.ADMIN || employee?.role == SupportedRoles.ACCOUNTING ? (
                 <GenericDropdown
-                  // disabled={updating}
+                  disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
                   colorMap={statusColorMap}
                   onChange={function (newValue: string | null): void {
