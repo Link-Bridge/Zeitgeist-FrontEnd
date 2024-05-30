@@ -3,6 +3,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Box, Button, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useEffect, useState } from 'react';
@@ -17,6 +18,7 @@ import StatusChip from '../../components/modules/Expenses/StatusChip';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport } from '../../types/expense';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import Report from './report';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -82,7 +84,7 @@ const ExpenseDetails = () => {
   }
 
   return (
-    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+    <main className='min-h-0 flex flex-col gap-2'>
       <Box
         sx={{
           display: 'flex',
@@ -94,23 +96,24 @@ const ExpenseDetails = () => {
       </Box>
 
       {data ? (
-        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+        <section className='overflow-hidden bg-white flex-1 flex flex-col rounded-xl p-6 mb-4 shadow-lg'>
           <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
             <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
             <div className='flex gap-3 shrink-0'>
-              <Button
-                //onClick={}
-                sx={{
-                  backgroundColor: colors.lightWhite,
-                  ':hover': {
-                    backgroundColor: colors.orangeChip,
-                  },
-                  height: '5px',
-                }}
-                startDecorator={<PictureAsPdfIcon sx={{ width: 24, color: colors.gold }} />}
-              >
-                <Typography sx={{ color: colors.gold }}>Download</Typography>
-              </Button>
+              <PDFDownloadLink document={<Report data={data} />} fileName='Report'>
+                <Button
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<PictureAsPdfIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold }}>Download</Typography>
+                </Button>
+              </PDFDownloadLink>
               <Button
                 onClick={() => setDelete(data)}
                 sx={{
@@ -160,8 +163,8 @@ const ExpenseDetails = () => {
               {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
             </Box>
           </section>
-          <section className='mb-4'>
-            <Sheet sx={{ overflow: 'auto' }}>
+          <section className='flex-1 overflow-hidden mb-4'>
+            <Sheet sx={{ overflow: 'auto', height: '100%' }}>
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
