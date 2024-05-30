@@ -8,6 +8,7 @@ import Option from '@mui/joy/Option';
 import Select, { selectClasses } from '@mui/joy/Select';
 import Divider from '@mui/material/Divider';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import dayjs from 'dayjs';
 import { SyntheticEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -25,7 +26,6 @@ import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
 import { capitalize } from './reportMethods';
-import dayjs from 'dayjs';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();

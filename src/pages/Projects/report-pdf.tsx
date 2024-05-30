@@ -1,9 +1,9 @@
 import { Document, Page, Text, View } from '@react-pdf/renderer';
+import dayjs from 'dayjs';
 import colors from '../../colors';
 import { Report } from '../../types/project-report';
 import { truncateText } from '../../utils/methods';
 import { numberToMonth, statusColor } from './reportMethods';
-import dayjs from 'dayjs';
 
 function chunkText(text: string, len: number): string {
   let txt = '';

@@ -76,6 +76,7 @@ const SideBar = () => {
               {Items.map(item => (
                 <li
                   key={item.href}
+                  onClick={() => setIsSidebarOpen(false)}
                   className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
                 >
                   <Link
