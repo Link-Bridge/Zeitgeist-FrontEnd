@@ -8,7 +8,7 @@ const useDeleteProject = () => {
 
   const deleteProject = async (id: string) => {
     try {
-      await axiosInstance.delete(`${BASE_API_URL}/project/details/${id}`);
+      await axiosInstance.delete(`${BASE_API_URL}/project/delete/${id}`);
     } catch (err: unknown) {
       if (axios.isAxiosError(err)) {
         setError(new Error(err.response?.data?.message || err.message));
