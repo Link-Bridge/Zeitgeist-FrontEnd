@@ -11,10 +11,11 @@ import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, redirect, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
+import DeleteModal from '../../components/common/DeleteModal';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
@@ -22,6 +23,7 @@ import ModalEditConfirmation from '../../components/common/ModalEditConfirmation
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteProject from '../../hooks/useDeleteProject';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
@@ -54,6 +56,7 @@ const chipStyle = {
 };
 
 const ProjectDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { setState } = useContext(SnackbarContext);
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
@@ -63,8 +66,9 @@ const ProjectDetails = () => {
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
   const [notFound, setNotFound] = useState(false);
+  const { deleteProject, error: deleteError } = useDeleteProject();
 
-  const navigate = useNavigate();
+
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
@@ -75,6 +79,10 @@ const ProjectDetails = () => {
     setOpen(!open);
   };
 
+  /**
+   * @description This useEffect is used to check if the error is an axios error and if the error
+   * message contains 'Invalid uuid' or 'unexpected error'
+   * */
   useEffect(() => {
     if (isAxiosError(error)) {
       const message = error.response?.data.message;
@@ -84,6 +92,9 @@ const ProjectDetails = () => {
     }
   }, [error]);
 
+  /**
+   * @description this hook is used to get the company details and task of the project
+   */
   const {
     data: company,
     loading: loadingCompany,
@@ -167,6 +178,22 @@ const ProjectDetails = () => {
       setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
       getTasks();
+    }
+  };
+
+  useEffect(() => {
+    if (deleteError) {
+      setState({ open: true, message: deleteError.message, type: 'danger' });
+    }
+  }, [deleteError, setState]);
+
+  const handleDeleteProject = async (id: string) => {
+    try {
+      await deleteProject(id);
+      setState({ open: true, message: 'Project deleted successfully', type: 'success' });
+      navigate('/projects');
+    } catch (error) {
+      setState({ open: true, message: 'Failed to delete project', type: 'danger' });
     }
   };
 
@@ -358,7 +385,9 @@ const ProjectDetails = () => {
                 </Button>
               )}
               <Button
-                /*onClick={() => setOpenDelete(true)}*/
+                onClick={() => {
+                  setOpen(true);
+                }}
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': { backgroundColor: colors.orangeChip },
@@ -370,6 +399,15 @@ const ProjectDetails = () => {
               </Button>
             </div>
           </section>
+          <DeleteModal
+            open={open}
+            setOpen={setOpen}
+            title='Delete project'
+            description='Every task and hours associated with this project will be eliminated.'
+            id={id ?? ''}
+            handleDelete={handleDeleteProject}
+            alertColor='danger'
+          />
 
           <p className='mt-4 whitespace-break-spaces break-all'>{data?.description}</p>
 
