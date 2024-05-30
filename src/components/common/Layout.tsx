@@ -37,11 +37,13 @@ const Layout = ({ children }: LayoutProps) => {
   };
 
   return (
-    <main className='flex w-screen lg:h-screen lg:overflow-auto'>
+    <main className='flex w-screen h-screen overflow-auto'>
       <SideBar />
-      <div className='flex flex-col w-full lg:h-screen lg:overflow-auto flex-1 pt-8 md:pt-0 px-5 md:px-10 pb-5 md:pb-1'>
+      <div className='flex flex-col w-full lg:h-screen lg:overflow-auto flex-1 pt-8 md:pt-0 px-5 md:px-10 pb-5 md:pb-1 min-h-0'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-2'>{children}</section>
+        <section className='flex flex-col flex-1 mt-2 min-h-0 overflow-y-scroll'>
+          {children}
+        </section>
       </div>
     </main>
   );
