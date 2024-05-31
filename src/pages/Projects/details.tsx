@@ -49,7 +49,9 @@ const statusColorMap: Record<ProjectStatus, { bg: string; font: string; bgHover:
 const chipStyle = {
   bgcolor: colors.orangeChip,
   fontSize: '1rem',
-  minWidth: '5px0px',
+  minWidth: '100px',
+  padding: '0 10px',
+  height: '30px',
 };
 
 const ProjectDetails = () => {
@@ -284,11 +286,9 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap justify-between gap-y-2'>
-            <h3 className='text-[22px] font-medium truncate' style={{ marginTop: '10px' }}>
-              {data?.name}
-            </h3>
-            <div className='flex gap-3'>
+          <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
+            <h3 className='text-4xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
+            <div className='flex flex-wrap gap-3 mb-6 justify-end'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -299,6 +299,8 @@ const ProjectDetails = () => {
                     backgroundColor: colors.orangeChip,
                   },
                   height: '5px',
+                  flexGrow: '1',
+                  maxWidth: '120px',
                 }}
                 startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -314,6 +316,8 @@ const ProjectDetails = () => {
                     backgroundColor: colors.orangeChip,
                   },
                   height: '5px',
+                  flexGrow: '1',
+                  maxWidth: '120px',
                 }}
                 startDecorator={<AssessmentOutlined sx={{ width: 24, color: colors.gold }} />}
               >
@@ -329,6 +333,8 @@ const ProjectDetails = () => {
                       backgroundColor: colors.orangeChip,
                     },
                     height: '5px',
+                    flexGrow: '1',
+                    maxWidth: '120px',
                   }}
                   startDecorator={<UnarchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
@@ -344,6 +350,8 @@ const ProjectDetails = () => {
                       backgroundColor: colors.orangeChip,
                     },
                     height: '5px',
+                    flexGrow: '1',
+                    maxWidth: '120px',
                   }}
                   startDecorator={<ArchiveRounded sx={{ width: 24, color: colors.gold }} />}
                 >
@@ -354,14 +362,11 @@ const ProjectDetails = () => {
             </div>
           </section>
 
-          <p style={{ marginTop: '15px' }}>{data?.description}</p>
+          <p className='mt-4 whitespace-break-spaces break-all'>{data?.description}</p>
 
           {data && (
-            <div
-              className='flex flex-wrap gap-x-10 gap-y-3 pt-5 text-[10px]'
-              style={{ color: colors.gray }}
-            >
-              <div style={{ fontSize: '15px' }}>
+            <div className='flex flex-wrap gap-5 pt-5 text-[10px]' style={{ color: colors.gray }}>
+              <div>
                 <p>Status</p>
                 {data && data.status !== undefined && (
                   <GenericDropdown
@@ -381,8 +386,8 @@ const ProjectDetails = () => {
               })}
 
               {data?.isChargeable && (
-                <div style={{ fontSize: '15px' }}>
-                  <p style={{ marginLeft: '7px' }}>Payed</p>
+                <div>
+                  <p>Payed</p>
                   <Chip
                     component={Select}
                     sx={chipStyle}
@@ -400,22 +405,33 @@ const ProjectDetails = () => {
             </div>
           )}
 
-          <Box sx={{ display: 'flex', justifyContent: 'left', mt: 5, mb: 3, mr: 1, gap: 18 }}>
-            <div className='flex items-center'>
-              <EventNoteRounded />
-              <p className='ml-3'>
-                Start Date:{' '}
-                {data?.startDate ? dayjs.utc(data.startDate).format('DD/MM/YYYY') : 'No start date'}
-              </p>
-            </div>
+          <Box
+            sx={{
+              mt: 5,
+              mb: 3,
+              mr: 1,
+              gap: 18,
+            }}
+          >
+            <section className='flex flex-col gap-4 sm:gap-10 sm:flex-row justify-start'>
+              <div className='flex items-center'>
+                <EventNoteRounded />
+                <p className='ml-3'>
+                  Start Date:{' '}
+                  {data?.startDate
+                    ? dayjs.utc(data.startDate).format('DD/MM/YYYY')
+                    : 'No start date'}
+                </p>
+              </div>
 
-            <div className='flex items-center'>
-              <EventNoteRounded />
-              <p className='ml-3'>
-                End Date:{' '}
-                {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
-              </p>
-            </div>
+              <div className='flex items-center'>
+                <EventNoteRounded />
+                <p className='ml-3'>
+                  End Date:{' '}
+                  {data?.endDate ? dayjs.utc(data.endDate).format('DD/MM/YYYY') : 'No end date'}
+                </p>
+              </div>
+            </section>
           </Box>
         </section>
       </Card>
@@ -429,8 +445,8 @@ const ProjectDetails = () => {
         />
       )}
 
-      <section className='flex justify-between my-6'>
-        <h1 className='text-[30px] text-gold' style={{ fontFamily: 'Didot' }}>
+      <section className='flex justify-between my-4'>
+        <h1 className='text-[25px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
         <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
@@ -456,7 +472,7 @@ const ProjectDetails = () => {
           </Link>
         </Box>
       </section>
-      <Card className='bg-white overflow-auto' sx={{ Maxwidth: '300px', padding: '20px' }}>
+      <Card className='bg-white overflow-auto mb-4'>
         <TaskListTable
           errorTasks={errorTasks}
           loadingTasks={loadingTasks}

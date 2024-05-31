@@ -29,7 +29,7 @@ const ProjectCard = ({ name, status, department, company }: CardProjectProps): J
         <h5 className='text-[#424242] font-montserrat truncate'>{name}</h5>
       </section>
       <h5 className='text-sm text-gold truncate'>{company}</h5>
-      <section className='mt-3 flex flex-nowrap gap-3 overflow-hidden'>
+      <section className='mt-3 flex flex-wrap gap-3 overflow-hidden'>
         <StatusChip status={status} />
         <Chip
           variant='solid'

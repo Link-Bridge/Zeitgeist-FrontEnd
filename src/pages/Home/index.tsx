@@ -38,8 +38,8 @@ const Home = () => {
 
   return (
     <main className='min-h-full overflow-y-auto overflow-x-hidden grid grid-cols-1 lg:grid-cols-3 gap-4 h-full'>
-      <section className='bg-[#FAFAFA] rounded-xl basis-4/6 p-10 lg:col-span-2 font-["Didot"] shadow-lg'>
-        <h2 className='text-[34px]'>MY PROJECTS </h2>
+      <section className='bg-[#FAFAFA] rounded-xl p-4 sm:p-4 lg:col-span-2 font-["Didot"] shadow-lg mb-6'>
+        <h2 className='text-[25px] sm:text-[34px] w-fit	'>MY PROJECTS </h2>
         {isLoading && <Loader />}
         {!isLoading && homeData && homeData.projects.length > 0 ? (
           <section className='overflow-y-auto grid grid-cols-1 lg:grid-cols-2 xl:grid-cols-2 gap-3 rounded-xl mt-6'>
@@ -59,8 +59,8 @@ const Home = () => {
           <ComponentPlaceholder text='No projects available' />
         )}
       </section>
-      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-10 font-["Didot"] shadow-lg flex-1 min-w-[285px]'>
-        <h2 className='text-[34px]'>MY CLIENTS</h2>
+      <section className='bg-[#FAFAFA] rounded-xl basis-2/6 p-4 sm:p-4 font-["Didot"] shadow-lg flex-1 min-w-fit mb-6'>
+        <h2 className='text-[25px] sm:text-[34px] w-fit'>MY CLIENTS</h2>
         {isLoading && <Loader />}
         {!isLoading && homeData && homeData.companies.length > 0 ? (
           <section className='overflow-y-auto grid grid-cols-1 lg:grid-cols-1 xl:grid-cols-1 gap-3 rounded-xl mt-6'>

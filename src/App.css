@@ -20,6 +20,16 @@
   filter: drop-shadow(0 0 2em #61dafbaa);
 }
 
+.login-bg {
+  background-image: url('assets/images/bg-mobile.png');
+}
+
+@media (min-width: 600px) {
+  .login-bg {
+    background-image: url('assets/images/login-image.png');
+  }
+}
+
 @keyframes logo-spin {
   from {
     transform: rotate(0deg);

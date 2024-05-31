@@ -44,7 +44,7 @@ const NewProject = () => {
   }, [admin, employee]);
 
   return (
-    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '30px' }}>
+    <Card className='bg-white flex-1 font-montserrat overflow-y-scroll' sx={{ padding: '20px' }}>
       {req.loading ? (
         <Loader />
       ) : (
@@ -118,10 +118,11 @@ const NewProject = () => {
               <DatePicker
                 value={dayjs(form.formState.startDate).utc()}
                 onChange={newVal => {
-                  form.handleChange('startDate', newVal ?? form.formState.startDate);
+                  form.handleChange('startDate', newVal);
                 }}
                 slotProps={{ textField: { error: !!form.errors.startDate } }}
                 minDate={MIN_DATE}
+                maxDate={MAX_DATE}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
