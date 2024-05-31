@@ -24,7 +24,7 @@ interface ModalProps {
  * @returns JSX.Element - React component
  */
 
-const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps) => {
+const SendNotificationModal = ({ open, projectId, onClose }: ModalProps) => {
   const { setState } = useContext(SnackbarContext);
   const { employee } = useContext(EmployeeContext);
   const [department, setDepartment] = useState<string>('');
@@ -32,10 +32,6 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
     `${RoutesPath.NOTIFICATIONS}/send/deparment`,
     RequestMethods.POST
   );
-
-  const handleClose = () => {
-    setOpen(false);
-  };
 
   const departmentOptions = useMemo(() => {
     if (!employee) return Object.values(SupportedDepartments);
@@ -97,7 +93,7 @@ const SendNotificationModal = ({ open, setOpen, projectId, onClose }: ModalProps
           <Button
             variant='outlined'
             size='md'
-            onClick={handleClose}
+            onClick={onClose}
             sx={{
               color: Colors.darkGold,
               borderColor: Colors.darkGold,
