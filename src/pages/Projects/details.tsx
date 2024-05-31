@@ -286,9 +286,9 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
+          <section className='flex flex-wrap flex-row justify-between gap-y-2 items-center'>
             <h3 className='text-4xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
-            <div className='flex flex-wrap gap-3 mb-6 justify-end'>
+            <div className='flex flex-wrap gap-3 justify-end items-center'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
