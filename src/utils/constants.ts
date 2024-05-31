@@ -19,6 +19,7 @@ export enum APIPath {
   PROJECT_DETAILS = '/project/details',
   COMPANIES = '/company',
   PROJECTS = '/project',
+  EXPENSES = '/expense',
   CREATE_TASK = '/tasks/:projectId/create',
   UPDATE_TASK = '/tasks/update',
   UPDATE_TASK_STATUS = '/tasks/update/status',
@@ -31,6 +32,13 @@ export enum RequestMethods {
   POST = 'POST',
   PUT = 'PUT',
   DELETE = 'DELETE',
+}
+
+export enum SupportedRoles {
+  WITHOUT_ROLE = 'No role',
+  ADMIN = 'Admin',
+  LEGAL = 'Legal',
+  ACCOUNTING = 'Accounting',
 }
 
 export const MIN_DATE = dayjs('2018-01-01T00:00:00.000Z');

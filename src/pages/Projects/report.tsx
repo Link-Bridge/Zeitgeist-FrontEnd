@@ -8,6 +8,7 @@ import Option from '@mui/joy/Option';
 import Select, { selectClasses } from '@mui/joy/Select';
 import Divider from '@mui/material/Divider';
 import { PDFDownloadLink } from '@react-pdf/renderer';
+import dayjs from 'dayjs';
 import { SyntheticEvent, useContext, useEffect, useRef, useState } from 'react';
 import { useNavigate, useParams } from 'react-router-dom';
 import calendar from '../../assets/icons/calendar.svg';
@@ -24,7 +25,7 @@ import { Report } from '../../types/project-report';
 import { APIPath, BASE_API_URL, RequestMethods } from '../../utils/constants';
 import { truncateText } from '../../utils/methods';
 import ProjectReportPDF from './report-pdf';
-import { capitalize, dateParser, filterteParser } from './reportMethods';
+import { capitalize } from './reportMethods';
 
 const ProjectReport: React.FC = () => {
   const { id } = useParams();
@@ -80,7 +81,7 @@ const ProjectReport: React.FC = () => {
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleClose = () => {
     setUsingFilter(true);
-    date.current = filterteParser(new Date(year, month - 1));
+    date.current = dayjs.utc(new Date(year, month - 1)).format('YYYY/MM/DD');
     const doFetch = async (): Promise<void> => {
       const data = await axiosInstance.get(
         `${BASE_API_URL}${APIPath.PROJECT_REPORT}/${id}?date=${date.current}`
@@ -328,7 +329,7 @@ const ProjectReport: React.FC = () => {
                     <img src={calendar} alt='calendar' className='w-5' />
                     <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                   </div>
-                  <p>{dateParser(report.project.startDate)}</p>
+                  <p>{dayjs.utc(report.project.startDate).format('DD-MM-YYYY')}</p>
                 </div>
 
                 {report.project.endDate && (
@@ -337,7 +338,7 @@ const ProjectReport: React.FC = () => {
                       <img src={calendar} alt='calendar' className='w-5' />
                       <p style={{ fontSize: '1rem' }}>&nbsp;End Date</p>
                     </div>
-                    <p>{dateParser(report.project.endDate)}</p>
+                    <p>{dayjs.utc(report.project.endDate).format('DD-MM-YYYY')}</p>
                   </div>
                 )}
               </section>
@@ -457,7 +458,7 @@ const ProjectReport: React.FC = () => {
                             <img src={calendar} alt='calendar' className='w-5' />
                             <p style={{ fontSize: '1em' }}>&nbsp;Start Date</p>
                           </div>
-                          <p>{dateParser(item.startDate)}</p>
+                          <p>{dayjs.utc(item.startDate).format('DD-MM-YYYY')}</p>
                         </div>
 
                         {item.endDate && (
@@ -466,7 +467,7 @@ const ProjectReport: React.FC = () => {
                               <img src={calendar} alt='calendar' className='w-5' />
                               <p style={{ fontSize: '1em' }}>&nbsp;Due Date</p>
                             </div>
-                            <p>{dateParser(item.endDate)}</p>
+                            <p>{dayjs.utc(item.endDate).format('DD-MM-YYYY')}</p>
                           </div>
                         )}
                       </div>

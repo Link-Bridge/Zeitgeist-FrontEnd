@@ -1,37 +1,57 @@
 import EventNoteRoundedIcon from '@mui/icons-material/EventNoteRounded';
 import LinkIcon from '@mui/icons-material/Link';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
-import { Box, Button, Sheet, Typography } from '@mui/joy';
+import { Box, Button, FormControl, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
-import { useEffect, useState } from 'react';
+import { useContext, useEffect, useState } from 'react';
 import { Navigate, useParams } from 'react-router-dom';
 import trash_can from '../../assets/icons/trash_can.svg';
-import colors from '../../colors';
+import colors, { statusChipColorCombination } from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
+import CreateConfirmationModal from '../../components/common/CreateConfirmationModal';
+import GenericDropdown from '../../components/common/GenericDropdown';
+import GenericInput from '../../components/common/GenericInput';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import { ExpensesTable } from '../../components/modules/Expenses/ExpensesTable';
 import StatusChip from '../../components/modules/Expenses/StatusChip';
+import { EmployeeContext } from '../../hooks/employeeContext';
+import { SnackbarContext } from '../../hooks/snackbarContext';
+import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 import useHttp from '../../hooks/useHttp';
-import { ExpenseReport } from '../../types/expense';
-import { APIPath, RequestMethods } from '../../utils/constants';
+import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
+import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
 }
 
-const ExpenseDetails = () => {
-  function employeeNameParser(firstName: string | undefined, lastName: string | undefined): void {
-    if (firstName && lastName) {
-      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
-    }
-  }
+const statusColorMap: Record<ExpenseReportStatus, { bg: string; font: string; bgHover: string }> = {
+  [ExpenseReportStatus.ACCEPTED]: statusChipColorCombination.accepted,
+  [ExpenseReportStatus.PAYED]: statusChipColorCombination.done,
+  [ExpenseReportStatus.PENDING]: statusChipColorCombination.inProgress,
+  [ExpenseReportStatus.REJECTED]: statusChipColorCombination.cancelled,
+};
 
+const ExpenseDetails = () => {
   const { id } = useParams();
+
+  const { setState: setSnackbar } = useContext(SnackbarContext);
+  const { employee } = useContext(EmployeeContext);
+  const form = useExpenseForm();
+
   const [employeeName, setEmployeeName] = useState<string>('');
   const [notFound, setNotFound] = useState(false);
+  const [notAuthorized, setNotAuthorized] = useState(false);
+  const [openModal, setOpenModal] = useState<boolean>(false);
+
+  const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(
+    ExpenseReportStatus.PENDING
+  );
+  const [urlVoucher, setUrlVoucher] = useState<string | null | undefined>(null);
+
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
   const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
@@ -39,24 +59,84 @@ const ExpenseDetails = () => {
     RequestMethods.GET
   );
 
+  const {
+    data: newStatus,
+    loading: loadingStatus,
+    error: errorStatus,
+    sendRequest: updateStatus,
+  } = useHttp<ExpenseReport>(`${APIPath.EXPENSE_REPORT}/status/${id}`, RequestMethods.PUT);
+
   useEffect(() => {
-    if (!data) {
-      sendRequest();
-    } else {
-      employeeNameParser(data.employeeFirstName, data.employeeLastName);
+    if (!data) sendRequest();
+    else employeeNameParser(data.employeeFirstName, data.employeeLastName);
+
+    if (data) {
+      setExpenseStatus(data.status as ExpenseReportStatus);
+      setUrlVoucher(data.urlVoucher);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data]);
 
   useEffect(() => {
     if (isAxiosError(error)) {
       const message = error.response?.data.message;
-      if (message.includes('unexpected error')) {
-        setNotFound(true);
-      }
+      if (message.includes('unexpected error')) setNotFound(true);
+
+      if (message.includes('Unauthorized employee')) setNotAuthorized(true);
     }
   }, [error]);
 
-  if (notFound) {
+  useEffect(() => {
+    if (newStatus) {
+      setSnackbar({ open: true, message: 'Expense status updated successfully', type: 'success' });
+      setExpenseStatus(newStatus.status ?? expenseStatus);
+    }
+    if (errorStatus)
+      setSnackbar({
+        open: true,
+        message: 'Error updating expense status. Please, try again',
+        type: 'danger',
+      });
+
+    if (form.data?.urlVoucher) {
+      setExpenseStatus(ExpenseReportStatus.PAYED);
+      setUrlVoucher(form.data.urlVoucher);
+    }
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [newStatus, loadingStatus, errorStatus, form.data]);
+
+  /**
+   * Method to parse the employee's name and get one first name and one last name
+   * @param firstName string | undefined first name of employee
+   * @param lastName string | undefined last name of employee
+   */
+  const employeeNameParser = (
+    firstName: string | undefined,
+    lastName: string | undefined
+  ): void => {
+    if (firstName && lastName) {
+      setEmployeeName(`${firstName.split(' ')[0]} ${lastName.split(' ')[0]}`);
+    }
+  };
+
+  /**
+   * @description Method tu handle the status change and PUT it in the backend
+   * @param newStatus ExpsenseReportStatus the new status to be updated
+   */
+  const handleStatusChange = async (newStatus: ExpenseReportStatus) => {
+    try {
+      updateStatus({}, { status: newStatus }, { 'Content-Type': 'application/json' });
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Error updating expense status. Please, try again',
+        type: 'danger',
+      });
+    }
+  };
+
+  if (notFound || notAuthorized) {
     return <Navigate to='/404' replace />;
   }
 
@@ -72,10 +152,6 @@ const ExpenseDetails = () => {
           color: colors.gray[500],
         }}
       >
-        <Typography variant='plain' level='h1' mb={4}>
-          Loading expense report details...
-        </Typography>
-
         <Loader />
       </Box>
     );
@@ -95,9 +171,21 @@ const ExpenseDetails = () => {
 
       {data ? (
         <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
-          <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4 items-center'>
-            <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
-            <div className='flex gap-3'>
+          <CreateConfirmationModal
+            open={openModal}
+            setOpen={setOpenModal}
+            url={form.formState.urlVoucher}
+            handleOnClick={() => {
+              setOpenModal(false);
+              form.handleUpdate(id!, true, setOpenModal);
+            }}
+          />
+
+          <section className='flex justify-end flex-wrap-reverse md:flex-nowrap md:justify-between gap-x-4 items-center'>
+            <h1 className='truncate text-gray text-[2rem] break-all whitespace-break-spaces'>
+              {data.title}
+            </h1>
+            <div className='flex gap-3 shrink-0'>
               <Button
                 //onClick={}
                 sx={{
@@ -127,13 +215,31 @@ const ExpenseDetails = () => {
             </div>
           </section>
           <section className='flex-wrap grid my-2'>
-            <p className='grow-0 text-wrap break-words'>{data.description}</p>
+            <p className='text-wrap break-all whitespace-break-spaces text-justify'>
+              {data.description}
+            </p>
           </section>
           <Divider sx={{ marginBottom: '10px' }} />
-          <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8'>
+          <section className='grid grid-cols-2 lg:grid-cols-4 items-center mb-8 gap-5'>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
-              <StatusChip status={data.status ? capitalize(data.status) : 'NONE'} />
+              {!urlVoucher &&
+                (employee?.role == SupportedRoles.ADMIN ||
+                  employee?.role == SupportedRoles.ACCOUNTING) ? (
+                <GenericDropdown
+                  disabled={loadingStatus}
+                  options={Object.values(ExpenseReportStatus)}
+                  colorMap={statusColorMap}
+                  onChange={function (newValue: string | null): void {
+                    handleStatusChange(newValue as ExpenseReportStatus);
+                  }}
+                  value={expenseStatus}
+                ></GenericDropdown>
+              ) : (
+                <StatusChip
+                  status={expenseStatus ? capitalize(expenseStatus) : ExpenseReportStatus.PENDING}
+                />
+              )}
             </Box>
             <Box>
               <p style={{ fontSize: '.9rem' }}>Total</p>
@@ -150,31 +256,26 @@ const ExpenseDetails = () => {
                 <ColorChip label='No employee assigned' color={`${colors.null}`}></ColorChip>
               )}
             </Box>
-            <Box className='flex items-center self-end gap-2'>
-              <EventNoteRoundedIcon />
-              <p style={{ fontSize: '.9rem' }}>Date: </p>
-              <Box
-                sx={{
-                  padding: 0.5,
-                  borderRadius: 4,
-                  gap: 2,
-                }}
-                className='flex flex-row'
-              >
-                {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
-              </Box>
+            <Box className='flex flex-col md:flex-row md:items-center self-end gap-x-2'>
+              <div className='flex items-center'>
+                <div className='hidden md:flex'>
+                  <EventNoteRoundedIcon />
+                </div>
+                <p style={{ fontSize: '.9rem' }}>Date: </p>
+              </div>
+              {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
             </Box>
           </section>
           <section className='mb-4'>
-            <Sheet className='max-h-[132px] lg:max-h-[230px]' sx={{ overflow: 'auto' }}>
+            <Sheet sx={{ overflow: 'auto' }}>
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
-          <section className='flex justify-between items-center'>
-            {data.status == 'Payed' ? (
+          <section className='flex flex-wrap flex-col-reverse sm:flex-row justify-between mt-16 gap-5'>
+            {expenseStatus == ExpenseReportStatus.PAYED && urlVoucher && (
               <Button
                 component='a'
-                href={data.urlVoucher ? data.urlVoucher : ''}
+                href={urlVoucher ? urlVoucher : ''}
                 variant='plain'
                 startDecorator={<LinkIcon />}
                 target='_blank'
@@ -185,10 +286,56 @@ const ExpenseDetails = () => {
               >
                 Link to voucher
               </Button>
+            )}
+            {expenseStatus == ExpenseReportStatus.PAYED &&
+              !urlVoucher &&
+              (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
+              <form
+                className='flex flex-col sm:flex-row items-start gap-3'
+              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+              >
+                <div className='sm:flex gap-2'>
+                  <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
+                  <FormControl>
+                    <GenericInput
+                      name={'urlVoucher' as Fields}
+                      placeholder='Link to voucher'
+                      errorString={form.errors.urlVoucher}
+                      handleChange={form.handleChange}
+                      value={form.formState.urlVoucher}
+                      max={512}
+                      className='mt-0'
+                      sx={{
+                        width: '70vw',
+                        '@media (min-width: 640px)': {
+                          width: '50vw',
+                          maxWidth: '300px',
+                        },
+                        '@media (min-width: 1400px)': {
+                          maxWidth: '450px',
+                        },
+                      }}
+                    />
+                  </FormControl>
+                </div>
+                <Button
+                  onClick={() => form.handleUpdate(id!, false, setOpenModal)}
+                  sx={{
+                    marginTop: '6px',
+                    background: colors.darkGold,
+                    '&:hover': {
+                      backgroundColor: colors.darkerGold,
+                    },
+                  }}
+                >
+                  Upload
+                </Button>
+              </form>
             ) : (
               <div></div>
             )}
-            <Box className='flex flex-row gap-4'>
+            <Box className='flex flex-row gap-4 justify-end items-center'>
               <p style={{ fontSize: '.9rem' }}>Total: </p>
               <ColorChip
                 label={`\$ ${data.totalAmount ? data.totalAmount : 0}`}
@@ -198,9 +345,11 @@ const ExpenseDetails = () => {
           </section>
         </section>
       ) : (
-        <Typography variant='plain' level='h1' mb={4}>
-          <p className='grow-0 text-2xl font-medium break-words col-span-2'>{`Expense with id: ${id} not found`}</p>
-        </Typography>
+        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+          <Typography variant='plain' level='h1'>
+            No data available
+          </Typography>
+        </section>
       )}
     </main>
   );
