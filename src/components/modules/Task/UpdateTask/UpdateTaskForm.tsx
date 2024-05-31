@@ -90,12 +90,13 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               Start Date <span className='text-red-600'>*</span>
             </FormLabel>
             <DatePicker
-              value={form.formState.startDate.utc()}
+              value={form.formState.startDate?.utc()}
               onChange={newDate => {
-                form.handleChange('startDate', newDate ?? form.formState.startDate);
+                form.handleChange('startDate', newDate);
               }}
               slotProps={{ textField: { error: !!form.errors.startDate } }}
               minDate={MIN_DATE}
+              maxDate={MAX_DATE}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
