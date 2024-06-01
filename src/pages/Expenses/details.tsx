@@ -54,9 +54,6 @@ const ExpenseDetails = () => {
   );
 
   const [urlVoucher, setUrlVoucher] = useState<string | null | undefined>(null);
-
-  // eslint-disable-next-line @typescript-eslint/no-unused-vars
-  const [expenseReportToDelete, setDelete] = useState<ExpenseReport | null>(null);
   const { data, loading, sendRequest, error } = useHttp<ExpenseReport>(
     `${APIPath.EXPENSE_REPORT}/${id}`,
     RequestMethods.GET
