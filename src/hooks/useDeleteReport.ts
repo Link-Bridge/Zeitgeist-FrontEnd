@@ -1,5 +1,3 @@
-import axios from 'axios';
-import { useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
 import { BASE_API_URL } from '../utils/constants';
 
@@ -10,21 +8,11 @@ import { BASE_API_URL } from '../utils/constants';
  */
 
 const useDeleteReport = () => {
-  const [error, setError] = useState<Error | null>(null);
-
   const deleteReport = async (id: string) => {
-    try {
-      await axiosInstance.delete(`${BASE_API_URL}/expense/report/delete/${id}`);
-    } catch (err: unknown) {
-      if (axios.isAxiosError(err)) {
-        setError(new Error(err.response?.data?.message || err.message));
-      } else {
-        setError(new Error('Unknown error occurred'));
-      }
-    }
+    await axiosInstance.delete(`${BASE_API_URL}/expense/report/delete/${id}`);
   };
 
-  return { deleteReport, error };
+  return { deleteReport };
 };
 
 export default useDeleteReport;

@@ -66,7 +66,7 @@ const ExpenseDetails = () => {
     sendRequest: updateStatus,
   } = useHttp<ExpenseReport>(`${APIPath.EXPENSE_REPORT}/status/${id}`, RequestMethods.PUT);
 
-  const { deleteReport, error: deleteError } = useDeleteReport();
+  const { deleteReport } = useDeleteReport();
 
   useEffect(() => {
     if (!data) sendRequest();
@@ -107,12 +107,6 @@ const ExpenseDetails = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newStatus, loadingStatus, errorStatus, form.data]);
-
-  useEffect(() => {
-    if (deleteError) {
-      setSnackbar({ open: true, message: deleteError.message, type: 'danger' });
-    }
-  });
 
   const navigate = useNavigate();
 
