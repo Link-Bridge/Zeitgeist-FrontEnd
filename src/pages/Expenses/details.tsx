@@ -6,11 +6,12 @@ import Divider from '@mui/material/Divider';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Navigate, useParams } from 'react-router-dom';
+import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import trash_can from '../../assets/icons/trash_can.svg';
 import colors, { statusChipColorCombination } from '../../colors';
 import ColorChip from '../../components/common/ColorChip';
 import CreateConfirmationModal from '../../components/common/CreateConfirmationModal';
+import DeleteModal from '../../components/common/DeleteModal';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GenericInput from '../../components/common/GenericInput';
 import GoBack from '../../components/common/GoBack';
@@ -19,10 +20,11 @@ import { ExpensesTable } from '../../components/modules/Expenses/ExpensesTable';
 import StatusChip from '../../components/modules/Expenses/StatusChip';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteReport from '../../hooks/useDeleteReport';
 import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
-import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath, SupportedRoles } from '../../utils/constants';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -50,6 +52,7 @@ const ExpenseDetails = () => {
   const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(
     ExpenseReportStatus.PENDING
   );
+
   const [urlVoucher, setUrlVoucher] = useState<string | null | undefined>(null);
 
   // eslint-disable-next-line @typescript-eslint/no-unused-vars
@@ -65,6 +68,8 @@ const ExpenseDetails = () => {
     error: errorStatus,
     sendRequest: updateStatus,
   } = useHttp<ExpenseReport>(`${APIPath.EXPENSE_REPORT}/status/${id}`, RequestMethods.PUT);
+
+  const { deleteReport, error: deleteError } = useDeleteReport();
 
   useEffect(() => {
     if (!data) sendRequest();
@@ -105,6 +110,14 @@ const ExpenseDetails = () => {
 
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [newStatus, loadingStatus, errorStatus, form.data]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setSnackbar({ open: true, message: deleteError.message, type: 'danger' });
+    }
+  });
+
+  const navigate = useNavigate();
 
   /**
    * Method to parse the employee's name and get one first name and one last name
@@ -157,6 +170,29 @@ const ExpenseDetails = () => {
     );
   }
 
+  /**
+   * @description Method to handle the report deletion
+   * @param id
+   */
+
+  const handleDeleteReport = async (id: string) => {
+    try {
+      await deleteReport(id);
+      setSnackbar({
+        open: true,
+        message: 'Report deleted successfully',
+        type: 'success',
+      });
+      navigate(RoutesPath.EXPENSES);
+    } catch (error) {
+      setSnackbar({
+        open: true,
+        message: 'Failed to delete report',
+        type: 'danger',
+      });
+    }
+  };
+
   return (
     <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
       <Box
@@ -200,7 +236,9 @@ const ExpenseDetails = () => {
                 <Typography sx={{ color: colors.gold }}>Download</Typography>
               </Button>
               <Button
-                onClick={() => setDelete(data)}
+                onClick={() => {
+                  setOpenModal(true);
+                }}
                 sx={{
                   backgroundColor: colors.lightWhite,
                   ':hover': {
@@ -224,8 +262,8 @@ const ExpenseDetails = () => {
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {!urlVoucher &&
-                (employee?.role == SupportedRoles.ADMIN ||
-                  employee?.role == SupportedRoles.ACCOUNTING) ? (
+              (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -288,12 +326,12 @@ const ExpenseDetails = () => {
               </Button>
             )}
             {expenseStatus == ExpenseReportStatus.PAYED &&
-              !urlVoucher &&
-              (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) ? (
+            !urlVoucher &&
+            (employee?.role == SupportedRoles.ADMIN ||
+              employee?.role == SupportedRoles.ACCOUNTING) ? (
               <form
                 className='flex flex-col sm:flex-row items-start gap-3'
-              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+                // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
               >
                 <div className='sm:flex gap-2'>
                   <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
@@ -351,6 +389,14 @@ const ExpenseDetails = () => {
           </Typography>
         </section>
       )}
+      <DeleteModal
+        open={openModal}
+        setOpen={setOpenModal}
+        title='Delete Expense Report'
+        description='Every expense record associated with this report will be deleted'
+        id={data?.id ?? ''}
+        handleDelete={handleDeleteReport}
+      />
     </main>
   );
 };
