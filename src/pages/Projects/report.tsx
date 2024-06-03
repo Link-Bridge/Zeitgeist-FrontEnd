@@ -109,7 +109,7 @@ const ProjectReport: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
-  useEffect(() => {}, [handleClose]);
+  useEffect(() => { }, [handleClose]);
 
   if (reqReport.loading) {
     return (
@@ -166,7 +166,7 @@ const ProjectReport: React.FC = () => {
       </Box>
 
       {report ? (
-        <section className='bg-white rounded-xl p-3 md:p-6 mb-5'>
+        <section className='bg-white rounded-xl p-3 md:p-6 mb-5 overflow-y-scroll'>
           <section className='grid grid-cols-2 md:flex flex-wrap justify-end gap-3 mb-5'>
             <Select
               defaultValue={1}

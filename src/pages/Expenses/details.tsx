@@ -185,7 +185,7 @@ const ExpenseDetails = () => {
             <h1 className='truncate text-gray text-[2rem] break-all whitespace-break-spaces'>
               {data.title}
             </h1>
-            <div className='flex gap-3 shrink-0'>
+            <div className='flex gap-2 md:gap-5 shrink-0'>
               <Button
                 //onClick={}
                 sx={{
@@ -197,7 +197,7 @@ const ExpenseDetails = () => {
                 }}
                 startDecorator={<PictureAsPdfIcon sx={{ width: 24, color: colors.gold }} />}
               >
-                <Typography sx={{ color: colors.gold }}>Download</Typography>
+                <Typography sx={{ color: colors.gold, fontSize: '14px' }}>Download</Typography>
               </Button>
               <Button
                 onClick={() => setDelete(data)}
@@ -210,7 +210,7 @@ const ExpenseDetails = () => {
                 }}
                 startDecorator={<img src={trash_can} alt='Delete' style={{ width: 24 }} />}
               >
-                <Typography sx={{ color: colors.gold }}>Delete</Typography>{' '}
+                <Typography sx={{ color: colors.gold, fontSize: '14px' }}>Delete</Typography>{' '}
               </Button>
             </div>
           </section>
@@ -224,8 +224,8 @@ const ExpenseDetails = () => {
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {!urlVoucher &&
-                (employee?.role == SupportedRoles.ADMIN ||
-                  employee?.role == SupportedRoles.ACCOUNTING) ? (
+              (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -271,7 +271,7 @@ const ExpenseDetails = () => {
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
-          <section className='flex flex-wrap flex-col-reverse sm:flex-row justify-between mt-16 gap-5'>
+          <section className='flex flex-wrap flex-col-reverse sm:flex-row justify-between mt-6 gap-5'>
             {expenseStatus == ExpenseReportStatus.PAYED && urlVoucher && (
               <Button
                 component='a'
@@ -288,12 +288,12 @@ const ExpenseDetails = () => {
               </Button>
             )}
             {expenseStatus == ExpenseReportStatus.PAYED &&
-              !urlVoucher &&
-              (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) ? (
+            !urlVoucher &&
+            (employee?.role == SupportedRoles.ADMIN ||
+              employee?.role == SupportedRoles.ACCOUNTING) ? (
               <form
                 className='flex flex-col sm:flex-row items-start gap-3'
-              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+                // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
               >
                 <div className='sm:flex gap-2'>
                   <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
