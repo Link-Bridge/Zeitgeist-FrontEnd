@@ -33,6 +33,16 @@ export type ExpenseEntity = {
   urlFile?: string | null;
 };
 
+/**
+ * This class is used to define the structure of the Expense Draft Entity
+ *
+ * @param title: string - Expense title
+ * @param supplier?: string - Expense supplier (optional)
+ * @param totalAmount: number - Expense amount
+ * @param date: Date - Expense date
+ * @param urlFile?: string - URL of the file associated with the expense (optional)
+ */
+
 export type ExpenseDraft = Pick<
   ExpenseEntity,
   'title' | 'totalAmount' | 'supplier' | 'date' | 'urlFile'
@@ -74,12 +84,32 @@ export interface ExpenseReport {
   totalAmount?: number | null;
 }
 
+/**
+ * This class is used to define the structure of the ExpenseReport Entity
+ *
+ * @param title: string - Expense Report title
+ * @param date: Date - Expense Report start date
+ * @param status?: string - Expense Report status (optional)
+ * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
+ *
+ */
+
 export type ExpenseRequest = {
   title: string;
   date: Date;
   status?: ExpenseReportStatus;
   expenses: ExpenseDraft[];
 };
+
+/**
+ * This class is used to define the structure of the ExpenseReport Entity
+ *
+ * @param title: string - Expense Report title
+ * @param startDate: Date - Expense Report start date
+ * @param status?: string - Expense Report status (optional)
+ * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
+ *
+ */
 
 export type InitialStateReimbursement = {
   title: string;

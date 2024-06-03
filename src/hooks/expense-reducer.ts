@@ -1,6 +1,9 @@
 import dayjs from 'dayjs';
 import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../types/expense';
 
+/**
+ * Action types for the expense reducer.
+ */
 export type ExpenseActions =
   | { type: 'toggle-modal' }
   | { type: 'update-reason'; payload: string }
@@ -11,12 +14,18 @@ export type ExpenseActions =
   | { type: 'send-request'; payload: { report: ExpenseRequest } }
   | { type: 'restart-request' };
 
+/**
+ * State type for the expense reducer.
+ */
 export type ExpenseState = {
   modalOpen: boolean;
   reimbursementRequest: InitialStateReimbursement;
   reimbursementSkeleton: ExpenseDraft;
 };
 
+/**
+ * Template for a new expense.
+ */
 export const reimbursementSkeleton: ExpenseDraft = {
   title: '',
   supplier: '',
@@ -25,6 +34,9 @@ export const reimbursementSkeleton: ExpenseDraft = {
   urlFile: '',
 };
 
+/**
+ * Initial state for the reimbursement request.
+ */
 const ReimbursementInitialState: InitialStateReimbursement = {
   title: '',
   startDate: null,
@@ -32,12 +44,21 @@ const ReimbursementInitialState: InitialStateReimbursement = {
   status: 'Pending',
 };
 
+/**
+ * Initial state for the expense reducer.
+ */
 export const InitialState: ExpenseState = {
   modalOpen: false,
   reimbursementRequest: ReimbursementInitialState,
   reimbursementSkeleton,
 };
 
+/**
+ * Reducer function to manage the expense state based on dispatched actions.
+ * @param state - The current state of the expense reducer.
+ * @param action - The action to be processed.
+ * @returns The updated state.
+ */
 export const ExpenseReducer = (
   state: ExpenseState = InitialState,
   action: ExpenseActions

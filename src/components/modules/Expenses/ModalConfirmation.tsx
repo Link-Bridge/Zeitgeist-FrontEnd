@@ -17,9 +17,11 @@ import { axiosInstance } from '../../../lib/axios/axios';
 import { ExpenseReportStatus } from '../../../types/expense';
 import { APIPath, BASE_API_URL } from '../../../utils/constants';
 
-type ModalConfirmationProps = {};
-
-const ModalConfirmation = ({}: ModalConfirmationProps) => {
+/**
+ * Handles the confirmation of the expense report.
+ * Sends a POST request to create the expense report.
+ */
+const ModalConfirmation = () => {
   const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
   const navigate = useNavigate();
@@ -35,8 +37,6 @@ const ModalConfirmation = ({}: ModalConfirmationProps) => {
         method: 'POST',
         data: payload,
       };
-      console.log('payload', payload);
-      console.log(state.reimbursementRequest);
       const res = await axiosInstance(config);
       setState({
         open: true,
@@ -55,6 +55,14 @@ const ModalConfirmation = ({}: ModalConfirmationProps) => {
       });
     }
   };
+
+  /**
+   * Modal Confirmation component
+   *
+   * @component
+   *
+   * @returns {JSX.Element} Modal confirmation component
+   */
 
   return (
     <Modal

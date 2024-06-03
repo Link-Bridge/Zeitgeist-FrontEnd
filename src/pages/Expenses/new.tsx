@@ -1,7 +1,7 @@
 import { Button, Card, Chip, FormControl, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { useContext, useMemo } from 'react';
+import { FormEvent, useContext, useMemo } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import ExpenseContainerInput from '../../components/modules/Expenses/ExpenseContainerInput';
@@ -19,11 +19,18 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
   const MIN_DATE = dayjs('2000-01-01T00:00:00.000Z');
   const MAX_DATE = dayjs(Date.now());
 
+  /**
+   * Calculates the total amount of all expenses.
+   */
   const totalAmount = useMemo(
     () => state.reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
     [state.reimbursementRequest.expenses]
   );
 
+  /**
+   * Validates the form before submitting.
+   * @returns {boolean} - Whether the form is valid or not.
+   */
   const formValidation = (): boolean => {
     if (
       state.reimbursementRequest.title.trim() === '' ||
@@ -119,7 +126,11 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
     return true;
   };
 
-  const handleForm = (e: any) => {
+  /**
+   * Handles the form submission.
+   * @param e - The form submission event.
+   */
+  const handleForm = (e: FormEvent) => {
     e.preventDefault();
     if (formValidation()) {
       dispatch({ type: 'toggle-modal' });

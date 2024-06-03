@@ -14,6 +14,17 @@ type ExpenseContainerInputProps = {
   expense: ExpenseDraft;
 };
 
+/**
+ * Expense container inputs component
+ *
+ * @component
+ * @param {ExpenseContainerInputProps} props - Page props
+ * @param {number} props.index - The index of the expense
+ * @param {ExpenseDraft} props.expense - The expense with the complete information
+ *
+ * @returns {JSX.Element} Expense Containter that stores inputs
+ */
+
 const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) => {
   const theme = useTheme();
   const { state, dispatch } = useContext(ExpenseContext);
