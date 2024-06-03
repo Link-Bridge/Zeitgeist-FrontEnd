@@ -92,6 +92,7 @@ const ExpenseDetails = () => {
     if (newStatus) {
       setSnackbar({ open: true, message: 'Expense status updated successfully', type: 'success' });
       setExpenseStatus(newStatus.status ?? expenseStatus);
+      if (data && newStatus) data.status = newStatus.status ?? expenseStatus
     }
     if (errorStatus)
       setSnackbar({
