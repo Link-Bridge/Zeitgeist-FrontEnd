@@ -1,5 +1,3 @@
-import { useContext } from 'react';
-
 import InfoIcon from '@mui/icons-material/Info';
 import { Box } from '@mui/joy';
 import Alert from '@mui/joy/Alert';
@@ -8,61 +6,27 @@ import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
-import { AxiosRequestConfig } from 'axios';
+import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
 import colors from '../../../colors';
 import { ExpenseContext } from '../../../hooks/expenseContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
-import { axiosInstance } from '../../../lib/axios/axios';
-import { ExpenseReportStatus } from '../../../types/expense';
-import { APIPath, BASE_API_URL } from '../../../utils/constants';
 
 /**
- * Handles the confirmation of the expense report.
- * Sends a POST request to create the expense report.
+ * Modal Confirmation component
+ *
+ * @component
+ *
+ * @returns {JSX.Element} Modal confirmation component
  */
 const ModalConfirmation = () => {
   const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
   const navigate = useNavigate();
 
-  const baseUrl = `${BASE_API_URL}${APIPath.EXPENSES}`;
-
-  const handleConfirmation = async () => {
-    try {
-      const payload = { ...state.reimbursementRequest };
-      payload.status = ExpenseReportStatus.PENDING;
-      const config: AxiosRequestConfig = {
-        url: `${baseUrl}/create`,
-        method: 'POST',
-        data: payload,
-      };
-      const res = await axiosInstance(config);
-      setState({
-        open: true,
-        message: 'Expense Report created successfully',
-        type: 'success',
-      });
-      navigate('/expenses/');
-      dispatch({ type: 'restart-request' });
-      return res.data;
-      // dispatch({ type: 'send-request', payload: { report: state.reimbursementRequest } });
-    } catch (e: unknown) {
-      setState({
-        open: true,
-        message: 'Error creating Expense Report',
-        type: 'danger',
-      });
-    }
+  const handleConfirmation = () => {
+    dispatch({ type: 'confirm-request', payload: { setState, navigate } });
   };
-
-  /**
-   * Modal Confirmation component
-   *
-   * @component
-   *
-   * @returns {JSX.Element} Modal confirmation component
-   */
 
   return (
     <Modal

@@ -1,5 +1,13 @@
+import { AxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
-import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../types/expense';
+import { axiosInstance } from '../lib/axios/axios';
+import {
+  ExpenseDraft,
+  ExpenseReportStatus,
+  ExpenseRequest,
+  InitialStateReimbursement,
+} from '../types/expense';
+import { APIPath, BASE_API_URL } from '../utils/constants';
 
 /**
  * Action types for the expense reducer.
@@ -12,7 +20,8 @@ export type ExpenseActions =
   | { type: 'remove-expense'; payload: number }
   | { type: 'update-expense'; payload: { index: number; field: string; value: any } }
   | { type: 'send-request'; payload: { report: ExpenseRequest } }
-  | { type: 'restart-request' };
+  | { type: 'restart-request' }
+  | { type: 'confirm-request'; payload: { setState: any; navigate: any } };
 
 /**
  * State type for the expense reducer.
@@ -124,6 +133,40 @@ export const ExpenseReducer = (
       };
 
     case 'restart-request':
+      return {
+        ...state,
+        reimbursementRequest: ReimbursementInitialState,
+        modalOpen: false,
+      };
+
+    case 'confirm-request':
+      const confirmRequest = async () => {
+        const { setState, navigate } = action.payload;
+        const payload = { ...state.reimbursementRequest };
+        payload.status = ExpenseReportStatus.PENDING;
+        const config: AxiosRequestConfig = {
+          url: `${BASE_API_URL}${APIPath.EXPENSES}/create`,
+          method: 'POST',
+          data: payload,
+        };
+        try {
+          const res = await axiosInstance(config);
+          setState({
+            open: true,
+            message: 'Expense Report created successfully',
+            type: 'success',
+          });
+          navigate('/expenses/');
+          return res.data;
+        } catch (e: unknown) {
+          setState({
+            open: true,
+            message: 'Error creating Expense Report',
+            type: 'danger',
+          });
+        }
+      };
+      confirmRequest();
       return {
         ...state,
         reimbursementRequest: ReimbursementInitialState,
