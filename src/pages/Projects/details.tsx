@@ -461,6 +461,18 @@ const ProjectDetails = () => {
                 '&:hover': {
                   backgroundColor: colors.darkerGold,
                 },
+                '@media (max-width:600px)': {
+                  width: '100%',
+                  fontSize: '0.75rem',
+                },
+                '@media (min-width:601px) and (max-width:960px)': {
+                  width: 'auto',
+                  fontSize: '0.875rem',
+                },
+                '@media (min-width:961px)': {
+                  width: 'auto', // Tamaño automático en pantallas grandes
+                  fontSize: '1rem', // Tamaño de fuente normal
+                },
               }}
               onClick={() => setIsNotificationModalOpen(true)}
             >
