@@ -1,13 +1,5 @@
-import { AxiosRequestConfig } from 'axios';
 import dayjs from 'dayjs';
-import { axiosInstance } from '../lib/axios/axios';
-import {
-  ExpenseDraft,
-  ExpenseReportStatus,
-  ExpenseRequest,
-  InitialStateReimbursement,
-} from '../types/expense';
-import { APIPath, BASE_API_URL } from '../utils/constants';
+import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../types/expense';
 
 /**
  * Action types for the expense reducer.
@@ -20,8 +12,7 @@ export type ExpenseActions =
   | { type: 'remove-expense'; payload: number }
   | { type: 'update-expense'; payload: { index: number; field: string; value: any } }
   | { type: 'send-request'; payload: { report: ExpenseRequest } }
-  | { type: 'restart-request' }
-  | { type: 'confirm-request'; payload: { setState: any; navigate: any } };
+  | { type: 'restart-request' };
 
 /**
  * State type for the expense reducer.
@@ -37,10 +28,10 @@ export type ExpenseState = {
  */
 export const reimbursementSkeleton: ExpenseDraft = {
   title: '',
-  supplier: '',
+  supplier: null,
   totalAmount: 0,
   date: null,
-  urlFile: '',
+  urlFile: null,
 };
 
 /**
@@ -138,41 +129,6 @@ export const ExpenseReducer = (
         reimbursementRequest: ReimbursementInitialState,
         modalOpen: false,
       };
-
-    case 'confirm-request':
-      const confirmRequest = async () => {
-        const { setState, navigate } = action.payload;
-        const payload = { ...state.reimbursementRequest };
-        payload.status = ExpenseReportStatus.PENDING;
-        const config: AxiosRequestConfig = {
-          url: `${BASE_API_URL}${APIPath.EXPENSES}/create`,
-          method: 'POST',
-          data: payload,
-        };
-        try {
-          const res = await axiosInstance(config);
-          setState({
-            open: true,
-            message: 'Expense Report created successfully',
-            type: 'success',
-          });
-          navigate('/expenses/');
-          return res.data;
-        } catch (e: unknown) {
-          setState({
-            open: true,
-            message: 'Error creating Expense Report',
-            type: 'danger',
-          });
-        }
-      };
-      confirmRequest();
-      return {
-        ...state,
-        reimbursementRequest: ReimbursementInitialState,
-        modalOpen: false,
-      };
-
     default:
       return state;
   }

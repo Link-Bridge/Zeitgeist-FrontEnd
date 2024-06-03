@@ -89,21 +89,33 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
         });
         return false;
       }
-      if (expense.title.trim().length > 70 || expense.supplier!.trim().length > 70) {
+      if (expense.title.trim().length > 70) {
         setState({
           open: true,
-          message: 'Neither the title nor the supplier can be more than 70 characters',
+          message: 'The title cannot be more than 70 characters',
           type: 'danger',
         });
         return false;
       }
-      if (expense.urlFile!.trim().length > 512) {
-        setState({
-          open: true,
-          message: 'The url for the file cannot be more than 512 characters',
-          type: 'danger',
-        });
-        return false;
+      if (expense.supplier !== null) {
+        if (expense.supplier!.trim().length > 70) {
+          setState({
+            open: true,
+            message: 'The supplier cannot be more than 70 characters',
+            type: 'danger',
+          });
+          return false;
+        }
+      }
+      if (expense.urlFile !== null) {
+        if (expense.urlFile!.trim().length > 512) {
+          setState({
+            open: true,
+            message: 'The url for the file cannot be more than 512 characters',
+            type: 'danger',
+          });
+          return false;
+        }
       }
       if (expense.date! < MIN_DATE) {
         setState({
