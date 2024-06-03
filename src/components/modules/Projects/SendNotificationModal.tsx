@@ -80,7 +80,7 @@ const SendNotificationModal = ({ open, projectId, onClose }: ModalProps) => {
           Send Notification
         </Typography>
         <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
-          Do you want to notify the other department that its their turn to start working in the
+          Do you want to notify the other department that it is their turn to start working on the
           project?
         </Typography>
         <GenericDropdown
