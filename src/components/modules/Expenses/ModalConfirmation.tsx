@@ -30,7 +30,6 @@ const ModalConfirmation = ({}: ModalConfirmationProps) => {
     try {
       const payload = { ...state.reimbursementRequest };
       payload.status = ExpenseReportStatus.PENDING;
-      console.log(payload.status);
       const config: AxiosRequestConfig = {
         url: `${baseUrl}/create`,
         method: 'POST',

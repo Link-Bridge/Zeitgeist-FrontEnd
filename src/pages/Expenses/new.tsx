@@ -16,6 +16,9 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
   const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
 
+  const MIN_DATE = dayjs('2000-01-01T00:00:00.000Z');
+  const MAX_DATE = dayjs(Date.now());
+
   const totalAmount = useMemo(
     () => state.reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
     [state.reimbursementRequest.expenses]
@@ -44,17 +47,69 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
       return false;
     }
 
+    if (state.reimbursementRequest.title.trim().length > 70) {
+      setState({
+        open: true,
+        message: 'The title cannot be more than 70 characters',
+        type: 'danger',
+      });
+      return false;
+    }
+
+    if (state.reimbursementRequest.startDate! < MIN_DATE) {
+      setState({
+        open: true,
+        message: 'The report cannot have a date before the year 2000',
+        type: 'danger',
+      });
+      return false;
+    }
+    if (state.reimbursementRequest.startDate! > MAX_DATE) {
+      setState({
+        open: true,
+        message: 'The report cannot have a date after today',
+        type: 'danger',
+      });
+      return false;
+    }
+
     for (const expense of state.reimbursementRequest.expenses) {
-      if (
-        !expense.title ||
-        expense.totalAmount <= 0 ||
-        !expense.supplier ||
-        !expense.date ||
-        !expense.urlFile
-      ) {
+      if (!expense.title || expense.totalAmount <= 0 || !expense.date) {
         setState({
           open: true,
-          message: 'All expense fields are required and amounts must be greater than zero',
+          message: 'Title, amount and date are required and amounts must be greater than zero',
+          type: 'danger',
+        });
+        return false;
+      }
+      if (expense.title.trim().length > 70 || expense.supplier!.trim().length > 70) {
+        setState({
+          open: true,
+          message: 'Neither the title nor the supplier can be more than 70 characters',
+          type: 'danger',
+        });
+        return false;
+      }
+      if (expense.urlFile!.trim().length > 512) {
+        setState({
+          open: true,
+          message: 'The url for the file cannot be more than 512 characters',
+          type: 'danger',
+        });
+        return false;
+      }
+      if (expense.date! < MIN_DATE) {
+        setState({
+          open: true,
+          message: 'The expense cannot have a date before the year 2000',
+          type: 'danger',
+        });
+        return false;
+      }
+      if (expense.date! > MAX_DATE) {
+        setState({
+          open: true,
+          message: 'The expense cannot have a date after today',
           type: 'danger',
         });
         return false;
