@@ -470,8 +470,8 @@ const ProjectDetails = () => {
                   fontSize: '0.875rem',
                 },
                 '@media (min-width:961px)': {
-                  width: 'auto', // Tamaño automático en pantallas grandes
-                  fontSize: '1rem', // Tamaño de fuente normal
+                  width: 'auto',
+                  fontSize: '1rem',
                 },
               }}
               onClick={() => setIsNotificationModalOpen(true)}

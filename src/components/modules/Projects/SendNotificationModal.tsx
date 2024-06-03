@@ -34,14 +34,17 @@ const SendNotificationModal = ({ open, projectId, onClose }: ModalProps) => {
   );
 
   const departmentOptions = useMemo(() => {
-    if (!employee) return Object.values(SupportedDepartments);
+    if (!employee) return [];
+
     switch (employee.department) {
       case SupportedDepartments.ACCOUNTING:
         return [SupportedDepartments.LEGAL];
       case SupportedDepartments.LEGAL:
         return [SupportedDepartments.ACCOUNTING];
+      case SupportedDepartments.WITHOUT_DEPARTMENT:
+        return [SupportedDepartments.ACCOUNTING, SupportedDepartments.LEGAL];
       default:
-        return Object.values(SupportedDepartments);
+        return [];
     }
   }, [employee]);
 
@@ -55,7 +58,7 @@ const SendNotificationModal = ({ open, projectId, onClose }: ModalProps) => {
 
   useEffect(() => {
     if (error) {
-      setState({ open: true, message: 'Failed to send notification', type: 'danger' });
+      setState({ open: true, message: `Error sending notification: ${error}`, type: 'danger' });
     } else if (data) {
       setState({ open: true, message: 'Notification sent successfully', type: 'success' });
     }
