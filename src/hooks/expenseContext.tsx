@@ -1,10 +1,5 @@
 import { createContext, Dispatch, ReactNode, useReducer } from 'react';
-import {
-  ExpenseActions,
-  ExpenseReducer,
-  ExpenseState,
-  InitialState,
-} from '../reducers/expense-reducer';
+import { ExpenseActions, ExpenseReducer, ExpenseState, InitialState } from './expense-reducer';
 
 type ExpenseContextProps = {
   state: ExpenseState;

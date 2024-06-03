@@ -1,4 +1,4 @@
-import { Button, Card, Chip, FormControl, Input, useTheme } from '@mui/joy';
+import { Button, Card, Chip, FormControl, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useContext, useMemo } from 'react';
@@ -13,8 +13,6 @@ import { formatCurrency } from '../../utils/methods';
 type ExpenseNewProps = {};
 
 const ExpenseNew = ({}: ExpenseNewProps) => {
-  const theme = useTheme();
-
   const { state, dispatch } = useContext(ExpenseContext);
   const { setState } = useContext(SnackbarContext);
 
@@ -25,8 +23,8 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
 
   const formValidation = (): boolean => {
     if (
-      state.reimbursementRequest.reason.trim() === '' ||
-      !state.reimbursementRequest.date ||
+      state.reimbursementRequest.title.trim() === '' ||
+      !state.reimbursementRequest.startDate ||
       isNaN(totalAmount)
     ) {
       setState({
@@ -79,7 +77,7 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
       <Card className='bg-white font-montserrat' sx={{ padding: '20px' }}>
         <form onSubmit={handleForm}>
           <section className='flex flex-col md:flex-row gap-4 items-center'>
-            <section className='flex flex-col flex-grow w-full md:w-3/4'>
+            <section className='flex flex-col flex-grow w-full md:w-3l/4'>
               <label className='text-[#686868] font-semibold text-base mb-4'>
                 Reason for expense*
               </label>
@@ -88,7 +86,7 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
                   paddingY: '14px',
                 }}
                 placeholder='Write the name of the expense'
-                value={state.reimbursementRequest.reason}
+                value={state.reimbursementRequest.title}
                 onChange={e => dispatch({ type: 'update-reason', payload: e.target.value })}
               />
             </section>
@@ -96,8 +94,8 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
               <label className='text-[#686868] font-semibold text-base mb-4'>Date*:</label>
               <DatePicker
                 value={
-                  state.reimbursementRequest.date
-                    ? dayjs(state.reimbursementRequest.date).utc()
+                  state.reimbursementRequest.startDate
+                    ? dayjs(state.reimbursementRequest.startDate).utc()
                     : null
                 }
                 onChange={date =>
@@ -131,7 +129,7 @@ const ExpenseNew = ({}: ExpenseNewProps) => {
                 },
               }}
             >
-              <Link to={'..'} replace>
+              <Link to={'..'} replace onClick={() => dispatch({ type: 'restart-request' })}>
                 Cancel
               </Link>
             </Button>

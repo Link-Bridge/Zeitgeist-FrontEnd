@@ -8,10 +8,14 @@ import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
+import { AxiosRequestConfig } from 'axios';
 import { useNavigate } from 'react-router-dom';
 import colors from '../../../colors';
 import { ExpenseContext } from '../../../hooks/expenseContext';
 import { SnackbarContext } from '../../../hooks/snackbarContext';
+import { axiosInstance } from '../../../lib/axios/axios';
+import { ExpenseReportStatus } from '../../../types/expense';
+import { APIPath, BASE_API_URL } from '../../../utils/constants';
 
 type ModalConfirmationProps = {};
 
@@ -20,8 +24,37 @@ const ModalConfirmation = ({}: ModalConfirmationProps) => {
   const { setState } = useContext(SnackbarContext);
   const navigate = useNavigate();
 
-  const handleConfirmation = () => {
-    navigate('/expenses/');
+  const baseUrl = `${BASE_API_URL}${APIPath.EXPENSES}`;
+
+  const handleConfirmation = async () => {
+    try {
+      const payload = { ...state.reimbursementRequest };
+      payload.status = ExpenseReportStatus.PENDING;
+      console.log(payload.status);
+      const config: AxiosRequestConfig = {
+        url: `${baseUrl}/create`,
+        method: 'POST',
+        data: payload,
+      };
+      console.log('payload', payload);
+      console.log(state.reimbursementRequest);
+      const res = await axiosInstance(config);
+      setState({
+        open: true,
+        message: 'Expense Report created successfully',
+        type: 'success',
+      });
+      navigate('/expenses/');
+      dispatch({ type: 'restart-request' });
+      return res.data;
+      // dispatch({ type: 'send-request', payload: { report: state.reimbursementRequest } });
+    } catch (e: unknown) {
+      setState({
+        open: true,
+        message: 'Error creating Expense Report',
+        type: 'danger',
+      });
+    }
   };
 
   return (

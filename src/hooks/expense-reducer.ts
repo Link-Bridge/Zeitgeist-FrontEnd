@@ -1,5 +1,5 @@
 import dayjs from 'dayjs';
-import { ExpenseDraft, InitialStateReimbursement } from '../types/expense';
+import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../types/expense';
 
 export type ExpenseActions =
   | { type: 'toggle-modal' }
@@ -7,7 +7,9 @@ export type ExpenseActions =
   | { type: 'update-date'; payload: dayjs.Dayjs }
   | { type: 'add-expense' }
   | { type: 'remove-expense'; payload: number }
-  | { type: 'update-expense'; payload: { index: number; field: string; value: any } };
+  | { type: 'update-expense'; payload: { index: number; field: string; value: any } }
+  | { type: 'send-request'; payload: { report: ExpenseRequest } }
+  | { type: 'restart-request' };
 
 export type ExpenseState = {
   modalOpen: boolean;
@@ -17,17 +19,17 @@ export type ExpenseState = {
 
 export const reimbursementSkeleton: ExpenseDraft = {
   title: '',
-  totalAmount: 0,
   supplier: '',
+  totalAmount: 0,
   date: null,
   urlFile: '',
 };
 
 const ReimbursementInitialState: InitialStateReimbursement = {
-  reason: '',
-  date: null,
+  title: '',
+  startDate: null,
   expenses: [reimbursementSkeleton],
-  total: 0,
+  status: 'Pending',
 };
 
 export const InitialState: ExpenseState = {
@@ -51,7 +53,7 @@ export const ExpenseReducer = (
         ...state,
         reimbursementRequest: {
           ...state.reimbursementRequest,
-          reason: action.payload,
+          title: action.payload,
         },
       };
     case 'update-date':
@@ -59,7 +61,7 @@ export const ExpenseReducer = (
         ...state,
         reimbursementRequest: {
           ...state.reimbursementRequest,
-          date: action.payload,
+          startDate: action.payload,
         },
       };
     case 'add-expense':
@@ -79,7 +81,6 @@ export const ExpenseReducer = (
         reimbursementRequest: {
           ...state.reimbursementRequest,
           expenses: updatedExpenses,
-          total: updatedExpenses.reduce((total, expense) => total + expense.totalAmount, 0),
         },
       };
     case 'update-expense':
@@ -93,9 +94,21 @@ export const ExpenseReducer = (
         reimbursementRequest: {
           ...state.reimbursementRequest,
           expenses: updatedExpenseList,
-          total: updatedExpenseList.reduce((total, expense) => total + expense.totalAmount, 0),
         },
       };
+    case 'send-request':
+      return {
+        ...state,
+        modalOpen: false,
+      };
+
+    case 'restart-request':
+      return {
+        ...state,
+        reimbursementRequest: ReimbursementInitialState,
+        modalOpen: false,
+      };
+
     default:
       return state;
   }

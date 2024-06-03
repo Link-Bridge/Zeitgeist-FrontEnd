@@ -25,15 +25,11 @@ export enum ExpenseReportStatus {
 export type ExpenseEntity = {
   id: string;
   title: string;
-  justification: string;
   supplier?: string | null;
   totalAmount: number;
-  status?: string | null;
-  category?: string | null;
   date: Date | null;
   createdAt: Date;
   updatedAt?: Date | null;
-  idReport: string;
   urlFile?: string | null;
 };
 
@@ -65,23 +61,29 @@ export type ExpenseDraft = Pick<
 export interface ExpenseReport {
   id: string;
   title: string;
-  description: string;
   startDate: Date;
   endDate?: Date | null;
   status?: ExpenseReportStatus;
   createdAt?: Date | null;
   updatedAt?: Date | null;
   urlVoucher?: string | null;
-  idEmployee: string;
+  idEmployee?: string | null;
   employeeFirstName?: string;
   employeeLastName?: string;
   expenses?: ExpenseEntity[];
   totalAmount?: number | null;
 }
 
-export type InitialStateReimbursement = {
-  reason: string;
-  date: Date | null;
+export type ExpenseRequest = {
+  title: string;
+  date: Date;
+  status?: ExpenseReportStatus;
   expenses: ExpenseDraft[];
-  total: number;
+};
+
+export type InitialStateReimbursement = {
+  title: string;
+  startDate: Date | null;
+  expenses: ExpenseDraft[];
+  status: 'Pending';
 };
