@@ -12,7 +12,7 @@ import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
-import { Link, Navigate, redirect, useNavigate, useParams } from 'react-router-dom';
+import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
@@ -70,8 +70,6 @@ const ProjectDetails = () => {
   const [notFound, setNotFound] = useState(false);
   const { deleteProject, error: deleteError } = useDeleteProject();
 
-
-
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
@@ -113,7 +111,6 @@ const ProjectDetails = () => {
     loading: loadingTasks,
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
-
 
   useEffect(() => {
     if (isAxiosError(error)) {

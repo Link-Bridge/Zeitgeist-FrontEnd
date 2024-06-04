@@ -109,7 +109,7 @@ const ProjectReport: React.FC = () => {
     // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [reqReport.data]);
 
-  useEffect(() => { }, [handleClose]);
+  useEffect(() => {}, [handleClose]);
 
   if (reqReport.loading) {
     return (
