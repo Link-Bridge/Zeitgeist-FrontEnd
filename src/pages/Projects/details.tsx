@@ -192,7 +192,7 @@ const ProjectDetails = () => {
       await deleteProject(id);
       setState({ open: true, message: 'Project deleted successfully', type: 'success' });
       navigate('/projects');
-    } catch (error) {
+    } catch {
       setState({ open: true, message: 'Failed to delete project', type: 'danger' });
     }
   };
