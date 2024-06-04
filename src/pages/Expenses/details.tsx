@@ -50,6 +50,7 @@ const ExpenseDetails = () => {
   const [notFound, setNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(
     ExpenseReportStatus.PENDING
@@ -232,7 +233,7 @@ const ExpenseDetails = () => {
               </PDFDownloadLink>
               <Button
                 onClick={() => {
-                  setOpenModal(true);
+                  setOpenDeleteModal(true);
                 }}
                 sx={{
                   backgroundColor: colors.lightWhite,
@@ -257,8 +258,8 @@ const ExpenseDetails = () => {
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {!urlVoucher &&
-              (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) ? (
+                (employee?.role == SupportedRoles.ADMIN ||
+                  employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -321,12 +322,12 @@ const ExpenseDetails = () => {
               </Button>
             )}
             {expenseStatus == ExpenseReportStatus.PAYED &&
-            !urlVoucher &&
-            (employee?.role == SupportedRoles.ADMIN ||
-              employee?.role == SupportedRoles.ACCOUNTING) ? (
+              !urlVoucher &&
+              (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
               <form
                 className='flex flex-col sm:flex-row items-start gap-3'
-                // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
               >
                 <div className='sm:flex gap-2'>
                   <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />
@@ -385,8 +386,8 @@ const ExpenseDetails = () => {
         </section>
       )}
       <DeleteModal
-        open={openModal}
-        setOpen={setOpenModal}
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
         title='Delete Expense Report'
         description='Every expense record associated with this report will be deleted'
         id={data?.id ?? ''}
