@@ -50,6 +50,7 @@ const ExpenseDetails = () => {
   const [notFound, setNotFound] = useState(false);
   const [notAuthorized, setNotAuthorized] = useState(false);
   const [openModal, setOpenModal] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
 
   const [expenseStatus, setExpenseStatus] = useState<ExpenseReportStatus>(
     ExpenseReportStatus.PENDING
@@ -232,7 +233,7 @@ const ExpenseDetails = () => {
               </PDFDownloadLink>
               <Button
                 onClick={() => {
-                  setOpenModal(true);
+                  setOpenDeleteModal(true);
                 }}
                 sx={{
                   backgroundColor: colors.lightWhite,
@@ -385,8 +386,8 @@ const ExpenseDetails = () => {
         </section>
       )}
       <DeleteModal
-        open={openModal}
-        setOpen={setOpenModal}
+        open={openDeleteModal}
+        setOpen={setOpenDeleteModal}
         title='Delete Expense Report'
         description='Every expense record associated with this report will be deleted'
         id={data?.id ?? ''}
