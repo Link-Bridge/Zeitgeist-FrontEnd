@@ -117,8 +117,7 @@ const ExpenseContainerInput = ({
                 name='totalAmount'
                 value={expense.totalAmount}
                 onChange={e => {
-                  if (parseFloat(e.target.value) < 0) return;
-                  if (e.target.value.length > 18) return;
+                  if (parseFloat(e.target.value) < 0 || parseFloat(e.target.value) > 1e6) return;
                   if (isNaN(parseFloat(e.target.value))) return;
                   handleInputChange(e);
                 }}
