@@ -129,7 +129,9 @@ const Report = ({ data }: ReportProps) => {
               <View style={tableStyle.tableBody}></View>
               <View key={index} style={tableStyle.tableRow}>
                 <Text style={{ ...tableStyle.tableCell, flexBasis: '33%' }}>{expense.title}</Text>
-                <Text style={tableStyle.tableCell}>{dayjs.utc(expense.date).format('DD/MM/YYYY')}</Text>
+                <Text style={tableStyle.tableCell}>
+                  {dayjs.utc(expense.date).format('DD/MM/YYYY')}
+                </Text>
                 <Text style={tableStyle.tableCell}>
                   {expense.supplier ? expense.supplier : '-'}
                 </Text>

@@ -1,7 +1,7 @@
 import AddIcon from '@mui/icons-material/Add';
 import LinkIcon from '@mui/icons-material/Link';
 import RemoveIcon from '@mui/icons-material/Remove';
-import { FormLabel, Input, useTheme } from '@mui/joy';
+import { FormLabel, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { ChangeEvent, useContext } from 'react';
@@ -20,7 +20,7 @@ type ExpenseContainerInputProps = {
     date: string;
     urlFile: string;
   };
-  setErrors: (errors) => {};
+  setErrors: (errors: object) => object;
 };
 
 const ExpenseContainerInput = ({
@@ -29,7 +29,6 @@ const ExpenseContainerInput = ({
   errors,
   setErrors,
 }: ExpenseContainerInputProps) => {
-  const theme = useTheme();
   const { state, dispatch } = useContext(ExpenseContext);
 
   /**
@@ -39,6 +38,7 @@ const ExpenseContainerInput = ({
    */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
+
     dispatch({
       type: 'update-expense',
       payload: { index, field: name, value: name === 'totalAmount' ? parseFloat(value) : value },
@@ -93,7 +93,7 @@ const ExpenseContainerInput = ({
               </FormLabel>
               <Input
                 slotProps={{ input: { maxLength: 70 } }}
-                error={errors.expenseTitle}
+                error={!!errors.expenseTitle}
                 sx={{ paddingY: '14px' }}
                 type='text'
                 placeholder='Expense Description'
@@ -114,7 +114,12 @@ const ExpenseContainerInput = ({
                 placeholder='$000.00 *'
                 name='totalAmount'
                 value={expense.totalAmount}
-                onChange={handleInputChange}
+                onChange={e => {
+                  if (parseFloat(e.target.value) < 0) return;
+                  if (e.target.value.length > 18) return;
+                  if (isNaN(parseFloat(e.target.value))) return;
+                  handleInputChange(e);
+                }}
               />
               {errors.totalAmount && <ExpenserError>{errors.totalAmount}</ExpenserError>}
             </div>
@@ -146,9 +151,11 @@ const ExpenseContainerInput = ({
             </div>
 
             <section className='flex flex-col flex-1 items-start w-full'>
-              <FormLabel>Link to voucher</FormLabel>
-              <div className='flex flex-row items-center w-full gap-3'>
+              <div className='flex items-center gap-2'>
                 <LinkIcon sx={{ color: colors.gold }} />
+                <FormLabel>Link to voucher</FormLabel>
+              </div>
+              <div className='flex flex-row items-center w-full gap-3'>
                 <Input
                   slotProps={{ input: { maxLength: 512 } }}
                   sx={{
@@ -166,6 +173,7 @@ const ExpenseContainerInput = ({
                   onChange={handleInputChange}
                 />
               </div>
+              {errors.urlFile && <ExpenserError>{errors.urlFile}</ExpenserError>}
             </section>
           </section>
         </main>

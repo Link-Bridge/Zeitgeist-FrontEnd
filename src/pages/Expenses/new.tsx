@@ -114,7 +114,14 @@ const ExpenseNew = () => {
           }
         }
       }
+
+      const regex = /^(http(s):\/\/.)[-a-zA-Z0-9@:%._\+~#=]{2,256}\.[a-z]{2,6}\b([-a-zA-Z0-9@:%_\+.~#?&//=]*)$/
+      if (expense.urlFile && !regex.exec(expense.urlFile)) {
+        newErrors.expenses[index].urlFile = 'Invalid URL';
+        isValid = false;
+      }
     });
+
 
     setErrors(newErrors);
     return isValid;
@@ -145,12 +152,13 @@ const ExpenseNew = () => {
               <Input
                 slotProps={{ input: { maxLength: 70 } }}
                 sx={{ paddingY: '14px' }}
-                error={errors.title}
+                error={!!errors.title}
                 placeholder='Write the name of the expense'
                 value={state.reimbursementRequest.title}
                 onChange={e => {
                   dispatch({ type: 'update-reason', payload: e.target.value });
-                  setErrors((errors.title = ''), ...errors);
+                  errors.title = '';
+                  setErrors(errors);
                 }}
               />
               {errors.title && <ExpenserError>{errors.title}</ExpenserError>}
@@ -167,7 +175,8 @@ const ExpenseNew = () => {
                 }
                 onChange={date => {
                   dispatch({ type: 'update-date', payload: date || dayjs().startOf('day') });
-                  setErrors((errors.startDate = ''), ...errors);
+                  errors.startDate = '';
+                  setErrors(errors);
                 }}
                 slotProps={{ textField: { error: !!errors.startDate } }}
               />
