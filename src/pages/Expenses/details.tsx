@@ -3,6 +3,7 @@ import LinkIcon from '@mui/icons-material/Link';
 import PictureAsPdfIcon from '@mui/icons-material/PictureAsPdf';
 import { Box, Button, FormControl, Sheet, Typography } from '@mui/joy';
 import Divider from '@mui/material/Divider';
+import { PDFDownloadLink } from '@react-pdf/renderer';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
@@ -23,6 +24,7 @@ import useExpenseForm, { Fields } from '../../hooks/useExpenseForm';
 import useHttp from '../../hooks/useHttp';
 import { ExpenseReport, ExpenseReportStatus } from '../../types/expense';
 import { APIPath, RequestMethods, SupportedRoles } from '../../utils/constants';
+import Report from './report';
 
 function capitalize(data: string): string {
   return data.charAt(0).toUpperCase() + data.substring(1).toLowerCase();
@@ -90,6 +92,7 @@ const ExpenseDetails = () => {
     if (newStatus) {
       setSnackbar({ open: true, message: 'Expense status updated successfully', type: 'success' });
       setExpenseStatus(newStatus.status ?? expenseStatus);
+      if (data && newStatus) data.status = newStatus.status ?? expenseStatus
     }
     if (errorStatus)
       setSnackbar({
@@ -158,7 +161,7 @@ const ExpenseDetails = () => {
   }
 
   return (
-    <main className='min-h-0 flex flex-col gap-2 overflow-hidden'>
+    <main className='min-h-0 flex flex-col gap-2'>
       <Box
         sx={{
           display: 'flex',
@@ -170,7 +173,7 @@ const ExpenseDetails = () => {
       </Box>
 
       {data ? (
-        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+        <section className='overflow-y-scroll bg-white flex-1 flex flex-col rounded-xl p-6 mb-4 shadow-lg'>
           <CreateConfirmationModal
             open={openModal}
             setOpen={setOpenModal}
@@ -186,19 +189,20 @@ const ExpenseDetails = () => {
               {data.title}
             </h1>
             <div className='flex gap-2 md:gap-5 shrink-0'>
-              <Button
-                //onClick={}
-                sx={{
-                  backgroundColor: colors.lightWhite,
-                  ':hover': {
-                    backgroundColor: colors.orangeChip,
-                  },
-                  height: '5px',
-                }}
-                startDecorator={<PictureAsPdfIcon sx={{ width: 24, color: colors.gold }} />}
-              >
-                <Typography sx={{ color: colors.gold, fontSize: '14px' }}>Download</Typography>
-              </Button>
+              <PDFDownloadLink document={<Report data={data} />} fileName='Report'>
+                <Button
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                  }}
+                  startDecorator={<PictureAsPdfIcon sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold, fontSize: '14px' }}>Download</Typography>
+                </Button>
+              </PDFDownloadLink>
               <Button
                 onClick={() => setDelete(data)}
                 sx={{
@@ -224,8 +228,8 @@ const ExpenseDetails = () => {
             <Box>
               <p style={{ fontSize: '.9rem' }}>Status</p>
               {!urlVoucher &&
-              (employee?.role == SupportedRoles.ADMIN ||
-                employee?.role == SupportedRoles.ACCOUNTING) ? (
+                (employee?.role == SupportedRoles.ADMIN ||
+                  employee?.role == SupportedRoles.ACCOUNTING) ? (
                 <GenericDropdown
                   disabled={loadingStatus}
                   options={Object.values(ExpenseReportStatus)}
@@ -266,8 +270,8 @@ const ExpenseDetails = () => {
               {dayjs.utc(data.startDate).format('DD/MM/YYYY')}
             </Box>
           </section>
-          <section className='mb-4'>
-            <Sheet sx={{ overflow: 'auto' }}>
+          <section className='flex-1 mb-4'>
+            <Sheet sx={{ overflow: 'auto', height: '100%' }}>
               <ExpensesTable expenses={data.expenses || []}></ExpensesTable>
             </Sheet>
           </section>
@@ -288,12 +292,12 @@ const ExpenseDetails = () => {
               </Button>
             )}
             {expenseStatus == ExpenseReportStatus.PAYED &&
-            !urlVoucher &&
-            (employee?.role == SupportedRoles.ADMIN ||
-              employee?.role == SupportedRoles.ACCOUNTING) ? (
+              !urlVoucher &&
+              (employee?.role == SupportedRoles.ADMIN ||
+                employee?.role == SupportedRoles.ACCOUNTING) ? (
               <form
                 className='flex flex-col sm:flex-row items-start gap-3'
-                // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
+              // onSubmit={e => form.handleUpdate(e, id!, userConfirmation, setOpenModal)}
               >
                 <div className='sm:flex gap-2'>
                   <LinkIcon sx={{ color: colors.gold, marginTop: '12px' }} />

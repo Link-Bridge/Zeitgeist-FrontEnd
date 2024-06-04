@@ -26,6 +26,8 @@ const ExpensesTable = ({ expenses }: ExpensesTableProps) => {
       sx={{
         minWidth: '600px',
         '& tr > *:not(:first-of-type)': { textAlign: 'center' },
+        overflow: 'auto',
+        maxHeight: '100%',
       }}
     >
       <thead>

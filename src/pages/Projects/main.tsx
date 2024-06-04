@@ -146,7 +146,7 @@ const ProjectMain = () => {
       {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />
       ) : (
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5 mb-4'>
           {isLoading ? (
             <Loader />
           ) : (
