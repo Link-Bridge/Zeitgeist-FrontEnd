@@ -8,10 +8,23 @@ import { ChangeEvent, useContext } from 'react';
 import colors from '../../../colors';
 import { ExpenseContext } from '../../../hooks/expenseContext';
 import { ExpenseDraft } from '../../../types/expense';
+import ExpenserError from './ExpenserError';
 
 type ExpenseContainerInputProps = {
   index: number;
   expense: ExpenseDraft;
+  errors: {
+    title: string;
+    startDate: Date;
+    totalAmount: number;
+    expense: {
+      expenseTitle: string;
+      totalAmount: number;
+      supplier: string;
+      date: Date;
+      urlFile: string;
+    };
+  };
 };
 
 /**
@@ -25,7 +38,7 @@ type ExpenseContainerInputProps = {
  * @returns {JSX.Element} Expense Containter that stores inputs
  */
 
-const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) => {
+const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInputProps) => {
   const theme = useTheme();
   const { state, dispatch } = useContext(ExpenseContext);
 
@@ -51,36 +64,40 @@ const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) =
         <p className='text-[#686868] font-semibold text-base'>{`${index + 1}.`}</p>
         <main className='flex flex-col flex-1'>
           <section className='flex flex-col md:flex-row flex-1 gap-4'>
-            <Input
-              sx={{
-                width: '100%',
-                paddingY: '14px',
-                [theme.breakpoints.up('md')]: {
-                  width: '80%',
-                },
-              }}
-              type='text'
-              placeholder='Expense Description'
-              name='title'
-              value={expense.title}
-              onChange={handleInputChange}
-            />
-            <Input
-              sx={{
-                width: '100%',
-                paddingY: '14px',
-                [theme.breakpoints.up('md')]: {
-                  width: '20%',
-                },
-              }}
-              type='number'
-              placeholder='$000.00'
-              name='totalAmount'
-              value={expense.totalAmount}
-              onChange={handleInputChange}
-            />
+            <div className='w-full md:w-[80%]'>
+              <Input
+                error={errors.expense.expenseTitle}
+                sx={{
+                  paddingY: '14px',
+                }}
+                type='text'
+                placeholder='Expense Description'
+                name='title'
+                value={expense.title}
+                onChange={handleInputChange}
+              />
+              {errors.expense.expenseTitle && (
+                <ExpenserError>{errors.expense.expenseTitle}</ExpenserError>
+              )}
+            </div>
+            <div className='w-full md:w-[20%]'>
+              <Input
+                error={errors.expense.totalAmount}
+                sx={{
+                  paddingY: '14px',
+                }}
+                type='number'
+                placeholder='$000.00'
+                name='totalAmount'
+                value={expense.totalAmount}
+                onChange={handleInputChange}
+              />
+              {errors.expense.totalAmount && (
+                <ExpenserError>{errors.expense.totalAmount}</ExpenserError>
+              )}
+            </div>
           </section>
-          <section className='flex flex-col md:flex-row flex-1 gap-4 items-center mt-4'>
+          <section className='flex flex-col md:flex-row flex-1 gap-4 items-start mt-4'>
             <Input
               sx={{ width: '100%', paddingY: '14px' }}
               type='text'
@@ -89,11 +106,16 @@ const ExpenseContainerInput = ({ index, expense }: ExpenseContainerInputProps) =
               value={expense.supplier!}
               onChange={handleInputChange}
             />
-            <DatePicker
-              sx={{ width: '100%' }}
-              value={dayjs(expense.date).utc()}
-              onChange={handleDateChange}
-            />
+            <div className='w-full'>
+              <DatePicker
+                sx={{ width: '100%' }}
+                value={dayjs(expense.date).utc()}
+                onChange={handleDateChange}
+                slotProps={{ textField: { error: !!errors.expense.date } }}
+              />
+              {errors.expense.date && <ExpenserError>{errors.expense.date}</ExpenserError>}
+            </div>
+
             <section className='flex flex-1 items-center gap-4 w-full'>
               <div className='flex items-center w-full gap-3'>
                 <LinkIcon sx={{ color: colors.gold }} />
