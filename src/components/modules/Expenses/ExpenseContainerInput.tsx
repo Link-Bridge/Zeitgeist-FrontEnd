@@ -14,34 +14,29 @@ type ExpenseContainerInputProps = {
   index: number;
   expense: ExpenseDraft;
   errors: {
-    title: string;
-    startDate: Date;
-    totalAmount: number;
-    expense: {
-      expenseTitle: string;
-      totalAmount: number;
-      supplier: string;
-      date: Date;
-      urlFile: string;
-    };
+    expenseTitle: string;
+    totalAmount: string;
+    supplier: string;
+    date: string;
+    urlFile: string;
   };
+  setErrors: (errors) => {};
 };
 
-/**
- * Expense container inputs component
- *
- * @component
- * @param {ExpenseContainerInputProps} props - Page props
- * @param {number} props.index - The index of the expense
- * @param {ExpenseDraft} props.expense - The expense with the complete information
- *
- * @returns {JSX.Element} Expense Containter that stores inputs
- */
-
-const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInputProps) => {
+const ExpenseContainerInput = ({
+  index,
+  expense,
+  errors,
+  setErrors,
+}: ExpenseContainerInputProps) => {
   const theme = useTheme();
   const { state, dispatch } = useContext(ExpenseContext);
 
+  /**
+   * Handles input change for expense fields.
+   *
+   * @param {ChangeEvent<HTMLInputElement>} e - The change event.
+   */
   const handleInputChange = (e: ChangeEvent<HTMLInputElement>) => {
     const { name, value } = e.target;
     dispatch({
@@ -50,12 +45,40 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
     });
   };
 
+  /**
+   * Handles date change for expense date field.
+   *
+   * @param {dayjs.Dayjs | null} date - The new date value.
+   */
   const handleDateChange = (date: dayjs.Dayjs | null) => {
     dispatch({ type: 'update-expense', payload: { index, field: 'date', value: date } });
   };
 
+  /**
+   * Handles the removal of an expense.
+   */
   const handleRemoveExpense = () => {
     dispatch({ type: 'remove-expense', payload: index });
+  };
+
+  /**
+   * Handles the addition of a new expense.
+   */
+  const handleAddExpense = () => {
+    dispatch({ type: 'add-expense' });
+    setErrors(prevErrors => ({
+      ...prevErrors,
+      expenses: [
+        ...prevErrors.expenses,
+        {
+          expenseTitle: '',
+          totalAmount: '',
+          supplier: '',
+          date: '',
+          urlFile: '',
+        },
+      ],
+    }));
   };
 
   return (
@@ -69,49 +92,43 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
                 Expense <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
-                error={errors.expense.expenseTitle}
-                sx={{
-                  paddingY: '14px',
-                }}
+                slotProps={{ input: { maxLength: 70 } }}
+                error={errors.expenseTitle}
+                sx={{ paddingY: '14px' }}
                 type='text'
                 placeholder='Expense Description'
                 name='title'
                 value={expense.title}
                 onChange={handleInputChange}
               />
-              {errors.expense.expenseTitle && (
-                <ExpenserError>{errors.expense.expenseTitle}</ExpenserError>
-              )}
+              {errors.expenseTitle! && <ExpenserError>{errors.expenseTitle}</ExpenserError>}
             </div>
             <div className='w-full md:w-[20%]'>
               <FormLabel>
                 Amount <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
-                error={errors.expense.totalAmount}
-                sx={{
-                  paddingY: '14px',
-                }}
+                error={!!errors.totalAmount}
+                sx={{ paddingY: '14px' }}
                 type='number'
                 placeholder='$000.00 *'
                 name='totalAmount'
                 value={expense.totalAmount}
                 onChange={handleInputChange}
               />
-              {errors.expense.totalAmount && (
-                <ExpenserError>{errors.expense.totalAmount}</ExpenserError>
-              )}
+              {errors.totalAmount && <ExpenserError>{errors.totalAmount}</ExpenserError>}
             </div>
           </section>
           <section className='flex flex-col md:flex-row flex-1 gap-4 items-start mt-4'>
-            <div className='w-full md:w-[20%]'>
+            <div className='w-full'>
               <FormLabel>Supplier</FormLabel>
               <Input
-                sx={{ width: '100%', paddingY: '14px' }}
+                slotProps={{ input: { maxLength: 70 } }}
+                sx={{ paddingY: '14px' }}
                 type='text'
                 placeholder='Supplier'
                 name='supplier'
-                value={expense.supplier!}
+                value={expense.supplier || ''}
                 onChange={handleInputChange}
               />
             </div>
@@ -123,9 +140,9 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
                 sx={{ width: '100%' }}
                 value={dayjs(expense.date).utc()}
                 onChange={handleDateChange}
-                slotProps={{ textField: { error: !!errors.expense.date } }}
+                slotProps={{ textField: { error: !!errors.date } }}
               />
-              {errors.expense.date && <ExpenserError>{errors.expense.date}</ExpenserError>}
+              {errors.date && <ExpenserError>{errors.date}</ExpenserError>}
             </div>
 
             <section className='flex flex-col flex-1 items-start w-full'>
@@ -133,6 +150,7 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
               <div className='flex flex-row items-center w-full gap-3'>
                 <LinkIcon sx={{ color: colors.gold }} />
                 <Input
+                  slotProps={{ input: { maxLength: 512 } }}
                   sx={{
                     width: '100%',
                     paddingY: '14px',
@@ -144,7 +162,7 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
                   type='text'
                   placeholder='URL'
                   name='urlFile'
-                  value={expense.urlFile!}
+                  value={expense.urlFile || ''}
                   onChange={handleInputChange}
                 />
               </div>
@@ -161,11 +179,8 @@ const ExpenseContainerInput = ({ index, expense, errors }: ExpenseContainerInput
       </div>
       {state.reimbursementRequest.expenses.length < 30 &&
         index === state.reimbursementRequest.expenses.length - 1 && (
-          <div className='bg-gold rounded-md h-8 w-8 flex items-center justify-center mx-auto mt-6 cursor-pointer'>
-            <AddIcon
-              className='text-white px-1'
-              onClick={() => dispatch({ type: 'add-expense' })}
-            />
+          <div className='bg-gold rounded-md h-8 w-8 flex items-center justify-center mx-auto mt-6'>
+            <AddIcon className='text-white px-1' onClick={handleAddExpense} />
           </div>
         )}
     </>

@@ -8,42 +8,36 @@ import ExpenseContainerInput from '../../components/modules/Expenses/ExpenseCont
 import ExpenserError from '../../components/modules/Expenses/ExpenserError';
 import ModalConfirmation from '../../components/modules/Expenses/ModalConfirmation';
 import { ExpenseContext } from '../../hooks/expenseContext';
-import { SnackbarContext } from '../../hooks/snackbarContext';
 import { formatCurrency } from '../../utils/methods';
 
-type ExpenseNewProps = {};
-
-const ExpenseNew = ({ }: ExpenseNewProps) => {
+const ExpenseNew = () => {
   const { state, dispatch } = useContext(ExpenseContext);
-  const { setState } = useContext(SnackbarContext);
 
   const [errors, setErrors] = useState({
     title: '',
     startDate: '',
     totalAmount: '',
-    expense: {
+    expenses: state.reimbursementRequest.expenses.map(() => ({
       expenseTitle: '',
       totalAmount: '',
       supplier: '',
       date: '',
       urlFile: '',
-    },
+    })),
   });
 
   const MIN_DATE = dayjs('2000-01-01T00:00:00.000Z');
   const MAX_DATE = dayjs(Date.now());
 
-  /**
-   * Calculates the total amount of all expenses.
-   */
   const totalAmount = useMemo(
     () => state.reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
     [state.reimbursementRequest.expenses]
   );
 
   /**
-   * Validates the form before submitting.
-   * @returns {boolean} - Whether the form is valid or not.
+   * Validates the form input and updates the error state accordingly.
+   *
+   * @returns {boolean} - Returns true if the form is valid, otherwise false.
    */
   const formValidation = (): boolean => {
     let isValid = true;
@@ -51,13 +45,13 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
       title: '',
       startDate: '',
       totalAmount: '',
-      expense: {
+      expenses: state.reimbursementRequest.expenses.map(() => ({
         expenseTitle: '',
         totalAmount: '',
         supplier: '',
         date: '',
         urlFile: '',
-      },
+      })),
     };
 
     if (state.reimbursementRequest.title.trim() === '') {
@@ -84,39 +78,40 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
       isValid = false;
     }
 
-    for (const expense of state.reimbursementRequest.expenses) {
+    state.reimbursementRequest.expenses.forEach((expense, index) => {
       if (!expense.title || expense.title.trim() === '') {
-        newErrors.expense.expenseTitle = 'Expense title cannot be empty';
+        newErrors.expenses[index].expenseTitle = 'Expense title cannot be empty';
         isValid = false;
       }
 
       if (!expense.totalAmount || expense.totalAmount <= 0) {
-        newErrors.expense.totalAmount = 'Total amount cannot be 0 or lower';
+        newErrors.expenses[index].totalAmount = 'Total amount cannot be 0 or lower';
         isValid = false;
       }
 
       if (!expense.date) {
-        newErrors.expense.date = 'Date is required';
+        newErrors.expenses[index].date = 'Date is required';
         isValid = false;
       } else {
         if (expense.date < MIN_DATE) {
-          newErrors.expense.date = 'The expense cannot have a date before the year 2000';
+          newErrors.expenses[index].date = 'The expense cannot have a date before the year 2000';
           isValid = false;
         }
         if (expense.date > MAX_DATE) {
-          newErrors.expense.date = 'The expense cannot have a date after today';
+          newErrors.expenses[index].date = 'The expense cannot have a date after today';
           isValid = false;
         }
       }
-    }
+    });
 
     setErrors(newErrors);
     return isValid;
   };
 
   /**
-   * Handles the form submission.
-   * @param e - The form submission event.
+   * Handles form submission.
+   *
+   * @param {FormEvent} e - The form event.
    */
   const handleForm = (e: FormEvent) => {
     e.preventDefault();
@@ -136,9 +131,8 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
                 Reason for expense <span className='text-red-600'>*</span>
               </FormLabel>
               <Input
-                sx={{
-                  paddingY: '14px',
-                }}
+                slotProps={{ input: { maxLength: 70 } }}
+                sx={{ paddingY: '14px' }}
                 error={errors.title}
                 placeholder='Write the name of the expense'
                 value={state.reimbursementRequest.title}
@@ -172,7 +166,13 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
             <label className='text-[#686868] font-semibold text-base my-6'>Expenses:</label>
           </FormControl>
           {state.reimbursementRequest.expenses.map((expense, idx) => (
-            <ExpenseContainerInput key={idx} index={idx} expense={expense} errors={errors} />
+            <ExpenseContainerInput
+              key={idx}
+              index={idx}
+              expense={expense}
+              errors={errors.expenses[idx]}
+              setErrors={setErrors}
+            />
           ))}
           <section className='flex gap-3 justify-end my-8'>
             <p className='text-[#686868] font-semibold text-base'>Total</p>
