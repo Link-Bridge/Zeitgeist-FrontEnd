@@ -1,7 +1,7 @@
 import { Button, Card, Chip, FormControl, FormLabel, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
-import { FormEvent, useContext, useMemo, useState } from 'react';
+import { FormEvent, useContext, useEffect, useMemo, useState } from 'react';
 import { Link } from 'react-router-dom';
 import colors from '../../colors';
 import ExpenseContainerInput from '../../components/modules/Expenses/ExpenseContainerInput';
@@ -33,6 +33,10 @@ const ExpenseNew = () => {
     () => state.reimbursementRequest.expenses.reduce((total, item) => total + item.totalAmount, 0),
     [state.reimbursementRequest.expenses]
   );
+
+  useEffect(() => {
+    dispatch({ type: 'restart-request' })
+  }, [])
 
   /**
    * Validates the form input and updates the error state accordingly.
