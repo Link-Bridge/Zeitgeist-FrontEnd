@@ -63,13 +63,19 @@ const ExpenseNew = () => {
       newErrors.startDate = 'Date is required';
       isValid = false;
     } else {
-      if (state.reimbursementRequest.startDate < MIN_DATE) {
-        newErrors.startDate = 'The report cannot have a date before the year 2000';
+      const startDate = dayjs(state.reimbursementRequest.startDate);
+      if (!startDate.isValid()) {
+        newErrors.startDate = 'Invalid date format';
         isValid = false;
-      }
-      if (state.reimbursementRequest.startDate > MAX_DATE) {
-        newErrors.startDate = 'The report cannot have a date after today';
-        isValid = false;
+      } else {
+        if (startDate < MIN_DATE) {
+          newErrors.startDate = 'The report cannot have a date before the year 2000';
+          isValid = false;
+        }
+        if (startDate > MAX_DATE) {
+          newErrors.startDate = 'The report cannot have a date after today';
+          isValid = false;
+        }
       }
     }
 
@@ -93,13 +99,19 @@ const ExpenseNew = () => {
         newErrors.expenses[index].date = 'Date is required';
         isValid = false;
       } else {
-        if (expense.date < MIN_DATE) {
-          newErrors.expenses[index].date = 'The expense cannot have a date before the year 2000';
+        const expenseDate = dayjs(expense.date);
+        if (!expenseDate.isValid()) {
+          newErrors.expenses[index].date = 'Invalid date format';
           isValid = false;
-        }
-        if (expense.date > MAX_DATE) {
-          newErrors.expenses[index].date = 'The expense cannot have a date after today';
-          isValid = false;
+        } else {
+          if (expenseDate < MIN_DATE) {
+            newErrors.expenses[index].date = 'The expense cannot have a date before the year 2000';
+            isValid = false;
+          }
+          if (expenseDate > MAX_DATE) {
+            newErrors.expenses[index].date = 'The expense cannot have a date after today';
+            isValid = false;
+          }
         }
       }
     });
