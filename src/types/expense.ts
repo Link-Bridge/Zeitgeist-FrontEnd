@@ -22,20 +22,31 @@ export enum ExpenseReportStatus {
  * @param urlFile?: string - URL of the file associated with the expense (optional)
  */
 
-export interface ExpenseEntity {
+export type ExpenseEntity = {
   id: string;
   title: string;
-  justification: string;
   supplier?: string | null;
   totalAmount: number;
-  status?: string | null;
-  category?: string | null;
-  date: Date;
+  date: Date | null;
   createdAt: Date;
   updatedAt?: Date | null;
-  idReport: string;
   urlFile?: string | null;
-}
+};
+
+/**
+ * This class is used to define the structure of the Expense Draft Entity
+ *
+ * @param title: string - Expense title
+ * @param supplier?: string - Expense supplier (optional)
+ * @param totalAmount: number - Expense amount
+ * @param date: Date - Expense date
+ * @param urlFile?: string - URL of the file associated with the expense (optional)
+ */
+
+export type ExpenseDraft = Pick<
+  ExpenseEntity,
+  'title' | 'totalAmount' | 'supplier' | 'date' | 'urlFile'
+>;
 
 /**
  * This class is used to define the structure of the ExpenseReport Entity
@@ -60,16 +71,49 @@ export interface ExpenseEntity {
 export interface ExpenseReport {
   id: string;
   title: string;
-  description: string;
   startDate: Date;
   endDate?: Date | null;
   status?: ExpenseReportStatus;
   createdAt?: Date | null;
   updatedAt?: Date | null;
   urlVoucher?: string | null;
-  idEmployee: string;
+  idEmployee?: string | null;
   employeeFirstName?: string;
   employeeLastName?: string;
   expenses?: ExpenseEntity[];
   totalAmount?: number | null;
 }
+
+/**
+ * This class is used to define the structure of the ExpenseReport Entity
+ *
+ * @param title: string - Expense Report title
+ * @param date: Date - Expense Report start date
+ * @param status?: string - Expense Report status (optional)
+ * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
+ *
+ */
+
+export type ExpenseRequest = {
+  title: string;
+  date: Date;
+  status?: ExpenseReportStatus;
+  expenses: ExpenseDraft[];
+};
+
+/**
+ * This class is used to define the structure of the ExpenseReport Entity
+ *
+ * @param title: string - Expense Report title
+ * @param startDate: Date - Expense Report start date
+ * @param status?: string - Expense Report status (optional)
+ * @param expenses?: ExpenseEntity[] - Array of expenses associated with the report (optional)
+ *
+ */
+
+export type InitialStateReimbursement = {
+  title: string;
+  startDate: Date | null;
+  expenses: ExpenseDraft[];
+  status: 'Pending';
+};

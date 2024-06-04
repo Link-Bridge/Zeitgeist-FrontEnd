@@ -40,7 +40,7 @@ function App() {
           setState(s => {
             return { ...s, open: false };
           }),
-        2000
+        3000
       );
     }
   }, [state]);
@@ -106,7 +106,12 @@ function App() {
               <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </Router>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          <Snackbar
+            open={state.open}
+            color={state.type ?? 'neutral'}
+            variant='solid'
+            sx={{ marginLeft: '10px' }}
+          >
             {state.message}
           </Snackbar>
         </SnackbarContext.Provider>
