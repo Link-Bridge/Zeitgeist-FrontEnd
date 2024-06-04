@@ -13,6 +13,7 @@ import { useContext, useState } from 'react';
 import { Link, useLocation } from 'react-router-dom';
 import LogoZeitgeist from '../../assets/icons/LOGO_Zeitgeist.svg';
 import colors from '../../colors';
+import { app } from '../../config/firebase.config';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import { axiosInstance } from '../../lib/axios/axios';
@@ -57,6 +58,7 @@ const SideBar = () => {
     localStorage.removeItem('deviceToken');
 
     setState({ open: true, message: 'Logged out successfully', type: 'success' });
+    app.auth().signOut();
   };
 
   const SideBarContent = () => (
@@ -76,6 +78,7 @@ const SideBar = () => {
               {Items.map(item => (
                 <li
                   key={item.href}
+                  onClick={() => setIsSidebarOpen(false)}
                   className='first:mt-0 my-6 text-base hover:bg-darkestGray transition-all duration-400 font-semibold'
                 >
                   <Link
@@ -119,12 +122,12 @@ const SideBar = () => {
 
   return (
     <div className='flex h-screen'>
-      <div className='md:hidden fixed top-7 left-3 z-50'>
+      <div className='lg:hidden fixed top-7 left-3 z-50'>
         <IconButton onClick={toggleSidebar}>
           <MenuRounded />
         </IconButton>
       </div>
-      <div className='hidden md:block w-72'>
+      <div className='hidden lg:block w-72'>
         <SideBarContent />
       </div>
       <div className='min-h-screen h-full'>

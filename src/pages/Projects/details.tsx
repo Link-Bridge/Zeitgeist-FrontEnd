@@ -7,6 +7,7 @@ import {
   EventNoteRounded,
   UnarchiveRounded,
 } from '@mui/icons-material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -21,6 +22,7 @@ import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
+import SendNotificationModal from '../../components/modules/Projects/SendNotificationModal';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
 import useDeleteProject from '../../hooks/useDeleteProject';
@@ -28,7 +30,7 @@ import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity, ProjectStatus } from '../../types/project';
+import { ProjectAreas, ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
@@ -111,6 +113,19 @@ const ProjectDetails = () => {
     loading: loadingTasks,
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  const toggleModal = () => {
+    setOpen(!open);
+  };
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!tasks) getTasks();
@@ -311,9 +326,9 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
+          <section className='flex flex-wrap flex-row justify-between gap-y-2 items-center'>
             <h3 className='text-4xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
-            <div className='flex flex-wrap gap-3 mb-6 justify-end'>
+            <div className='flex flex-wrap gap-3 justify-end items-center'>
               <Button
                 component={Link}
                 to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -483,13 +498,53 @@ const ProjectDetails = () => {
         </section>
       </Card>
 
+      {isNotificationModalOpen && (
+        <SendNotificationModal
+          open={isNotificationModalOpen}
+          setOpen={() => setIsNotificationModalOpen(true)}
+          onClose={() => setIsNotificationModalOpen(false)}
+          projectId={data!.id}
+        />
+      )}
+
       <section className='flex justify-between my-4'>
         <h1 className='text-[25px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
-        <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
-        </Link>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {data && data.area === ProjectAreas.LEGAL_AND_ACCOUNTING && (
+            <Button
+              startDecorator={<NotificationsIcon />}
+              variant='solid'
+              size='sm'
+              sx={{
+                height: '30px',
+                backgroundColor: colors.darkGold,
+                '&:hover': {
+                  backgroundColor: colors.darkerGold,
+                },
+                '@media (max-width:600px)': {
+                  width: '100%',
+                  fontSize: '0.75rem',
+                },
+                '@media (min-width:601px) and (max-width:960px)': {
+                  width: 'auto',
+                  fontSize: '0.875rem',
+                },
+                '@media (min-width:961px)': {
+                  width: 'auto',
+                  fontSize: '1rem',
+                },
+              }}
+              onClick={() => setIsNotificationModalOpen(true)}
+            >
+              Send notification
+            </Button>
+          )}
+          <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
+            <AddButton onClick={() => {}} />
+          </Link>
+        </Box>
       </section>
       <Card className='bg-white overflow-auto mb-4'>
         <TaskListTable
