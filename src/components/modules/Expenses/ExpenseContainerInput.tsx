@@ -187,7 +187,7 @@ const ExpenseContainerInput = ({
       </div>
       {state.reimbursementRequest.expenses.length < 30 &&
         index === state.reimbursementRequest.expenses.length - 1 && (
-          <div className='bg-gold rounded-md h-8 w-8 flex items-center justify-center mx-auto mt-6'>
+          <div className='bg-gold rounded-md h-8 w-8 flex items-center justify-center mx-auto mt-6 cursor-pointer'>
             <AddIcon className='text-white px-1' onClick={handleAddExpense} />
           </div>
         )}
