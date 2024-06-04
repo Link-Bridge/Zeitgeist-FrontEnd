@@ -189,7 +189,7 @@ const ExpenseNew = () => {
             </section>
           </section>
           <FormControl>
-            <label className='text-[#686868] font-semibold text-base my-6'>Expenses:</label>
+            <label className='text-gray font-semibold text-base my-6'>Expenses:</label>
           </FormControl>
           {state.reimbursementRequest.expenses.map((expense, idx) => (
             <ExpenseContainerInput
@@ -201,7 +201,7 @@ const ExpenseNew = () => {
             />
           ))}
           <section className='flex gap-3 justify-end my-8'>
-            <p className='text-[#686868] font-semibold text-base'>Total</p>
+            <p className='text-gray  font-semibold text-base'>Total</p>
             <Chip sx={{ backgroundColor: colors.lightGold }}>
               {isNaN(totalAmount) ? formatCurrency(0) : formatCurrency(totalAmount)}
             </Chip>

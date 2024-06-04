@@ -5,7 +5,7 @@ type ExpenserErrorProps = {
 };
 
 const ExpenserError = ({ children }: ExpenserErrorProps) => {
-  return <p className='text-[#D86D6E] mt-2 text-sm'>{children}</p>;
+  return <p className='text-errorColor mt-2 text-sm'>{children}</p>;
 };
 
 export default ExpenserError;

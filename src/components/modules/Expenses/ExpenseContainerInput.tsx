@@ -86,7 +86,7 @@ const ExpenseContainerInput = ({
       <div
         className={`flex flex-wrap items-start gap-3 ${index === 0 ? 'mt-0' : 'mt-10'} justify-end`}
       >
-        <p className='text-[#686868] font-semibold text-base'>{`${index + 1}.`}</p>
+        <p className='font-semibold text-base'>{`${index + 1}.`}</p>
         <main className='flex flex-col flex-1'>
           <section className='flex flex-col md:flex-row flex-1 gap-4'>
             <div className='w-full md:w-[80%]'>
