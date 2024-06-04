@@ -1,4 +1,3 @@
-import dayjs from 'dayjs';
 import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../types/expense';
 
 /**
@@ -7,10 +6,10 @@ import { ExpenseDraft, ExpenseRequest, InitialStateReimbursement } from '../type
 export type ExpenseActions =
   | { type: 'toggle-modal' }
   | { type: 'update-reason'; payload: string }
-  | { type: 'update-date'; payload: dayjs.Dayjs }
+  | { type: 'update-date'; payload: Date }
   | { type: 'add-expense' }
   | { type: 'remove-expense'; payload: number }
-  | { type: 'update-expense'; payload: { index: number; field: string; value: any } }
+  | { type: 'update-expense'; payload: { index: number; field: string; value: number } }
   | { type: 'send-request'; payload: { report: ExpenseRequest } }
   | { type: 'restart-request' };
 

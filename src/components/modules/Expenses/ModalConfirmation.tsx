@@ -1,4 +1,4 @@
-import InfoIcon from '@mui/icons-material/Info';
+import { Warning } from '@mui/icons-material';
 import { Box } from '@mui/joy';
 import Alert from '@mui/joy/Alert';
 import Button from '@mui/joy/Button';
@@ -93,7 +93,7 @@ const ModalConfirmation = () => {
         <Typography component='h2' id='modal-desc' textColor='text.tertiary' sx={{ py: 2 }}>
           Double-check that all the information is correct.
         </Typography>
-        <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
+        <Alert size='lg' startDecorator={<Warning />} variant='soft' color='warning'>
           This information cannot be modified once it is sent.
         </Alert>
         <Box
