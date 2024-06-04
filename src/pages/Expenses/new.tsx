@@ -142,7 +142,10 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
                 error={errors.title}
                 placeholder='Write the name of the expense'
                 value={state.reimbursementRequest.title}
-                onChange={e => dispatch({ type: 'update-reason', payload: e.target.value })}
+                onChange={e => {
+                  dispatch({ type: 'update-reason', payload: e.target.value });
+                  setErrors((errors.title = ''), ...errors);
+                }}
               />
               {errors.title && <ExpenserError>{errors.title}</ExpenserError>}
             </section>
@@ -156,9 +159,10 @@ const ExpenseNew = ({ }: ExpenseNewProps) => {
                     ? dayjs(state.reimbursementRequest.startDate).utc()
                     : null
                 }
-                onChange={date =>
-                  dispatch({ type: 'update-date', payload: date || dayjs().startOf('day') })
-                }
+                onChange={date => {
+                  dispatch({ type: 'update-date', payload: date || dayjs().startOf('day') });
+                  setErrors((errors.startDate = ''), ...errors);
+                }}
                 slotProps={{ textField: { error: !!errors.startDate } }}
               />
               {errors.startDate && <ExpenserError>{errors.startDate}</ExpenserError>}
