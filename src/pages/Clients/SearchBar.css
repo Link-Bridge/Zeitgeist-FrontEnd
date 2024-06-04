@@ -1,0 +1,10 @@
+.search-bar-container {
+  flex: 1;
+  max-width: 40%;
+}
+
+@media (max-width: 600px) {
+  .search-bar-container {
+    max-width: 100%;
+  }
+}
