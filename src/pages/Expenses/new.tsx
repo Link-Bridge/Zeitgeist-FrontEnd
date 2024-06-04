@@ -35,8 +35,9 @@ const ExpenseNew = () => {
   );
 
   useEffect(() => {
-    dispatch({ type: 'restart-request' })
-  }, [])
+    dispatch({ type: 'restart-request' });
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, []);
 
   /**
    * Validates the form input and updates the error state accordingly.
