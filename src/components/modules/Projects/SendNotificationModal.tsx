@@ -61,8 +61,9 @@ const SendNotificationModal = ({ open, projectId, onClose }: ModalProps) => {
       setState({ open: true, message: 'Error sending notification', type: 'danger' });
     } else if (data) {
       setState({ open: true, message: 'Notification sent successfully', type: 'success' });
+      onClose();
     }
-  }, [error, data, setState]);
+  }, [error, data, setState, onClose]);
 
   return (
     <Modal
