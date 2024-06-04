@@ -69,6 +69,7 @@ const ProjectDetails = () => {
   const [updating, setUpdating] = useState(false);
   const [notFound, setNotFound] = useState(false);
   const { deleteProject, error: deleteError } = useDeleteProject();
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
