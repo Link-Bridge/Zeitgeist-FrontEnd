@@ -114,9 +114,6 @@ const ProjectDetails = () => {
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
 
-  const toggleModal = () => {
-    setOpen(!open);
-  };
 
   useEffect(() => {
     if (isAxiosError(error)) {
