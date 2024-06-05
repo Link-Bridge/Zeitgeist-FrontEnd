@@ -118,12 +118,12 @@ const SideBar = () => {
 
   return (
     <div className='flex h-screen'>
-      <div className='md:hidden fixed top-7 left-3 z-50'>
+      <div className='lg:hidden fixed top-7 left-3 z-50'>
         <IconButton onClick={toggleSidebar}>
           <MenuRounded />
         </IconButton>
       </div>
-      <div className='hidden md:block w-72'>
+      <div className='hidden lg:block w-72'>
         <SideBarContent />
       </div>
       <div className='min-h-screen h-full'>
