@@ -442,7 +442,7 @@ const ProjectDetails = () => {
           <AddButton onClick={() => { }} />
         </Link>
       </section>
-      <Card className='bg-white overflow-auto mb-4'>
+      <Card className='bg-white overflow-auto'>
         <TaskListTable
           errorTasks={errorTasks}
           loadingTasks={loadingTasks}
