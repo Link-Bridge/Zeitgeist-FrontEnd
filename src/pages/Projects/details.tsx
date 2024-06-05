@@ -284,8 +284,8 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap flex-col-reverse justify-between gap-y-2'>
-            <h3 className='text-4xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
+          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between gap-y-2'>
+            <h3 className='text-2xl lg:text-3xl font-medium whitespace-break-spaces break-all'>{data?.name}</h3>
             <div className='flex flex-wrap gap-3 mb-6 justify-end'>
               <Button
                 component={Link}
@@ -439,7 +439,7 @@ const ProjectDetails = () => {
           Project Tasks
         </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
+          <AddButton onClick={() => { }} />
         </Link>
       </section>
       <Card className='bg-white overflow-auto mb-4'>
