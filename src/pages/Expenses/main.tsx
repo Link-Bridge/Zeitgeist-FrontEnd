@@ -62,12 +62,14 @@ const ExpensesMain = () => {
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
         {employee?.role.toUpperCase() === SupportedRoles.ACCOUNTING.toUpperCase() ||
         employee?.role.toUpperCase() === SupportedRoles.ADMIN.toUpperCase() ? (
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            placeholder='Employee'
-            maxLength={70}
-          />
+          <div className='search-bar-container mb-2'>
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder='Employee'
+              maxLength={70}
+            />
+          </div>
         ) : (
           <div></div>
         )}

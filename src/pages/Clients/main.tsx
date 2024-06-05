@@ -101,17 +101,21 @@ const ClientList = (): JSX.Element => {
     return (
       <main className='min-h-full flex flex-col gap-2 overflow-hidden mb-8'>
         <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            placeholder='Search by name'
-            setSelectedOption={() => {}}
-            options={[]}
-            maxLength={70}
-          />
-          <div className='flex flex-wrap w-full md:justify-self-end items-center gap-2'>
+          <div className='flex w-full justify-between items-center'>
+            <div className='search-bar-container mb-2'>
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                placeholder='Search by name'
+                setSelectedOption={() => {}}
+                options={[]}
+                maxLength={70}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
             {isAdmin && (
-              <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex justify-start w-full items-center gap-2 my-6 mt-2'>
                 <div className='flex-row flex items-center sm:gap-2'>
                   <FilterAltIcon
                     sx={{ width: '30px', height: '30px' }}
@@ -139,7 +143,9 @@ const ClientList = (): JSX.Element => {
                 />
               </div>
             )}
-            <AddButton onClick={openModal} />
+            <div className='w-full flex justify-end mb-2'>
+              <AddButton onClick={openModal} />
+            </div>
           </div>
         </section>
         <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
@@ -153,17 +159,19 @@ const ClientList = (): JSX.Element => {
   return (
     <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder='Search by name'
-          setSelectedOption={() => {}}
-          options={[]}
-          maxLength={70}
-        />
-        <div className='flex flex-wrap w-full md:justify-self-end items-center gap-2'>
+        <div className='search-bar-container mb-2'>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            placeholder='Search by name'
+            setSelectedOption={() => {}}
+            options={[]}
+            maxLength={70}
+          />
+        </div>
+        <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
           {isAdmin && (
-            <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+            <div className='flex justify-start w-full items-center gap-2 mt-2'>
               <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon
                   sx={{ width: '30px', height: '30px' }}
@@ -191,7 +199,9 @@ const ClientList = (): JSX.Element => {
               />
             </div>
           )}
-          <AddButton onClick={openModal} />
+          <div className='w-full flex justify-end mt-2'>
+            <AddButton onClick={openModal} />
+          </div>
         </div>
       </section>
       {filteredCompanies.length === 0 ? (
