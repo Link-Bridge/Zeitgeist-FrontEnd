@@ -115,7 +115,6 @@ const useClientForm = () => {
         }
       }
 
-      console.log(payload);
       const baseUrl = `${BASE_API_URL}${APIPath.COMPANIES}`;
       const config: AxiosRequestConfig = {
         url: update ? `${baseUrl}/${id}` : `${baseUrl}/new`,

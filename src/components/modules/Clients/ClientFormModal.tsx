@@ -129,7 +129,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
           <FormControl error={!!form.errors.constitutionDate} sx={{ width: '100%' }}>
             <FormLabel>Constitution Date</FormLabel>
             <DatePicker
-              value={form.formState.constitutionDate}
+              value={form.formState.constitutionDate ?? null}
               onChange={newDate => form.handleChange('constitutionDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.constitutionDate, size: 'small' } }}
               maxDate={MAX_DATE}

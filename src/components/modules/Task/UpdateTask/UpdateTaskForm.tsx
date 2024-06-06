@@ -106,7 +106,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <FormControl error={!!form.errors.endDate}>
             <FormLabel>End Date</FormLabel>
             <DatePicker
-              value={form.formState.endDate?.utc()}
+              value={form.formState.endDate?.utc() ?? null}
               onChange={newDate => form.handleChange('endDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.endDate } }}
               maxDate={MAX_DATE}
