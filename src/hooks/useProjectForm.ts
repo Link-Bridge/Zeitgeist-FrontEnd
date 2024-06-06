@@ -93,9 +93,9 @@ const validate = (formState: FormState) => {
 
   if (
     formState.startDate &&
-    (isNaN(formState.startDate.day()) ||
-      isNaN(formState.startDate.month()) ||
-      isNaN(formState.startDate.year()))
+    (isNaN(formState.startDate.$D) ||
+      isNaN(formState.startDate.$M) ||
+      isNaN(formState.startDate.$y))
   ) {
     errors.startDate = 'Invalid date';
   }
@@ -107,18 +107,24 @@ const validate = (formState: FormState) => {
   )
     errors.startDate = 'Start date must be after 01/01/2018';
 
+  if (formState.startDate && formState.startDate.isAfter(MAX_DATE))
+    errors.startDate = `Start date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
+
   if (formState.endDate) {
     if (formState.endDate.isBefore(formState.startDate)) {
-      errors.startDate = 'Start date must be before end date';
+      errors.endDate = 'End date must be after start date';
+    }
+
+    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$M) || isNaN(formState.endDate.$y)) {
+      errors.endDate = 'Invalid date';
     }
 
     if (
-      isNaN(formState.endDate.day()) ||
-      isNaN(formState.endDate.month()) ||
-      isNaN(formState.endDate.year())
-    ) {
-      errors.endDate = 'Invalid date';
-    }
+      formState.endDate &&
+      !formState.endDate.isSame(MIN_DATE) &&
+      formState.endDate.isBefore(MIN_DATE)
+    )
+      errors.endDate = 'End date must be after 01/01/2018';
 
     if (formState.endDate.isAfter(MAX_DATE))
       errors.endDate = `End date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;

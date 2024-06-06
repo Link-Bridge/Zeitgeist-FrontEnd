@@ -86,9 +86,9 @@ function validate(formState: FormState) {
 
   if (
     formState.startDate &&
-    (isNaN(formState.startDate.day()) ||
-      isNaN(formState.startDate.month()) ||
-      isNaN(formState.startDate.year()))
+    (isNaN(formState.startDate.$D) ||
+      isNaN(formState.startDate.$M) ||
+      isNaN(formState.startDate.$y))
   ) {
     errors.startDate = 'Invalid date';
   }
@@ -100,20 +100,19 @@ function validate(formState: FormState) {
   )
     errors.startDate = 'Start date must be after 01/01/2018';
 
+  if (formState.startDate && formState.startDate.isAfter(MAX_DATE))
+    errors.startDate = `Start date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
+
   if (!formState.status) {
     errors.status = 'Status is required';
   }
 
   if (formState.endDate) {
     if (formState.startDate && formState.startDate.isAfter(formState.endDate)) {
-      errors.startDate = 'Start date must be before end date';
+      errors.endDate = 'End date must be after start date';
     }
 
-    if (
-      isNaN(formState.endDate.day()) ||
-      isNaN(formState.endDate.month()) ||
-      isNaN(formState.endDate.year())
-    ) {
+    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$M) || isNaN(formState.endDate.$y)) {
       errors.endDate = 'Invalid date';
     }
 
