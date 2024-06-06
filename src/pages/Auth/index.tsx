@@ -33,14 +33,18 @@ const Auth: React.FC = () => {
   }, [setState]);
 
   const updateUserContext = useCallback(
-    async (data: EmployeeReponse) => {
+    async (data: EmployeeReponse, token: string, refreshToken: string) => {
       if (data) {
         if (data.data.role !== 'No role') {
+          localStorage.setItem('idToken', token);
+          localStorage.setItem('refreshToken', refreshToken);
           setEmployee(data.data);
           localStorage.setItem('employee', JSON.stringify(data.data));
           navigate(RoutesPath.HOME);
           handleGetDeviceToken(data.data.employee.email);
         } else {
+          localStorage.removeItem('idToken');
+          localStorage.removeItem('refreshToken');
           setState({
             open: true,
             message: 'User not authorized',
@@ -56,18 +60,19 @@ const Auth: React.FC = () => {
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
+        console.log(result)
         if (result) {
           const token = await result.user.getIdToken(true);
           const refreshToken = result.user.refreshToken;
-          localStorage.setItem('idToken', token);
-          localStorage.setItem('refreshToken', refreshToken);
+
 
           const response = await sendRequest();
           if (!response) {
             setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
             return;
           }
-          await updateUserContext(response);
+
+          await updateUserContext(response, token, refreshToken);
         }
       } catch (error) {
         setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
