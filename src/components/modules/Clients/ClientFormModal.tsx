@@ -13,7 +13,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import useClientForm, { Fields, initialFormState } from '../../../hooks/useClientForm';
 import { CompanyEntity } from '../../../types/company';
-import { MAX_DATE } from '../../../utils/constants';
+import { CLIENT_MIN_DATE, MAX_DATE } from '../../../utils/constants';
 import GenericInput from '../../common/GenericInput';
 
 type ClientFormModalProps = {
@@ -22,8 +22,8 @@ type ClientFormModalProps = {
   data?: CompanyEntity;
   id?: string;
   updateFunction:
-    | Dispatch<SetStateAction<CompanyEntity[]>>
-    | Dispatch<SetStateAction<CompanyEntity | null>>;
+  | Dispatch<SetStateAction<CompanyEntity[]>>
+  | Dispatch<SetStateAction<CompanyEntity | null>>;
 };
 
 function phoneNumberMask(value: string) {
@@ -86,7 +86,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 );
               form.setState(defaultData);
               setOpen(false);
-            } catch (err) {}
+            } catch (err) { }
           }}
         >
           <GenericInput
@@ -132,8 +132,8 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
               value={form.formState.constitutionDate}
               onChange={newDate => form.handleChange('constitutionDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.constitutionDate, size: 'small' } }}
-              minDate={dayjs('1900-01-01').startOf('day')}
               maxDate={MAX_DATE}
+              minDate={CLIENT_MIN_DATE}
             />
             {form.errors.constitutionDate ? (
               <FormHelperText>{form.errors.constitutionDate}</FormHelperText>

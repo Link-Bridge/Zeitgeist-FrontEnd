@@ -68,13 +68,16 @@ const validate = (formState: FormState) => {
   if (
     formState.constitutionDate &&
     (isNaN(formState.constitutionDate.$D) ||
-      isNaN(formState.constitutionDate.$H) ||
+      isNaN(formState.constitutionDate.$M) ||
       isNaN(formState.constitutionDate.$y))
   )
     errors.constitutionDate = 'Invalid date';
 
+  console.log(formState.constitutionDate);
+  console.log(CLIENT_MIN_DATE);
+
   if (formState.constitutionDate && formState.constitutionDate.isBefore(CLIENT_MIN_DATE))
-    errors.constitutionDate = `Constitution date must be before ${CLIENT_MIN_DATE.format('DD/MM/YYYY')}`;
+    errors.constitutionDate = `Constitution date must be after ${CLIENT_MIN_DATE.format('DD/MM/YYYY')}`;
 
   if (formState.constitutionDate && formState.constitutionDate.isAfter(MAX_DATE))
     errors.constitutionDate = `Constitution date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;

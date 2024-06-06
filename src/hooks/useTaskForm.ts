@@ -87,7 +87,7 @@ function validate(formState: FormState) {
   if (
     formState.startDate &&
     (isNaN(formState.startDate.$D) ||
-      isNaN(formState.startDate.$H) ||
+      isNaN(formState.startDate.$M) ||
       isNaN(formState.startDate.$y))
   ) {
     errors.startDate = 'Invalid date';
@@ -112,7 +112,7 @@ function validate(formState: FormState) {
       errors.endDate = 'End date must be after start date';
     }
 
-    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$H) || isNaN(formState.endDate.$y)) {
+    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$M) || isNaN(formState.endDate.$y)) {
       errors.endDate = 'Invalid date';
     }
 
