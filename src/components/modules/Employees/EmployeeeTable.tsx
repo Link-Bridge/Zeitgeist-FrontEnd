@@ -46,7 +46,7 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
 
-  const { deleteEmployee, error: deleteError } = useDeleteEmployee();
+  const { deleteEmployee, error: deletError } = useDeleteEmployee();
 
   useEffect(() => {
     reqEmployees.sendRequest();
@@ -58,10 +58,10 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
     if (reqEmployees.error) {
       setState({ open: true, message: reqEmployees.error.message, type: 'danger' });
     }
-    if (deleteError) {
-      setState({ open: true, message: deleteError.message, type: 'danger' });
+    if (deletError) {
+      setState({ open: true, message: deletError.message, type: 'danger' });
     }
-  }, [reqEmployees.error, deleteError, setState]);
+  }, [reqEmployees.error, deletError, setState]);
 
   useEffect(() => {
     const filteredEmployees =

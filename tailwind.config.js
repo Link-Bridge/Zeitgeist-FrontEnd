@@ -25,7 +25,6 @@ export default {
         darkBlue: '#878FD2',
         darkerBlue: '#273086',
         cardBg: '#FAFAFA',
-        errorColor: '#D86D6E',
       },
       fontFamily: {
         montserrat: ['montserrat', 'sans-serif'],
