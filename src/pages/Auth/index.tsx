@@ -17,7 +17,7 @@ const Auth: React.FC = () => {
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [responseOk, setResponseOk] = useState(false)
+  const [responseOk, setResponseOk] = useState(false);
 
   const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? null);
   if (currentEmployee) {
@@ -46,7 +46,7 @@ const Auth: React.FC = () => {
         } else {
           localStorage.removeItem('idToken');
           localStorage.removeItem('refreshToken');
-          setResponseOk(false)
+          setResponseOk(false);
           setState({
             open: true,
             message: 'User not authorized',
@@ -59,12 +59,12 @@ const Auth: React.FC = () => {
   );
 
   useEffect(() => {
-    setIsLoggingIn(true)
+    setIsLoggingIn(true);
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
         if (result) {
-          setResponseOk(true)
+          setResponseOk(true);
           const token = await result.user.getIdToken(true);
           const refreshToken = result.user.refreshToken;
 
@@ -76,15 +76,17 @@ const Auth: React.FC = () => {
 
           await updateUserContext(response, token, refreshToken);
         }
-        if (!responseOk) setIsLoggingIn(false)
+        if (!responseOk) setIsLoggingIn(false);
       } catch (error) {
         setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-        setIsLoggingIn(false)
-        setResponseOk(false)
+        setIsLoggingIn(false);
+        setResponseOk(false);
       }
     };
 
     checkRedirectResult();
+
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sendRequest, setState, updateUserContext]);
 
   const handleGoogleSignIn = async () => {
@@ -94,7 +96,7 @@ const Auth: React.FC = () => {
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
       setIsLoggingIn(false);
-      setResponseOk(false)
+      setResponseOk(false);
     }
   };
 
