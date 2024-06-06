@@ -143,11 +143,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               type='number'
               value={form.formState.workedHours}
               onChange={e => {
-                if (e.target.value === '') {
-                  form.handleChange('workedHours', 0);
-                  return;
-                }
-                form.handleChange('workedHours', Number(e.target.value));
+                if (e.nativeEvent.data == 'e') return;
+                if (e.nativeEvent.data == '-') return;
+                if (parseFloat(e.target.value) < 0 || parseFloat(e.target.value) > 1000) return;
+                if (isNaN(parseFloat(e.target.value))) e.target.value = '0';
+                e.target.value = String(Number(e.target.value));
+                form.handleChange('workedHours', e.target.value);
               }}
             />
             {form.errors ? <FormHelperText>{form.errors.workedHours}</FormHelperText> : null}
