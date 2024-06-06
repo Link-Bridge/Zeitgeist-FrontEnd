@@ -25,7 +25,7 @@ const ProjectMain = () => {
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterOption, setFilterOption] = useState('Name');
+  const [filterOption] = useState('Name');
   const { employee } = useContext(EmployeeContext);
 
   useEffect(() => {
@@ -109,7 +109,7 @@ const ProjectMain = () => {
               searchTerm={searchTerm}
               setSearchTerm={setSearchTerm}
               placeholder='Search by name'
-              setSelectedOption={() => {}}
+              setSelectedOption={() => { }}
               options={[]}
               maxLength={70}
             />
@@ -144,7 +144,7 @@ const ProjectMain = () => {
           ) : null}
           <div className='w-full flex justify-end mb-2'>
             <Link to={`${RoutesPath.PROJECTS}/new`}>
-              <AddButton onClick={() => {}}></AddButton>
+              <AddButton onClick={() => { }}></AddButton>
             </Link>
           </div>
         </div>
