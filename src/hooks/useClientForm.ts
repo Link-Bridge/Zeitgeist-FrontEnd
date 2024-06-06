@@ -2,7 +2,7 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import { Dayjs } from 'dayjs';
 import { FormEvent, useContext, useReducer, useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
-import { APIPath, BASE_API_URL, MAX_DATE } from '../utils/constants';
+import { APIPath, BASE_API_URL, CLIENT_MIN_DATE, MAX_DATE } from '../utils/constants';
 import { SnackbarContext } from './snackbarContext';
 
 export type FormState = {
@@ -73,8 +73,11 @@ const validate = (formState: FormState) => {
   )
     errors.constitutionDate = 'Invalid date';
 
+  if (formState.constitutionDate && formState.constitutionDate.isBefore(CLIENT_MIN_DATE))
+    errors.constitutionDate = `Constitution date must be before ${CLIENT_MIN_DATE.format('DD/MM/YYYY')}`;
+
   if (formState.constitutionDate && formState.constitutionDate.isAfter(MAX_DATE))
-    errors.constitutionDate = `End date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
+    errors.constitutionDate = `Constitution date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
 
   return errors;
 };
