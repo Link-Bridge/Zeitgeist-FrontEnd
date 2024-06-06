@@ -290,7 +290,6 @@ const ProjectDetails = () => {
             </h3>
             <div className='flex flex-wrap gap-3 mb-6 justify-end'>
               {loadingCompany && loading && !company?.data.archived && (
-
                 <Button
                   component={Link}
                   to={`${RoutesPath.PROJECTS}/edit/${id}`}
@@ -444,7 +443,7 @@ const ProjectDetails = () => {
           Project Tasks
         </h1>
         <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => { }} />
+          <AddButton onClick={() => {}} />
         </Link>
       </section>
       <Card className='bg-white overflow-auto'>
