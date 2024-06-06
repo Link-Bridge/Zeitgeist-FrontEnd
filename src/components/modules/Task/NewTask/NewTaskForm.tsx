@@ -1,4 +1,4 @@
-import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import { Link } from 'react-router-dom';
 import { default as colors, statusChipColorCombination } from '../../../../colors';
@@ -164,7 +164,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
           <Link to={`/projects/details/${idProject}`} replace>
-            <CancelButton onClick={() => { }} />
+            <CancelButton onClick={() => {}} />
           </Link>
           <SendButton disabled={form.isPosting} onClick={() => form.handleSubmit(idProject)} />
         </section>

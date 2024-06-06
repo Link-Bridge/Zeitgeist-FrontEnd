@@ -22,8 +22,8 @@ type ClientFormModalProps = {
   data?: CompanyEntity;
   id?: string;
   updateFunction:
-  | Dispatch<SetStateAction<CompanyEntity[]>>
-  | Dispatch<SetStateAction<CompanyEntity | null>>;
+    | Dispatch<SetStateAction<CompanyEntity[]>>
+    | Dispatch<SetStateAction<CompanyEntity | null>>;
 };
 
 function phoneNumberMask(value: string) {
@@ -86,7 +86,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 );
               form.setState(defaultData);
               setOpen(false);
-            } catch (err) { }
+            } catch (err) {}
           }}
         >
           <GenericInput
@@ -134,15 +134,6 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
               slotProps={{ textField: { error: !!form.errors.constitutionDate, size: 'small' } }}
               minDate={dayjs('1900-01-01').startOf('day')}
               maxDate={MAX_DATE}
-              textField={(params: any) => (
-                <TextField
-                  {...params}
-                  inputProps={{
-                    ...params.inputProps,
-                    readOnly: true
-                  }}
-                />
-              )}
             />
             {form.errors.constitutionDate ? (
               <FormHelperText>{form.errors.constitutionDate}</FormHelperText>
