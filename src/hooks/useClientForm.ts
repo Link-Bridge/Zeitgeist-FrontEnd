@@ -73,9 +73,6 @@ const validate = (formState: FormState) => {
   )
     errors.constitutionDate = 'Invalid date';
 
-  console.log(formState.constitutionDate);
-  console.log(CLIENT_MIN_DATE);
-
   if (formState.constitutionDate && formState.constitutionDate.isBefore(CLIENT_MIN_DATE))
     errors.constitutionDate = `Constitution date must be after ${CLIENT_MIN_DATE.format('DD/MM/YYYY')}`;
 
