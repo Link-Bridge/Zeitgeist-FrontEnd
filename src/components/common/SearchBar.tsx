@@ -8,7 +8,7 @@ interface SearchBarProps {
   setSearchTerm: (term: string) => void;
   placeholder: string;
   options?: string[];
-  setSelectedOption?: (option: string) => void;
+  setSelectedOption: (option: string) => void;
   maxLength?: number;
 }
 
@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   maxLength,
 }) => {
   const [selectedOption, setSelectedOptionState] = useState(
-    options.length > 0 ? options[0] : placeholder
+    options.length > 0 ? options[0] : 'Search'
   );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -31,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleMenuClose = (option: string) => {
     setSelectedOptionState(option);
-    if (setSelectedOption) setSelectedOption(option);
+    setSelectedOption(option);
     setAnchorEl(null);
   };
 

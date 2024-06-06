@@ -55,7 +55,7 @@ function GenericDropdown(props: GenericDropdownProps) {
           bgcolor: colorCombination?.bg,
           color: colorCombination?.font,
           width: 240,
-          fontSize: '1rem',
+          fontSize: '0.8rem',
 
           [`&:hover`]: {
             bgcolor: colorCombination.bgHover,

@@ -9,8 +9,6 @@ export enum RoutesPath {
   TASKS = '/tasks',
   CLIENTS = '/clients',
   EMPLOYEES = '/employees',
-  EXPENSES = '/expenses',
-  NOTIFICATIONS = '/notification',
 }
 
 export enum APIPath {
@@ -19,12 +17,9 @@ export enum APIPath {
   PROJECT_DETAILS = '/project/details',
   COMPANIES = '/company',
   PROJECTS = '/project',
-  EXPENSES = '/expense',
   CREATE_TASK = '/tasks/:projectId/create',
   UPDATE_TASK = '/tasks/update',
   UPDATE_TASK_STATUS = '/tasks/update/status',
-  EXPENSE_REPORT = '/expense/report',
-  NOTIFICATION = '/notification',
 }
 
 export enum RequestMethods {
@@ -34,12 +29,6 @@ export enum RequestMethods {
   DELETE = 'DELETE',
 }
 
-export enum SupportedRoles {
-  WITHOUT_ROLE = 'No role',
-  ADMIN = 'Admin',
-  LEGAL = 'Legal',
-  ACCOUNTING = 'Accounting',
-}
-
 export const MIN_DATE = dayjs('2018-01-01T00:00:00.000Z');
+export const CLIENT_MIN_DATE = dayjs('1800-01-01T00:00:00.000Z');
 export const MAX_DATE = dayjs().startOf('day').add(10, 'year');

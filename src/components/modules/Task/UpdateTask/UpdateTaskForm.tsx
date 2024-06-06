@@ -10,6 +10,7 @@ import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import { MAX_DATE, MIN_DATE } from '../../../../utils/constants';
+import { truncateText } from '../../../../utils/methods';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import GenericInput from '../../../common/GenericInput';
@@ -105,7 +106,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
           <FormControl error={!!form.errors.endDate}>
             <FormLabel>End Date</FormLabel>
             <DatePicker
-              value={form.formState.endDate?.utc()}
+              value={form.formState.endDate?.utc() ?? null}
               onChange={newDate => form.handleChange('endDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.endDate } }}
               maxDate={MAX_DATE}
@@ -131,7 +132,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <GenericDropdown
               placeholder='Select employee'
               value={form.formState.idEmployee}
-              options={employees.map(employee => `${employee.firstName} ${employee.lastName}`)}
+              options={employees.map(employee =>
+                truncateText(`${employee.firstName} ${employee.lastName}`)
+              )}
               values={employees.map(employee => employee.id)}
               onChange={newVal => form.handleChange('idEmployee', newVal)}
               clearable
@@ -143,11 +146,12 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               type='number'
               value={form.formState.workedHours}
               onChange={e => {
-                if (e.target.value === '') {
-                  form.handleChange('workedHours', 0);
-                  return;
-                }
-                form.handleChange('workedHours', Number(e.target.value));
+                if (e.nativeEvent.data == 'e') return;
+                if (e.nativeEvent.data == '-') return;
+                if (parseFloat(e.target.value) < 0 || parseFloat(e.target.value) > 1000) return;
+                if (isNaN(parseFloat(e.target.value))) e.target.value = '0';
+                e.target.value = String(Number(e.target.value));
+                form.handleChange('workedHours', e.target.value);
               }}
             />
             {form.errors ? <FormHelperText>{form.errors.workedHours}</FormHelperText> : null}

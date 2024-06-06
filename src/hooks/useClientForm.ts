@@ -2,7 +2,7 @@ import { AxiosError, AxiosRequestConfig } from 'axios';
 import { Dayjs } from 'dayjs';
 import { FormEvent, useContext, useReducer, useState } from 'react';
 import { axiosInstance } from '../lib/axios/axios';
-import { APIPath, BASE_API_URL } from '../utils/constants';
+import { APIPath, BASE_API_URL, CLIENT_MIN_DATE, MAX_DATE } from '../utils/constants';
 import { SnackbarContext } from './snackbarContext';
 
 export type FormState = {
@@ -67,11 +67,17 @@ const validate = (formState: FormState) => {
 
   if (
     formState.constitutionDate &&
-    (isNaN(formState.constitutionDate.day()) ||
-      isNaN(formState.constitutionDate.month()) ||
-      isNaN(formState.constitutionDate.year()))
+    (isNaN(formState.constitutionDate.$D) ||
+      isNaN(formState.constitutionDate.$M) ||
+      isNaN(formState.constitutionDate.$y))
   )
     errors.constitutionDate = 'Invalid date';
+
+  if (formState.constitutionDate && formState.constitutionDate.isBefore(CLIENT_MIN_DATE))
+    errors.constitutionDate = `Constitution date must be after ${CLIENT_MIN_DATE.format('DD/MM/YYYY')}`;
+
+  if (formState.constitutionDate && formState.constitutionDate.isAfter(MAX_DATE))
+    errors.constitutionDate = `Constitution date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
 
   return errors;
 };
@@ -109,7 +115,6 @@ const useClientForm = () => {
         }
       }
 
-      console.log(payload);
       const baseUrl = `${BASE_API_URL}${APIPath.COMPANIES}`;
       const config: AxiosRequestConfig = {
         url: update ? `${baseUrl}/${id}` : `${baseUrl}/new`,

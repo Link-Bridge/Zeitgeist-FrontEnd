@@ -15,7 +15,7 @@ import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { ProjectEntity, ProjectFilters } from '../../types/project';
 import { Response } from '../../types/response';
-import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
+import { APIPath, RequestMethods, RoutesPath } from '../../utils/constants';
 
 const ProjectMain = () => {
   const req = useHttp<Response<ProjectEntity>>('/project', RequestMethods.GET);
@@ -103,54 +103,50 @@ const ProjectMain = () => {
   return (
     <main className='min-h-full flex flex-col overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
-        <div className='flex w-full justify-between items-center'>
-          <div className='search-bar-container mb-2'>
-            <SearchBar
-              searchTerm={searchTerm}
-              setSearchTerm={setSearchTerm}
-              placeholder='Search projects'
-              options={['Name', 'Company']}
-              setSelectedOption={setFilterOption}
-              maxLength={20}
-            />
-          </div>
-        </div>
-        <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
-          {employee?.role === 'Admin' && (
-            <div className='flex w-full items-center gap-2 my-6 mt-2'>
-              <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-              <Typography
-                sx={{
-                  color: colors.gold,
-                  fontWeight: 'bold',
-                  '@media (max-width: 600px)': {
-                    fontSize: '14px',
-                  },
-                  '@media (min-width: 960px)': {
-                    fontSize: '20px',
-                  },
-                }}
-              >
-                Filter Projects:
-              </Typography>
+        <SearchBar
+          searchTerm={searchTerm}
+          setSearchTerm={setSearchTerm}
+          placeholder='Search projects'
+          options={['Name', 'Company']}
+          setSelectedOption={setFilterOption}
+          maxLength={70}
+        />
+        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
+          {employee?.role === 'Admin' ? (
+            <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex-row flex items-center sm:gap-2'>
+                <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}
+                >
+                  Filter Projects:
+                </Typography>
+              </div>
               <GenericDropdown
                 value={filter}
                 options={Object.values(ProjectFilters)}
                 onChange={value => handleFilter(value)}
               />
             </div>
-          )}
-          <div className='w-full flex justify-end mb-2'>
-            <Link to={`${RoutesPath.PROJECTS}/new`}>
-              <AddButton onClick={() => {}} />
-            </Link>
-          </div>
+          ) : null}
+          <Link to={`${RoutesPath.PROJECTS}/new`}>
+            <AddButton onClick={() => {}}></AddButton>
+          </Link>
         </div>
       </section>
       {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />
       ) : (
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5 mb-4'>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
           {isLoading ? (
             <Loader />
           ) : (
@@ -179,7 +175,7 @@ async function getClientsNames(projects: ProjectEntity[]) {
   const reqs: Promise<AxiosResponse<unknown>>[] = [];
 
   for (const id of names.keys()) {
-    reqs.push(axiosInstance.get(`${BASE_API_URL}${APIPath.COMPANIES}/${id}`));
+    reqs.push(axiosInstance.get(`${import.meta.env.VITE_BASE_API_URL}${APIPath.COMPANIES}/${id}`));
   }
 
   const responses = await Promise.all(reqs);

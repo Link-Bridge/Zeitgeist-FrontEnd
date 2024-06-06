@@ -93,7 +93,7 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
           <FormControl error={!!form.errors.endDate}>
             <FormLabel>End Date</FormLabel>
             <DatePicker
-              value={form.formState.endDate?.utc()}
+              value={form.formState.endDate?.utc() ?? null}
               onChange={newDate => form.handleChange('endDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.endDate } }}
               maxDate={MAX_DATE}
@@ -131,11 +131,12 @@ const NewTaskForm: React.FC<NewTaskFormProps> = ({
               type='number'
               value={form.formState.workedHours}
               onChange={e => {
-                if (e.target.value === '') {
-                  form.handleChange('workedHours', 0);
-                  return;
-                }
-                form.handleChange('workedHours', Number(e.target.value));
+                if (e.nativeEvent.data == 'e') return;
+                if (e.nativeEvent.data == '-') return;
+                if (parseFloat(e.target.value) < 0 || parseFloat(e.target.value) > 1000) return;
+                if (isNaN(parseFloat(e.target.value))) e.target.value = '0';
+                e.target.value = String(Number(e.target.value));
+                form.handleChange('workedHours', e.target.value);
               }}
             />
             {form.errors.workedHours ? (

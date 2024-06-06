@@ -13,7 +13,7 @@ import { Dispatch, SetStateAction, useEffect, useState } from 'react';
 import colors from '../../../colors';
 import useClientForm, { Fields, initialFormState } from '../../../hooks/useClientForm';
 import { CompanyEntity } from '../../../types/company';
-import { MAX_DATE } from '../../../utils/constants';
+import { CLIENT_MIN_DATE, MAX_DATE } from '../../../utils/constants';
 import GenericInput from '../../common/GenericInput';
 
 type ClientFormModalProps = {
@@ -129,11 +129,11 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
           <FormControl error={!!form.errors.constitutionDate} sx={{ width: '100%' }}>
             <FormLabel>Constitution Date</FormLabel>
             <DatePicker
-              value={form.formState.constitutionDate}
+              value={form.formState.constitutionDate ?? null}
               onChange={newDate => form.handleChange('constitutionDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.constitutionDate, size: 'small' } }}
-              minDate={dayjs('1900-01-01').startOf('day')}
               maxDate={MAX_DATE}
+              minDate={CLIENT_MIN_DATE}
             />
             {form.errors.constitutionDate ? (
               <FormHelperText>{form.errors.constitutionDate}</FormHelperText>
