@@ -46,13 +46,13 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
 
-  const { deleteEmployee, error: deletError } = useDeleteEmployee();
+  const { deleteEmployee, error: deletError, success: deleteSuccess } = useDeleteEmployee();
 
   useEffect(() => {
     reqEmployees.sendRequest();
     reqRoles.sendRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [deleteSuccess, deletError]);
 
   useEffect(() => {
     if (reqEmployees.error) {
