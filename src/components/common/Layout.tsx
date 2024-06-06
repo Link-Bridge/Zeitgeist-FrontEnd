@@ -30,6 +30,9 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Modify Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}/details/`)) return 'Expense Details';
+    if (location.pathname === `${RoutesPath.EXPENSES}/new`) return 'Reimbursement request';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}`)) return 'Expenses';
 
     return `Welcome Back, ${employee?.employee.firstName}!`;
   };
@@ -39,7 +42,7 @@ const Layout = ({ children }: LayoutProps) => {
       <SideBar />
       <div className='flex flex-col w-full lg:h-screen lg:overflow-auto flex-1 pt-8 md:pt-0 px-5 md:px-10 pb-5 md:pb-1 min-h-0'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-2 min-h-0 overflow-y-scroll'>
+        <section className='flex flex-col flex-1 mt-2 pb-2 lg:overflow-y-auto min-h-0 overflow-y-scroll'>
           {children}
         </section>
       </div>
