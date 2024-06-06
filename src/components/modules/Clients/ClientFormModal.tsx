@@ -22,8 +22,8 @@ type ClientFormModalProps = {
   data?: CompanyEntity;
   id?: string;
   updateFunction:
-  | Dispatch<SetStateAction<CompanyEntity[]>>
-  | Dispatch<SetStateAction<CompanyEntity | null>>;
+    | Dispatch<SetStateAction<CompanyEntity[]>>
+    | Dispatch<SetStateAction<CompanyEntity | null>>;
 };
 
 function phoneNumberMask(value: string) {
@@ -86,7 +86,7 @@ function ClientFormModal({ open, setOpen, data, id, updateFunction }: ClientForm
                 );
               form.setState(defaultData);
               setOpen(false);
-            } catch (err) { }
+            } catch (err) {}
           }}
         >
           <GenericInput
