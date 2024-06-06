@@ -29,6 +29,7 @@ const Auth: React.FC = () => {
       return response.data as EmployeeReponse;
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+      setResponseOk(false);
     }
   }, [setState]);
 
@@ -69,6 +70,7 @@ const Auth: React.FC = () => {
           const response = await sendRequest();
           if (!response) {
             setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+            setResponseOk(false);
             return;
           }
 
