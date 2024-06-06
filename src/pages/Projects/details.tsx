@@ -289,7 +289,7 @@ const ProjectDetails = () => {
               {data?.name}
             </h3>
             <div className='flex flex-wrap gap-3 mb-6 justify-end'>
-              {loadingCompany && loading && !company?.data.archived && (
+              {!loadingCompany && !loading && !company?.data.archived && (
                 <Button
                   component={Link}
                   to={`${RoutesPath.PROJECTS}/edit/${id}`}
