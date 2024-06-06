@@ -27,7 +27,7 @@ export default function DeleteModal({
   description,
   id,
   handleDelete,
-  alertColor = 'warning'
+  alertColor = 'warning',
 }: ModalInterface) {
   const handleOnDelete = () => {
     setOpen(false); // This will close the modal or dialog

@@ -139,7 +139,7 @@ const ProjectMain = () => {
             </div>
           ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => { }}></AddButton>
+            <AddButton onClick={() => {}}></AddButton>
           </Link>
         </div>
       </section>
