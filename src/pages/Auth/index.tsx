@@ -60,11 +60,10 @@ const Auth: React.FC = () => {
     const checkRedirectResult = async () => {
       try {
         const result = await getRedirectResult(auth);
-        console.log(result)
+        console.log(result);
         if (result) {
           const token = await result.user.getIdToken(true);
           const refreshToken = result.user.refreshToken;
-
 
           const response = await sendRequest();
           if (!response) {
