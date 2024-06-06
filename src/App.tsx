@@ -14,6 +14,7 @@ import { configDayjs } from './lib/dayjs/dayjs';
 import Auth from './pages/Auth';
 import Clients from './pages/Clients';
 import Employees from './pages/Employees';
+import Expenses from './pages/Expenses';
 import Home from './pages/Home';
 import Projects from './pages/Projects';
 import Tasks from './pages/Tasks';
@@ -39,7 +40,7 @@ function App() {
           setState(s => {
             return { ...s, open: false };
           }),
-        2000
+        3000
       );
     }
   }, [state]);
@@ -93,11 +94,24 @@ function App() {
                     </ProtectedRoute>
                   }
                 />
+                <Route
+                  path={`${RoutesPath.EXPENSES}/*`}
+                  element={
+                    <ProtectedRoute>
+                      <Expenses />
+                    </ProtectedRoute>
+                  }
+                />
               </Route>
               <Route path='*' element={<NotFoundPage />} />
             </Routes>
           </Router>
-          <Snackbar open={state.open} color={state.type ?? 'neutral'} variant='solid'>
+          <Snackbar
+            open={state.open}
+            color={state.type ?? 'neutral'}
+            variant='solid'
+            sx={{ marginLeft: '10px' }}
+          >
             {state.message}
           </Snackbar>
         </SnackbarContext.Provider>

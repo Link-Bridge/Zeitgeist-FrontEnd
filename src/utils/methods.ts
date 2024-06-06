@@ -34,3 +34,10 @@ export const truncateText = (text: string | undefined | null, maxLength: number 
   if (text.length > maxLength) return text.substring(0, maxLength) + '...';
   return text;
 };
+
+export const formatCurrency = (amount: number) => {
+  return new Intl.NumberFormat('en-US', {
+    style: 'currency',
+    currency: 'USD',
+  }).format(amount);
+};
