@@ -1,5 +1,5 @@
 /* eslint-disable react-hooks/exhaustive-deps */
-import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input } from '@mui/joy';
+import { Box, Card, Chip, FormControl, FormHelperText, FormLabel, Input, TextField } from '@mui/joy';
 import { DatePicker } from '@mui/x-date-pickers';
 import dayjs from 'dayjs';
 import { useEffect } from 'react';
@@ -97,6 +97,15 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               slotProps={{ textField: { error: !!form.errors.startDate } }}
               minDate={MIN_DATE}
               maxDate={MAX_DATE}
+              textField={(params: any) => (
+                <TextField
+                  {...params}
+                  inputProps={{
+                    ...params.inputProps,
+                    readOnly: true
+                  }}
+                />
+              )}
             />
             {form.errors.startDate ? (
               <FormHelperText> {form.errors.startDate}</FormHelperText>
@@ -109,6 +118,15 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
               onChange={newDate => form.handleChange('endDate', newDate)}
               slotProps={{ textField: { error: !!form.errors.endDate } }}
               maxDate={MAX_DATE}
+              textField={(params: any) => (
+                <TextField
+                  {...params}
+                  inputProps={{
+                    ...params.inputProps,
+                    readOnly: true
+                  }}
+                />
+              )}
             />
             {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
           </FormControl>
@@ -174,7 +192,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
           <Link to={`/projects/details/${data.idProject}`} replace>
-            <CancelButton onClick={() => {}} />
+            <CancelButton onClick={() => { }} />
           </Link>
           <ModifyButton disabled={form.isPosting} onClick={() => form.handleUpdate(data.id)} />
         </section>
