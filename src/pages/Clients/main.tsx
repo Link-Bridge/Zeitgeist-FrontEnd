@@ -107,7 +107,7 @@ const ClientList = (): JSX.Element => {
                 searchTerm={searchTerm}
                 setSearchTerm={setSearchTerm}
                 placeholder='Search by name'
-                setSelectedOption={() => {}}
+                setSelectedOption={() => { }}
                 options={[]}
                 maxLength={70}
               />
@@ -115,7 +115,7 @@ const ClientList = (): JSX.Element => {
           </div>
           <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
             {isAdmin && (
-              <div className='flex justify-start w-full items-center gap-2 my-6 mt-2'>
+              <div className='flex justify-start w-full items-center gap-2'>
                 <div className='flex-row flex items-center sm:gap-2'>
                   <FilterAltIcon
                     sx={{ width: '30px', height: '30px' }}
@@ -164,14 +164,14 @@ const ClientList = (): JSX.Element => {
             searchTerm={searchTerm}
             setSearchTerm={setSearchTerm}
             placeholder='Search by name'
-            setSelectedOption={() => {}}
+            setSelectedOption={() => { }}
             options={[]}
             maxLength={70}
           />
         </div>
         <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
           {isAdmin && (
-            <div className='flex justify-start w-full items-center gap-2 my-6 mt-2'>
+            <div className='flex justify-start w-full items-center gap-2'>
               <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon
                   sx={{ width: '30px', height: '30px' }}
@@ -199,7 +199,7 @@ const ClientList = (): JSX.Element => {
               />
             </div>
           )}
-          <div className='w-full flex justify-end mt-2'>
+          <div className='w-full flex justify-end'>
             <AddButton onClick={openModal} />
           </div>
         </div>
