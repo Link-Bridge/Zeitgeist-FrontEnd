@@ -103,15 +103,19 @@ const ProjectMain = () => {
   return (
     <main className='min-h-full flex flex-col overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2'>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder='Search projects'
-          options={['Name', 'Company']}
-          setSelectedOption={setFilterOption}
-          maxLength={70}
-        />
-        <div className='flex flex-wrap flex-row items-center gap-2 my-4 w-full'>
+        <div className='flex w-full justify-between items-center'>
+          <div className='search-bar-container mb-2'>
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder='Search by name'
+              setSelectedOption={() => { }}
+              options={[]}
+              maxLength={70}
+            />
+          </div>
+        </div>
+        <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
           {employee?.role === 'Admin' ? (
             <div className='flex justify-between w-full items-center gap-2 my-6 mt-2'>
               <div className='flex-row flex items-center sm:gap-2'>
@@ -139,7 +143,7 @@ const ProjectMain = () => {
             </div>
           ) : null}
           <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => {}}></AddButton>
+            <AddButton onClick={() => { }}></AddButton>
           </Link>
         </div>
       </section>
