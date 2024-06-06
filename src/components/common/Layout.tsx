@@ -30,6 +30,9 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Modify Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}/details/`)) return 'Expense Details';
+    if (location.pathname === `${RoutesPath.EXPENSES}/new`) return 'Reimbursement request';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}`)) return 'Expenses';
 
     return `Welcome Back, ${employee?.employee.firstName}!`;
   };

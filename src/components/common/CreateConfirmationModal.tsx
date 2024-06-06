@@ -7,31 +7,27 @@ import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
 import * as React from 'react';
+import { Link } from 'react-router-dom';
 import Colors from '../../colors';
 
 interface ModalInterface {
   open: boolean;
-  title: string;
-  description: string;
-  id: string;
+  url: string | undefined | null;
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleModal?: () => void;
-  handleDelete: (id: string) => void;
+  handleOnClick: () => void;
   alertColor?: string;
 }
 
-export default function DeleteModal({
+export default function CreateConfirmationModal({
   open,
   setOpen,
-  title,
-  description,
-  id,
-  handleDelete,
-  alertColor = 'warning'
+  url,
+  handleOnClick,
 }: ModalInterface) {
-  const handleOnDelete = () => {
-    setOpen(false); // This will close the modal or dialog
-    handleDelete(id); // This will update the UI
+  const handleOnConfirm = () => {
+    setOpen(false);
+    handleOnClick();
   };
 
   return (
@@ -58,12 +54,25 @@ export default function DeleteModal({
             fontWeight='lg'
             mb={1}
           >
-            {title}
+            Confirm before submitting
           </Typography>
           <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
-            {description}
+            Verify that the URL is correct{' '}
+            <Link
+              to={url as string}
+              target={'_blank'}
+              className='underline whitespace-break-spaces break-all'
+            >
+              {url}
+            </Link>
           </Typography>
-          <Alert size='lg' startDecorator={<WarningIcon />} variant='soft' color={alertColor}>
+          <Alert
+            size='lg'
+            startDecorator={<WarningIcon />}
+            variant='soft'
+            color={'danger'}
+            sx={{ marginTop: '10px' }}
+          >
             This action cannot be undone.
           </Alert>
           <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>
@@ -89,9 +98,9 @@ export default function DeleteModal({
                   backgroundColor: Colors.darkerGold,
                 },
               }}
-              onClick={() => handleOnDelete()}
+              onClick={() => handleOnConfirm()}
             >
-              Delete
+              Submit
             </Button>
           </Box>
         </Sheet>
