@@ -10,7 +10,6 @@ import { SnackbarContext } from '../../hooks/snackbarContext';
 import { axiosInstance } from '../../lib/axios/axios';
 import { EmployeeReponse } from '../../types/employee';
 import { BASE_API_URL, RoutesPath } from '../../utils/constants';
-import { handleGetDeviceToken } from './device-token';
 
 const Auth: React.FC = () => {
   const navigate = useNavigate();
@@ -42,7 +41,6 @@ const Auth: React.FC = () => {
           setEmployee(data.data);
           localStorage.setItem('employee', JSON.stringify(data.data));
           navigate(RoutesPath.HOME);
-          handleGetDeviceToken(data.data.employee.email);
         } else {
           localStorage.removeItem('idToken');
           localStorage.removeItem('refreshToken');
