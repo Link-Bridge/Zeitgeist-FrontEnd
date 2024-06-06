@@ -143,7 +143,7 @@ const TaskDetails: React.FC = () => {
 
       {data ? (
         <section className='bg-white rounded-xl p-6 overflow-y-scroll lg:overflow-y-hidden'>
-          <section className='flex flex-wrap flex-col-reverse justify-between gap-x-4 gap-y-4'>
+          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between gap-x-4 gap-y-4'>
             <h1 className='text-gray text-[2rem] break-all whitespace-break-spaces'>
               {data.title}
             </h1>
