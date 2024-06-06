@@ -10,12 +10,12 @@ import { EmployeeEntity } from '../../../../types/employee';
 import { TaskDetail } from '../../../../types/task';
 import { TaskStatus } from '../../../../types/task-status';
 import { MAX_DATE, MIN_DATE } from '../../../../utils/constants';
+import { truncateText } from '../../../../utils/methods';
 import CancelButton from '../../../common/CancelButton';
 import GenericDropdown from '../../../common/GenericDropdown';
 import GenericInput from '../../../common/GenericInput';
 import GenericTextArea from '../../../common/GenericTextArea';
 import ModifyButton from '../../../common/ModifyButton';
-import { truncateText } from '../../../../utils/methods';
 
 const statusColorMap: Record<TaskStatus, { bg: string; font: string }> = {
   [TaskStatus.NOT_STARTED]: statusChipColorCombination.notStarted,
@@ -132,7 +132,9 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
             <GenericDropdown
               placeholder='Select employee'
               value={form.formState.idEmployee}
-              options={employees.map(employee => truncateText(`${employee.firstName} ${employee.lastName}`))}
+              options={employees.map(employee =>
+                truncateText(`${employee.firstName} ${employee.lastName}`)
+              )}
               values={employees.map(employee => employee.id)}
               onChange={newVal => form.handleChange('idEmployee', newVal)}
               clearable
@@ -175,7 +177,7 @@ const UpdateTaskForm: React.FC<UpdateTaskFormProps> = ({
         </section>
         <section className='flex lg:mt-10 gap-4 justify-end'>
           <Link to={`/projects/details/${data.idProject}`} replace>
-            <CancelButton onClick={() => { }} />
+            <CancelButton onClick={() => {}} />
           </Link>
           <ModifyButton disabled={form.isPosting} onClick={() => form.handleUpdate(data.id)} />
         </section>
