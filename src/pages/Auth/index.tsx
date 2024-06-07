@@ -16,7 +16,7 @@ const Auth: React.FC = () => {
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [responseOk, setResponseOk] = useState(false);
+  const [, setResponseOk] = useState(false);
 
   const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? null);
   if (currentEmployee) {
@@ -76,7 +76,7 @@ const Auth: React.FC = () => {
 
           await updateUserContext(response, token, refreshToken);
         }
-        if (!responseOk) setIsLoggingIn(false);
+        setIsLoggingIn(false);
       } catch (error) {
         setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
         setIsLoggingIn(false);
@@ -85,8 +85,6 @@ const Auth: React.FC = () => {
     };
 
     checkRedirectResult();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sendRequest, setState, updateUserContext]);
 
   const handleGoogleSignIn = async () => {
@@ -105,7 +103,7 @@ const Auth: React.FC = () => {
       <div className='flex justify-center sm:justify-end p-2 sm:pr-16 pt-10'>
         <Button
           onClick={handleGoogleSignIn}
-          disabled={isLoggingIn || responseOk}
+          disabled={isLoggingIn}
           sx={{
             backgroundColor: 'white',
             color: 'black',
