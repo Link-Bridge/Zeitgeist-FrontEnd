@@ -76,7 +76,7 @@ const Auth: React.FC = () => {
 
           await updateUserContext(response, token, refreshToken);
         }
-        if (!responseOk) setIsLoggingIn(false);
+        setIsLoggingIn(false);
       } catch (error) {
         setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
         setIsLoggingIn(false);
