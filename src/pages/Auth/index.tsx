@@ -92,7 +92,7 @@ const Auth: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setIsLoggingIn(true);
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
       setIsLoggingIn(false);
