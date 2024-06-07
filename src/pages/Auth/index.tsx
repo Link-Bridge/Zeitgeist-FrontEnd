@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Button from '@mui/joy/Button';
-import { getRedirectResult, signInWithPopup } from 'firebase/auth';
+import { getRedirectResult, signInWithRedirect } from 'firebase/auth';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
@@ -90,7 +90,7 @@ const Auth: React.FC = () => {
   const handleGoogleSignIn = async () => {
     setIsLoggingIn(true);
     try {
-      await signInWithPopup(auth, provider);
+      await signInWithRedirect(auth, provider);
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
       setIsLoggingIn(false);
