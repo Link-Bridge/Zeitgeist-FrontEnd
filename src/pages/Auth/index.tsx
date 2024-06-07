@@ -16,7 +16,7 @@ const Auth: React.FC = () => {
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [responseOk, setResponseOk] = useState(false);
+  const [, setResponseOk] = useState(false);
 
   const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? null);
   if (currentEmployee) {
@@ -85,8 +85,6 @@ const Auth: React.FC = () => {
     };
 
     checkRedirectResult();
-
-    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [sendRequest, setState, updateUserContext]);
 
   const handleGoogleSignIn = async () => {
