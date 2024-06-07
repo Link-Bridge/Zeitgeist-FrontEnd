@@ -289,25 +289,23 @@ const ProjectDetails = () => {
               {data?.name}
             </h3>
             <div className='flex flex-wrap gap-3 mb-6 justify-end'>
-              {!loadingCompany && !loading && !company?.data.archived && (
-                <Button
-                  component={Link}
-                  to={`${RoutesPath.PROJECTS}/edit/${id}`}
-                  state={{ fromDetail: true }}
-                  sx={{
-                    backgroundColor: colors.lightWhite,
-                    ':hover': {
-                      backgroundColor: colors.orangeChip,
-                    },
-                    height: '5px',
-                    flexGrow: '1',
-                    maxWidth: '120px',
-                  }}
-                  startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
-                >
-                  <Typography sx={{ color: colors.gold }}>Edit</Typography>
-                </Button>
-              )}
+              <Button
+                component={Link}
+                to={`${RoutesPath.PROJECTS}/edit/${id}`}
+                state={{ fromDetail: true }}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': {
+                    backgroundColor: colors.orangeChip,
+                  },
+                  height: '5px',
+                  flexGrow: '1',
+                  maxWidth: '120px',
+                }}
+                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Edit</Typography>
+              </Button>
 
               <Button
                 component={Link}
