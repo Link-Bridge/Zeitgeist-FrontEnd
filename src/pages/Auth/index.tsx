@@ -105,7 +105,7 @@ const Auth: React.FC = () => {
       <div className='flex justify-center sm:justify-end p-2 sm:pr-16 pt-10'>
         <Button
           onClick={handleGoogleSignIn}
-          disabled={isLoggingIn || responseOk}
+          disabled={isLoggingIn}
           sx={{
             backgroundColor: 'white',
             color: 'black',
