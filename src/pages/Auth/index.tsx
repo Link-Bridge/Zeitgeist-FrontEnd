@@ -1,6 +1,6 @@
 /* eslint-disable react-hooks/rules-of-hooks */
 import Button from '@mui/joy/Button';
-import { getRedirectResult, signInWithPopup, signInWithRedirect } from 'firebase/auth';
+import { getRedirectResult, signInWithRedirect } from 'firebase/auth';
 import React, { useCallback, useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
