@@ -23,6 +23,7 @@ export enum ProjectPeriodicity {
 export enum ProjectAreas {
   ACCOUNTING = 'Accounting',
   LEGAL = 'Legal',
+  LEGAL_AND_ACCOUNTING = 'Legal and accounting',
 }
 
 export enum ProjectStatus {

@@ -21,7 +21,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
   maxLength,
 }) => {
   const [selectedOption, setSelectedOptionState] = useState(
-    options.length > 0 ? options[0] : 'Search'
+    options.length > 0 ? options[0] : placeholder
   );
   const [anchorEl, setAnchorEl] = useState<null | HTMLElement>(null);
 
@@ -31,7 +31,7 @@ const SearchBar: React.FC<SearchBarProps> = ({
 
   const handleMenuClose = (option: string) => {
     setSelectedOptionState(option);
-    setSelectedOption(option);
+    if (setSelectedOption) setSelectedOption(option);
     setAnchorEl(null);
   };
 
