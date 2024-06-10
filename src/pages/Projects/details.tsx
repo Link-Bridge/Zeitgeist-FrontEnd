@@ -2,10 +2,12 @@
 import {
   ArchiveRounded,
   AssessmentOutlined,
+  DeleteOutline,
   EditOutlined,
   EventNoteRounded,
   UnarchiveRounded,
 } from '@mui/icons-material';
+import NotificationsIcon from '@mui/icons-material/Notifications';
 import { Box, Button, Card, Chip, Option, Select, Typography } from '@mui/joy';
 import { isAxiosError } from 'axios';
 import dayjs from 'dayjs';
@@ -14,18 +16,21 @@ import { Link, Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors, { statusChipColorCombination } from '../../colors';
 import AddButton from '../../components/common/AddButton';
 import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
+import DeleteModal from '../../components/common/DeleteModal';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import GoBack from '../../components/common/GoBack';
 import Loader from '../../components/common/Loader';
 import ModalEditConfirmation from '../../components/common/ModalEditConfirmation';
 import ChipWithLabel from '../../components/modules/Projects/ChipWithLabel';
+import SendNotificationModal from '../../components/modules/Projects/SendNotificationModal';
 import { TaskListTable } from '../../components/modules/Task/TaskListTable';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteProject from '../../hooks/useDeleteProject';
 import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { axiosInstance } from '../../lib/axios/axios';
 import { CompanyEntity } from '../../types/company';
-import { ProjectEntity, ProjectStatus } from '../../types/project';
+import { ProjectAreas, ProjectEntity, ProjectStatus } from '../../types/project';
 import { Response } from '../../types/response';
 import { TaskDetail } from '../../types/task';
 import { APIPath, BASE_API_URL, RequestMethods, RoutesPath } from '../../utils/constants';
@@ -53,27 +58,29 @@ const chipStyle = {
 };
 
 const ProjectDetails = () => {
+  const navigate = useNavigate();
   const { id } = useParams();
   const { setState } = useContext(SnackbarContext);
   const [initialTasks, setInitialTasks] = useState<TaskDetail[]>([]);
   const [open, setOpen] = useState<boolean>(false);
+  const [openDeleteModal, setOpenDeleteModal] = useState<boolean>(false);
   const [companyName, setCompanyName] = useState<string>('');
   const [projectStatus, setProjectStatus] = useState<ProjectStatus>(ProjectStatus.NOT_STARTED);
   const [totalHours, setTotalHours] = useState<number>(0);
   const [updating, setUpdating] = useState(false);
   const [notFound, setNotFound] = useState(false);
-
-  const navigate = useNavigate();
+  const { deleteProject, error: deleteError } = useDeleteProject();
+  const [isNotificationModalOpen, setIsNotificationModalOpen] = useState(false);
 
   const { data, loading, sendRequest, error } = useHttp<ProjectEntity>(
     `${APIPath.PROJECT_DETAILS}/${id}`,
     RequestMethods.GET
   );
 
-  const toggleModal = () => {
-    setOpen(!open);
-  };
-
+  /**
+   * @description This useEffect is used to check if the error is an axios error and if the error
+   * message contains 'Invalid uuid' or 'unexpected error'
+   * */
   useEffect(() => {
     if (isAxiosError(error)) {
       const message = error.response?.data.message;
@@ -83,6 +90,9 @@ const ProjectDetails = () => {
     }
   }, [error]);
 
+  /**
+   * @description this hook is used to get the company details and task of the project
+   */
   const {
     data: company,
     loading: loadingCompany,
@@ -99,6 +109,15 @@ const ProjectDetails = () => {
     loading: loadingTasks,
     sendRequest: getTasks,
   } = useHttp<Response<TaskDetail>>(`/tasks/project/${id}`, RequestMethods.GET);
+
+  useEffect(() => {
+    if (isAxiosError(error)) {
+      const message = error.response?.data.message;
+      if (message.includes('Invalid uuid') || message.includes('unexpected error')) {
+        setNotFound(true);
+      }
+    }
+  }, [error]);
 
   useEffect(() => {
     if (!tasks) getTasks();
@@ -167,6 +186,22 @@ const ProjectDetails = () => {
       setState({ open: true, message: `Error deleting task: ${error}`, type: 'danger' });
     } finally {
       getTasks();
+    }
+  };
+
+  useEffect(() => {
+    if (deleteError) {
+      setState({ open: true, message: deleteError.message, type: 'danger' });
+    }
+  }, [deleteError, setState]);
+
+  const handleDeleteProject = async (id: string) => {
+    try {
+      await deleteProject(id);
+      setState({ open: true, message: 'Project deleted successfully', type: 'success' });
+      navigate('/projects');
+    } catch {
+      setState({ open: true, message: 'Failed to delete project', type: 'danger' });
     }
   };
 
@@ -284,28 +319,30 @@ const ProjectDetails = () => {
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
-          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between gap-y-2'>
+          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between gap-y-2 items-center'>
             <h3 className='text-2xl lg:text-3xl font-medium whitespace-break-spaces break-all'>
               {data?.name}
             </h3>
-            <div className='flex flex-wrap gap-3 mb-6 justify-end'>
-              <Button
-                component={Link}
-                to={`${RoutesPath.PROJECTS}/edit/${id}`}
-                state={{ fromDetail: true }}
-                sx={{
-                  backgroundColor: colors.lightWhite,
-                  ':hover': {
-                    backgroundColor: colors.orangeChip,
-                  },
-                  height: '5px',
-                  flexGrow: '1',
-                  maxWidth: '120px',
-                }}
-                startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
-              >
-                <Typography sx={{ color: colors.gold }}>Edit</Typography>
-              </Button>
+            <div className='flex flex-wrap gap-3 mb-6 justify-end items-center'>
+              {!loadingCompany && !loading && !company?.data.archived && (
+                <Button
+                  component={Link}
+                  to={`${RoutesPath.PROJECTS}/edit/${id}`}
+                  state={{ fromDetail: true }}
+                  sx={{
+                    backgroundColor: colors.lightWhite,
+                    ':hover': {
+                      backgroundColor: colors.orangeChip,
+                    },
+                    height: '5px',
+                    flexGrow: '1',
+                    maxWidth: '120px',
+                  }}
+                  startDecorator={<EditOutlined sx={{ width: 24, color: colors.gold }} />}
+                >
+                  <Typography sx={{ color: colors.gold }}>Edit</Typography>
+                </Button>
+              )}
 
               <Button
                 component={Link}
@@ -326,7 +363,7 @@ const ProjectDetails = () => {
 
               {data?.isArchived ? (
                 <Button
-                  onClick={toggleModal}
+                  onClick={() => setOpen(true)}
                   sx={{
                     backgroundColor: colors.lightWhite,
                     ':hover': {
@@ -343,7 +380,7 @@ const ProjectDetails = () => {
                 </Button>
               ) : (
                 <Button
-                  onClick={toggleModal}
+                  onClick={() => setOpen(true)}
                   sx={{
                     backgroundColor: colors.lightWhite,
                     ':hover': {
@@ -359,8 +396,30 @@ const ProjectDetails = () => {
                   <Typography sx={{ color: colors.gold }}>Archive</Typography>
                 </Button>
               )}
+              <Button
+                onClick={() => {
+                  setOpenDeleteModal(true);
+                }}
+                sx={{
+                  backgroundColor: colors.lightWhite,
+                  ':hover': { backgroundColor: colors.orangeChip },
+                  height: '5px',
+                }}
+                startDecorator={<DeleteOutline sx={{ width: 24, color: colors.gold }} />}
+              >
+                <Typography sx={{ color: colors.gold }}>Delete</Typography>
+              </Button>
             </div>
           </section>
+          <DeleteModal
+            open={openDeleteModal}
+            setOpen={setOpenDeleteModal}
+            title='Delete project'
+            description='Every task and hours associated with this project will be eliminated.'
+            id={id ?? ''}
+            handleDelete={handleDeleteProject}
+            alertColor='danger'
+          />
 
           <p className='mt-4 whitespace-break-spaces break-all'>{data?.description}</p>
 
@@ -436,13 +495,53 @@ const ProjectDetails = () => {
         </section>
       </Card>
 
+      {isNotificationModalOpen && (
+        <SendNotificationModal
+          open={isNotificationModalOpen}
+          setOpen={() => setIsNotificationModalOpen(true)}
+          onClose={() => setIsNotificationModalOpen(false)}
+          projectId={data!.id}
+        />
+      )}
+
       <section className='flex justify-between my-4'>
         <h1 className='text-[25px] text-gold' style={{ fontFamily: 'Didot' }}>
           Project Tasks
         </h1>
-        <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-          <AddButton onClick={() => {}} />
-        </Link>
+        <Box sx={{ display: 'flex', gap: 2, alignItems: 'center' }}>
+          {data && data.area === ProjectAreas.LEGAL_AND_ACCOUNTING && (
+            <Button
+              startDecorator={<NotificationsIcon />}
+              variant='solid'
+              size='sm'
+              sx={{
+                height: '30px',
+                backgroundColor: colors.darkGold,
+                '&:hover': {
+                  backgroundColor: colors.darkerGold,
+                },
+                '@media (max-width:600px)': {
+                  width: '100%',
+                  fontSize: '0.75rem',
+                },
+                '@media (min-width:601px) and (max-width:960px)': {
+                  width: 'auto',
+                  fontSize: '0.875rem',
+                },
+                '@media (min-width:961px)': {
+                  width: 'auto',
+                  fontSize: '1rem',
+                },
+              }}
+              onClick={() => setIsNotificationModalOpen(true)}
+            >
+              Send notification
+            </Button>
+          )}
+          <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
+            <AddButton onClick={() => {}} />
+          </Link>
+        </Box>
       </section>
       <Card className='bg-white overflow-auto'>
         <TaskListTable
