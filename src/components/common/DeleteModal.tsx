@@ -17,6 +17,7 @@ interface ModalInterface {
   setOpen: React.Dispatch<React.SetStateAction<boolean>>;
   toggleModal?: () => void;
   handleDelete: (id: string) => void;
+  alertColor?: string;
 }
 
 export default function DeleteModal({
@@ -26,6 +27,7 @@ export default function DeleteModal({
   description,
   id,
   handleDelete,
+  alertColor = 'warning',
 }: ModalInterface) {
   const handleOnDelete = () => {
     setOpen(false); // This will close the modal or dialog
@@ -37,7 +39,7 @@ export default function DeleteModal({
       <Modal
         open={open}
         onClose={() => setOpen(false)}
-        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center' }}
+        sx={{ display: 'flex', justifyContent: 'center', alignItems: 'center', padding: '0 20px' }}
       >
         <Sheet
           variant='outlined'
@@ -61,13 +63,7 @@ export default function DeleteModal({
           <Typography id='modal-desc' textColor='text.tertiary' sx={{ py: 1 }}>
             {description}
           </Typography>
-          <Alert
-            size='lg'
-            sx={{ mt: 2, pr: 15, border: '#333333' }}
-            startDecorator={<WarningIcon />}
-            variant='soft'
-            color='warning'
-          >
+          <Alert size='lg' startDecorator={<WarningIcon />} variant='soft' color={alertColor}>
             This action cannot be undone.
           </Alert>
           <Box mt={3} display='flex' alignItems='center' justifyContent='end' gap={2} sx={{}}>

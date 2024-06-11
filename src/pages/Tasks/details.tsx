@@ -18,6 +18,7 @@ import useDeleteTask from '../../hooks/useDeleteTask';
 import useHttp from '../../hooks/useHttp';
 import { TaskDetail } from '../../types/task';
 import { APIPath, RequestMethods } from '../../utils/constants';
+import { truncateText } from '../../utils/methods';
 import Update from './edit';
 
 function capitalize(data: string): string {
@@ -141,10 +142,12 @@ const TaskDetails: React.FC = () => {
       </Box>
 
       {data ? (
-        <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
-          <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4 items-center'>
-            <h1 className='truncate text-gray text-[2rem]'>{data.title}</h1>
-            <div className='flex gap-3'>
+        <section className='bg-white rounded-xl p-6 overflow-y-scroll lg:overflow-y-hidden'>
+          <section className='flex flex-wrap flex-col-reverse lg:flex-row justify-between gap-x-4 gap-y-4'>
+            <h1 className='text-gray text-[2rem] break-all whitespace-break-spaces'>
+              {data.title}
+            </h1>
+            <div className='flex justify-end gap-3'>
               <Button
                 onClick={handleEdit}
                 sx={{
@@ -173,13 +176,13 @@ const TaskDetails: React.FC = () => {
               </Button>
             </div>
           </section>
-          <section className='flex-wrap grid my-2'>
-            <p className='grow-0 text-clip overflow-hidden'>{data.description}</p>
+          <section className='my-3'>
+            <p className='break-words whitespace-break-spaces'>{data.description}</p>
           </section>
           <Divider sx={{ marginBottom: '30px' }} />
-          <section className='grid grid-cols-2 lg:grid-cols-3 gap-4'>
+          <section className='flex flex-wrap lg:grid grid-cols-2 lg:grid-cols-3 gap-4'>
             <Box>
-              <p style={{ fontSize: '.9rem' }}>Start date</p>
+              <p className='text-sm'>Start date</p>
               <Box
                 sx={{
                   padding: 0.5,
@@ -193,7 +196,7 @@ const TaskDetails: React.FC = () => {
               </Box>
             </Box>
             <Box>
-              <p style={{ fontSize: '.9rem' }}>Due date</p>
+              <p className='text-sm'>Due date</p>
               <Box
                 sx={{
                   padding: 0.5,
@@ -236,7 +239,7 @@ const TaskDetails: React.FC = () => {
                   maxWidth: '95%',
                 }}
               >
-                {data.projectName}
+                {truncateText(data.projectName, 30)}
               </Chip>
             </Box>
           </section>

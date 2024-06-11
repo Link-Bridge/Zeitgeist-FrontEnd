@@ -31,7 +31,7 @@ const ModifyButton = ({ onClick, disabled }: ModifyButtonProps) => {
         },
       }}
     >
-      Modify Task
+      Update
     </Button>
   );
 };

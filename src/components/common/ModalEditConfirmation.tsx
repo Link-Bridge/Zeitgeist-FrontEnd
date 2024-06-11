@@ -1,15 +1,16 @@
 import { useContext, useEffect, useState } from 'react';
 
-import colors from '../../colors';
-import { SnackbarContext } from '../../hooks/snackbarContext';
-import useHttp from '../../hooks/useHttp';
-
+import InfoIcon from '@mui/icons-material/Info';
 import { Box } from '@mui/joy';
+import Alert from '@mui/joy/Alert';
 import Button from '@mui/joy/Button';
 import Modal from '@mui/joy/Modal';
 import ModalClose from '@mui/joy/ModalClose';
 import Sheet from '@mui/joy/Sheet';
 import Typography from '@mui/joy/Typography';
+import colors from '../../colors';
+import { SnackbarContext } from '../../hooks/snackbarContext';
+import useHttp from '../../hooks/useHttp';
 
 import { useNavigate } from 'react-router-dom';
 import { ProjectEntity } from '../../types/project';
@@ -60,6 +61,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
         navigate(`/projects/`);
       }, 2000);
     }
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [data, error]);
 
   const handleArchive = async () => {
@@ -81,6 +83,7 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
         display: 'flex',
         justifyContent: 'center',
         alignItems: 'center',
+        padding: '0 20px',
       }}
     >
       <Sheet
@@ -108,6 +111,9 @@ const ModalEditConfirmation = ({ project, open, setOpen, refetch }: ModalEditPro
             ? 'Are sure you want to unarchive this project?'
             : 'Are sure you want to archive this project?'}
         </Typography>
+        <Alert size='lg' startDecorator={<InfoIcon />} variant='soft' color='primary'>
+          Don't worry, this action can be undone.
+        </Alert>
         <Box
           mt={3}
           display='flex'

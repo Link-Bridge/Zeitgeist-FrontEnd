@@ -1,15 +1,16 @@
+import { AxiosError } from 'axios';
 import dayjs, { Dayjs } from 'dayjs';
 import { useContext, useReducer, useState } from 'react';
 import { useLocation, useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios/axios';
 import { TaskStatus } from '../types/task-status';
-import { BASE_API_URL } from '../utils/constants';
+import { BASE_API_URL, MAX_DATE, MIN_DATE } from '../utils/constants';
 import { SnackbarContext } from './snackbarContext';
 
 export type FormState = {
   title: string;
   description: string;
-  startDate: Dayjs;
+  startDate: Dayjs | null;
   endDate: Dayjs | null;
   status: TaskStatus;
   idEmployee: string | null;
@@ -51,7 +52,7 @@ const formReducer = (state: FormState, action: FormAction) => {
 function validate(formState: FormState) {
   const errors: FormErrors = {};
 
-  if (formState.title.trim() === '') {
+  if (!formState.title.trim()) {
     errors.title = 'Title is required';
   }
 
@@ -64,7 +65,7 @@ function validate(formState: FormState) {
   }
 
   if (formState.description.length > 255) {
-    errors.description = 'Description must be less than 255 characters';
+    errors.description = 'Description must be less than 256 characters';
   }
 
   if (formState.workedHours < 0) {
@@ -75,34 +76,48 @@ function validate(formState: FormState) {
     errors.workedHours = 'Worked hours must be lower than or equal to 1000';
   }
 
+  if (!formState.workedHours && formState.workedHours !== 0) {
+    errors.workedHours = 'Worked hours must be a digit';
+  }
+
   if (!formState.startDate) {
     errors.startDate = 'Start date is required';
   }
 
   if (
-    isNaN(formState.startDate.day()) ||
-    isNaN(formState.startDate.month()) ||
-    isNaN(formState.startDate.year())
+    formState.startDate &&
+    (isNaN(formState.startDate.$D) ||
+      isNaN(formState.startDate.$M) ||
+      isNaN(formState.startDate.$y))
   ) {
     errors.startDate = 'Invalid date';
   }
+
+  if (
+    formState.startDate &&
+    !formState.startDate.isSame(MIN_DATE) &&
+    formState.startDate.isBefore(MIN_DATE)
+  )
+    errors.startDate = 'Start date must be after 01/01/2018';
+
+  if (formState.startDate && formState.startDate.isAfter(MAX_DATE))
+    errors.startDate = `Start date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
 
   if (!formState.status) {
     errors.status = 'Status is required';
   }
 
   if (formState.endDate) {
-    if (formState.startDate.isAfter(formState.endDate)) {
-      errors.startDate = 'Start date must be before end date';
+    if (formState.startDate && formState.startDate.isAfter(formState.endDate)) {
+      errors.endDate = 'End date must be after start date';
     }
 
-    if (
-      isNaN(formState.endDate.day()) ||
-      isNaN(formState.endDate.month()) ||
-      isNaN(formState.endDate.year())
-    ) {
+    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$M) || isNaN(formState.endDate.$y)) {
       errors.endDate = 'Invalid date';
     }
+
+    if (formState.endDate.isAfter(MAX_DATE))
+      errors.endDate = `End date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
   }
 
   return errors;
@@ -138,6 +153,14 @@ export default function useTaskForm() {
 
     setIsPosting(true);
     try {
+      formState.workedHours = Number(formState.workedHours);
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
+
       const res = await axiosInstance.post(`${BASE_API_URL}/tasks/create`, {
         ...formState,
         idProject,
@@ -146,7 +169,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task created successfully', type: 'success' });
       navigate(`/tasks/${res.data.id}`, { state: location.state, replace: true });
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error creating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);
@@ -160,6 +185,13 @@ export default function useTaskForm() {
 
     setIsPosting(true);
     try {
+      formState.workedHours = Number(formState.workedHours);
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string) = (payload[key as Fields] as string).trim();
+        }
+      }
       const res = await axiosInstance.put(`${BASE_API_URL}/tasks/update/${idTask}`, {
         ...formState,
       });
@@ -167,7 +199,9 @@ export default function useTaskForm() {
       setSnackbar({ open: true, message: 'Task updated successfully', type: 'success' });
       navigate(-1);
     } catch (error) {
-      setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
+      if (error instanceof AxiosError)
+        setSnackbar({ open: true, message: error.response?.data.message, type: 'danger' });
+      else setSnackbar({ open: true, message: 'Error updating task', type: 'danger' });
       if (error instanceof Error) setError(error);
     } finally {
       setIsPosting(false);

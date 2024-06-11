@@ -1,3 +1,4 @@
+import { DeleteOutline } from '@mui/icons-material';
 import AbcOutlinedIcon from '@mui/icons-material/AbcOutlined';
 import ArchiveIcon from '@mui/icons-material/Archive';
 import BusinessOutlinedIcon from '@mui/icons-material/BusinessOutlined';
@@ -12,11 +13,14 @@ import { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate, useParams } from 'react-router-dom';
 import colors from '../../colors';
 import ArchiveModal from '../../components/common/ArchiveModal';
+import DeleteModal from '../../components/common/DeleteModal';
 import GoBack from '../../components/common/GoBack';
-import EditClientFormModal from '../../components/modules/Clients/EditClientFormModal';
+import Loader from '../../components/common/Loader';
+import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import styles from '../../components/modules/Clients/details.module.css';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import { SnackbarContext } from '../../hooks/snackbarContext';
+import useDeleteCompany from '../../hooks/useDeleteCompany';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity } from '../../types/company';
 import { ResponseEntity } from '../../types/response';
@@ -34,11 +38,10 @@ import { ProjectsClientList } from '../Projects/ProjectsClientList';
  */
 
 const ClientDetails = () => {
-  // const [openDelete, setOpenDelete] = useState<boolean>(false);
+  const [openDelete, setOpenDelete] = useState<boolean>(false);
   const [openArchive, setOpenArchive] = useState<boolean>(false);
   const [editModalOpen, setEditModalOpen] = useState(false);
   const [company, setCompany] = useState<CompanyEntity | null>(null);
-  const [refetch, setRefetch] = useState(false);
   const { setState } = useContext(SnackbarContext);
   const { clientId } = useParams();
   const { data, error, loading, sendRequest } = useHttp<ResponseEntity<CompanyEntity>>(
@@ -47,6 +50,7 @@ const ClientDetails = () => {
   );
   const { employee } = useContext(EmployeeContext);
   const [notFound, setNotFound] = useState(false);
+  const { deleteCompany, error: deleteError } = useDeleteCompany();
 
   useEffect(() => {
     if (isAxiosError(error)) {
@@ -56,6 +60,16 @@ const ClientDetails = () => {
       }
     }
   }, [error]);
+
+  useEffect(() => {
+    if (deleteError) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  }, [deleteError, setState]);
 
   const navigate = useNavigate();
 
@@ -73,12 +87,11 @@ const ClientDetails = () => {
   useEffect(() => {
     sendRequest();
     if (data && data.data) setCompany(data.data);
-
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, [refetch]);
+  }, []);
 
   if (loading) {
-    return <div>Loading...</div>;
+    return <Loader />;
   }
 
   if (notFound) {
@@ -90,6 +103,24 @@ const ClientDetails = () => {
   }
 
   const ToggleModalArchive = () => setOpenArchive(!openArchive);
+
+  const handleDeleteCompany = async (id: string) => {
+    try {
+      await deleteCompany(id);
+      setState({
+        open: true,
+        message: 'Company deleted successfully',
+        type: 'success',
+      });
+      navigate(RoutesPath.CLIENTS);
+    } catch (error) {
+      setState({
+        open: true,
+        message: 'Failed to delete company',
+        type: 'danger',
+      });
+    }
+  };
 
   const isAdmin = employee?.role === 'Admin';
 
@@ -106,7 +137,7 @@ const ClientDetails = () => {
         <GoBack />
       </Box>
 
-      <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 '>
+      <section className='overflow-y-auto overflow-hidden bg-white rounded-xl p-6 mb-6'>
         <ArchiveModal
           sendRequest={sendRequest}
           toggleModal={ToggleModalArchive}
@@ -136,16 +167,19 @@ const ClientDetails = () => {
         ></ArchiveModal>
         {company && !loading && (
           <>
-            <EditClientFormModal
+            <ClientFormModal
               open={editModalOpen}
               setOpen={setEditModalOpen}
-              clientData={company}
-              setRefetch={setRefetch}
+              data={company}
+              id={clientId}
+              updateFunction={setCompany}
             />
-            <section className='flex justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
-              <div className='flex flex-auto flex-col lg:flex-row justify-between'>
-                <p className='text-2xl text-gold font-medium truncate'>{company.name}</p>
-                <div className='flex flex-wrap items-center gap-x-5'>
+            <section className='flex flex-wrap flex-col-reverse justify-between overflow-x-scroll lg:overflow-x-hidden gap-x-4'>
+              <div className='flex flex-wrap justify-between gap-5'>
+                <p className='text-2xl text-gold font-medium whitespace-break-spaces break-all'>
+                  {company.name}
+                </p>
+                <div className='flex flex-wrap items-center gap-x-2'>
                   <Typography>Constitution date:</Typography>
                   <Chip color='primary' variant='outlined'>
                     {company.constitutionDate
@@ -154,7 +188,7 @@ const ClientDetails = () => {
                   </Chip>
                 </div>
               </div>
-              <div className='flex gap-5'>
+              <div className='flex flex-wrap justify-end gap-2 mb-6'>
                 <Button
                   onClick={handleEditClick}
                   sx={{
@@ -170,55 +204,83 @@ const ClientDetails = () => {
                 </Button>
 
                 {isAdmin && (
-                  <Button
-                    onClick={ToggleModalArchive}
-                    sx={{
-                      backgroundColor: colors.lightWhite,
-                      ':hover': {
-                        backgroundColor: colors.orangeChip,
-                      },
-                      height: '5px',
-                      color: 'text-gold',
-                    }}
-                    startDecorator={
-                      company?.archived ? (
-                        <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      ) : (
-                        <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
-                      )
-                    }
-                  >
-                    <Typography sx={{ color: colors.gold }}>
-                      {company?.archived ? 'Unarchive' : 'Archive'}
-                    </Typography>
-                  </Button>
+                  <>
+                    <Button
+                      onClick={ToggleModalArchive}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                        color: 'text-gold',
+                      }}
+                      startDecorator={
+                        company?.archived ? (
+                          <UnarchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        ) : (
+                          <ArchiveIcon sx={{ width: 24, color: colors.gold }} />
+                        )
+                      }
+                    >
+                      <Typography sx={{ color: colors.gold }}>
+                        {company?.archived ? 'Unarchive' : 'Archive'}
+                      </Typography>
+                    </Button>
+
+                    <Button
+                      onClick={() => setOpenDelete(true)}
+                      sx={{
+                        backgroundColor: colors.lightWhite,
+                        ':hover': { backgroundColor: colors.orangeChip },
+                        height: '5px',
+                      }}
+                      startDecorator={<DeleteOutline sx={{ width: 24, color: colors.gold }} />}
+                    >
+                      <Typography sx={{ color: colors.gold }}>Delete</Typography>
+                    </Button>
+                  </>
                 )}
               </div>
             </section>
 
-            <section className={`flex justify-between mt-8 flex-wrap ${styles.container}`}>
-              <article className='flex gap-1 truncate'>
+            <section className={`flex flex-wrap mt-8 lg:grid grid-cols-2 ${styles.container}`}>
+              <span className='w-full flex gap-3'>
                 <EmailOutlinedIcon />
-                <p>{company.email}</p>
-              </article>
-              <article className='flex gap-1'>
+                <p className='whitespace-break-spaces break-all text-sm md:text-md'>
+                  {company.email}
+                </p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <AbcOutlinedIcon />
-                <p>{company.rfc}</p>
-              </article>
-              <article className='flex gap-1 truncate'>
+                <p className='whitespace-break-spaces break-all text-sm md:text-md'>
+                  {company.rfc}
+                </p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <BusinessOutlinedIcon />
-                <p>{company.taxResidence}</p>
-              </article>
-              <article className='flex gap-1'>
+                <p className='whitespace-break-spaces break-all text-sm md:text-md'>
+                  {company.taxResidence}
+                </p>
+              </span>
+              <span className='w-full flex gap-3'>
                 <StayPrimaryPortraitOutlinedIcon />
-                <p>{company.phoneNumber}</p>
-              </article>
+                <p className='whitespace-break-spaces text-sm md:text-md'>{company.phoneNumber}</p>
+              </span>
             </section>
           </>
         )}
         <Divider sx={{ marginTop: '30px' }} />
         <ProjectsClientList clientId={clientId ?? ''} isCompanyArchived={company?.archived} />
       </section>
+
+      <DeleteModal
+        open={openDelete}
+        setOpen={setOpenDelete}
+        title='Delete Company'
+        description='Every project and task associated with this company will be eliminated.'
+        id={company?.id ?? ''}
+        handleDelete={handleDeleteCompany}
+        alertColor='danger'
+      />
     </main>
   );
 };

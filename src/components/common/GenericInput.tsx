@@ -6,6 +6,8 @@ type GenericInputProps<T extends string = string> = InputProps & {
   handleChange: (name: T, value: string) => void;
   label: string;
   required?: boolean;
+  min?: number;
+  max?: number;
 };
 
 function GenericInput<T extends string = string>({
@@ -14,6 +16,8 @@ function GenericInput<T extends string = string>({
   handleChange,
   label,
   required = false,
+  min,
+  max,
   ...props
 }: GenericInputProps<T>) {
   props.type ? props.type : 'text';
@@ -22,7 +26,12 @@ function GenericInput<T extends string = string>({
       <FormLabel>
         {label} {required ? <span className='text-red-600'>*</span> : null}
       </FormLabel>
-      <Input {...props} onChange={e => handleChange(name, e.target.value)} />
+      <Input
+        {...props}
+        className='md:max-h-8 w-full'
+        onChange={e => handleChange(name, e.target.value)}
+        slotProps={{ input: { maxLength: max, minLength: min } }}
+      />
       {errorString ? <FormHelperText>{errorString}</FormHelperText> : null}
     </FormControl>
   );

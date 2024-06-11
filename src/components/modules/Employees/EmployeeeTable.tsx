@@ -46,13 +46,13 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   const [currentEmployeeId, setCurrentEmployeeId] = useState<string>('');
   const [searchResults, setSearchResults] = useState<Employee[]>([]);
 
-  const { deleteEmployee, error: deletError } = useDeleteEmployee();
+  const { deleteEmployee, error: deletError, success: deleteSuccess } = useDeleteEmployee();
 
   useEffect(() => {
     reqEmployees.sendRequest();
     reqRoles.sendRequest();
     // eslint-disable-next-line react-hooks/exhaustive-deps
-  }, []);
+  }, [deleteSuccess, deletError]);
 
   useEffect(() => {
     if (reqEmployees.error) {
@@ -121,7 +121,9 @@ export default function EmployeeTable({ searchTerm, filterOption }: Props) {
   if (reqEmployees.data?.data.length === 0)
     return <ComponentPlaceholder text='No employees found' />;
 
-  return (
+  return searchResults.length === 0 ? (
+    <ComponentPlaceholder text='No employees were found' />
+  ) : (
     <Sheet sx={{ overflow: 'visible', width: '100%', maxWidth: '100%' }}>
       <Table borderAxis='xBetween' sx={{ minWidth: '800px' }} hoverRow>
         <thead>

@@ -30,16 +30,19 @@ const Layout = ({ children }: LayoutProps) => {
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/details/`)) return 'Project Details';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/edit/`)) return 'Modify Project';
     if (location.pathname.startsWith(`${RoutesPath.PROJECTS}/report/`)) return 'Project Report';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}/details/`)) return 'Expense Details';
+    if (location.pathname === `${RoutesPath.EXPENSES}/new`) return 'Reimbursement request';
+    if (location.pathname.startsWith(`${RoutesPath.EXPENSES}`)) return 'Expenses';
 
     return `Welcome Back, ${employee?.employee.firstName}!`;
   };
 
   return (
-    <main className='w-screen h-screen flex min-w-[590px] min-h-screen'>
+    <main className='flex w-screen h-screen overflow-auto'>
       <SideBar />
-      <div className='flex flex-col h-full w-full flex-1 px-14 pb-5 md:pb-10 min-w-[590px] min-h-screen'>
+      <div className='flex flex-col w-full lg:h-screen lg:overflow-auto flex-1 pt-8 md:pt-0 px-5 md:px-10 pb-5 md:pb-1 min-h-0'>
         <Header pageTitle={pathToText()} />
-        <section className='flex flex-col flex-1 mt-3 overflow-y-hidden'>{children}</section>
+        <section className='flex flex-col flex-1 mt-2 pb-2 lg:overflow-y-auto'>{children}</section>
       </div>
     </main>
   );

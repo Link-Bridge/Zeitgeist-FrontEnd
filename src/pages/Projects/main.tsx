@@ -25,7 +25,7 @@ const ProjectMain = () => {
   const [projects, setProjects] = useState<ProjectEntity[]>([]);
   const [isLoading, setIsLoading] = useState(req.loading);
   const [searchTerm, setSearchTerm] = useState('');
-  const [filterOption, setFilterOption] = useState('Name');
+  const [filterOption] = useState('Name');
   const { employee } = useContext(EmployeeContext);
 
   useEffect(() => {
@@ -97,25 +97,41 @@ const ProjectMain = () => {
 
   useEffect(() => {
     handleFilter(filter);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
   }, [searchTerm, projects, companyNames, filterOption]);
 
   return (
-    <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
+    <main className='min-h-full flex flex-col overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder='Search projects'
-          options={['Name', 'Company']}
-          setSelectedOption={setFilterOption}
-          maxLength={70}
-        />
-        <div className='flex flex-wrap flex-row items-center gap-2'>
+        <div className='flex w-full justify-between items-center'>
+          <div className='search-bar-container mb-2'>
+            <SearchBar
+              searchTerm={searchTerm}
+              setSearchTerm={setSearchTerm}
+              placeholder='Search by name'
+              setSelectedOption={() => { }}
+              options={[]}
+              maxLength={70}
+            />
+          </div>
+        </div>
+        <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
           {employee?.role === 'Admin' ? (
-            <>
-              <div className='flex-row flex items-center gap-2'>
+            <div className='flex justify-start w-full items-center gap-2 mb-4'>
+              <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}
+                >
                   Filter Projects:
                 </Typography>
               </div>
@@ -124,17 +140,19 @@ const ProjectMain = () => {
                 options={Object.values(ProjectFilters)}
                 onChange={value => handleFilter(value)}
               />
-            </>
+            </div>
           ) : null}
-          <Link to={`${RoutesPath.PROJECTS}/new`}>
-            <AddButton onClick={() => {}}></AddButton>
-          </Link>
+          <div className='w-full flex justify-end mb-2'>
+            <Link to={`${RoutesPath.PROJECTS}/new`}>
+              <AddButton onClick={() => { }}></AddButton>
+            </Link>
+          </div>
         </div>
       </section>
       {filteredProjects.length === 0 ? (
         <ComponentPlaceholder text='No projects were found' />
       ) : (
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5 mt-5'>
           {isLoading ? (
             <Loader />
           ) : (

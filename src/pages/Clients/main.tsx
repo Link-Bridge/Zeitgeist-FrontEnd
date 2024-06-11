@@ -9,7 +9,7 @@ import ComponentPlaceholder from '../../components/common/ComponentPlaceholder';
 import GenericDropdown from '../../components/common/GenericDropdown';
 import Loader from '../../components/common/Loader';
 import SearchBar from '../../components/common/SearchBar';
-import NewClientFormModal from '../../components/modules/Clients/NewClientFormModal';
+import ClientFormModal from '../../components/modules/Clients/ClientFormModal';
 import { EmployeeContext } from '../../hooks/employeeContext';
 import useHttp from '../../hooks/useHttp';
 import { CompanyEntity, CompanyFilters } from '../../types/company';
@@ -31,7 +31,8 @@ const ClientList = (): JSX.Element => {
 
   useEffect(() => {
     handleFilter(filter);
-  }, [searchTerm, clientsRequest.data]);
+    // eslint-disable-next-line react-hooks/exhaustive-deps
+  }, [searchTerm, clientsRequest.data, companies]);
 
   // eslint-disable-next-line react-hooks/exhaustive-deps
   const handleFilter = (value: string) => {
@@ -98,37 +99,57 @@ const ClientList = (): JSX.Element => {
 
   if (isLoading) {
     return (
-      <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
+      <main className='min-h-full flex flex-col gap-2 overflow-hidden mb-8'>
         <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-          <SearchBar
-            searchTerm={searchTerm}
-            setSearchTerm={setSearchTerm}
-            placeholder='Search by name'
-            setSelectedOption={() => {}}
-            options={[]}
-            maxLength={70}
-          />
-          <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
+          <div className='flex w-full justify-between items-center'>
+            <div className='search-bar-container mb-2'>
+              <SearchBar
+                searchTerm={searchTerm}
+                setSearchTerm={setSearchTerm}
+                placeholder='Search by name'
+                setSelectedOption={() => {}}
+                options={[]}
+                maxLength={70}
+              />
+            </div>
+          </div>
+          <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
             {isAdmin && (
-              <div className='flex flex-row items-center gap-2'>
-                <div className='flex-row flex items-center gap-2'>
-                  <FilterAltIcon sx={{ width: '30px', height: '30px' }} className='text-gold' />
-                  <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+              <div className='flex justify-start w-full items-center gap-2'>
+                <div className='flex-row flex items-center sm:gap-2'>
+                  <FilterAltIcon
+                    sx={{ width: '30px', height: '30px' }}
+                    className='text-gold flex-none'
+                  />
+                  <Typography
+                    sx={{
+                      color: colors.gold,
+                      fontWeight: 'bold',
+                      '@media (max-width: 600px)': {
+                        fontSize: '14px',
+                      },
+                      '@media (min-width: 960px)': {
+                        fontSize: '20px',
+                      },
+                    }}
+                  >
                     Filter Clients:
                   </Typography>
                 </div>
                 <GenericDropdown
-                  value={CompanyFilters.ALL}
+                  value={filter}
                   options={Object.values(CompanyFilters)}
-                  onChange={value => handleFilter(value)}
+                  onChange={value => handleFilter(value ?? CompanyFilters.NOT_ARCHIVED)}
                 />
               </div>
             )}
-            <AddButton onClick={openModal} />
+            <div className='w-full flex justify-end mb-2'>
+              <AddButton onClick={openModal} />
+            </div>
           </div>
         </section>
-        <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
-        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5'>
+        <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
+        <section className='overflow-y-auto bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 min-h-0 shadow-lg p-4 gap-5 mt-5'>
           <Loader />
         </section>
       </main>
@@ -138,41 +159,55 @@ const ClientList = (): JSX.Element => {
   return (
     <main className='min-h-full flex flex-col gap-2 overflow-hidden'>
       <section className='flex flex-wrap justify-between flex-row md:items-center md-2 gap-2'>
-        <SearchBar
-          searchTerm={searchTerm}
-          setSearchTerm={setSearchTerm}
-          placeholder='Search by name'
-          setSelectedOption={() => {}}
-          options={[]}
-          maxLength={70}
-        />
-        <div className='flex flex-wrap flex-row justify-self-end items-center gap-2'>
+        <div className='search-bar-container mb-2'>
+          <SearchBar
+            searchTerm={searchTerm}
+            setSearchTerm={setSearchTerm}
+            placeholder='Search by name'
+            setSelectedOption={() => {}}
+            options={[]}
+            maxLength={70}
+          />
+        </div>
+        <div className='flex flex-col sm:flex-row w-full justify-between items-center'>
           {isAdmin && (
-            <div className='flex flex-row items-center gap-2'>
-              <div className='flex-row flex items-center gap-2'>
+            <div className='flex justify-start w-full items-center gap-2'>
+              <div className='flex-row flex items-center sm:gap-2'>
                 <FilterAltIcon
                   sx={{ width: '30px', height: '30px' }}
                   className='text-gold flex-none'
                 />
-                <Typography sx={{ color: colors.gold, fontWeight: 'bold' }}>
+                <Typography
+                  sx={{
+                    color: colors.gold,
+                    fontWeight: 'bold',
+                    '@media (max-width: 600px)': {
+                      fontSize: '14px',
+                    },
+                    '@media (min-width: 960px)': {
+                      fontSize: '20px',
+                    },
+                  }}
+                >
                   Filter Clients:
                 </Typography>
               </div>
               <GenericDropdown
                 value={filter}
                 options={Object.values(CompanyFilters)}
-                onChange={value => handleFilter(value)}
+                onChange={value => handleFilter(value ?? CompanyFilters.NOT_ARCHIVED)}
               />
             </div>
           )}
-          <AddButton onClick={openModal} />
+          <div className='w-full flex justify-end'>
+            <AddButton onClick={openModal} />
+          </div>
         </div>
       </section>
-      <NewClientFormModal open={open} setOpen={setOpen} setRefetch={setRefetch} />
       {filteredCompanies.length === 0 ? (
         <ComponentPlaceholder text='No companies were found' />
       ) : (
-        <section className='overflow-y-auto overflow-hidden bg-cardBg rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 shadow-lg p-4 gap-5'>
+        <section className='overflow-y-auto overflow-hidden bg-cardBg mt-5 rounded-xl grid grid-cols-1 md:grid-cols-2 lg:grid-cols-3 shadow-lg p-4 gap-5 mb-4'>
           {filteredCompanies.map(company => (
             <Link to={`${RoutesPath.CLIENTS}/details/${company.id}`} key={company.id}>
               <ClientCard
@@ -186,6 +221,7 @@ const ClientList = (): JSX.Element => {
           ))}
         </section>
       )}
+      <ClientFormModal open={open} setOpen={setOpen} updateFunction={setClientsData} />
     </main>
   );
 };

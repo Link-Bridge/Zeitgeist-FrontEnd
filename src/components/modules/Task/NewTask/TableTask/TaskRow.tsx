@@ -1,4 +1,3 @@
-/* eslint-disable react-hooks/exhaustive-deps */
 import dayjs from 'dayjs';
 import { useContext } from 'react';
 import { useNavigate } from 'react-router-dom';
@@ -29,9 +28,12 @@ function TaskRow({ task, handleStatusChange }: TaskRowProps) {
 
   const modalContext = useContext(ModalContext);
   return (
-    <tr className='hover:cursor-pointer' onClick={() => navigate(`/tasks/${task.id}`)}>
-      <td>{task.title}</td>
-      <td onClick={e => e.stopPropagation()}>
+    <tr
+      className='hover:cursor-pointer block lg:table-row'
+      onClick={() => navigate(`/tasks/${task.id}`)}
+    >
+      <td className='min-w-[200px] max-w-[200px] lg:max-w-1/3 break-all'>{task.title}</td>
+      <td className='min-w-[200px]' onClick={e => e.stopPropagation()}>
         <GenericDropdown
           onChange={newStatus => handleStatusChange(task.id, newStatus as TaskStatus)}
           options={Object.values(TaskStatus)}
@@ -40,8 +42,10 @@ function TaskRow({ task, handleStatusChange }: TaskRowProps) {
           value={task.status}
         />
       </td>
-      <td>{task.workedHours ? task.workedHours : 0}</td>
-      <td>{task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}</td>
+      <td className='min-w-[80px]'>{task.workedHours ? task.workedHours : 0}</td>
+      <td className='min-w-[80px]'>
+        {task.endDate ? dayjs.utc(task.endDate).format('DD/MM/YYYY') : 'No due date'}
+      </td>
       <td onClick={e => e.stopPropagation()}>
         <TaskActionsMenu
           task={task}

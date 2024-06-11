@@ -19,7 +19,7 @@ import {
   ProjectEntity,
   ProjectPeriodicity,
 } from '../../types/project';
-import { RequestMethods } from '../../utils/constants';
+import { MAX_DATE, MIN_DATE, RequestMethods } from '../../utils/constants';
 
 const NewProject = () => {
   const { employee } = useContext(EmployeeContext);
@@ -29,7 +29,7 @@ const NewProject = () => {
   const projectCategories = Object.values(ProjectCategory) as string[];
   const projectPeriodicity = Object.values(ProjectPeriodicity) as string[];
   const projectAreas = Object.values(ProjectAreas) as string[];
-  const req = useHttp<CompanyEntity[]>('/company', RequestMethods.GET);
+  const req = useHttp<CompanyEntity[]>('/company/unarchived', RequestMethods.GET);
   const [admin, setAdmin] = useState(false);
 
   const projectReq = useHttp<ProjectEntity>(`/project/details/${id}`, RequestMethods.GET);
@@ -44,13 +44,12 @@ const NewProject = () => {
   }, []);
 
   useEffect(() => {
-    console.log(projectReq.data);
     if (projectReq.data) {
       form.setState({
         name: projectReq.data.name,
         idCompany: projectReq.data.idCompany,
         category: projectReq.data.category,
-        matter: projectReq.data.matter,
+        matter: projectReq.data.matter ?? '',
         description: projectReq.data.description,
         startDate: dayjs(projectReq.data.startDate),
         endDate: projectReq.data.endDate ? dayjs(projectReq.data.endDate) : null,
@@ -76,6 +75,7 @@ const NewProject = () => {
               required
               label='Project Name'
               value={form.formState.name}
+              max={70}
             />
           </FormControl>
           <section className='flex lg:flex-row gap-4 flex-col'>
@@ -89,6 +89,7 @@ const NewProject = () => {
                 name='idCompany'
                 handleChange={form.handleChange}
                 value={form.formState.idCompany}
+                disabled
               />
               {form.errors.idCompany ? (
                 <FormHelperText>{form.errors.idCompany}</FormHelperText>
@@ -115,6 +116,7 @@ const NewProject = () => {
               handleChange={form.handleChange}
               label='Matter'
               value={form.formState.matter}
+              max={70}
             />
           </section>
           <FormControl>
@@ -126,6 +128,7 @@ const NewProject = () => {
               handleChange={form.handleChange}
               label='Description'
               value={form.formState.description}
+              max={255}
             />
           </FormControl>
           <section className='grid grid-cols-1 lg:grid-cols-3 gap-4'>
@@ -136,8 +139,11 @@ const NewProject = () => {
               <DatePicker
                 value={dayjs(form.formState.startDate).utc()}
                 onChange={newVal => {
-                  form.handleChange('startDate', newVal ?? form.formState.startDate);
+                  form.handleChange('startDate', newVal);
                 }}
+                slotProps={{ textField: { error: !!form.errors.startDate } }}
+                minDate={MIN_DATE}
+                maxDate={MAX_DATE}
               />
               {form.errors.startDate ? (
                 <FormHelperText>{form.errors.startDate}</FormHelperText>
@@ -148,6 +154,8 @@ const NewProject = () => {
               <DatePicker
                 value={form.formState.endDate ? dayjs(form.formState.endDate).utc() : null}
                 onChange={e => form.handleChange('endDate', e)}
+                slotProps={{ textField: { error: !!form.errors.endDate } }}
+                maxDate={MAX_DATE}
               />
               {form.errors.endDate ? <FormHelperText>{form.errors.endDate}</FormHelperText> : null}
             </FormControl>
@@ -203,7 +211,7 @@ const NewProject = () => {
                 },
               }}
             >
-              <Link to={'..'} replace>
+              <Link to={`/projects/details/${id}`} replace>
                 Cancel
               </Link>
             </Button>

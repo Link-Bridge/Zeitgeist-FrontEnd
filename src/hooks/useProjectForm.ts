@@ -3,7 +3,7 @@ import { FormEvent, useContext, useReducer, useState } from 'react';
 import { useNavigate } from 'react-router-dom';
 import { axiosInstance } from '../lib/axios/axios';
 import { ProjectAreas, ProjectEntity, ProjectPeriodicity, ProjectStatus } from '../types/project';
-import { APIPath, BASE_API_URL } from '../utils/constants';
+import { APIPath, BASE_API_URL, MAX_DATE, MIN_DATE } from '../utils/constants';
 import { SnackbarContext } from './snackbarContext';
 
 export type FormState = {
@@ -12,7 +12,7 @@ export type FormState = {
   category: string;
   matter: string;
   description: string;
-  startDate: Dayjs;
+  startDate: Dayjs | null;
   endDate: Dayjs | null;
   periodicity: ProjectPeriodicity;
   isChargeable: boolean;
@@ -59,7 +59,7 @@ const formReducer = (state: FormState, action: FormAction) => {
 
 const validate = (formState: FormState) => {
   const errors: FormErrors = {};
-  if (!formState.name) {
+  if (!formState.name.trim()) {
     errors.name = 'Project name is required';
   }
 
@@ -76,7 +76,7 @@ const validate = (formState: FormState) => {
   }
 
   if (formState.description && formState.description.length > 255) {
-    errors.description = 'Project description must be less than 255 characters';
+    errors.description = 'Project description must be less than 256 characters';
   }
 
   if (!formState.category) {
@@ -92,25 +92,42 @@ const validate = (formState: FormState) => {
   }
 
   if (
-    isNaN(formState.startDate.day()) ||
-    isNaN(formState.startDate.month()) ||
-    isNaN(formState.startDate.year())
+    formState.startDate &&
+    (isNaN(formState.startDate.$D) ||
+      isNaN(formState.startDate.$M) ||
+      isNaN(formState.startDate.$y))
   ) {
     errors.startDate = 'Invalid date';
   }
 
+  if (
+    formState.startDate &&
+    !formState.startDate.isSame(MIN_DATE) &&
+    formState.startDate.isBefore(MIN_DATE)
+  )
+    errors.startDate = 'Start date must be after 01/01/2018';
+
+  if (formState.startDate && formState.startDate.isAfter(MAX_DATE))
+    errors.startDate = `Start date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
+
   if (formState.endDate) {
     if (formState.endDate.isBefore(formState.startDate)) {
-      errors.startDate = 'Start date must be before end date';
+      errors.endDate = 'End date must be after start date';
+    }
+
+    if (isNaN(formState.endDate.$D) || isNaN(formState.endDate.$M) || isNaN(formState.endDate.$y)) {
+      errors.endDate = 'Invalid date';
     }
 
     if (
-      isNaN(formState.startDate.day()) ||
-      isNaN(formState.startDate.month()) ||
-      isNaN(formState.startDate.year())
-    ) {
-      errors.endDate = 'Invalid date';
-    }
+      formState.endDate &&
+      !formState.endDate.isSame(MIN_DATE) &&
+      formState.endDate.isBefore(MIN_DATE)
+    )
+      errors.endDate = 'End date must be after 01/01/2018';
+
+    if (formState.endDate.isAfter(MAX_DATE))
+      errors.endDate = `End date must be before ${MAX_DATE.format('DD/MM/YYYY')}`;
   }
 
   return errors;
@@ -142,9 +159,16 @@ const useProjectForm = () => {
 
     try {
       setIsPosting(true);
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string | undefined) =
+            (payload[key as Fields] as string).trim() || undefined;
+        }
+      }
 
       const res = await axiosInstance.post(`${BASE_API_URL}${APIPath.PROJECTS}/create`, {
-        ...formState,
+        ...payload,
         status: ProjectStatus.NOT_STARTED,
       });
       setData(res.data);
@@ -166,8 +190,16 @@ const useProjectForm = () => {
     try {
       setIsPosting(true);
 
+      const payload = { ...formState };
+      for (const key in payload) {
+        if (typeof payload[key as Fields] === 'string') {
+          (payload[key as Fields] as string | null) =
+            (payload[key as Fields] as string).trim() || null;
+        }
+      }
+
       const res = await axiosInstance.put(`${BASE_API_URL}${APIPath.PROJECTS}/edit/${id}`, {
-        ...formState,
+        ...payload,
       });
       setData(res.data);
       setSnackbar({ open: true, message: 'Project updated successfully', type: 'success' });

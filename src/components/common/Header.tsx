@@ -1,5 +1,6 @@
-import { NotificationsNone } from '@mui/icons-material';
+import CalendarMonthIcon from '@mui/icons-material/CalendarMonth';
 import { Avatar } from '@mui/joy';
+import dayjs from 'dayjs';
 import { useContext, useEffect, useState } from 'react';
 import Colors from '../../colors';
 import { EmployeeContext } from '../../hooks/employeeContext';
@@ -12,38 +13,40 @@ const Header = ({ pageTitle }: HeaderProps) => {
   const { employee: employeeContext } = useContext(EmployeeContext);
   const [currentDate, setCurrentDate] = useState('');
   useEffect(() => {
-    const date = new Date();
-    const dateOptions: Intl.DateTimeFormatOptions = {
-      weekday: 'long',
-      day: 'numeric',
-      month: 'long',
-      year: 'numeric',
-    };
-    setCurrentDate(date.toLocaleDateString('en-US', dateOptions));
+    setCurrentDate(dayjs().format('dddd, MMMM D, YYYY'));
   }, []);
 
   return (
-    <header className='flex flex-row flex-wrap justify-between items-start pt-6 basis-1/6'>
+    <header className='flex flex-row flex-wrap justify-between items-start pt-6'>
       <section>
-        <p className='py-2 text-[#686868]'>{currentDate}</p>
+        <p className='pt-2 text-[#686868]'>{currentDate}</p>
         <h1
           style={{
             color: Colors.gold,
             fontFamily: 'Didot',
-            fontSize: '3.5rem',
             lineHeight: '1.1',
             letterSpacing: '1.5px',
           }}
+          className='text-[25px] sm:text-[35px] lg:text-[45px] my-3'
         >
           {pageTitle}
         </h1>
       </section>
 
       <section className='hidden md:flex justify-between items-center mt-3'>
-        <button className='mr-8 text-[#C29A51]'>
-          <NotificationsNone fontSize='large' />
-        </button>
-        <Avatar src={employeeContext?.employee.imageUrl} alt='User Profile'></Avatar>
+        <a href='https://calendar.google.com/calendar/' className='mr-8' target='_blank'>
+          <CalendarMonthIcon fontSize='large' className='text-[#C29A51]' />
+        </a>
+        {employeeContext?.employee.imageUrl ? (
+          <Avatar
+            src={employeeContext.employee.imageUrl}
+            alt={employeeContext.employee.firstName}
+          />
+        ) : (
+          <Avatar>
+            {`${employeeContext?.employee.firstName[0]}${employeeContext?.employee.lastName[0]}`}
+          </Avatar>
+        )}
       </section>
     </header>
   );
