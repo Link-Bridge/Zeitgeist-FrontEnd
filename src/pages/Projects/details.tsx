@@ -290,7 +290,7 @@ const ProjectDetails = () => {
     { label: 'Area', content: data?.area },
     { label: 'Periodicity', content: data?.periodicity },
     { label: 'Chargeable', content: data?.isChargeable ? 'Yes' : 'No' },
-    { label: 'isArchived', content: data?.isArchived ? 'Yes' : 'No' },
+    { label: 'Archived', content: data?.isArchived ? 'Yes' : 'No' },
   ];
 
   return (
@@ -315,7 +315,7 @@ const ProjectDetails = () => {
       </Box>
 
       <Card
-        className='bg-white overflow-y-auto overflow-hidden'
+        className='bg-white overflow-y-hidden overflow-hidden min-h-[40vh]'
         sx={{ Maxwidth: '300px', padding: '20px', border: 'none' }}
       >
         <section className='font-montserrat'>
@@ -446,7 +446,7 @@ const ProjectDetails = () => {
 
               {data?.isChargeable && (
                 <div>
-                  <p>Payed</p>
+                  <p>Paid</p>
                   <Chip
                     component={Select}
                     sx={chipStyle}
@@ -539,7 +539,7 @@ const ProjectDetails = () => {
             </Button>
           )}
           <Link to={id ? `${RoutesPath.TASKS}/${id}/create` : RoutesPath.TASKS}>
-            <AddButton onClick={() => {}} />
+            <AddButton onClick={() => { }} />
           </Link>
         </Box>
       </section>
