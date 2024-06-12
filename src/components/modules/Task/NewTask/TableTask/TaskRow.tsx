@@ -32,7 +32,7 @@ function TaskRow({ task, handleStatusChange }: TaskRowProps) {
       className='hover:cursor-pointer block lg:table-row'
       onClick={() => navigate(`/tasks/${task.id}`)}
     >
-      <td className='min-w-[200px] max-w-[200px] lg:max-w-1/3 break-all'>{task.title}</td>
+      <td className='min-w-[200px] max-w-[200px] lg:max-w-1/3 break-words'>{task.title}</td>
       <td className='min-w-[200px]' onClick={e => e.stopPropagation()}>
         <GenericDropdown
           onChange={newStatus => handleStatusChange(task.id, newStatus as TaskStatus)}
