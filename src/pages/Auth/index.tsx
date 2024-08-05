@@ -1,7 +1,6 @@
-/* eslint-disable react-hooks/rules-of-hooks */
 import Button from '@mui/joy/Button';
-import { getRedirectResult, signInWithPopup } from 'firebase/auth';
-import React, { useCallback, useContext, useEffect, useState } from 'react';
+import { onAuthStateChanged, signInWithPopup } from 'firebase/auth';
+import React, { useContext, useEffect, useState } from 'react';
 import { Navigate, useNavigate } from 'react-router-dom';
 import googleImage from '../../assets/images/google-logo.webp';
 import { auth, provider } from '../../config/firebase.config';
@@ -16,76 +15,62 @@ const Auth: React.FC = () => {
   const { setEmployee } = useContext(EmployeeContext);
   const { setState } = useContext(SnackbarContext);
   const [isLoggingIn, setIsLoggingIn] = useState(false);
-  const [, setResponseOk] = useState(false);
 
   const currentEmployee = JSON.parse(localStorage.getItem('employee') ?? null);
   if (currentEmployee) {
     return <Navigate to='/home' replace />;
   }
 
-  const sendRequest = useCallback(async () => {
+  const sendRequest = async () => {
     try {
       const response = await axiosInstance.post(`${BASE_API_URL}/employee/signup`);
       return response.data as EmployeeReponse;
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-      setResponseOk(false);
     }
-  }, [setState]);
+  };
 
-  const updateUserContext = useCallback(
-    async (data: EmployeeReponse, token: string, refreshToken: string) => {
-      if (data) {
-        if (data.data.role !== 'No role') {
-          localStorage.setItem('idToken', token);
-          localStorage.setItem('refreshToken', refreshToken);
-          setEmployee(data.data);
-          localStorage.setItem('employee', JSON.stringify(data.data));
-          navigate(RoutesPath.HOME);
-        } else {
-          localStorage.removeItem('idToken');
-          localStorage.removeItem('refreshToken');
-          setResponseOk(false);
-          setState({
-            open: true,
-            message: 'User not authorized',
-            type: 'danger',
-          });
-        }
+  const updateUserContext = async (data: EmployeeReponse, token: string, refreshToken: string) => {
+    if (data) {
+      if (data.data.role !== 'No role') {
+        localStorage.setItem('idToken', token);
+        localStorage.setItem('refreshToken', refreshToken);
+        setEmployee(data.data);
+        localStorage.setItem('employee', JSON.stringify(data.data));
+        navigate(RoutesPath.HOME);
+      } else {
+        localStorage.removeItem('idToken');
+        localStorage.removeItem('refreshToken');
+        setState({
+          open: true,
+          message: 'User not authorized',
+          type: 'danger',
+        });
       }
-    },
-    [navigate, setEmployee, setState]
-  );
+    }
+  };
 
   useEffect(() => {
-    setIsLoggingIn(true);
-    const checkRedirectResult = async () => {
-      try {
-        const result = await getRedirectResult(auth);
-        if (result) {
-          setResponseOk(true);
-          const token = await result.user.getIdToken(true);
-          const refreshToken = result.user.refreshToken;
+    const unregisterAuthObserver = onAuthStateChanged(auth, async user => {
+      if (user) {
+        setIsLoggingIn(true);
+        const token = await user.getIdToken(true);
+        const refreshToken = user.refreshToken;
 
-          const response = await sendRequest();
-          if (!response) {
-            setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-            setResponseOk(false);
-            return;
-          }
-
-          await updateUserContext(response, token, refreshToken);
+        const response = await sendRequest();
+        if (!response) {
+          setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
+          setIsLoggingIn(false);
+          return;
         }
-        setIsLoggingIn(false);
-      } catch (error) {
-        setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
-        setIsLoggingIn(false);
-        setResponseOk(false);
-      }
-    };
 
-    checkRedirectResult();
-  }, [sendRequest, setState, updateUserContext]);
+        await updateUserContext(response, token, refreshToken);
+        setIsLoggingIn(false);
+      }
+    });
+
+    return () => unregisterAuthObserver();
+  }, []);
 
   const handleGoogleSignIn = async () => {
     setIsLoggingIn(true);
@@ -94,7 +79,6 @@ const Auth: React.FC = () => {
     } catch (error) {
       setState({ open: true, message: 'Oops! we are having some troubles', type: 'danger' });
       setIsLoggingIn(false);
-      setResponseOk(false);
     }
   };
 
